@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KI-Einordnung – Lern-Tool für Business Analyst:innen</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700&display=swap');
+
+  :root {
+    --bg: #0b0c10;
+    --surface: #14161d;
+    --surface2: #1b1d27;
+    --surface3: #22242f;
+    --border: #282b38;
+    --border-hover: #3a3e50;
+    --text: #e4e6f0;
+    --text-dim: #9499b0;
+    --text-muted: #5d6280;
+    --accent: #6992f4;
+    --accent-glow: rgba(105,146,244,0.15);
+    --accent-soft: rgba(105,146,244,0.08);
+    --accent2: #f0a500;
+    --green: #34d399;
+    --green-glow: rgba(52,211,153,0.12);
+    --red: #f87171;
+    --red-glow: rgba(248,113,113,0.12);
+    --cat-auto: #34d399;
+    --cat-llm: #6992f4;
+    --cat-ml: #a78bfa;
+    --cat-anomaly: #fbbf24;
+    --cat-process: #22d3ee;
+    --cat-none: #94a3b8;
+    --radius: 12px;
+    --radius-sm: 8px;
+    --radius-lg: 16px;
+    --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(rgba(105,146,244,0.07) 1px, transparent 1px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 800px;
+    height: 500px;
+    background: radial-gradient(ellipse, rgba(105,146,244,0.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 48px 24px 100px;
+  }
+
+  header { text-align: center; margin-bottom: 48px; }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border: 1px solid rgba(105,146,244,0.25);
+    background: rgba(105,146,244,0.06);
+    padding: 6px 14px;
+    border-radius: 99px;
+    margin-bottom: 24px;
+    opacity: 0; animation: fadeUp .5s ease forwards .1s;
+  }
+
+  h1 {
+    font-size: clamp(28px, 5vw, 44px);
+    font-weight: 700;
+    line-height: 1.15;
+    margin-bottom: 14px;
+    letter-spacing: -0.5px;
+    opacity: 0; animation: fadeUp .5s ease forwards .15s;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--accent), #a78bfa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: var(--text-dim);
+    font-size: 15px;
+    font-weight: 400;
+    max-width: 480px;
+    margin: 0 auto;
+    line-height: 1.7;
+    opacity: 0; animation: fadeUp .5s ease forwards .2s;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 12px;
+    opacity: 0; animation: fadeUp .5s ease forwards .25s;
+  }
+
+  @media(max-width:520px) { .stats-bar { grid-template-columns: repeat(2,1fr); } }
+
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-align: center;
+    transition: border-color var(--transition);
+  }
+  .stat:hover { border-color: var(--border-hover); }
+
+  .stat-value {
+    font-family: 'DM Mono', monospace;
+    font-size: 24px;
+    font-weight: 500;
+    color: var(--accent);
+    display: block;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .progress-wrap {
+    background: var(--surface2);
+    border-radius: 99px;
+    height: 5px;
+    margin-bottom: 44px;
+    overflow: hidden;
+    opacity: 0; animation: fadeUp .5s ease forwards .3s;
+    position: relative;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--green));
+    border-radius: 99px;
+    transition: width .6s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 0%;
+    position: relative;
+  }
+
+  .progress-bar::after {
+    content: '';
+    position: absolute;
+    right: 0; top: -2px;
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+    opacity: 0;
+    transition: opacity .3s;
+  }
+
+  .progress-bar.active::after { opacity: 1; }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  #phase-select { display: block; }
+  #phase-play   { display: none; }
+  #phase-result { display: none; }
+
+  .phase-transition { animation: phaseIn .35s ease forwards; }
+
+  @keyframes phaseIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .filter-tabs { display: flex; gap: 6px; }
+
+  .filter-tab {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 7px 16px;
+    cursor: pointer;
+    transition: all var(--transition);
+    white-space: nowrap;
+  }
+
+  .filter-tab:hover { color: var(--text-dim); border-color: var(--border-hover); }
+  .filter-tab.active { color: var(--text); background: var(--surface2); border-color: var(--accent); }
+
+  .filter-tab .count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    margin-left: 4px;
+    opacity: 0.6;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 28px;
+    opacity: 0; animation: fadeUp .5s ease forwards .32s;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 5px 10px 5px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+    transition: all var(--transition);
+    cursor: default;
+  }
+  .legend-item:hover { border-color: var(--border-hover); color: var(--text-dim); }
+
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+  .info-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 17px; height: 17px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--text-muted);
+    font-size: 9px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all var(--transition);
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    line-height: 1;
+    margin-left: 2px;
+  }
+
+  .info-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    transform: scale(1.15);
+  }
+
+  .use-case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin-bottom: 32px;
+    opacity: 0; animation: fadeUp .5s ease forwards .38s;
+  }
+
+  .uc-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .uc-card-top {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .uc-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.25), 0 0 0 1px rgba(105,146,244,0.08);
+    background: var(--surface2);
+  }
+
+  .uc-card:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .uc-card:active { transform: translateY(0); }
+
+  .uc-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border-radius: 6px;
+    padding: 4px 8px;
+    flex-shrink: 0;
+    transition: all var(--transition);
+  }
+
+  .uc-card:hover .uc-num { background: var(--surface3); }
+
+  .uc-title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    flex: 1;
+  }
+
+  .uc-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    padding-left: 42px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .uc-status-icon {
+    font-size: 14px;
+    flex-shrink: 0;
+    opacity: 0.7;
+  }
+
+  .uc-card.solved-correct {
+    border-color: rgba(52,211,153,0.2);
+  }
+  .uc-card.solved-correct .uc-num {
+    background: rgba(52,211,153,0.1);
+    color: var(--green);
+  }
+  .uc-card.solved-correct .uc-status-icon { color: var(--green); }
+
+  .uc-card.solved-wrong {
+    border-color: rgba(248,113,113,0.12);
+    cursor: default;
+    opacity: 0.55;
+  }
+  .uc-card.solved-wrong:hover {
+    transform: none;
+    box-shadow: none;
+    border-color: rgba(248,113,113,0.2);
+    background: var(--surface);
+  }
+  .uc-card.solved-wrong .uc-num {
+    background: rgba(248,113,113,0.08);
+    color: var(--red);
+  }
+  .uc-card.solved-wrong .uc-status-icon { color: var(--red); }
+
+  .uc-lock-badge {
+    display: none;
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-muted);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 99px;
+    padding: 2px 10px;
+    margin-left: 42px;
+    margin-top: 2px;
+    width: fit-content;
+  }
+
+  .uc-card.solved-wrong .uc-lock-badge { display: flex; align-items: center; gap: 4px; }
+
+  .uc-cat-dot {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    border-radius: 0 0 var(--radius) var(--radius);
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+
+  .uc-card.solved-correct .uc-cat-dot,
+  .uc-card.solved-wrong .uc-cat-dot { opacity: 1; }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  .empty-state-icon { font-size: 36px; margin-bottom: 12px; display: block; opacity: 0.5; }
+
+  .play-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 36px 40px;
+    margin-bottom: 32px;
+    position: relative;
+  }
+
+  .play-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+
+  .play-number {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    background: var(--surface2);
+    padding: 6px 12px;
+    border-radius: 99px;
+    border: 1px solid var(--border);
+  }
+
+  .play-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .play-hint kbd {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 6px;
+  }
+
+  .play-case-title {
+    font-size: clamp(22px, 4vw, 30px);
+    font-weight: 700;
+    margin-bottom: 12px;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+  }
+
+  .play-case-title .quote-mark {
+    color: var(--accent);
+    font-size: 1.6em;
+    line-height: 0;
+    vertical-align: -0.15em;
+    margin-right: 4px;
+    opacity: 0.5;
+  }
+
+  .play-scenario {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .play-scenario-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .play-scenario-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  .play-scenario-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .play-question {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 8px;
+  }
+
+  .cat-btn {
+    background: var(--surface2);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cat-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity var(--transition);
+  }
+
+  .cat-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  }
+  .cat-btn:active { transform: translateY(0); }
+  .cat-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .cat-btn[data-cat="Automatisierung"]:hover,
+  .cat-btn[data-cat="Automatisierung"].kb-focus { border-color: var(--cat-auto); }
+  .cat-btn[data-cat="Automatisierung"]::before { background: linear-gradient(135deg, rgba(52,211,153,0.06), transparent); }
+
+  .cat-btn[data-cat="KI \u2013 Textverst\u00e4ndnis (GPT / LLM)"]:hover,
+  .cat-btn[data-cat="KI \u2013 Textverst\u00e4ndnis (GPT / LLM)"].kb-focus { border-color: var(--cat-llm); }
+  .cat-btn[data-cat="KI \u2013 Textverst\u00e4ndnis (GPT / LLM)"]::before { background: linear-gradient(135deg, rgba(105,146,244,0.06), transparent); }
+
+  .cat-btn[data-cat="KI \u2013 Vorhersage (Machine Learning)"]:hover,
+  .cat-btn[data-cat="KI \u2013 Vorhersage (Machine Learning)"].kb-focus { border-color: var(--cat-ml); }
+  .cat-btn[data-cat="KI \u2013 Vorhersage (Machine Learning)"]::before { background: linear-gradient(135deg, rgba(167,139,250,0.06), transparent); }
+
+  .cat-btn[data-cat="KI \u2013 Auff\u00e4lligkeiten erkennen"]:hover,
+  .cat-btn[data-cat="KI \u2013 Auff\u00e4lligkeiten erkennen"].kb-focus { border-color: var(--cat-anomaly); }
+  .cat-btn[data-cat="KI \u2013 Auff\u00e4lligkeiten erkennen"]::before { background: linear-gradient(135deg, rgba(251,191,36,0.06), transparent); }
+
+  .cat-btn[data-cat="KI im Arbeitsprozess"]:hover,
+  .cat-btn[data-cat="KI im Arbeitsprozess"].kb-focus { border-color: var(--cat-process); }
+  .cat-btn[data-cat="KI im Arbeitsprozess"]::before { background: linear-gradient(135deg, rgba(34,211,238,0.06), transparent); }
+
+  .cat-btn[data-cat="Keine KI notwendig"]:hover,
+  .cat-btn[data-cat="Keine KI notwendig"].kb-focus { border-color: var(--cat-none); }
+  .cat-btn[data-cat="Keine KI notwendig"]::before { background: linear-gradient(135deg, rgba(148,163,184,0.06), transparent); }
+
+  .cat-btn:hover::before { opacity: 1; }
+
+  .cat-icon { font-size: 20px; flex-shrink: 0; }
+  .cat-label { line-height: 1.3; position: relative; z-index: 1; }
+
+  .cat-key-hint {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    margin-left: auto;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .cat-info-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--text-muted);
+    font-size: 9px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    transition: all var(--transition);
+    z-index: 2;
+    opacity: 0;
+  }
+
+  .cat-btn:hover .cat-info-btn { opacity: 1; }
+
+  .cat-info-btn:hover {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border-radius: var(--radius-lg);
+    padding: 36px 40px;
+    margin-bottom: 24px;
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--green);
+  }
+
+  .result-card.wrong { border-top-color: var(--red); }
+
+  .verdict {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .verdict-icon {
+    width: 52px; height: 52px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+    flex-shrink: 0;
+  }
+
+  .verdict-icon.correct-bg {
+    background: var(--green-glow);
+    border: 1px solid rgba(52,211,153,0.2);
+  }
+
+  .verdict-icon.wrong-bg {
+    background: var(--red-glow);
+    border: 1px solid rgba(248,113,113,0.2);
+  }
+
+  .verdict-text h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+  .verdict-text p { font-size: 13px; color: var(--text-dim); }
+
+  .answer-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  @media(max-width: 600px) { .answer-comparison { grid-template-columns: 1fr; } }
+
+  .answer-box {
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+  }
+
+  .answer-box label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .answer-box .answer-val { font-size: 14px; font-weight: 600; }
+
+  .answer-box.correct {
+    border-color: rgba(52,211,153,0.3);
+    background: rgba(52,211,153,0.04);
+  }
+  .answer-box.correct .answer-val { color: var(--green); }
+
+  .answer-box.user-wrong {
+    border-color: rgba(248,113,113,0.3);
+    background: rgba(248,113,113,0.04);
+  }
+  .answer-box.user-wrong .answer-val { color: var(--red); }
+
+  .reason-block, .detail-block {
+    margin-bottom: 24px;
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+
+  .reason-block { border-left: 3px solid var(--accent); }
+  .detail-block { border-left: 3px solid var(--accent2); }
+
+  .reason-block h3, .detail-block h3 {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .reason-block p { font-size: 15px; line-height: 1.7; color: var(--text); }
+  .detail-block p { font-size: 14px; line-height: 1.7; color: var(--text-dim); }
+
+  .locked-hint {
+    display: none;
+    background: rgba(248,113,113,0.05);
+    border: 1px solid rgba(248,113,113,0.15);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-size: 13px;
+    color: var(--text-dim);
+    align-items: center;
+    gap: 10px;
+  }
+
+  .locked-hint.show { display: flex; }
+  .locked-hint-icon { font-size: 18px; flex-shrink: 0; }
+
+  .next-steps { margin-bottom: 8px; }
+
+  .next-steps h3 {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 14px;
+  }
+
+  .steps-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 8px 12px;
+    background: var(--surface2);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    transition: border-color var(--transition);
+  }
+  .step-item:hover { border-color: var(--border-hover); }
+
+  .step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-soft);
+    border: 1px solid rgba(105,146,244,0.15);
+    border-radius: 6px;
+    width: 24px; height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    border-radius: var(--radius-sm);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all var(--transition);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:hover { background: #5a84e6; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(105,146,244,0.25); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-ghost { background: transparent; color: var(--text-dim); border: 1px solid var(--border); }
+  .btn-ghost:hover { border-color: var(--border-hover); color: var(--text); background: var(--surface2); }
+
+  .btn-danger { background: var(--red); color: #fff; }
+  .btn-danger:hover { background: #e85d5d; transform: translateY(-1px); }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  .back-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
+
+  .breadcrumb {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .breadcrumb span { opacity: 0.5; }
+
+  .info-modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .info-modal-bg.show { display: flex; }
+
+  .info-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    max-width: 520px;
+    width: 100%;
+    position: relative;
+    animation: modalIn .25s ease forwards;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .info-modal::-webkit-scrollbar { width: 6px; }
+  .info-modal::-webkit-scrollbar-track { background: transparent; }
+  .info-modal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .info-modal-close {
+    position: absolute;
+    top: 16px; right: 16px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    width: 32px; height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition);
+  }
+  .info-modal-close:hover { color: var(--text); border-color: var(--text-muted); }
+
+  .info-modal-icon { font-size: 32px; margin-bottom: 8px; display: block; }
+
+  .info-modal-cat {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    display: block;
+  }
+
+  .info-modal h2 { font-size: 20px; font-weight: 700; margin-bottom: 14px; line-height: 1.3; }
+
+  .info-modal-desc {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+  }
+
+  .info-modal-wann, .info-modal-example {
+    background: var(--surface2);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+
+  .info-modal-wann { margin-bottom: 12px; border-left: 3px solid var(--accent); }
+  .info-modal-example { border-left: 3px solid var(--accent2); }
+
+  .info-modal-wann h3, .info-modal-example h3 {
+    font-size: 10px;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .info-modal-wann p, .info-modal-example p {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-dim);
+  }
+
+  .score-flash {
+    display: none;
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.85);
+    background: var(--surface);
+    border: 2px solid var(--green);
+    border-radius: var(--radius-lg);
+    padding: 36px 52px;
+    text-align: center;
+    z-index: 100;
+    animation: popIn .3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  }
+
+  .score-flash.wrong { border-color: var(--red); }
+  .score-flash.show { display: block; }
+
+  @keyframes popIn {
+    from { transform: translate(-50%, -50%) scale(0.85); opacity: 0; }
+    to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  }
+
+  .score-flash .big { font-size: 48px; }
+  .score-flash p { font-size: 14px; color: var(--text-dim); margin-top: 10px; font-weight: 500; }
+
+  .overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 99;
+    backdrop-filter: blur(3px);
+  }
+  .overlay.show { display: block; }
+
+  .celebration-card {
+    display: none;
+    text-align: center;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 48px 40px;
+    margin-top: 24px;
+    border-top: 3px solid var(--green);
+  }
+
+  .celebration-card.show { display: block; animation: phaseIn .4s ease forwards; }
+  .celebration-emoji { font-size: 56px; margin-bottom: 16px; display: block; }
+  .celebration-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+  .celebration-sub { color: var(--text-dim); font-size: 15px; margin-bottom: 8px; }
+  .celebration-score { font-family: 'DM Mono', monospace; font-size: 36px; color: var(--green); font-weight: 500; margin: 16px 0; }
+  .celebration-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  .confetti-container {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 300;
+    overflow: hidden;
+  }
+
+  .confetti-piece {
+    position: absolute;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    animation: confettiFall 2.5s ease-out forwards;
+  }
+
+  @keyframes confettiFall {
+    0% { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(1); }
+    100% { opacity: 0; transform: translateY(100vh) rotate(720deg) scale(0.3); }
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 250;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform .35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity .35s;
+    opacity: 0;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+  .confirm-modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 200;
+    backdrop-filter: blur(8px);
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .confirm-modal-bg.show { display: flex; }
+
+  .confirm-modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    max-width: 400px;
+    width: 100%;
+    text-align: center;
+    animation: modalIn .25s ease forwards;
+  }
+
+  .confirm-modal-icon { font-size: 40px; display: block; margin-bottom: 16px; }
+  .confirm-modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+  .confirm-modal p { font-size: 14px; color: var(--text-dim); margin-bottom: 24px; line-height: 1.6; }
+  .confirm-modal .btn-row { justify-content: center; border-top: none; padding-top: 0; margin-top: 0; }
+
+  @media(max-width: 600px) {
+    .container { padding: 32px 16px 80px; }
+    .play-card, .result-card { padding: 24px 20px; }
+    .play-hint { display: none; }
+    .cat-key-hint { display: none; }
+    .category-grid { grid-template-columns: 1fr; }
+    .play-scenario { padding: 14px 16px; }
+  }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--border-hover); }
+  ::selection { background: rgba(105,146,244,0.3); color: #fff; }
+
+  .reset-area {
+    text-align: center;
+    margin-top: 32px;
+    opacity: 0; animation: fadeUp .5s ease forwards .42s;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="badge">&#x1f3e5; Krankenkasse &amp; Versicherung</div>
+    <h1>KI-Einordnung <span>lernen</span></h1>
+    <p class="subtitle">Ordne reale Use Cases richtig ein &#x2014; Automatisierung, KI oder doch nichts davon? Teste dein Gespr.</p>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat"><span class="stat-value" id="stat-total">20</span><span class="stat-label">F&#xe4;lle</span></div>
+    <div class="stat"><span class="stat-value" id="stat-done">0</span><span class="stat-label">Gespielt</span></div>
+    <div class="stat"><span class="stat-value" id="stat-correct">0</span><span class="stat-label">Richtig</span></div>
+    <div class="stat"><span class="stat-value" id="stat-score">&#x2013;</span><span class="stat-label">Quote</span></div>
+  </div>
+
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div id="phase-select">
+    <p class="section-label">Kategorien</p>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-auto)"></div> Automatisierung <button class="info-btn" onclick="openInfoModal('Automatisierung')">i</button></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-llm)"></div> Textverst&#xe4;ndnis <button class="info-btn" onclick="openInfoModal('KI \u2013 Textverst\u00e4ndnis (GPT / LLM)')">i</button></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-ml)"></div> Vorhersage <button class="info-btn" onclick="openInfoModal('KI \u2013 Vorhersage (Machine Learning)')">i</button></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-anomaly)"></div> Auff&#xe4;lligkeiten <button class="info-btn" onclick="openInfoModal('KI \u2013 Auff\u00e4lligkeiten erkennen')">i</button></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-process)"></div> Arbeitsprozess <button class="info-btn" onclick="openInfoModal('KI im Arbeitsprozess')">i</button></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cat-none)"></div> Keine KI <button class="info-btn" onclick="openInfoModal('Keine KI notwendig')">i</button></div>
+    </div>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:14px;">
+      <p class="section-label" style="margin-bottom:0;">Use Cases</p>
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-filter="all" onclick="setFilter('all')">Alle <span class="count" id="countAll">20</span></button>
+        <button class="filter-tab" data-filter="open" onclick="setFilter('open')">Offen <span class="count" id="countOpen">20</span></button>
+        <button class="filter-tab" data-filter="correct" onclick="setFilter('correct')">Richtig <span class="count" id="countCorrect">0</span></button>
+        <button class="filter-tab" data-filter="wrong" onclick="setFilter('wrong')">Falsch <span class="count" id="countWrong">0</span></button>
+      </div>
+    </div>
+
+    <div class="use-case-grid" id="ucGrid"></div>
+    <div id="emptyState" class="empty-state" style="display:none;"><span class="empty-state-icon">&#x1f4ed;</span>Keine Use Cases in dieser Kategorie.</div>
+
+    <div id="celebrationCard" class="celebration-card">
+      <span class="celebration-emoji">&#x1f389;</span>
+      <div class="celebration-title">Alle F&#xe4;lle bearbeitet!</div>
+      <p class="celebration-sub">Du hast alle 20 Use Cases eingeordnet.</p>
+      <div class="celebration-score" id="celebrationScore">0%</div>
+      <div class="celebration-label">Richtig eingeordnet</div>
+      <div class="btn-row" style="justify-content:center; border-top:none; padding-top:16px;">
+        <button class="btn btn-primary" onclick="confirmReset()">&#x1f504; Nochmal spielen</button>
+      </div>
+    </div>
+
+    <div class="reset-area"><button class="btn btn-ghost" onclick="confirmReset()">&#x21ba; Fortschritt zur&#xfc;cksetzen</button></div>
+  </div>
+
+  <div id="phase-play">
+    <div class="back-bar">
+      <button class="btn btn-ghost" onclick="goBack()" style="padding:8px 16px; font-size:13px;">&#x2190; Zur&#xfc;ck</button>
+      <div class="breadcrumb"><span>&#xdc;bersicht</span> <span>/</span> <span id="breadcrumbTitle" style="color:var(--text-dim); opacity:1;"></span></div>
+    </div>
+    <div class="play-card phase-transition">
+      <div class="play-header">
+        <span class="play-number" id="playNumber"></span>
+        <span class="play-hint">Tastatur: <kbd>1</kbd>&#x2013;<kbd>6</kbd> zum W&#xe4;hlen</span>
+      </div>
+      <p class="play-case-title" id="playTitle"></p>
+      <div class="play-scenario">
+        <span class="play-scenario-icon">&#x1f4cb;</span>
+        <div>
+          <span class="play-scenario-label">Szenario</span>
+          <div class="play-scenario-text" id="playScenarioText"></div>
+        </div>
+      </div>
+      <p class="play-question">Welche Kategorie passt?</p>
+      <div class="category-grid" id="catGrid"></div>
+    </div>
+  </div>
+
+  <div id="phase-result">
+    <div class="back-bar">
+      <button class="btn btn-ghost" onclick="goBack()" style="padding:8px 16px; font-size:13px;">&#x2190; &#xdc;bersicht</button>
+      <div class="breadcrumb"><span>&#xdc;bersicht</span> <span>/</span> <span id="breadcrumbResult" style="color:var(--text-dim); opacity:1;"></span></div>
+    </div>
+    <div id="resultCard" class="result-card phase-transition">
+      <div class="verdict">
+        <div class="verdict-icon" id="verdictIcon"></div>
+        <div class="verdict-text"><h2 id="verdictTitle"></h2><p id="verdictSub"></p></div>
+      </div>
+      <div class="answer-comparison">
+        <div class="answer-box" id="userAnswerBox"><label>Deine Antwort</label><div class="answer-val" id="userAnswerVal"></div></div>
+        <div class="answer-box correct"><label>Richtige Antwort</label><div class="answer-val" id="correctAnswerVal"></div></div>
+      </div>
+      <div class="reason-block"><h3>&#x1f4a1; Warum diese Kategorie?</h3><p id="reasonText"></p></div>
+      <div class="detail-block"><h3>&#x1f50d; Erkl&#xe4;rung zum Use Case</h3><p id="detailText"></p></div>
+      <div class="locked-hint" id="lockedHint"><span class="locked-hint-icon">&#x1f512;</span><span>Dieser Fall ist jetzt gesperrt. Setze den gesamten Fortschritt zur&#xfc;ck, um ihn erneut zu versuchen.</span></div>
+      <div class="next-steps"><h3>N&#xe4;chste Schritte f&#xfc;r Business Analyst:innen</h3><div class="steps-list" id="stepsList"></div></div>
+      <div class="btn-row" id="resultBtnRow"></div>
+    </div>
+  </div>
+</div>
+
+<div class="info-modal-bg" id="infoModalBg" onclick="closeInfoModal(event)">
+  <div class="info-modal" onclick="event.stopPropagation()">
+    <button class="info-modal-close" onclick="closeInfoModal()">&#x2715;</button>
+    <span class="info-modal-icon" id="modalIcon"></span>
+    <span class="info-modal-cat" id="modalCat"></span>
+    <h2 id="modalTitle"></h2>
+    <p class="info-modal-desc" id="modalDesc"></p>
+    <div class="info-modal-wann"><h3>&#x1f4cc; Wann passt das?</h3><p id="modalWann"></p></div>
+    <div class="info-modal-example" style="margin-top:12px;"><h3>&#x1f4cb; Praxisbeispiel</h3><p id="modalExample"></p></div>
+  </div>
+</div>
+
+<div class="confirm-modal-bg" id="confirmModalBg">
+  <div class="confirm-modal">
+    <span class="confirm-modal-icon">&#x26a0;&#xfe0f;</span>
+    <h2>Fortschritt zur&#xfc;cksetzen?</h2>
+    <p>Alle bisherigen Ergebnisse werden gel&#xf6;scht. Auch gesperrte F&#xe4;lle werden wieder freigeschaltet.</p>
+    <div class="btn-row"><button class="btn btn-ghost" onclick="closeConfirmModal()">Abbrechen</button><button class="btn btn-danger" onclick="resetProgress()">Zur&#xfc;cksetzen</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="score-flash" id="scoreFlash"><div class="big" id="flashIcon"></div><p id="flashText"></p></div>
+<div class="toast" id="toast"></div>
+<div class="confetti-container" id="confettiContainer"></div>
+
+<script>
+const useCases=[{title:"Leerbrief erstellen",description:"Die Krankenkasse muss Versicherte regelm\u00e4\u00dfig anschreiben \u2013 z.B. mit Erinnerungen, Ablehnungen oder Infos. Bisher formulieren Sachbearbeiter:innen diese Briefe manuell. Gesucht wird eine L\u00f6sung, die passende Brieftexte automatisch vorformuliert.",solution:"KI \u2013 Textverst\u00e4ndnis (GPT / LLM)",reason:"Hier muss Sprache erzeugt werden: Ein Brief wird inhaltlich passend formuliert, nicht nur aus starren Textbausteinen zusammengesetzt. Das erfordert ein Sprachmodell, das den Kontext versteht und daraus einen fl\u00fcssigen Text erstellt.",nextSteps:["Ziel des Schreibens definieren","Beispielbriefe sammeln","Prompt testen","Fachliche Pr\u00fcfung einplanen"]},{title:"MD-Gutachten zusammenfassen",description:"Gutachten des Medizinischen Dienstes sind oft viele Seiten lang. Sachbearbeiter:innen m\u00fcssen den Kern schnell erfassen, um Entscheidungen zu treffen. Gesucht wird eine L\u00f6sung, die die wichtigsten Punkte auf einen Blick liefert.",solution:"KI \u2013 Textverst\u00e4ndnis (GPT / LLM)",reason:"Ein langes Dokument muss gelesen, verstanden und auf das Wesentliche reduziert werden. Das ist keine einfache Textsuche, sondern erfordert echtes Sprachverst\u00e4ndnis \u2013 genau das, was ein LLM leistet.",nextSteps:["Gew\u00fcnschte L\u00e4nge definieren","Testdokumente ausw\u00e4hlen","Qualit\u00e4tspr\u00fcfung abstimmen"]},{title:"Pflegeberatung dokumentieren",description:"Pflegeberater:innen telefonieren mit Versicherten und m\u00fcssen das Gespr\u00e4ch anschlie\u00dfend dokumentieren. Das kostet viel Zeit. Gesucht wird eine L\u00f6sung, die beim Dokumentieren direkt hilft \u2013 nicht erst danach.",solution:"KI im Arbeitsprozess",reason:"Die KI springt nicht erst nach Feierabend an, sondern unterst\u00fctzt die Beraterin live: Stichworte werden in Echtzeit zur Dokumentation erg\u00e4nzt. Der Mensch bleibt in der Verantwortung, die KI beschleunigt den Workflow.",nextSteps:["Dokustruktur festlegen","Pilot starten","Nutzerfeedback einholen"]},{title:"Serienbrief automatisch versenden",description:"Jedes Quartal m\u00fcssen Tausende Mitglieder denselben Brief erhalten \u2013 z.B. zur Beitragsanpassung. Bisher wird das manuell angesto\u00dfen. Gesucht wird eine L\u00f6sung, die den Versand vollautomatisch erledigt.",solution:"Automatisierung",reason:"Der Brief existiert bereits als Vorlage, die Empf\u00e4nger stehen fest, der Ausl\u00f6ser ist klar (Quartalswechsel). Hier muss nichts verstanden, vorhergesagt oder generiert werden \u2013 nur eine klare Wenn-Dann-Regel ausgef\u00fchrt.",nextSteps:["Regeln definieren","Ausl\u00f6ser festlegen","Workflow konfigurieren"]},{title:"K\u00fcndigungsrisiko erkennen",description:"Die Krankenkasse verliert regelm\u00e4\u00dfig Mitglieder, ohne es kommen zu sehen. Gesucht wird eine L\u00f6sung, die fr\u00fchzeitig erkennt, welche Mitglieder wahrscheinlich k\u00fcndigen werden \u2013 bevor sie es tun.",solution:"KI \u2013 Vorhersage (Machine Learning)",reason:"Hier geht es um eine Prognose: Basierend auf historischen Daten (Kontakth\u00e4ufigkeit, Beschwerden, Alter, Tarif) wird ein Wahrscheinlichkeitswert berechnet. Das ist klassisches Machine Learning.",nextSteps:["Zielvariable definieren","Daten pr\u00fcfen","Data-Team einbinden"]},{title:"Auff\u00e4llige Abrechnungen erkennen",description:"Unter den Millionen Abrechnungen von \u00c4rzten und Therapeuten verstecken sich m\u00f6glicherweise Fehler oder Betrug. Gesucht wird eine L\u00f6sung, die ungew\u00f6hnliche Muster automatisch erkennt \u2013 ohne dass jemand vorher definieren muss, was genau verd\u00e4chtig ist.",solution:"KI \u2013 Auff\u00e4lligkeiten erkennen",reason:"Niemand wei\u00df vorher, wie Betrug genau aussieht. Die KI lernt, was 'normal' ist, und meldet Abweichungen. Das ist Anomalie-Erkennung \u2013 keine Vorhersage und keine Regel.",nextSteps:["Normalverhalten definieren","Daten analysieren","Fachpr\u00fcfung festlegen"]},{title:"Wissenssuche im Intranet",description:"Mitarbeitende suchen regelm\u00e4\u00dfig nach internen Richtlinien, Prozessbeschreibungen oder Formularen. Die klassische Stichwortsuche liefert oft irrelevante Treffer. Gesucht wird eine L\u00f6sung, die Fragen in nat\u00fcrlicher Sprache versteht und die passende Antwort aus vielen Quellen zusammenstellt.",solution:"KI \u2013 Textverst\u00e4ndnis (GPT / LLM)",reason:"Eine Frage wie 'Wie beantrage ich Sonderurlaub?' erfordert Sprachverst\u00e4ndnis. Die KI muss verschiedene Dokumente lesen, die relevanten Stellen finden und eine koh\u00e4rente Antwort formulieren.",nextSteps:["Wissensquellen sammeln","Testfragen definieren","Pilot durchf\u00fchren"]},{title:"Bonusprogramm automatisch pr\u00fcfen",description:"Mitglieder reichen Nachweise f\u00fcr Bonusprogramme ein (Fitnessstudio, Vorsorge, etc.). Die Pr\u00fcfung erfolgt manuell, obwohl die Kriterien eindeutig sind. Gesucht wird eine L\u00f6sung, die die Pr\u00fcfung automatisch \u00fcbernimmt.",solution:"Automatisierung",reason:"Die Regeln sind glasklar: Hat das Mitglied den Nachweis eingereicht? Liegt er im richtigen Zeitraum? Ist die Kategorie f\u00f6rderf\u00e4hig? Alles Ja/Nein-Entscheidungen \u2013 perfekt f\u00fcr Automatisierung ohne KI.",nextSteps:["Regeln dokumentieren","Ausnahmen pr\u00fcfen","Automatisierung umsetzen"]},{title:"Formular auf Vollst\u00e4ndigkeit pr\u00fcfen",description:"Bevor ein Antrag bearbeitet wird, muss gepr\u00fcft werden, ob alle Felder ausgef\u00fcllt sind: Name, Versichertennummer, Diagnose, Unterschrift. Gesucht wird eine L\u00f6sung, die unvollst\u00e4ndige Formulare automatisch erkennt.",solution:"Keine KI notwendig",reason:"Das ist eine simple Pflichtfeldpr\u00fcfung: Ist Feld X ausgef\u00fcllt? Ja oder Nein. Daf\u00fcr braucht man keine KI \u2013 eine Formularvalidierung reicht v\u00f6llig aus.",nextSteps:["Pflichtfelder definieren","Validierung bauen"]},{title:"Eingangspost vorsortieren",description:"T\u00e4glich gehen hunderte Briefe, Faxe und E-Mails ein. Bisher sichtet ein Team jedes Dokument und leitet es an die richtige Abteilung weiter. Gesucht wird eine L\u00f6sung, die diese Zuordnung automatisch \u00fcbernimmt.",solution:"KI \u2013 Vorhersage (Machine Learning)",reason:"Die Dokumente sind vielf\u00e4ltig und unstrukturiert. Ein regelbasiertes System scheitert hier, weil es keine festen Wenn-Dann-Regeln gibt. Stattdessen lernt ein ML-Modell aus historischen Zuordnungen, welches Dokument wohin geh\u00f6rt.",nextSteps:["Kategorien definieren","Trainingsdaten sammeln"]},{title:"Gespr\u00e4chsnotizen strukturieren",description:"Nach Telefonaten tippen Mitarbeitende ihre Notizen in Freitext-Felder. Die Qualit\u00e4t ist unterschiedlich, die Struktur fehlt. Gesucht wird eine L\u00f6sung, die aus Stichpunkten und Flie\u00dftext eine saubere, einheitliche Gespr\u00e4chsdokumentation macht.",solution:"KI \u2013 Textverst\u00e4ndnis (GPT / LLM)",reason:"Aus unstrukturiertem Freitext eine geordnete Dokumentation zu machen, erfordert Sprachverst\u00e4ndnis. Die KI erkennt, was Anliegen, Ergebnis und n\u00e4chster Schritt ist \u2013 und bringt das in Form.",nextSteps:["Struktur definieren","Prompt testen"]},{title:"Beschwerden fr\u00fch erkennen",description:"Oft eskalieren Probleme, weil niemand die Anzeichen rechtzeitig bemerkt. Gesucht wird eine L\u00f6sung, die anhand von Daten wie Kontaktverl\u00e4ufen, Wartezeiten und Tonalit\u00e4t vorhersagt, welche F\u00e4lle sich zur Beschwerde entwickeln k\u00f6nnten.",solution:"KI \u2013 Vorhersage (Machine Learning)",reason:"Es geht um eine Prognose: Welche laufenden Vorg\u00e4nge werden mit hoher Wahrscheinlichkeit zu einer Beschwerde f\u00fchren? Das Modell lernt aus vergangenen Eskalationen und \u00fcbertr\u00e4gt die Muster auf aktuelle F\u00e4lle.",nextSteps:["Indikatoren definieren","Datenhistorie pr\u00fcfen"]},{title:"Ticketbeschreibung erzeugen",description:"Wenn Mitarbeitende ein IT- oder Fach-Ticket erstellen, fehlen oft relevante Details. Gesucht wird eine L\u00f6sung, die auf Basis von Stichpunkten automatisch eine vollst\u00e4ndige, verst\u00e4ndliche Ticketbeschreibung vorschl\u00e4gt.",solution:"KI im Arbeitsprozess",reason:"Die KI unterst\u00fctzt direkt im Arbeitsablauf: W\u00e4hrend der Mitarbeitende ein Ticket anlegt, wird live ein Textvorschlag generiert. Es geht nicht um nachgelagerte Analyse, sondern um Echtzeit-Assistenz.",nextSteps:["Ticketstruktur festlegen","Pilot testen"]},{title:"Prozessschritte automatisch starten",description:"In der Sachbearbeitung folgt auf Schritt A immer Schritt B \u2013 z.B. nach Genehmigung einer Leistung wird automatisch die Auszahlung angesto\u00dfen. Bisher muss jemand manuell den n\u00e4chsten Schritt starten.",solution:"Automatisierung",reason:"Die Abfolge ist fix: Wenn Schritt A abgeschlossen ist, starte Schritt B. Kein Ermessen, keine Interpretation n\u00f6tig. Das ist klassische Prozessautomatisierung.",nextSteps:["Trigger definieren","Workflow modellieren"]},{title:"Beratungsempfehlungen geben",description:"Berater:innen sollen Mitgliedern passende Gesundheitsangebote empfehlen (R\u00fcckenkurs, Ern\u00e4hrungsberatung, etc.). Bisher basiert das auf Erfahrung. Gesucht wird eine L\u00f6sung, die datenbasiert die besten Empfehlungen vorschl\u00e4gt.",solution:"KI \u2013 Vorhersage (Machine Learning)",reason:"Die Empfehlung basiert auf Mustern: Welche Angebote haben bei \u00e4hnlichen Mitgliedern (Alter, Diagnose, Nutzungsverhalten) den gr\u00f6\u00dften Effekt gehabt? Das ist ein typisches ML-Klassifikations- oder Ranking-Problem.",nextSteps:["Kriterien definieren","Daten analysieren"]},{title:"Leistungsentwicklung analysieren",description:"Die Krankenkasse will verstehen, wie sich bestimmte Leistungsausgaben \u00fcber die n\u00e4chsten Monate entwickeln werden \u2013 z.B. Krankengeld oder Hilfsmittel. Gesucht wird eine L\u00f6sung, die Trends erkennt und Prognosen erstellt.",solution:"KI \u2013 Vorhersage (Machine Learning)",reason:"Es sollen zuk\u00fcnftige Werte gesch\u00e4tzt werden, basierend auf historischen Zeitreihen. Das ist klassische Trendanalyse mit Machine Learning \u2013 keine Regel, sondern ein gelerntes Modell.",nextSteps:["Zeitreihen pr\u00fcfen","Analysemodell abstimmen"]},{title:"Dokumente klassifizieren",description:"Eingereichte Unterlagen (Arztbriefe, Rechnungen, Antr\u00e4ge, Atteste) m\u00fcssen der richtigen Dokumentkategorie zugeordnet werden. Bisher macht das ein Mensch. Gesucht wird eine L\u00f6sung, die das automatisch erledigt.",solution:"KI \u2013 Vorhersage (Machine Learning)",reason:"Die Dokumente sind vielf\u00e4ltig und nicht standardisiert. Ein ML-Modell wird mit Beispielen trainiert und lernt, anhand von Inhalt und Struktur die richtige Kategorie zuzuordnen \u2013 ein typisches Klassifikationsproblem.",nextSteps:["Dokumentklassen definieren","Trainingsdaten sammeln"]},{title:"Antwortvorschl\u00e4ge f\u00fcr Kundenanfragen",description:"Mitglieder schreiben E-Mails mit verschiedensten Anliegen. Sachbearbeiter:innen m\u00fcssen jede Anfrage individuell beantworten. Gesucht wird eine L\u00f6sung, die automatisch einen passenden Antwort-Entwurf vorschl\u00e4gt.",solution:"KI \u2013 Textverst\u00e4ndnis (GPT / LLM)",reason:"Die KI muss die Anfrage lesen, das Anliegen verstehen und einen sprachlich passenden Antwortentwurf erzeugen. Das ist Textverst\u00e4ndnis plus Textgenerierung \u2013 die Kernkompetenz eines Sprachmodells.",nextSteps:["Antwortstil definieren","Beispiele sammeln"]},{title:"Pflegefallrisiko einsch\u00e4tzen",description:"Die Kasse m\u00f6chte fr\u00fchzeitig erkennen, welche Versicherten in den n\u00e4chsten Jahren pflegebed\u00fcrftig werden k\u00f6nnten \u2013 um pr\u00e4ventive Angebote zu machen. Gesucht wird eine datenbasierte L\u00f6sung.",solution:"KI \u2013 Vorhersage (Machine Learning)",reason:"Es geht um eine Wahrscheinlichkeitsberechnung auf Basis historischer Daten (Alter, Diagnosen, Krankenhausaufenthalte). Ein ML-Modell prognostiziert, wer ein erh\u00f6htes Risiko hat \u2013 klassische Vorhersage.",nextSteps:["Risikofaktoren definieren","Daten pr\u00fcfen"]},{title:"Checkliste digital abarbeiten",description:"Bei bestimmten Vorg\u00e4ngen m\u00fcssen Mitarbeitende eine feste Checkliste durchgehen \u2013 Schritt f\u00fcr Schritt, ohne Spielraum. Bisher auf Papier. Gesucht wird eine digitale L\u00f6sung.",solution:"Keine KI notwendig",reason:"Eine Checkliste ist eine feste Abfolge von Ja/Nein-Schritten. Daf\u00fcr braucht man keine KI \u2013 ein einfaches digitales Formular oder Workflow-Tool erledigt das zuverl\u00e4ssiger und g\u00fcnstiger.",nextSteps:["Checkliste definieren","Digitalen Workflow bauen"]}];
+
+const categories=[{label:"Automatisierung",icon:"\ud83d\udfe2",key:"1"},{label:"KI \u2013 Textverst\u00e4ndnis (GPT / LLM)",icon:"\ud83e\udd16",key:"2"},{label:"KI \u2013 Vorhersage (Machine Learning)",icon:"\ud83d\udcca",key:"3"},{label:"KI \u2013 Auff\u00e4lligkeiten erkennen",icon:"\ud83d\udd0e",key:"4"},{label:"KI im Arbeitsprozess",icon:"\u2699\ufe0f",key:"5"},{label:"Keine KI notwendig",icon:"\u274c",key:"6"}];
+
+const catColorMap={"Automatisierung":"var(--cat-auto)","KI \u2013 Textverst\u00e4ndnis (GPT / LLM)":"var(--cat-llm)","KI \u2013 Vorhersage (Machine Learning)":"var(--cat-ml)","KI \u2013 Auff\u00e4lligkeiten erkennen":"var(--cat-anomaly)","KI im Arbeitsprozess":"var(--cat-process)","Keine KI notwendig":"var(--cat-none)"};
+
+const categoryInfo={"Automatisierung":{icon:"\ud83d\udfe2",color:"var(--cat-auto)",subtitle:"Regelbasierte Prozesse",desc:"Automatisierung bedeutet: Ein Computer f\u00fchrt klar definierte Schritte immer gleich aus \u2013 ohne zu denken oder zu lernen. Sobald die Regeln feststehen, l\u00e4uft alles automatisch.",wann:"Immer dann, wenn es ein klares \"Wenn A, dann B\" gibt. Zum Beispiel: Wenn ein Formular vollst\u00e4ndig ist, wird es weitergeleitet.",example:"Ein Mitglied beantragt Haushaltshilfe. Das System pr\u00fcft automatisch: Liegt eine Krankenhausentlassung vor? Sind Kinder unter 12 im Haushalt? Wenn beides zutrifft, wird der Antrag sofort genehmigt."},"KI \u2013 Textverst\u00e4ndnis (GPT / LLM)":{icon:"\ud83e\udd16",color:"var(--cat-llm)",subtitle:"Texte lesen, schreiben, zusammenfassen",desc:"Diese KI versteht menschliche Sprache und kann damit arbeiten: Texte lesen, zusammenfassen, umformulieren oder neue Texte schreiben.",wann:"Wenn es um Sprache geht: Einen Brief verfassen, ein Dokument zusammenfassen, eine Anfrage beantworten, Notizen strukturieren.",example:"Ein Sachbearbeiter erh\u00e4lt t\u00e4glich dutzende Widerspruchsschreiben. Die KI liest jedes Schreiben, fasst den Kerninhalt zusammen und ordnet den passenden Textbaustein zu."},"KI \u2013 Vorhersage (Machine Learning)":{icon:"\ud83d\udcca",color:"var(--cat-ml)",subtitle:"Aus Daten lernen und Zukunft einsch\u00e4tzen",desc:"Diese KI schaut sich historische Daten an und lernt daraus Muster. Dann nutzt sie diese Muster, um Vorhersagen zu treffen oder Dinge zu klassifizieren.",wann:"Wenn die Frage lautet: \"Was wird wahrscheinlich passieren?\" oder \"In welche Kategorie geh\u00f6rt das?\"",example:"Die Krankenkasse m\u00f6chte wissen, welche Mitglieder in den n\u00e4chsten 6 Monaten k\u00fcndigen k\u00f6nnten. Die KI analysiert Kontakth\u00e4ufigkeit und Beschwerdeverhalten."},"KI \u2013 Auff\u00e4lligkeiten erkennen":{icon:"\ud83d\udd0e",color:"var(--cat-anomaly)",subtitle:"Ungew\u00f6hnliches im Datenstrom finden",desc:"Diese KI lernt, was \"normal\" ist \u2013 und schl\u00e4gt Alarm, wenn etwas davon abweicht.",wann:"Wenn man nach Ausrei\u00dfern, Betrug, Fehlern oder ungew\u00f6hnlichen Mustern sucht.",example:"Ein Arzt rechnet pl\u00f6tzlich f\u00fcr 90% seiner Patienten eine bestimmte teure Behandlung ab \u2013 der Durchschnitt liegt bei 15%. Die KI erkennt die Abweichung automatisch."},"KI im Arbeitsprozess":{icon:"\u2699\ufe0f",color:"var(--cat-process)",subtitle:"KI als Assistent im Arbeitsalltag",desc:"Hier geht es nicht um vollst\u00e4ndige Automatisierung, sondern darum, dass KI den Menschen bei seiner t\u00e4glichen Arbeit aktiv unterst\u00fctzt.",wann:"Wenn Mitarbeitende bei ihrer normalen Arbeit Unterst\u00fctzung brauchen: beim Dokumentieren, beim Nachschlagen, beim Formulieren.",example:"Eine Pflegeberaterin telefoniert mit einem Mitglied. W\u00e4hrend des Gespr\u00e4chs tippt sie Stichworte ein \u2013 die KI schl\u00e4gt in Echtzeit die passende Dokumentationsstruktur vor."},"Keine KI notwendig":{icon:"\u274c",color:"var(--cat-none)",subtitle:"Einfache L\u00f6sung reicht aus",desc:"Nicht jedes Problem braucht KI. Manchmal ist eine einfache Checkliste, eine Pflichtfeldpr\u00fcfung oder ein simples Regelwerk die bessere L\u00f6sung.",wann:"Wenn die L\u00f6sung sich mit festen Regeln oder einfachen Pr\u00fcfungen abdecken l\u00e4sst. Keine Interpretation, kein Ermessen, keine Vorhersage n\u00f6tig.",example:"Bei der Beantragung einer Kosten\u00fcbernahme muss gepr\u00fcft werden, ob alle Pflichtfelder ausgef\u00fcllt sind. Das kann ein einfaches Formular mit Validierung leisten."}};
+
+let state={},currentIdx=null,currentFilter='all',isPlayPhase=false;
+
+function loadState(){try{return JSON.parse(localStorage.getItem('ki_tool_state_v3')||'{}')}catch(e){return{}}}
+function saveState(){localStorage.setItem('ki_tool_state_v3',JSON.stringify(state))}
+
+function confirmReset(){document.getElementById('confirmModalBg').classList.add('show')}
+function closeConfirmModal(){document.getElementById('confirmModalBg').classList.remove('show')}
+
+function resetProgress(){
+  closeConfirmModal();
+  state={};saveState();currentFilter='all';
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.toggle('active',t.dataset.filter==='all'));
+  renderSelect();updateStats();
+  document.getElementById('celebrationCard').classList.remove('show');
+  document.getElementById('celebrationCard').dataset.shown='';
+  showToast('\ud83d\udd04 Fortschritt zur\u00fcckgesetzt \u2013 alle F\u00e4lle wieder offen');
+}
+
+function updateStats(){
+  const keys=Object.keys(state).filter(k=>!k.includes('_answer'));
+  const done=keys.length;
+  const correct=keys.filter(k=>state[k]===true).length;
+  const wrong=keys.filter(k=>state[k]===false).length;
+  const open=useCases.length-done;
+  document.getElementById('stat-done').textContent=done;
+  document.getElementById('stat-correct').textContent=correct;
+  document.getElementById('stat-score').textContent=done>0?Math.round(correct/done*100)+'%':'\u2013';
+  const pbar=document.getElementById('progressBar');
+  const pct=(done/useCases.length*100);
+  pbar.style.width=pct+'%';
+  pbar.classList.toggle('active',pct>0&&pct<100);
+  document.getElementById('countAll').textContent=useCases.length;
+  document.getElementById('countOpen').textContent=open;
+  document.getElementById('countCorrect').textContent=correct;
+  document.getElementById('countWrong').textContent=wrong;
+  if(done===useCases.length){
+    document.getElementById('celebrationScore').textContent=Math.round(correct/done*100)+'%';
+    document.getElementById('celebrationCard').classList.add('show');
+    if(!document.getElementById('celebrationCard').dataset.shown){
+      document.getElementById('celebrationCard').dataset.shown='true';
+      launchConfetti();
+    }
+  }
+}
+
+function setFilter(filter){
+  currentFilter=filter;
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.toggle('active',t.dataset.filter===filter));
+  renderSelect();
+}
+
+function getFilteredIndices(){
+  return useCases.map((_,i)=>i).filter(i=>{
+    if(currentFilter==='all')return true;
+    if(currentFilter==='open')return state[i]===undefined;
+    if(currentFilter==='correct')return state[i]===true;
+    if(currentFilter==='wrong')return state[i]===false;
+    return true;
+  });
+}
+
+function renderSelect(){
+  const grid=document.getElementById('ucGrid');
+  grid.innerHTML='';
+  const indices=getFilteredIndices();
+  if(indices.length===0){document.getElementById('emptyState').style.display='block';grid.style.display='none';return;}
+  document.getElementById('emptyState').style.display='none';grid.style.display='grid';
+  indices.forEach(i=>{
+    const uc=useCases[i],done=state[i]!==undefined,correct=state[i]===true,wrong=state[i]===false;
+    const card=document.createElement('div');
+    card.className='uc-card';card.tabIndex=0;card.setAttribute('role','button');
+    if(correct)card.classList.add('solved-correct');
+    if(wrong)card.classList.add('solved-wrong');
+    const statusIcon=done?(correct?'\u2713':'\u2717'):'\u2192';
+    const catColor=done?catColorMap[uc.solution]:'transparent';
+    const shortDesc=uc.description.split('.')[0]+'.';
+    card.innerHTML='<div class="uc-card-top"><span class="uc-num">'+String(i+1).padStart(2,'0')+'</span><span class="uc-title">'+uc.title+'</span><span class="uc-status-icon">'+statusIcon+'</span></div><div class="uc-desc">'+shortDesc+'</div>'+(wrong?'<div class="uc-lock-badge">\ud83d\udd12 Gesperrt</div>':'')+'<div class="uc-cat-dot" style="background:'+catColor+'"></div>';
+    if(wrong){card.title='Falsch beantwortet \u2013 gesperrt bis zum Reset';card.onclick=()=>showLockedResult(i);}
+    else if(correct){card.onclick=()=>showLockedResult(i);}
+    else{card.onclick=()=>startPlay(i);}
+    card.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();card.onclick();}};
+    grid.appendChild(card);
+  });
+}
+
+function showPhase(name){
+  isPlayPhase=(name==='play');
+  ['select','play','result'].forEach(p=>{document.getElementById('phase-'+p).style.display=p===name?'block':'none';});
+}
+
+function startPlay(idx){
+  if(state[idx]!==undefined){showLockedResult(idx);return;}
+  currentIdx=idx;const uc=useCases[idx];
+  document.getElementById('playNumber').textContent='Fall '+String(idx+1).padStart(2,'0')+' / '+useCases.length;
+  document.getElementById('playTitle').innerHTML='<span class="quote-mark">\u201E</span>'+uc.title;
+  document.getElementById('breadcrumbTitle').textContent=uc.title;
+  document.getElementById('playScenarioText').textContent=uc.description;
+  const catGrid=document.getElementById('catGrid');catGrid.innerHTML='';
+  categories.forEach(cat=>{
+    const btn=document.createElement('button');btn.className='cat-btn';btn.dataset.cat=cat.label;
+    btn.innerHTML='<span class="cat-icon">'+cat.icon+'</span><span class="cat-label">'+cat.label+'</span><span class="cat-key-hint">'+cat.key+'</span>';
+    const ib=document.createElement('span');ib.className='cat-info-btn';ib.textContent='i';ib.onclick=e=>{e.stopPropagation();openInfoModal(cat.label);};
+    btn.appendChild(ib);btn.onclick=()=>doAnswer(cat.label);catGrid.appendChild(btn);
+  });
+  showPhase('play');window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function doAnswer(chosen){
+  const uc=useCases[currentIdx],isCorrect=chosen===uc.solution;
+  state[currentIdx]=isCorrect;state[currentIdx+'_answer']=chosen;
+  saveState();updateStats();showFlash(isCorrect,chosen);
+}
+
+function showFlash(isCorrect,chosen){
+  const flash=document.getElementById('scoreFlash'),overlay=document.getElementById('overlay');
+  flash.className='score-flash show'+(isCorrect?'':' wrong');
+  document.getElementById('flashIcon').textContent=isCorrect?'\ud83c\udfaf':'\ud83d\udca1';
+  document.getElementById('flashText').textContent=isCorrect?'Richtig erkannt!':'Nicht ganz \u2013 schau dir die Erkl\u00e4rung an';
+  overlay.classList.add('show');
+  setTimeout(()=>{flash.className='score-flash';overlay.classList.remove('show');showResult(isCorrect,chosen);},1000);
+}
+
+function showResult(isCorrect,chosen){
+  const uc=useCases[currentIdx];
+  document.getElementById('breadcrumbResult').textContent=uc.title;
+  document.getElementById('resultCard').className='result-card phase-transition'+(isCorrect?'':' wrong');
+  const iconEl=document.getElementById('verdictIcon');
+  iconEl.textContent=isCorrect?'\u2705':'\u274c';
+  iconEl.className='verdict-icon '+(isCorrect?'correct-bg':'wrong-bg');
+  document.getElementById('verdictTitle').textContent=isCorrect?'Richtig!':'Nicht ganz...';
+  document.getElementById('verdictSub').textContent=isCorrect?'Du hast den Use Case korrekt eingeordnet.':'Die richtige Einordnung ist unten erkl\u00e4rt.';
+  document.getElementById('userAnswerBox').className='answer-box'+(isCorrect?' correct':' user-wrong');
+  document.getElementById('userAnswerVal').textContent=chosen;
+  document.getElementById('correctAnswerVal').textContent=uc.solution;
+  document.getElementById('reasonText').textContent=uc.reason;
+  document.getElementById('detailText').textContent=uc.description;
+  document.getElementById('lockedHint').className='locked-hint'+(isCorrect?'':' show');
+  document.getElementById('stepsList').innerHTML=uc.nextSteps.map((s,i)=>'<div class="step-item"><span class="step-num">'+(i+1)+'</span><span>'+s+'</span></div>').join('');
+  const btnRow=document.getElementById('resultBtnRow');btnRow.innerHTML='';
+  const nextOpen=findNextOpen(currentIdx);
+  if(nextOpen!==null){
+    const nb=document.createElement('button');nb.className='btn btn-primary';nb.textContent='N\u00e4chsten Fall \u2192';nb.onclick=()=>startPlay(nextOpen);btnRow.appendChild(nb);
+    const bb=document.createElement('button');bb.className='btn btn-ghost';bb.textContent='\u00dcbersicht';bb.onclick=()=>goBack();btnRow.appendChild(bb);
+  }else{
+    const bb=document.createElement('button');bb.className='btn btn-primary';bb.textContent='Zur \u00dcbersicht';bb.onclick=()=>goBack();btnRow.appendChild(bb);
+  }
+  showPhase('result');window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function showLockedResult(idx){
+  currentIdx=idx;const uc=useCases[idx],isCorrect=state[idx]===true;
+  const chosen=state[idx+'_answer']||uc.solution;
+  document.getElementById('breadcrumbResult').textContent=uc.title;
+  document.getElementById('resultCard').className='result-card phase-transition'+(isCorrect?'':' wrong');
+  const iconEl=document.getElementById('verdictIcon');
+  iconEl.textContent=isCorrect?'\u2705':'\u274c';iconEl.className='verdict-icon '+(isCorrect?'correct-bg':'wrong-bg');
+  document.getElementById('verdictTitle').textContent=isCorrect?'Richtig beantwortet':'Falsch beantwortet';
+  document.getElementById('verdictSub').textContent=isCorrect?'Du hattest diesen Fall korrekt eingeordnet.':'Die richtige Einordnung ist unten erkl\u00e4rt.';
+  document.getElementById('userAnswerBox').className='answer-box'+(isCorrect?' correct':' user-wrong');
+  document.getElementById('userAnswerVal').textContent=chosen;
+  document.getElementById('correctAnswerVal').textContent=uc.solution;
+  document.getElementById('reasonText').textContent=uc.reason;
+  document.getElementById('detailText').textContent=uc.description;
+  document.getElementById('lockedHint').className='locked-hint'+(isCorrect?'':' show');
+  document.getElementById('stepsList').innerHTML=uc.nextSteps.map((s,i)=>'<div class="step-item"><span class="step-num">'+(i+1)+'</span><span>'+s+'</span></div>').join('');
+  const btnRow=document.getElementById('resultBtnRow');btnRow.innerHTML='';
+  const bb=document.createElement('button');bb.className='btn btn-primary';bb.textContent='\u2190 Zur\u00fcck zur \u00dcbersicht';bb.onclick=()=>goBack();btnRow.appendChild(bb);
+  if(!isCorrect){const rb=document.createElement('button');rb.className='btn btn-ghost';rb.textContent='\u21ba Fortschritt zur\u00fccksetzen';rb.onclick=()=>{goBack();setTimeout(confirmReset,300);};btnRow.appendChild(rb);}
+  showPhase('result');window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function findNextOpen(fromIdx){for(let i=1;i<=useCases.length;i++){const idx=(fromIdx+i)%useCases.length;if(state[idx]===undefined)return idx;}return null;}
+function goBack(){showPhase('select');renderSelect();window.scrollTo({top:0,behavior:'smooth'});}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){
+    if(document.getElementById('confirmModalBg').classList.contains('show')){closeConfirmModal();return;}
+    if(document.getElementById('infoModalBg').classList.contains('show')){closeInfoModal();return;}
+    if(isPlayPhase||document.getElementById('phase-result').style.display==='block'){goBack();}
+  }
+  if(isPlayPhase&&e.key>='1'&&e.key<='6'){
+    const idx=parseInt(e.key)-1;if(idx<categories.length){
+      const btns=document.querySelectorAll('.cat-btn');
+      if(btns[idx]){btns[idx].classList.add('kb-focus');setTimeout(()=>btns[idx].classList.remove('kb-focus'),150);}
+      doAnswer(categories[idx].label);
+    }
+  }
+});
+
+function openInfoModal(catLabel){
+  const info=categoryInfo[catLabel];if(!info)return;
+  document.getElementById('modalIcon').textContent=info.icon;
+  document.getElementById('modalCat').textContent=catLabel;document.getElementById('modalCat').style.color=info.color;
+  document.getElementById('modalTitle').textContent=info.subtitle;
+  document.getElementById('modalDesc').textContent=info.desc;
+  document.getElementById('modalWann').textContent=info.wann;
+  document.getElementById('modalExample').textContent=info.example;
+  document.getElementById('infoModalBg').classList.add('show');document.body.style.overflow='hidden';
+}
+
+function closeInfoModal(e){
+  if(e&&e.target!==document.getElementById('infoModalBg')&&!e.target.closest('.info-modal-close'))return;
+  document.getElementById('infoModalBg').classList.remove('show');document.body.style.overflow='';
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+function launchConfetti(){
+  const c=document.getElementById('confettiContainer');c.innerHTML='';
+  const cols=['#34d399','#6992f4','#a78bfa','#fbbf24','#22d3ee','#f87171','#f0a500'];
+  for(let i=0;i<60;i++){const p=document.createElement('div');p.className='confetti-piece';p.style.left=Math.random()*100+'%';p.style.top='-10px';p.style.background=cols[Math.floor(Math.random()*cols.length)];p.style.animationDelay=Math.random()*0.8+'s';p.style.animationDuration=(1.5+Math.random()*1.5)+'s';p.style.width=(5+Math.random()*8)+'px';p.style.height=(5+Math.random()*8)+'px';p.style.borderRadius=Math.random()>0.5?'50%':'2px';c.appendChild(p);}
+  setTimeout(()=>c.innerHTML='',4000);
+}
+
+state=loadState();renderSelect();updateStats();
+</script>
+</body>
+</html>

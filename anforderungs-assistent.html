@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="SBK Anforderungs-Assistent – Anforderungen iterativ erarbeiten und schärfen">
+<title>Anforderungs-Assistent · SBK</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue-deep:#002B52; --blue-strong:#2B6CB0; --blue-vivid:#3182CE;
+  --blue-light:#BEE3F8; --blue-pale:#EBF8FF;
+  --green:#16A34A; --green-light:#F0FFF4; --green-border:#68D391;
+  --yellow:#ECC94B; --yellow-light:#FFFFF0; --yellow-border:#F6E05E;
+  --lila:#6B46C1; --lila-light:#FAF5FF; --lila-border:#D6BCFA;
+  --red:#C53030; --red-light:#FFF5F5;
+  --orange:#C05621;
+  --bg:#F7FAFC; --sf:#FFFFFF; --sf2:#F7FAFC; --sf3:#EDF2F7;
+  --bd:#E2E8F0; --bd2:#EDF2F7;
+  --tx:#1A202C; --tx2:#2D3748; --mu:#718096; --dm:#A0AEC0;
+  --r:12px; --rs:8px; --tb:52px;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.06);
+  --shadow:0 4px 6px rgba(0,0,0,.04),0 2px 4px rgba(0,0,0,.03);
+  --shadow-lg:0 10px 25px rgba(0,0,0,.06);
+  --ease:cubic-bezier(.4,0,.2,1);
+  --ease-out:cubic-bezier(0,0,.2,1);
+  --ease-bounce:cubic-bezier(.34,1.56,.64,1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--tx);font-size:15px;line-height:1.65;-webkit-font-smoothing:antialiased;overflow-x:hidden;}
+:focus-visible{outline:2px solid var(--blue-vivid);outline-offset:2px;border-radius:4px;}
+::selection{background:var(--blue-light);color:var(--blue-deep);}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--dm);}
+
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;height:var(--tb);background:var(--blue-deep);display:flex;align-items:center;justify-content:space-between;padding:0 20px;z-index:300;box-shadow:0 2px 12px rgba(0,43,82,.2);}
+.tl{display:flex;align-items:center;gap:14px;}
+.sbk-logo{font-weight:700;font-size:20px;color:#fff;letter-spacing:.04em;cursor:pointer;}
+.tsep{width:1px;height:16px;background:rgba(255,255,255,.12);}
+.ttitle{font-size:13px;color:rgba(255,255,255,.45);font-weight:400;}
+.tr{display:flex;align-items:center;gap:10px;}
+.phase-pill{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:4px 14px 4px 8px;font-size:12px;color:rgba(255,255,255,.5);transition:all .3s var(--ease);}
+.phase-pill.hidden{opacity:0;pointer-events:none;}
+.phase-dots{display:flex;gap:4px;}
+.phase-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.12);transition:all .3s var(--ease);}
+.phase-dot.active{background:var(--blue-light);}
+.phase-dot.done{background:var(--green);}
+.phase-label{color:rgba(255,255,255,.8);font-weight:600;}
+.tbtn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.5);border-radius:var(--rs);padding:5px 12px;font-family:inherit;font-size:12.5px;cursor:pointer;display:none;align-items:center;gap:5px;transition:all .2s var(--ease);}
+.tbtn:hover{background:rgba(255,255,255,.12);color:#fff;}
+.tbtn.on{display:inline-flex;}
+
+/* VIEWS */
+.view{display:none;opacity:0;}
+.view.active{display:block;animation:fadeIn .35s var(--ease-out) forwards;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* LANDING */
+.landing{margin-top:var(--tb);min-height:calc(100vh - var(--tb));display:flex;align-items:center;justify-content:center;padding:40px 20px;}
+.landing-inner{max-width:580px;width:100%;}
+.landing-tag{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-strong);margin-bottom:8px;}
+.landing-title{font-family:'Fraunces',serif;font-size:32px;font-weight:600;color:var(--tx);margin-bottom:10px;line-height:1.25;}
+.landing-desc{font-size:15.5px;color:var(--mu);line-height:1.7;margin-bottom:32px;}
+.mode-primary{background:var(--sf);border:2px solid var(--bd);border-radius:var(--r);padding:28px;cursor:pointer;transition:all .25s var(--ease);margin-bottom:14px;position:relative;overflow:hidden;}
+.mode-primary:hover{border-color:var(--blue-strong);box-shadow:var(--shadow-lg);transform:translateY(-2px);}
+.mode-primary:hover .mode-arrow{transform:translateX(4px);}
+.mode-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue-strong);background:rgba(43,108,176,.08);border:1px solid rgba(43,108,176,.15);border-radius:4px;padding:3px 8px;display:inline-block;margin-bottom:12px;}
+.mode-primary h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--tx);margin-bottom:6px;}
+.mode-primary p{font-size:14px;color:var(--mu);line-height:1.6;}
+.mode-arrow{position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--dm);transition:transform .2s var(--ease);}
+.mode-secondary{display:inline-flex;align-items:center;gap:8px;padding:12px 0;font-size:14px;color:var(--mu);cursor:pointer;border:none;background:none;font-family:inherit;transition:color .2s var(--ease);text-decoration:underline;text-underline-offset:3px;}
+.mode-secondary:hover{color:var(--blue-strong);}
+.token-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:24px;box-shadow:var(--shadow-sm);margin-top:24px;}
+.token-card h4{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:10px;}
+.tok-row{display:flex;gap:8px;}
+.tok-wrap{position:relative;flex:1;}
+.tok-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--dm);font-size:15px;padding:3px;border-radius:4px;}
+.tok-toggle:hover{color:var(--tx);}
+.tok-hint{font-size:12px;color:var(--dm);margin-top:6px;line-height:1.5;}
+
+/* FORMS */
+textarea.fi,input.fi{width:100%;background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--rs);padding:11px 14px;color:var(--tx);font-family:inherit;font-size:14.5px;outline:none;transition:border-color .2s var(--ease),box-shadow .2s var(--ease);resize:vertical;}
+textarea.fi:hover,input.fi:hover{border-color:#CBD5E0;}
+textarea.fi:focus,input.fi:focus{border-color:var(--blue-vivid);box-shadow:0 0 0 3px rgba(49,130,206,.1);}
+textarea.fi::placeholder,input.fi::placeholder{color:var(--dm);}
+textarea.fi{min-height:80px;}
+.fi.inv{border-color:var(--red)!important;}
+.bprim{background:var(--blue-strong);color:#fff;border:none;border-radius:var(--rs);padding:10px 22px;font-family:inherit;font-size:14.5px;font-weight:700;cursor:pointer;transition:all .2s var(--ease);display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(43,108,176,.2);}
+.bprim:hover{background:#2C5282;transform:translateY(-1px);}
+.bprim:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.bsec{background:var(--sf);color:var(--tx2);border:1.5px solid var(--bd);border-radius:var(--rs);padding:9px 16px;font-family:inherit;font-size:13.5px;font-weight:600;cursor:pointer;transition:all .2s var(--ease);}
+.bsec:hover{border-color:var(--blue-strong);color:var(--blue-strong);}
+.bghost{background:transparent;color:var(--mu);border:none;padding:8px 4px;font-family:inherit;font-size:13.5px;cursor:pointer;}
+.bghost:hover{color:var(--blue-strong);}
+.flbl{font-size:13.5px;font-weight:600;color:var(--tx);margin-bottom:6px;display:flex;align-items:center;gap:7px;}
+.fhint{font-size:12px;color:var(--dm);margin-top:5px;line-height:1.5;}
+.ferr{font-size:12px;color:var(--red);margin-top:5px;display:none;}
+.ferr.on{display:block;}
+
+/* SPLIT VIEW */
+.app{margin-top:var(--tb);display:flex;min-height:calc(100vh - var(--tb));}
+.doc-panel{width:400px;flex-shrink:0;background:var(--sf);border-right:1px solid var(--bd);position:sticky;top:var(--tb);height:calc(100vh - var(--tb));overflow-y:auto;display:flex;flex-direction:column;}
+.doc-header{padding:20px 22px 14px;border-bottom:1px solid var(--bd2);background:var(--sf2);}
+.doc-header-title{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--tx);margin-bottom:2px;}
+.doc-header-sub{font-size:11.5px;color:var(--dm);}
+.doc-body{flex:1;overflow-y:auto;padding:0;}
+.doc-section{padding:16px 22px;border-bottom:1px solid var(--bd2);}
+.doc-section:last-child{border-bottom:none;}
+.doc-sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
+.doc-sec-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--dm);}
+.doc-sec-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;}
+.doc-sec-status.empty{background:var(--sf3);color:var(--dm);}
+.doc-sec-status.draft{background:var(--yellow-light);border:1px solid var(--yellow-border);color:var(--orange);}
+.doc-sec-status.done{background:var(--green-light);border:1px solid var(--green-border);color:var(--green);}
+.doc-sec-content{font-size:13px;color:var(--tx2);line-height:1.65;min-height:24px;}
+.doc-sec-content.empty{color:var(--dm);font-style:italic;font-size:12.5px;}
+.doc-sec-content ul,.doc-sec-content ol{padding-left:18px;margin:4px 0;}
+.doc-sec-content li{margin-bottom:3px;}
+.doc-sec-content strong{color:var(--tx);font-weight:600;}
+.doc-footer{padding:14px 22px;border-top:1px solid var(--bd);background:var(--sf2);margin-top:auto;}
+.doc-footer-btns{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* MOBILE TABS */
+.mobile-tabs{display:none;position:fixed;bottom:0;left:0;right:0;height:48px;background:var(--sf);border-top:1px solid var(--bd);z-index:200;box-shadow:0 -2px 8px rgba(0,0,0,.05);}
+.mobile-tab{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;font-size:13px;font-weight:600;color:var(--mu);background:none;border:none;cursor:pointer;}
+.mobile-tab.active{color:var(--blue-strong);}
+
+/* CHAT */
+.chat-panel{flex:1;display:flex;flex-direction:column;min-width:0;}
+.intake{padding:32px 36px;max-width:680px;}
+.intake-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--tx);margin-bottom:6px;}
+.intake-desc{font-size:14.5px;color:var(--mu);line-height:1.65;margin-bottom:20px;}
+.intake-type-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.type-chip{background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:6px 16px;font-family:inherit;font-size:13px;color:var(--mu);cursor:pointer;transition:all .2s var(--ease);}
+.type-chip:hover{border-color:var(--blue-strong);color:var(--blue-strong);}
+.type-chip.sel{background:rgba(43,108,176,.06);border-color:var(--blue-strong);color:var(--blue-strong);font-weight:600;}
+.intake-actions{display:flex;gap:10px;align-items:center;margin-top:14px;}
+.chat-messages{flex:1;overflow-y:auto;padding:24px 32px;display:flex;flex-direction:column;gap:16px;}
+.msg{display:flex;gap:10px;align-items:flex-start;animation:fadeIn .3s var(--ease-out);}
+.msg.user{justify-content:flex-end;}
+.msg-avatar{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#fff;flex-shrink:0;margin-top:2px;}
+.msg-avatar.kia{background:linear-gradient(135deg,var(--blue-strong),var(--blue-deep));}
+.msg-bubble{max-width:85%;border-radius:var(--r);padding:14px 18px;font-size:14px;line-height:1.7;}
+.msg-bubble.kia{background:var(--sf);border:1px solid var(--bd);color:var(--tx);}
+.msg-bubble.user{background:rgba(43,108,176,.06);border:1px solid rgba(43,108,176,.12);color:var(--tx);border-bottom-right-radius:4px;}
+.msg-bubble h4{font-size:13px;font-weight:700;color:var(--tx);margin:14px 0 6px;text-transform:uppercase;letter-spacing:.04em;}
+.msg-bubble h4:first-child{margin-top:0;}
+.msg-bubble p{margin-bottom:8px;}
+.msg-bubble p:last-child{margin-bottom:0;}
+.msg-bubble ol,.msg-bubble ul{padding-left:18px;margin:6px 0;}
+.msg-bubble li{margin-bottom:6px;line-height:1.6;}
+.msg-bubble strong{color:var(--tx);font-weight:700;}
+.rq-block{margin-top:12px;display:flex;flex-direction:column;gap:10px;}
+.rq-item{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:12px 14px;}
+.rq-q{font-size:13.5px;color:var(--tx);line-height:1.55;margin-bottom:8px;}
+.rq-q-num{font-size:10px;font-weight:700;color:var(--blue-strong);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:3px;}
+.rq-answer-row{display:flex;gap:6px;align-items:flex-end;}
+.rq-answer{flex:1;background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--rs);padding:9px 12px;font-family:inherit;font-size:13.5px;color:var(--tx);outline:none;resize:none;min-height:38px;max-height:80px;line-height:1.5;transition:border-color .2s var(--ease);}
+.rq-answer:focus{border-color:var(--blue-vivid);box-shadow:0 0 0 3px rgba(49,130,206,.08);}
+.rq-answer::placeholder{color:var(--dm);}
+.rq-answer.done{background:var(--green-light);border-color:var(--green-border);opacity:.8;}
+.rq-skip{font-size:11.5px;color:var(--dm);cursor:pointer;border:1px solid var(--bd);background:var(--sf);border-radius:var(--rs);padding:5px 9px;font-family:inherit;white-space:nowrap;transition:all .2s var(--ease);}
+.rq-skip:hover{border-color:var(--mu);}
+.rq-skip.active{background:var(--yellow-light);border-color:var(--yellow-border);color:var(--orange);}
+.rq-submit-row{display:flex;gap:8px;align-items:center;margin-top:8px;}
+.rq-submit{background:var(--blue-strong);color:#fff;border:none;border-radius:var(--rs);padding:8px 18px;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:all .2s var(--ease);}
+.rq-submit:hover:not(:disabled){background:#2C5282;}
+.rq-submit:disabled{opacity:.4;cursor:not-allowed;}
+.rq-submit-hint{font-size:11.5px;color:var(--dm);}
+.chat-input-bar{padding:14px 20px;border-top:1px solid var(--bd);background:var(--sf);display:flex;gap:8px;align-items:flex-end;}
+.chat-input{flex:1;background:var(--sf2);border:1.5px solid var(--bd);border-radius:var(--rs);padding:11px 14px;font-family:inherit;font-size:14.5px;color:var(--tx);outline:none;resize:none;min-height:44px;max-height:120px;line-height:1.55;transition:border-color .2s var(--ease);}
+.chat-input:focus{border-color:var(--blue-vivid);box-shadow:0 0 0 3px rgba(49,130,206,.08);}
+.chat-input::placeholder{color:var(--dm);}
+.chat-send{background:var(--blue-strong);color:#fff;border:none;border-radius:var(--rs);height:44px;padding:0 20px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s var(--ease);white-space:nowrap;}
+.chat-send:hover{background:#2C5282;}
+.chat-send:disabled{opacity:.35;cursor:not-allowed;}
+.loading-msg{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);font-size:13.5px;color:var(--mu);animation:fadeIn .3s var(--ease-out);}
+.spin{width:16px;height:16px;border:2.5px solid var(--bd);border-top-color:var(--blue-strong);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.actions-bar{padding:14px 20px;border-top:1px solid var(--bd);background:var(--sf2);display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.actions-bar.hidden{display:none;}
+
+/* FINAL OUTPUT */
+.final-view{margin-top:var(--tb);padding:36px 48px 80px;max-width:960px;margin-left:auto;margin-right:auto;}
+.final-top{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px;}
+.sec-card{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);box-shadow:var(--shadow-sm);margin-bottom:16px;overflow:hidden;transition:box-shadow .2s var(--ease);}
+.sec-card:hover{box-shadow:var(--shadow);}
+.sec-card-head{display:flex;align-items:center;gap:10px;padding:14px 20px;border-bottom:1px solid var(--bd2);background:var(--sf2);}
+.sec-card-num{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0;}
+.sec-card-title{font-size:14px;font-weight:700;color:var(--tx);flex:1;}
+.sec-card-copy{background:none;border:1px solid var(--bd);border-radius:var(--rs);padding:4px 12px;font-family:inherit;font-size:11.5px;color:var(--mu);cursor:pointer;transition:all .2s var(--ease);white-space:nowrap;}
+.sec-card-copy:hover{border-color:var(--blue-strong);color:var(--blue-strong);}
+.sec-card-copy.copied{border-color:var(--green);color:var(--green);background:var(--green-light);}
+.sec-card-body{padding:18px 20px;}
+
+/* RENDERED CONTENT */
+.rendered{font-size:14px;line-height:1.75;color:var(--tx);}
+.rendered strong,.rendered b{font-weight:700;color:var(--tx);}
+.rendered ul,.rendered ol{padding-left:22px;margin:8px 0;}
+.rendered li{margin-bottom:6px;line-height:1.65;}
+.rendered li ul,.rendered li ol{margin-top:4px;margin-bottom:4px;}
+.rendered p{margin-bottom:8px;}
+.rendered p:last-child{margin-bottom:0;}
+
+/* TESTFALL TABLE */
+.tf-table-wrap{overflow-x:auto;}
+.tf-table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;}
+.tf-table th{background:var(--blue-deep);color:#fff;font-weight:700;text-align:left;padding:10px 12px;white-space:nowrap;font-size:12px;letter-spacing:.02em;}
+.tf-table th:first-child{border-radius:var(--rs) 0 0 0;}
+.tf-table th:last-child{border-radius:0 var(--rs) 0 0;}
+.tf-table td{padding:10px 12px;border-bottom:1px solid var(--bd2);vertical-align:top;color:var(--tx2);}
+.tf-table tr:last-child td{border-bottom:none;}
+.tf-table tr:nth-child(even){background:var(--sf2);}
+.tf-table tr:hover{background:var(--blue-pale);}
+.tf-table td:first-child{font-weight:700;color:var(--blue-strong);white-space:nowrap;text-align:center;}
+.tf-table td:nth-child(2){white-space:nowrap;font-size:12px;color:var(--mu);font-family:monospace;}
+.tf-table td:last-child{white-space:nowrap;text-align:center;}
+.prio-high{color:var(--red);font-weight:700;}
+.prio-medium{color:var(--orange);font-weight:600;}
+.prio-low{color:var(--green);font-weight:500;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--blue-deep);color:#fff;border-radius:var(--rs);padding:11px 18px;font-size:13.5px;font-weight:500;box-shadow:var(--shadow-lg);transform:translateY(44px);opacity:0;transition:all .3s var(--ease-bounce);z-index:600;max-width:360px;}
+.toast.on{transform:translateY(0);opacity:1;}
+.toast.ok{background:var(--green);}
+.toast.warn{background:var(--orange);}
+.toast.err{background:var(--red);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .doc-panel{display:none;position:fixed;top:var(--tb);left:0;right:0;bottom:48px;width:100%;z-index:150;border-right:none;}
+  .doc-panel.mobile-show{display:flex;}
+  .chat-panel{width:100%;}
+  .chat-panel.mobile-hide{display:none;}
+  .mobile-tabs{display:flex;}
+  .chat-messages{padding:20px 16px;padding-bottom:60px;}
+  .intake{padding:24px 20px;}
+  .chat-input-bar{padding:10px 12px;}
+  .final-view{padding:24px 16px 80px;}
+  .app{flex-direction:column;}
+}
+@media(max-width:600px){
+  .intake-type-row{flex-direction:column;}
+  .tok-row{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="tl">
+    <div class="sbk-logo" onclick="backToLanding()">SBK</div>
+    <div class="tsep"></div>
+    <div class="ttitle" id="topTitle">Anforderungs-Assistent</div>
+  </div>
+  <div class="tr">
+    <div class="phase-pill hidden" id="phasePill">
+      <div class="phase-dots" id="phaseDots"></div>
+      <span class="phase-label" id="phaseLabel"></span>
+    </div>
+    <button class="tbtn" id="btnNew" onclick="confirmNewReq()">Neue Anforderung</button>
+  </div>
+</header>
+
+<!-- LANDING -->
+<div class="view active" id="v-landing">
+<div class="landing"><div class="landing-inner">
+  <div class="landing-tag">SBK Anforderungs-Assistent</div>
+  <div class="landing-title">Anforderungen gemeinsam erarbeiten und schaerfen</div>
+  <div class="landing-desc">Beschreibe deine Anforderung, kopiere einen bestehenden JIRA Text oder starte von null. Der Assistent begleitet dich als Sparringspartner, bis eine klare, verstaendliche Anforderung steht.</div>
+  <div class="mode-primary" onclick="selectMode('general')" role="button" tabindex="0">
+    <div class="mode-badge">Empfohlen</div>
+    <h3>Allgemeine Anforderung</h3>
+    <p>Fachliche Anforderung oder Change Request iterativ erarbeiten. IST und SOLL schaerfen, Akzeptanzkriterien und Testfaelle generieren.</p>
+    <div class="mode-arrow">&#8594;</div>
+  </div>
+  <button class="mode-secondary" onclick="selectMode('aktion')">Speziell fuer Aktionssteuerung? Zum gefuehrten Wizard &#8594;</button>
+  <div class="token-card">
+    <h4>KIA Token eingeben</h4>
+    <div class="tok-row"><div class="tok-wrap">
+      <input type="password" class="fi" id="tokIn" placeholder="Token aus KIA, Einstellungen, Konto ..." onkeydown="if(event.key==='Enter')saveToken()" autocomplete="off">
+      <button class="tok-toggle" onclick="toggleTokenVis()" type="button">&#128065;</button>
+    </div><button class="bprim" onclick="saveToken()">Verbinden</button></div>
+    <div class="tok-hint">Du findest das Token unter KIA, Einstellungen, Konto. Es wird nur lokal gespeichert.</div>
+    <div class="ferr" id="tokErr" role="alert"></div>
+  </div>
+</div></div>
+</div>
+
+<!-- GENERAL MODE -->
+<div class="view" id="v-general">
+<div class="app">
+  <div class="doc-panel" id="docPanel">
+    <div class="doc-header"><div class="doc-header-title">Anforderung (Entwurf)</div><div class="doc-header-sub">Wird laufend aktualisiert</div></div>
+    <div class="doc-body" id="docBody">
+      <div class="doc-section" id="ds-titel"><div class="doc-sec-head"><div class="doc-sec-label">Titel</div><div class="doc-sec-status empty" id="dss-titel">Offen</div></div><div class="doc-sec-content empty" id="dc-titel">Wird im Sparring erarbeitet</div></div>
+      <div class="doc-section" id="ds-ist"><div class="doc-sec-head"><div class="doc-sec-label">IST Beschreibung</div><div class="doc-sec-status empty" id="dss-ist">Offen</div></div><div class="doc-sec-content empty" id="dc-ist">Aktueller Zustand noch nicht erfasst</div></div>
+      <div class="doc-section" id="ds-soll"><div class="doc-sec-head"><div class="doc-sec-label">SOLL Beschreibung</div><div class="doc-sec-status empty" id="dss-soll">Offen</div></div><div class="doc-sec-content empty" id="dc-soll">Gewuenschter Zustand noch nicht erfasst</div></div>
+      <div class="doc-section" id="ds-kz" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Kennzahlen</div><div class="doc-sec-status empty" id="dss-kz">Offen</div></div><div class="doc-sec-content empty" id="dc-kz">Fallzahlen und Aufwaende noch offen</div></div>
+      <div class="doc-section" id="ds-ak" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Akzeptanzkriterien</div><div class="doc-sec-status empty" id="dss-ak">Offen</div></div><div class="doc-sec-content empty" id="dc-ak">Werden nach IST/SOLL generiert</div></div>
+      <div class="doc-section" id="ds-tf" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Testfaelle</div><div class="doc-sec-status empty" id="dss-tf">Offen</div></div><div class="doc-sec-content empty" id="dc-tf">Werden nach IST/SOLL generiert</div></div>
+      <div class="doc-section" id="ds-open" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Offene Punkte</div></div><div class="doc-sec-content empty" id="dc-open"></div></div>
+    </div>
+    <div class="doc-footer"><div class="doc-footer-btns">
+      <button class="bsec" onclick="copyAllSections()" id="btnCopyReq" disabled>Alles kopieren</button>
+      <button class="bprim" onclick="startFinalize()" id="btnFinalize" disabled>Abschliessen</button>
+    </div></div>
+  </div>
+
+  <div class="chat-panel" id="chatPanel">
+    <div id="intakeArea" class="intake">
+      <div class="intake-title">Beschreibe deine Anforderung</div>
+      <div class="intake-desc">Gib einen Freitext ein, kopiere einen bestehenden JIRA Text oder beschreibe in Stichpunkten, worum es geht.</div>
+      <div class="flbl">Art der Anforderung <span style="font-weight:400;color:var(--dm)">(optional)</span></div>
+      <div class="intake-type-row">
+        <button class="type-chip" data-type="fachlich" onclick="selType(this)" type="button">Fachliche Anforderung</button>
+        <button class="type-chip" data-type="change" onclick="selType(this)" type="button">Change Request</button>
+        <button class="type-chip" data-type="technisch" onclick="selType(this)" type="button">Technische Anforderung</button>
+      </div>
+      <div class="flbl" style="margin-top:16px">Deine Beschreibung</div>
+      <textarea class="fi" id="intakeText" placeholder="Zum Beispiel: Aktuell muessen die Sachbearbeiter bei jedem Vorgang manuell ..." style="min-height:160px;"></textarea>
+      <div class="fhint">Du kannst auch einen bestehenden JIRA Text hier reinkopieren.</div>
+      <div class="ferr" id="intakeErr">Bitte beschreibe kurz, worum es geht.</div>
+      <div class="intake-actions">
+        <button class="bprim" onclick="startSparring()">Sparring starten</button>
+        <button class="bghost" onclick="backToLanding()">Zurueck</button>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessages" style="display:none"></div>
+    <div class="chat-input-bar" id="chatInputBar" style="display:none">
+      <textarea class="chat-input" id="chatInput" placeholder="Antwort eingeben oder Rueckfragen beantworten ... (Enter = senden)"></textarea>
+      <button class="chat-send" id="btnSend" onclick="sendChat()">Senden</button>
+    </div>
+    <div class="actions-bar hidden" id="actionsBar">
+      <button class="bprim" onclick="startFinalize()" id="btnFinalizeChat">Anforderung abschliessen</button>
+      <button class="bsec" onclick="generateAkTf()">Akzeptanzkriterien und Testfaelle generieren</button>
+      <span style="font-size:12px;color:var(--dm);">Klicke auf Abschliessen, wenn IST und SOLL stehen.</span>
+    </div>
+  </div>
+</div>
+<div class="mobile-tabs" id="mobileTabs">
+  <button class="mobile-tab active" onclick="mobileTab('chat')" id="mtChat">Sparring</button>
+  <button class="mobile-tab" onclick="mobileTab('doc')" id="mtDoc">Dokument</button>
+</div>
+</div>
+
+<!-- FINAL OUTPUT -->
+<div class="view" id="v-final">
+<div class="final-view">
+  <div class="final-top">
+    <div><div class="landing-tag">Anforderungs-Assistent</div><div class="landing-title" style="margin-bottom:0;font-size:26px;">Fertige Anforderung</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="bprim" onclick="copyAllSections()">Alles kopieren</button>
+      <button class="bsec" onclick="showView('v-general')">Zurueck zum Sparring</button>
+      <button class="bsec" onclick="confirmNewReq()">Neue Anforderung</button>
+    </div>
+  </div>
+  <div id="finalSections"></div>
+</div>
+</div>
+
+<!-- AKTION PLACEHOLDER -->
+<div class="view" id="v-aktion">
+<div class="landing" style="text-align:center;"><div class="landing-inner">
+  <div class="landing-tag">Aktionssteuerung</div>
+  <div class="landing-title">Gefuehrter Wizard</div>
+  <div class="landing-desc">Der spezialisierte Wizard fuer Automatisierungs-Anforderungen wird hier eingebunden.</div>
+  <button class="bghost" onclick="backToLanding()">Zurueck zur Auswahl</button>
+</div></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ═══ CONFIG ═══ */
+const API_BASE='https://kia.apps.test.sbk.de';
+const MODEL='openai/gpt-oss-120b';
+
+const STYLE=`Schreibe in einem klaren, strukturierten und praxisnahen Stil. Verstaendlich und menschlich, ohne formell oder buerokratisch zu sein. Einfache, direkte Saetze. Loesungsorientiert. Nummerierte Listen fuer Rueckfragen. Sachlich, ruhig, kollegial, wertschaetzend. Immer Du-Form. Keine Emojis. Verwende **Fettdruck** fuer wichtige Begriffe und Schluesselpunkte.`;
+
+const SYS_GENERAL=`Du bist der Anforderungs-Assistent der SBK. Du agierst als erfahrener Business Analyst und Sparringspartner.
+
+${STYLE}
+
+Deine Aufgabe:
+Du hilfst Fachbereichen, schlecht formulierte oder unvollstaendige Anforderungen (fachliche Anforderungen, Change Requests) zu schaerfen. Du hinterfragst, ergaenzt und strukturierst, bis eine klare JIRA-faehige Anforderung steht.
+
+Technischer Hinweis: Du arbeitest auf einem aktuellen Open-Source-KI-Modell. Halte Ausgaben klar strukturiert. Formuliere Anweisungen und Ausgaben explizit.
+
+Ablauf:
+1. VERSTEHEN: Analysiere die Eingabe. Trenne IST (aktueller Zustand) und SOLL (gewuenschter Zustand). Fasse zusammen was du verstanden hast.
+2. HINTERFRAGEN: Stelle maximal 3 nummerierte Rueckfragen pro Runde. Nur zu dem was wirklich fehlt oder unklar ist. Frage auch nach Kennzahlen (Fallzahlen pro Zeitraum, Zeitaufwand aktuell vs. gewuenscht, betroffene Nutzeranzahl) wenn diese fehlen.
+3. SCHAERFEN: Nach jeder Antwort aktualisiere dein Verstaendnis. Wiederhole die aktuelle Version von IST und SOLL.
+4. ABSCHLIESSEN: Wenn IST und SOLL ausreichend klar sind, sage: "IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen."
+
+Nutze **Fettdruck** fuer Schluesselbegriffe in IST und SOLL.
+Nutze Aufzaehlungen mit - wenn du mehrere Punkte auflisten musst.
+
+Ausgabeformat fuer jede Antwort:
+
+TITEL: [Vorschlag fuer praegnanten Anforderungstitel, einzeilig]
+
+IST:
+[Aktuelle IST Beschreibung. **Fettdruck** fuer wichtige Begriffe. Aufzaehlungen mit - wenn sinnvoll. 2-8 Saetze.]
+
+SOLL:
+[Aktuelle SOLL Beschreibung. **Fettdruck** fuer wichtige Begriffe. Aufzaehlungen mit - wenn sinnvoll. 2-8 Saetze.]
+
+KENNZAHLEN:
+[Falls bekannt: Fallzahlen, Zeitaufwaende, betroffene Nutzer etc. als kurze Aufzaehlung mit -. Falls noch nicht bekannt: "Noch nicht erfasst."]
+
+ANALYSE:
+[Deine Einschaetzung, was gut ist und was fehlt. 1-3 Saetze.]
+
+RUECKFRAGEN:
+1. [Erste Rueckfrage]
+2. [Zweite Rueckfrage]
+3. [Dritte Rueckfrage, falls noetig]
+
+OFFENE PUNKTE:
+[Liste noch ungeklaerter Aspekte, falls vorhanden. Sonst "Keine."]
+
+Wenn du keinen IST oder SOLL Zustand ableiten kannst, setze "[Noch nicht erfasst]" ein und frage danach.
+Wenn die Eingabe ein bestehender JIRA Text ist, analysiere ihn kritisch und zeige Verbesserungspotenzial auf.`;
+
+const SYS_AKTF=`Du bist der Anforderungs-Assistent der SBK. Generiere Akzeptanzkriterien und Testfaelle.
+
+${STYLE}
+
+Basierend auf der Anforderung (TITEL, IST, SOLL, KENNZAHLEN):
+
+1. Erstelle 4-8 Akzeptanzkriterien. Jedes Kriterium beginnt mit: "Die Anforderung ist erfuellt, wenn ..."
+Nutze **Fettdruck** fuer die Kernaussage jedes Kriteriums.
+
+2. Erstelle 4-8 Testfaelle als Pipe-getrennte Tabelle mit exakt diesen Spalten:
+Nr.|ID|Beschreibung|Vorbedingung|Aktion|Erwartetes Ergebnis|Prioritaet
+
+Die erste Zeile ist die Kopfzeile. Danach folgen die Datenzeilen.
+Beispiel:
+Nr.|ID|Beschreibung|Vorbedingung|Aktion|Erwartetes Ergebnis|Prioritaet
+1|TF-001|Automatische Statusaenderung|Vorgang ist angelegt|Nutzer setzt Status auf Aktiv|System aendert Feld automatisch|Hoch
+2|TF-002|Fehlerfall ohne Berechtigung|Nutzer hat keine Rolle|Nutzer klickt Speichern|Fehlermeldung wird angezeigt|Mittel
+
+Halte alles konkret und pruefbar. Keine generischen Aussagen.
+
+Ausgabeformat:
+
+AKZEPTANZKRITERIEN:
+1. Die Anforderung ist erfuellt, wenn **[Kernaussage]** ...
+2. ...
+
+TESTFAELLE:
+Nr.|ID|Beschreibung|Vorbedingung|Aktion|Erwartetes Ergebnis|Prioritaet
+1|TF-001|...|...|...|...|...
+...`;
+
+/* ═══ STATE ═══ */
+let apiToken='',selectedMode='',reqType='',msgs=[],isRunning=false,currentPhase=0,sparringCount=0;
+let docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};
+const PHASES=[{label:'Einstieg'},{label:'Verstehen'},{label:'Schaerfen'},{label:'Strukturieren'},{label:'Absichern'}];
+
+/* ═══ HELPERS ═══ */
+const g=id=>document.getElementById(id);
+const val=id=>{const e=g(id);return e?e.value.trim():'';};
+const escH=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+function showToast(m,t){const el=g('toast');el.textContent=m;el.className='toast on'+(t?' '+t:'');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),3500);}
+function autoResize(el){if(!el)return;el.style.height='auto';el.style.height=Math.min(el.scrollHeight,140)+'px';}
+
+function renderMd(text){
+  if(!text)return'';
+  let h=escH(text);
+  h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  const lines=h.split('\n');let out='',inList=false;
+  for(const line of lines){
+    const m=line.match(/^(\s*)[-*\u2022]\s+(.+)/);
+    if(m){if(!inList){out+='<ul>';inList=true;}out+='<li>'+m[2]+'</li>';}
+    else{if(inList){out+='</ul>';inList=false;}if(line.trim())out+='<p>'+line+'</p>';}
+  }
+  if(inList)out+='</ul>';
+  if(!out.includes('<p>')&&!out.includes('<ul>'))out=h.replace(/\n/g,'<br>');
+  return out;
+}
+
+function stripMd(t){return(t||'').replace(/\*\*(.+?)\*\*/g,'$1');}
+
+/* ═══ VIEWS ═══ */
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));const el=g(id);if(el)el.classList.add('active');}
+function backToLanding(){showView('v-landing');g('phasePill').classList.add('hidden');g('btnNew').classList.remove('on');}
+function selectMode(mode){
+  if(!apiToken){showToast('Bitte zuerst das KIA Token eingeben.','warn');g('tokIn').focus();return;}
+  selectedMode=mode;
+  if(mode==='general'){showView('v-general');g('btnNew').classList.add('on');updatePhase(0);}
+  else{showView('v-aktion');g('btnNew').classList.add('on');}
+}
+
+/* ═══ TOKEN ═══ */
+function saveToken(){
+  const v=g('tokIn').value.trim();
+  if(!v){g('tokErr').textContent='Bitte KIA Token eingeben.';g('tokErr').classList.add('on');g('tokIn').classList.add('inv');return;}
+  apiToken=v;g('tokErr').classList.remove('on');g('tokIn').classList.remove('inv');
+  showToast('Verbunden','ok');try{localStorage.setItem('kia-token',v);}catch(e){}
+}
+function toggleTokenVis(){const i=g('tokIn');i.type=i.type==='password'?'text':'password';}
+try{const s=localStorage.getItem('kia-token');if(s){g('tokIn').value=s;apiToken=s;}}catch(e){}
+
+/* ═══ PHASE ═══ */
+function updatePhase(p){
+  currentPhase=p;const pill=g('phasePill');pill.classList.remove('hidden');
+  g('phaseDots').innerHTML=PHASES.map((ph,i)=>`<div class="phase-dot${i<p?' done':''}${i===p?' active':''}" title="${ph.label}"></div>`).join('');
+  g('phaseLabel').textContent=PHASES[Math.min(p,PHASES.length-1)].label;
+}
+
+/* ═══ TYPE ═══ */
+function selType(btn){document.querySelectorAll('.type-chip').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');reqType=btn.dataset.type;}
+
+/* ═══ LIVING DOC ═══ */
+function updateDoc(field,content,status){
+  docState[field]=content;
+  const el=g('dc-'+field),st=g('dss-'+field);if(!el)return;
+  const empty=!content||content==='[Noch nicht erfasst]'||content==='Noch nicht erfasst.';
+  if(!empty){
+    el.className='doc-sec-content';el.innerHTML=renderMd(content);
+    if(st){st.className='doc-sec-status '+(status||'draft');st.textContent=status==='done'?'Steht':'Entwurf';}
+  }else{
+    el.className='doc-sec-content empty';
+    const ph={titel:'Wird im Sparring erarbeitet',ist:'Aktueller Zustand noch nicht erfasst',soll:'Gewuenschter Zustand noch nicht erfasst',kz:'Fallzahlen und Aufwaende noch offen',ak:'Werden nach IST/SOLL generiert',tf:'Werden nach IST/SOLL generiert',open:''};
+    el.textContent=ph[field]||'';
+    if(st){st.className='doc-sec-status empty';st.textContent='Offen';}
+  }
+  checkReady();
+}
+function checkReady(){
+  const ok=f=>docState[f]&&docState[f]!=='[Noch nicht erfasst]'&&docState[f]!=='Noch nicht erfasst.';
+  if(ok('ist')&&ok('soll')){
+    ['ds-kz','ds-ak','ds-tf'].forEach(id=>{g(id).style.display='';});
+    g('btnFinalize').disabled=false;g('btnFinalizeChat')&&(g('btnFinalizeChat').disabled=false);
+    g('actionsBar').classList.remove('hidden');g('btnCopyReq').disabled=false;
+  }
+}
+
+/* ═══ PARSE ═══ */
+function isHeader(cleaned, patterns){
+  for(const p of patterns){ if(cleaned.match(p)) return true; }
+  return false;
+}
+
+function parseKIA(text){
+  const lines=text.split('\n');
+  let titel='',ist='',soll='',kz='',analyse='',open='',ak='',tf='';
+  let questions=[],mode=null;
+
+  // Normalize a string for header matching only (not for content)
+  function norm(s){
+    return s.replace(/\u00fc/gi,'ue').replace(/\u00e4/gi,'ae').replace(/\u00f6/gi,'oe')
+            .replace(/\u00dc/gi,'UE').replace(/\u00c4/gi,'AE').replace(/\u00d6/gi,'OE');
+  }
+
+  const H_TITEL   = [/^TITEL\s*:/i];
+  const H_IST     = [/^IST[\s-]*(?:BESCHREIBUNG|ZUSTAND|SITUATION)?\s*:/i, /^IST\s*:/i];
+  const H_SOLL    = [/^SOLL[\s-]*(?:BESCHREIBUNG|ZUSTAND)?\s*:/i, /^SOLL\s*:/i];
+  const H_KZ      = [/^KENNZAHLEN\s*:/i];
+  const H_ANALYSE = [/^ANALYSE\s*:/i];
+  const H_RUECK   = [/^RUE?CKFRAGEN\s*:/i, /^FRAGEN\s*:/i];
+  const H_OPEN    = [/^OFFENE\s*PUNKTE\s*:/i];
+  const H_AK      = [/^AKZEPTANZKRITERIEN\s*:/i];
+  const H_TF      = [/^TESTFAE?LLE\s*:/i];
+
+  for(const line of lines){
+    const raw = line.trim();
+    if(!raw) continue;
+    // Clean for header detection: strip bold markers, bullets, #
+    const cl = raw.replace(/^\s*[-*\u2022#]+\s*/,'').replace(/\*\*/g,'').trim();
+    // Normalized version for matching
+    const nCl = norm(cl);
+
+    // Detect section headers
+    if(isHeader(nCl, H_TITEL)){
+      titel = cl.replace(/^TITEL\s*:\s*/i,'').trim();
+      mode = null; continue;
+    }
+    if(isHeader(nCl, H_IST)){
+      const v = cl.replace(/^IST[\s\-A-Za-z]*:\s*/i,'').trim();
+      if(v) ist = v;
+      mode = 'ist'; continue;
+    }
+    if(isHeader(nCl, H_SOLL)){
+      const v = cl.replace(/^SOLL[\s\-A-Za-z]*:\s*/i,'').trim();
+      if(v) soll = v;
+      mode = 'soll'; continue;
+    }
+    if(isHeader(nCl, H_KZ)){
+      const v = cl.replace(/^KENNZAHLEN\s*:\s*/i,'').trim();
+      if(v) kz = v;
+      mode = 'kz'; continue;
+    }
+    if(isHeader(nCl, H_ANALYSE)){
+      const v = cl.replace(/^ANALYSE\s*:\s*/i,'').trim();
+      if(v) analyse = v;
+      mode = 'analyse'; continue;
+    }
+    if(isHeader(nCl, H_RUECK)){ mode = 'q'; continue; }
+    if(isHeader(nCl, H_OPEN)){
+      const v = cl.replace(/^OFFENE\s*PUNKTE\s*:\s*/i,'').trim();
+      if(v) open = v;
+      mode = 'open'; continue;
+    }
+    if(isHeader(nCl, H_AK)){ mode = 'ak'; continue; }
+    if(isHeader(nCl, H_TF)){ mode = 'tf'; continue; }
+
+    // Accumulate content per section (use original raw text to preserve umlauts)
+    if(mode==='ist') ist += (ist?'\n':'') + raw;
+    else if(mode==='soll') soll += (soll?'\n':'') + raw;
+    else if(mode==='kz') kz += (kz?'\n':'') + raw;
+    else if(mode==='analyse') analyse += (analyse?'\n':'') + raw;
+    else if(mode==='q'){
+      const qm = raw.replace(/\*\*/g,'').match(/^\d+[.)]\s*(.+)/);
+      if(qm) questions.push(qm[1].trim());
+      else if(raw.length > 15 && !raw.match(/^[-*\u2022]/) && raw.includes('?')) questions.push(raw);
+    }
+    else if(mode==='open') open += (open?'\n':'') + raw;
+    else if(mode==='ak') ak += (ak?'\n':'') + raw;
+    else if(mode==='tf') tf += (tf?'\n':'') + raw;
+  }
+
+  console.log('parseKIA:', {titel:!!titel,ist:!!ist,soll:!!soll,kz:!!kz,analyse:!!analyse,q:questions.length,open:!!open});
+  return{titel,ist,soll,kz,analyse,questions,open,ak,tf};
+}
+
+/* ═══ SPARRING START ═══ */
+async function startSparring(){
+  const text=val('intakeText');
+  if(!text){g('intakeErr').classList.add('on');g('intakeText').classList.add('inv');g('intakeText').focus();return;}
+  g('intakeErr').classList.remove('on');g('intakeText').classList.remove('inv');
+  g('intakeArea').style.display='none';g('chatMessages').style.display='flex';g('chatInputBar').style.display='flex';
+  updatePhase(1);
+  const tl=reqType==='fachlich'?'Fachliche Anforderung':reqType==='change'?'Change Request':reqType==='technisch'?'Technische Anforderung':'Nicht angegeben';
+  const prompt=`Anforderungstyp: ${tl}\n\nEingabe des Nutzers:\n${text}\n\nAnalysiere diese Eingabe. Trenne IST und SOLL. Fasse zusammen was du verstanden hast und stelle gezielte Rueckfragen.`;
+  addMsg('user',text);msgs=[{role:'user',content:prompt}];sparringCount++;
+  await callAndRender();
+}
+
+/* ═══ CHAT ═══ */
+function addMsg(role,content,html){
+  const c=g('chatMessages'),d=document.createElement('div');d.className='msg '+role;
+  if(role==='kia')d.innerHTML=`<div class="msg-avatar kia">K</div><div class="msg-bubble kia">${html||renderMd(content)}</div>`;
+  else d.innerHTML=`<div class="msg-bubble user">${escH(content).replace(/\n/g,'<br>')}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+function addLoading(){const c=g('chatMessages'),d=document.createElement('div');d.className='loading-msg';d.id='loadingMsg';d.innerHTML='<div class="spin"></div><span>KIA analysiert ...</span>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function removeLoading(){const e=g('loadingMsg');if(e)e.remove();}
+
+function renderKIAMsg(p, rawText){
+  let h='';
+
+  // Show analyse if present
+  if(p.analyse) h+=`<h4>Analyse</h4>${renderMd(p.analyse)}`;
+
+  // Show questions as interactive fields
+  if(p.questions.length>0){
+    const bid='rq-'+Date.now();
+    h+=`<h4>Rueckfragen</h4><div class="rq-block" id="${bid}">`;
+    p.questions.forEach((q,i)=>{const qid=bid+'-'+i;
+      h+=`<div class="rq-item"><div class="rq-q"><span class="rq-q-num">Frage ${i+1}</span>${renderMd(q)}</div><div class="rq-answer-row"><textarea class="rq-answer" id="${qid}" placeholder="Deine Antwort ..." rows="1" oninput="autoResize(this)"></textarea><button class="rq-skip" id="${qid}-skip" onclick="toggleSkip('${qid}')" type="button">Entfaellt</button></div></div>`;
+    });
+    h+=`<div class="rq-submit-row"><button class="rq-submit" onclick="submitAnswers('${bid}',${p.questions.length})">Antworten uebernehmen</button><span class="rq-submit-hint">Schickt alle Antworten an KIA</span></div></div>`;
+  }
+
+  // Show open points
+  if(p.open&&!p.open.match(/^keine\.?$/i)) h+=`<h4>Offene Punkte</h4>${renderMd(p.open)}`;
+
+  // Completion signal
+  const istOk=p.ist&&p.ist!=='[Noch nicht erfasst]';
+  const sollOk=p.soll&&p.soll!=='[Noch nicht erfasst]';
+  if(istOk&&sollOk&&p.questions.length===0)
+    h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen.</div>`;
+
+  // FALLBACK: If parsing produced nothing useful, try to extract questions from raw text
+  // and still render the full response formatted
+  if(!h && rawText){
+    console.warn('parseKIA produced empty render, using fallback');
+    h = renderMd(rawText);
+    // Try to find numbered questions in raw text and append interactive fields
+    const fallbackQs = [];
+    const rawLines = rawText.split('\n');
+    for(const line of rawLines){
+      const m = line.replace(/\*\*/g,'').trim().match(/^\d+[.)]\s*(.{15,})/);
+      if(m && m[1].includes('?')) fallbackQs.push(m[1].trim());
+    }
+    if(fallbackQs.length>0){
+      const bid='rqf-'+Date.now();
+      h+=`<div style="margin-top:14px;padding:12px;background:var(--blue-pale);border:1px solid var(--blue-light);border-radius:var(--rs);"><p style="font-size:12px;color:var(--blue-strong);font-weight:600;margin-bottom:8px;">Rueckfragen direkt beantworten:</p><div class="rq-block" id="${bid}">`;
+      fallbackQs.forEach((q,i)=>{const qid=bid+'-'+i;
+        h+=`<div class="rq-item"><div class="rq-q"><span class="rq-q-num">Frage ${i+1}</span>${escH(q)}</div><div class="rq-answer-row"><textarea class="rq-answer" id="${qid}" placeholder="Deine Antwort ..." rows="1" oninput="autoResize(this)"></textarea><button class="rq-skip" id="${qid}-skip" onclick="toggleSkip('${qid}')" type="button">Entfaellt</button></div></div>`;
+      });
+      h+=`<div class="rq-submit-row"><button class="rq-submit" onclick="submitAnswers('${bid}',${fallbackQs.length})">Antworten uebernehmen</button></div></div></div>`;
+    }
+  }
+
+  // Always add hint about free text input
+  if(h) h+=`<div style="margin-top:10px;font-size:11.5px;color:var(--dm);">Du kannst auch jederzeit im Freitextfeld unten antworten.</div>`;
+
+  return h;
+}
+
+async function callAndRender(){
+  if(isRunning)return;isRunning=true;addLoading();g('btnSend').disabled=true;
+  try{
+    const r=await callKIA(msgs,SYS_GENERAL);msgs.push({role:'assistant',content:r});removeLoading();
+    const p=parseKIA(r);
+    if(p.titel)updateDoc('titel',p.titel,'draft');
+    if(p.ist)updateDoc('ist',p.ist,p.ist!=='[Noch nicht erfasst]'?'draft':null);
+    if(p.soll)updateDoc('soll',p.soll,p.soll!=='[Noch nicht erfasst]'?'draft':null);
+    if(p.kz)updateDoc('kz',p.kz,p.kz!=='Noch nicht erfasst.'?'draft':null);
+    if(p.open)updateDoc('open',p.open);
+    if(p.kz&&p.kz!=='Noch nicht erfasst.')g('ds-kz').style.display='';
+    // Pass raw text as fallback
+    const html=renderKIAMsg(p, r);
+    addMsg('kia','',html || renderMd(r));
+    if(sparringCount>=2&&currentPhase<2)updatePhase(2);
+    if(p.ist&&p.ist!=='[Noch nicht erfasst]'&&p.soll&&p.soll!=='[Noch nicht erfasst]'&&p.questions.length===0)updatePhase(3);
+  }catch(e){removeLoading();showToast('Fehler: '+e.message,'err');}
+  finally{isRunning=false;g('btnSend').disabled=false;}
+}
+
+function toggleSkip(qid){const i=g(qid),b=g(qid+'-skip');if(!i||!b)return;if(b.classList.contains('active')){b.classList.remove('active');b.textContent='Entfaellt';i.value='';i.disabled=false;}else{b.classList.add('active');b.textContent='Uebersprungen';i.value='[Entfaellt]';i.disabled=true;}}
+
+async function submitAnswers(bid,cnt){
+  let parts=[],any=false;
+  for(let i=0;i<cnt;i++){const inp=g(bid+'-'+i),v=inp?inp.value.trim():'';if(v&&v!=='[Entfaellt]')any=true;
+    const qT=inp?.closest('.rq-item')?.querySelector('.rq-q')?.textContent?.replace(/^Frage \d+\s*/,'').trim()||'';
+    parts.push(`Frage ${i+1}: ${qT}\nAntwort: ${v||'[Keine Antwort]'}`);if(inp){inp.disabled=true;inp.classList.add('done');}}
+  if(!any){showToast('Bitte mindestens eine Frage beantworten.','warn');return;}
+  const t=parts.join('\n\n');addMsg('user',t);msgs.push({role:'user',content:t});sparringCount++;await callAndRender();
+}
+
+g('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}});
+g('chatInput').addEventListener('input',function(){autoResize(this);});
+async function sendChat(){const t=val('chatInput');if(!t||isRunning)return;g('chatInput').value='';g('chatInput').style.height='auto';addMsg('user',t);msgs.push({role:'user',content:t});sparringCount++;await callAndRender();}
+
+/* ═══ GENERATE AK + TF ═══ */
+async function generateAkTf(){
+  if(isRunning)return;
+  if(!docState.soll||docState.soll==='[Noch nicht erfasst]'){showToast('Bitte zuerst SOLL erarbeiten.','warn');return;}
+  isRunning=true;updatePhase(4);addLoading();
+  const prompt=`Basierend auf folgender Anforderung:\n\nTITEL: ${docState.titel}\n\nIST: ${stripMd(docState.ist)}\n\nSOLL: ${stripMd(docState.soll)}\n\nKENNZAHLEN: ${stripMd(docState.kz)||'Nicht angegeben'}\n\nGeneriere passende Akzeptanzkriterien und Testfaelle.`;
+  try{
+    const r=await callKIA([{role:'user',content:prompt}],SYS_AKTF);removeLoading();
+    const p=parseKIA(r);
+    if(p.ak){docState.ak=p.ak;updateDoc('ak',p.ak,'draft');g('ds-ak').style.display='';}
+    if(p.tf){docState.tf=p.tf;updateDoc('tf','Testfaelle generiert (siehe Ausgabe)','draft');g('ds-tf').style.display='';}
+    let html='<h4>Akzeptanzkriterien</h4><div class="rendered">'+renderMd(p.ak||'')+'</div>';
+    html+='<h4>Testfaelle</h4>'+renderTfTable(p.tf||'');
+    html+=`<div style="margin-top:12px;padding:10px 14px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);font-size:12.5px;color:var(--mu);">Du kannst Anpassungen direkt im Chat vorschlagen.</div>`;
+    addMsg('kia','',html);msgs.push({role:'assistant',content:r});
+    showToast('Akzeptanzkriterien und Testfaelle generiert','ok');
+  }catch(e){removeLoading();showToast('Fehler: '+e.message,'err');}
+  finally{isRunning=false;}
+}
+
+/* ═══ TESTFALL TABLE ═══ */
+const TF_HEADERS=['Testfall Nr.','Testfall ID','Beschreibung','Vorbedingung','Aktion','Erwartetes Ergebnis','Prioritaet'];
+
+function renderTfTable(raw){
+  if(!raw)return'<p style="color:var(--dm)">Keine Testfaelle.</p>';
+  const rows=parseTfRows(raw);
+  if(rows.length===0)return'<div class="rendered">'+renderMd(raw)+'</div>';
+  let h='<div class="tf-table-wrap"><table class="tf-table"><thead><tr>';
+  TF_HEADERS.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
+  h+='</tr></thead><tbody>';
+  rows.forEach(row=>{
+    h+='<tr>';
+    for(let i=0;i<7;i++){
+      let v=row[i]||'';
+      if(i===6){const pc=v.match(/hoch/i)?'prio-high':v.match(/mittel/i)?'prio-medium':'prio-low';h+=`<td class="${pc}">${escH(v)}</td>`;}
+      else h+=`<td>${escH(v)}</td>`;
+    }
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';return h;
+}
+
+function parseTfRows(raw){
+  const lines=raw.split('\n').filter(l=>l.includes('|'));
+  if(lines.length<2)return[];
+  // Skip header if present
+  let data=lines;if(lines[0].match(/Nr|ID|Beschreibung/i))data=lines.slice(1);
+  return data.map(l=>l.split('|').map(c=>c.trim()).filter(c=>c));
+}
+
+function tfToPlaintext(raw){
+  const rows=parseTfRows(raw);
+  if(rows.length===0)return stripMd(raw);
+  let t=TF_HEADERS.join('\t')+'\n';
+  rows.forEach(r=>{t+=r.join('\t')+'\n';});
+  return t;
+}
+
+/* ═══ FINALIZE ═══ */
+function startFinalize(){
+  updatePhase(4);
+  const c=g('finalSections');c.innerHTML='';
+  const secs=[
+    {key:'titel',label:'Titel',color:'var(--blue-deep)',type:'title'},
+    {key:'ist',label:'IST Beschreibung',color:'var(--blue-strong)',type:'md'},
+    {key:'soll',label:'SOLL Beschreibung',color:'var(--green)',type:'md'},
+    {key:'kz',label:'Kennzahlen',color:'var(--lila)',type:'md'},
+    {key:'ak',label:'Akzeptanzkriterien',color:'var(--orange)',type:'md'},
+    {key:'tf',label:'Testfaelle',color:'var(--blue-deep)',type:'table'}
+  ];
+  let num=0;
+  secs.forEach(sec=>{
+    const v=docState[sec.key];
+    if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.'||v==='Testfaelle generiert (siehe Ausgabe)'&&!docState.tf)return;
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    let body='';
+    if(sec.type==='title')body=`<div class="rendered" style="font-size:20px;font-weight:700;font-family:'Fraunces',serif;">${escH(stripMd(v))}</div>`;
+    else if(sec.type==='md')body=`<div class="rendered">${renderMd(v)}</div>`;
+    else if(sec.type==='table')body=renderTfTable(v);
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:${sec.color}">${num}</div><div class="sec-card-title">${sec.label}</div><button class="sec-card-copy" onclick="copySec('${sec.key}',this)" type="button">Kopieren</button></div><div class="sec-card-body">${body}</div>`;
+    c.appendChild(card);
+  });
+  showView('v-final');
+}
+
+/* ═══ COPY ═══ */
+function getPlain(key){
+  const v=docState[key]||'';
+  if(key==='tf')return tfToPlaintext(v);
+  return stripMd(v);
+}
+function copySec(key,btn){
+  const labels={titel:'',ist:'IST BESCHREIBUNG',soll:'SOLL BESCHREIBUNG',kz:'KENNZAHLEN',ak:'AKZEPTANZKRITERIEN',tf:'TESTFAELLE'};
+  const prefix=labels[key]?labels[key]+':\n':'';
+  navigator.clipboard.writeText(prefix+getPlain(key)).then(()=>{
+    btn.classList.add('copied');btn.textContent='Kopiert';
+    setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Kopieren';},2000);
+  });
+}
+function copyAllSections(){
+  const order=['titel','ist','soll','kz','ak','tf'];
+  const labels={titel:'TITEL',ist:'IST BESCHREIBUNG',soll:'SOLL BESCHREIBUNG',kz:'KENNZAHLEN',ak:'AKZEPTANZKRITERIEN',tf:'TESTFAELLE'};
+  let parts=[];
+  order.forEach(k=>{
+    const v=docState[k];if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.')return;
+    if(k==='titel')parts.push(labels[k]+': '+getPlain(k));
+    else parts.push(labels[k]+':\n'+getPlain(k));
+  });
+  navigator.clipboard.writeText(parts.join('\n\n')).then(()=>showToast('Gesamte Anforderung kopiert','ok'));
+}
+
+/* ═══ RESET ═══ */
+function confirmNewReq(){
+  if(!confirm('Neue Anforderung starten? Aktuelle Eingaben gehen verloren.'))return;
+  msgs=[];docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};sparringCount=0;reqType='';isRunning=false;
+  g('intakeArea').style.display='';g('chatMessages').style.display='none';g('chatMessages').innerHTML='';
+  g('chatInputBar').style.display='none';g('actionsBar').classList.add('hidden');g('intakeText').value='';
+  document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('sel'));
+  ['titel','ist','soll','kz','ak','tf','open'].forEach(f=>updateDoc(f,'',null));
+  ['ds-kz','ds-ak','ds-tf','ds-open'].forEach(id=>{g(id).style.display='none';});
+  g('btnCopyReq').disabled=true;g('btnFinalize').disabled=true;
+  showView('v-general');updatePhase(0);
+}
+
+/* ═══ MOBILE ═══ */
+function mobileTab(t){
+  if(t==='doc'){g('docPanel').classList.add('mobile-show');g('chatPanel').classList.add('mobile-hide');g('mtDoc').classList.add('active');g('mtChat').classList.remove('active');}
+  else{g('docPanel').classList.remove('mobile-show');g('chatPanel').classList.remove('mobile-hide');g('mtChat').classList.add('active');g('mtDoc').classList.remove('active');}
+}
+
+/* ═══ API ═══ */
+async function callKIA(msgList,sys){
+  const r=await fetch(API_BASE+'/api/chat/completions',{method:'POST',headers:{'Authorization':'Bearer '+apiToken,'Content-Type':'application/json'},body:JSON.stringify({model:MODEL,messages:[{role:'system',content:sys},...msgList],stream:false})});
+  if(!r.ok){const t=await r.text();throw new Error('KIA '+r.status+': '+t.substring(0,160));}
+  const d=await r.json();const c=d.choices?.[0]?.message?.content;if(!c)throw new Error('Leere Antwort.');return c;
+}
+</script>
+</body>
+</html>

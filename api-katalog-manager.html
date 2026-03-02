@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API-Katalog Manager</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f5f7fa;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .mode-btn.active {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .mode-btn:not(.active) {
+            background: #e5e7eb;
+            color: #4b5563;
+        }
+
+        .mode-btn:not(.active):hover {
+            background: #d1d5db;
+        }
+
+        .file-upload-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .upload-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .upload-group label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        .upload-group input[type="file"] {
+            padding: 10px;
+            border: 2px dashed #d1d5db;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #f9fafb;
+        }
+
+        .upload-group input[type="text"] {
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .info-text {
+            margin-top: 12px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px 14px 45px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .stats-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .export-btn {
+            padding: 10px 20px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .export-btn:hover {
+            background: #059669;
+        }
+
+        .export-btn:disabled {
+            background: #d1d5db;
+            cursor: not-allowed;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat-card {
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .stat-card.blue { background: #eff6ff; }
+        .stat-card.green { background: #f0fdf4; }
+        .stat-card.purple { background: #faf5ff; }
+        .stat-card.orange { background: #fff7ed; }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-card.blue .stat-value { color: #2563eb; }
+        .stat-card.green .stat-value { color: #16a34a; }
+        .stat-card.purple .stat-value { color: #9333ea; }
+        .stat-card.orange .stat-value { color: #ea580c; }
+
+        .table-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: #f9fafb;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        th {
+            padding: 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 700;
+            color: #374151;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid #f3f4f6;
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: #f9fafb;
+        }
+
+        tr.selected {
+            background: #eff6ff;
+        }
+
+        .checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge.standard { background: #d1fae5; color: #065f46; }
+        .badge.individualisierung { background: #fef3c7; color: #92400e; }
+        .badge.entwicklung { background: #dbeafe; color: #1e40af; }
+        .badge.unknown { background: #f3f4f6; color: #4b5563; }
+
+        .compare-overview {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .compare-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .compare-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .compare-card {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .compare-card.green { background: #f0fdf4; }
+        .compare-card.red { background: #fef2f2; }
+        .compare-card.blue { background: #eff6ff; }
+        .compare-card.purple { background: #faf5ff; }
+
+        .compare-number {
+            font-size: 36px;
+            font-weight: 700;
+            margin-top: 8px;
+        }
+
+        .compare-card.green .compare-number { color: #16a34a; }
+        .compare-card.red .compare-number { color: #dc2626; }
+        .compare-card.blue .compare-number { color: #2563eb; }
+        .compare-card.purple .compare-number { color: #9333ea; }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>📊 API-Katalog Manager</h1>
+            
+            <!-- Modus-Buttons -->
+            <div class="mode-buttons">
+                <button class="mode-btn active" onclick="switchMode('search')">
+                    🔍 Suche & Auswahl
+                </button>
+                <button class="mode-btn" onclick="switchMode('compare')">
+                    📈 Quartalsvergleich
+                </button>
+            </div>
+
+            <!-- Datei-Upload -->
+            <div class="file-upload-section">
+                <div class="upload-group">
+                    <label id="mainFileLabel">API-Katalog hochladen (Excel)</label>
+                    <input type="file" id="mainFile" accept=".xlsx,.xls" onchange="handleMainFile(event)">
+                    <input type="text" id="mainQuarter" placeholder="z.B. Q2 2026" class="hidden">
+                </div>
+
+                <div class="upload-group hidden" id="compareUploadGroup">
+                    <label>Vergleichs-Katalog (älteres Quartal)</label>
+                    <input type="file" id="compareFile" accept=".xlsx,.xls" onchange="handleCompareFile(event)">
+                    <input type="text" id="compareQuarter" placeholder="z.B. Q1 2026">
+                </div>
+
+                <div class="info-text" id="infoText"></div>
+            </div>
+        </div>
+
+        <!-- Suche-Modus -->
+        <div id="searchMode">
+            <!-- Suchfeld -->
+            <div class="search-section hidden" id="searchSection">
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Suche über alle Spalten..." oninput="performSearch()">
+                </div>
+                <div class="info-text" style="margin-top: 12px;" id="searchInfo"></div>
+            </div>
+
+            <!-- Statistiken -->
+            <div class="stats-section hidden" id="statsSection">
+                <div class="stats-header">
+                    <div class="section-title">Auswahl-Statistiken</div>
+                    <button class="export-btn" onclick="exportToPowerPoint('selection')">
+                        📥 Als PowerPoint exportieren
+                    </button>
+                </div>
+                <div class="stats-grid" id="statsGrid"></div>
+            </div>
+
+            <!-- Tabelle -->
+            <div class="table-section hidden" id="tableSection">
+                <div class="table-wrapper">
+                    <table id="dataTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 60px;">Auswahl</th>
+                                <th>Name</th>
+                                <th>Paket</th>
+                                <th>Jährl. Lizenzgebühr</th>
+                                <th>Verfügbarkeit</th>
+                                <th>Ab</th>
+                                <th>Lizenziert</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vergleichs-Modus -->
+        <div id="compareMode" class="hidden">
+            <!-- Vergleichs-Übersicht -->
+            <div class="compare-overview hidden" id="compareOverview">
+                <div class="compare-header">
+                    <div class="section-title" id="compareTitle">Quartalsvergleich</div>
+                    <button class="export-btn" onclick="exportToPowerPoint('comparison')">
+                        📥 Als PowerPoint exportieren
+                    </button>
+                </div>
+                <div class="compare-grid" id="compareGrid"></div>
+            </div>
+
+            <!-- Neue APIs -->
+            <div class="table-section hidden" id="newAPIsSection" style="margin-bottom: 20px;">
+                <div style="padding: 20px; background: #f0fdf4; border-bottom: 2px solid #86efac;">
+                    <div class="section-title" style="color: #16a34a;">✨ Neu hinzugekommen</div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Paket</th>
+                                <th>Verfügbarkeit</th>
+                                <th>Lizenzgebühr</th>
+                            </tr>
+                        </thead>
+                        <tbody id="newAPIsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Entfernte APIs -->
+            <div class="table-section hidden" id="removedAPIsSection">
+                <div style="padding: 20px; background: #fef2f2; border-bottom: 2px solid #fca5a5;">
+                    <div class="section-title" style="color: #dc2626;">🗑️ Entfernt</div>
+                </div>
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Paket</th>
+                                <th>Verfügbarkeit</th>
+                            </tr>
+                        </thead>
+                        <tbody id="removedAPIsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let mainData = [];
+        let compareData = null;
+        let filteredData = [];
+        let selectedAPIs = new Set();
+        let currentMode = 'search';
+        let comparisonResult = null;
+
+        function switchMode(mode) {
+            currentMode = mode;
+            
+            // Update button states
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Show/hide sections
+            if (mode === 'search') {
+                document.getElementById('searchMode').classList.remove('hidden');
+                document.getElementById('compareMode').classList.add('hidden');
+                document.getElementById('compareUploadGroup').classList.add('hidden');
+                document.getElementById('mainQuarter').classList.add('hidden');
+                document.getElementById('mainFileLabel').textContent = 'API-Katalog hochladen (Excel)';
+            } else {
+                document.getElementById('searchMode').classList.add('hidden');
+                document.getElementById('compareMode').classList.remove('hidden');
+                document.getElementById('compareUploadGroup').classList.remove('hidden');
+                document.getElementById('mainQuarter').classList.remove('hidden');
+                document.getElementById('mainFileLabel').textContent = 'Aktueller Katalog (neueres Quartal)';
+            }
+        }
+
+        function handleMainFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                mainData = XLSX.utils.sheet_to_json(firstSheet);
+                
+                filteredData = [...mainData];
+                selectedAPIs.clear();
+                
+                updateInfoText();
+                
+                if (currentMode === 'search') {
+                    displaySearchMode();
+                } else if (compareData) {
+                    performComparison();
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function handleCompareFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+                compareData = XLSX.utils.sheet_to_json(firstSheet);
+                
+                updateInfoText();
+                
+                if (mainData.length > 0) {
+                    performComparison();
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function updateInfoText() {
+            let text = '';
+            if (mainData.length > 0) {
+                text += `${mainData.length} APIs geladen`;
+            }
+            if (compareData) {
+                text += ` • ${compareData.length} APIs im Vergleichskatalog`;
+            }
+            document.getElementById('infoText').textContent = text;
+        }
+
+        function displaySearchMode() {
+            document.getElementById('searchSection').classList.remove('hidden');
+            document.getElementById('tableSection').classList.remove('hidden');
+            renderTable();
+            updateSearchInfo();
+        }
+
+        function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            
+            if (!searchTerm) {
+                filteredData = [...mainData];
+            } else {
+                filteredData = mainData.filter(row => {
+                    return Object.values(row).some(value => {
+                        if (value === null || value === undefined) return false;
+                        return String(value).toLowerCase().includes(searchTerm);
+                    });
+                });
+            }
+            
+            renderTable();
+            updateSearchInfo();
+        }
+
+        function updateSearchInfo() {
+            let info = `${filteredData.length} von ${mainData.length} APIs`;
+            if (selectedAPIs.size > 0) {
+                info += ` • ${selectedAPIs.size} ausgewählt`;
+            }
+            document.getElementById('searchInfo').textContent = info;
+        }
+
+        function toggleSelection(apiName) {
+            if (selectedAPIs.has(apiName)) {
+                selectedAPIs.delete(apiName);
+            } else {
+                selectedAPIs.add(apiName);
+            }
+            renderTable();
+            updateSearchInfo();
+            updateStats();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+
+            filteredData.forEach(row => {
+                const tr = document.createElement('tr');
+                if (selectedAPIs.has(row.Name)) {
+                    tr.classList.add('selected');
+                }
+
+                tr.innerHTML = `
+                    <td>
+                        <input type="checkbox" class="checkbox" 
+                               ${selectedAPIs.has(row.Name) ? 'checked' : ''} 
+                               onchange="toggleSelection('${row.Name.replace(/'/g, "\\'")}')">
+                    </td>
+                    <td style="font-weight: 600;">${row.Name || '-'}</td>
+                    <td>${row.Paket || '-'}</td>
+                    <td>${formatLicense(row['Jährl. Lizenzgebühr'])}</td>
+                    <td>${formatAvailability(row.Verfügbarkeit)}</td>
+                    <td>${row.Ab || '-'}</td>
+                    <td>${row.Lizenziert || '-'}</td>
+                `;
+
+                tbody.appendChild(tr);
+            });
+        }
+
+        function formatLicense(value) {
+            if (!value) return '-';
+            const num = parseFloat(value);
+            if (isNaN(num)) return '-';
+            return num.toLocaleString('de-DE') + ' €';
+        }
+
+        function formatAvailability(status) {
+            if (!status) return '<span class="badge unknown">Unbekannt</span>';
+            
+            const statusMap = {
+                'Standard': 'standard',
+                'Individualisierung': 'individualisierung',
+                'In Entwicklung': 'entwicklung'
+            };
+            
+            const className = statusMap[status] || 'unknown';
+            return `<span class="badge ${className}">${status}</span>`;
+        }
+
+        function updateStats() {
+            if (selectedAPIs.size === 0) {
+                document.getElementById('statsSection').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('statsSection').classList.remove('hidden');
+
+            const selected = mainData.filter(row => selectedAPIs.has(row.Name));
+            
+            // Lizenzgebühren
+            const totalLicense = selected.reduce((sum, row) => {
+                const fee = parseFloat(row['Jährl. Lizenzgebühr']);
+                return sum + (isNaN(fee) ? 0 : fee);
+            }, 0);
+
+            // Verfügbarkeit
+            const availability = {};
+            selected.forEach(row => {
+                const status = row.Verfügbarkeit || 'Unbekannt';
+                availability[status] = (availability[status] || 0) + 1;
+            });
+
+            // Pakete
+            const packages = new Set();
+            selected.forEach(row => {
+                if (row.Paket) packages.add(row.Paket);
+            });
+
+            // Verfügbarkeit als String
+            const availabilityText = Object.entries(availability)
+                .map(([status, count]) => `${status}: ${count}`)
+                .join('<br>');
+
+            document.getElementById('statsGrid').innerHTML = `
+                <div class="stat-card blue">
+                    <div class="stat-label">Gesamt ausgewählt</div>
+                    <div class="stat-value">${selected.length}</div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-label">Jährl. Lizenzgebühr</div>
+                    <div class="stat-value">${totalLicense > 0 ? totalLicense.toLocaleString('de-DE') + ' €' : 'N/A'}</div>
+                </div>
+                <div class="stat-card purple">
+                    <div class="stat-label">Pakete</div>
+                    <div class="stat-value" style="font-size: 16px; line-height: 1.4;">
+                        ${packages.size > 0 ? Array.from(packages).join(', ') : 'Keine'}
+                    </div>
+                </div>
+                <div class="stat-card orange">
+                    <div class="stat-label">Verfügbarkeit</div>
+                    <div class="stat-value" style="font-size: 14px; line-height: 1.6;">
+                        ${availabilityText}
+                    </div>
+                </div>
+            `;
+        }
+
+        function performComparison() {
+            if (!mainData.length || !compareData) return;
+
+            const currentNames = new Set(mainData.map(row => row.Name));
+            const compareNames = new Set(compareData.map(row => row.Name));
+
+            const newAPIs = mainData.filter(row => !compareNames.has(row.Name));
+            const removedAPIs = compareData.filter(row => !currentNames.has(row.Name));
+            const commonAPIs = mainData.filter(row => compareNames.has(row.Name));
+
+            comparisonResult = {
+                new: newAPIs,
+                removed: removedAPIs,
+                common: commonAPIs,
+                totalCurrent: mainData.length,
+                totalCompare: compareData.length
+            };
+
+            // Quartalsnamen
+            const currentQ = document.getElementById('mainQuarter').value || 'Aktuell';
+            const compareQ = document.getElementById('compareQuarter').value || 'Vorherig';
+
+            // Übersicht anzeigen
+            document.getElementById('compareOverview').classList.remove('hidden');
+            document.getElementById('compareTitle').textContent = `Quartalsvergleich: ${currentQ} vs ${compareQ}`;
+            
+            document.getElementById('compareGrid').innerHTML = `
+                <div class="compare-card green">
+                    <div class="stat-label">Neu hinzugekommen</div>
+                    <div class="compare-number">${newAPIs.length}</div>
+                </div>
+                <div class="compare-card red">
+                    <div class="stat-label">Entfernt</div>
+                    <div class="compare-number">${removedAPIs.length}</div>
+                </div>
+                <div class="compare-card blue">
+                    <div class="stat-label">Unverändert</div>
+                    <div class="compare-number">${commonAPIs.length}</div>
+                </div>
+                <div class="compare-card purple">
+                    <div class="stat-label">Gesamt aktuell</div>
+                    <div class="compare-number">${mainData.length}</div>
+                </div>
+            `;
+
+            // Neue APIs anzeigen
+            if (newAPIs.length > 0) {
+                document.getElementById('newAPIsSection').classList.remove('hidden');
+                const tbody = document.getElementById('newAPIsBody');
+                tbody.innerHTML = '';
+                
+                newAPIs.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight: 600;">${row.Name || '-'}</td>
+                        <td>${row.Paket || '-'}</td>
+                        <td>${row.Verfügbarkeit || '-'}</td>
+                        <td>${formatLicense(row['Jährl. Lizenzgebühr'])}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                document.getElementById('newAPIsSection').classList.add('hidden');
+            }
+
+            // Entfernte APIs anzeigen
+            if (removedAPIs.length > 0) {
+                document.getElementById('removedAPIsSection').classList.remove('hidden');
+                const tbody = document.getElementById('removedAPIsBody');
+                tbody.innerHTML = '';
+                
+                removedAPIs.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight: 600;">${row.Name || '-'}</td>
+                        <td>${row.Paket || '-'}</td>
+                        <td>${row.Verfügbarkeit || '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                document.getElementById('removedAPIsSection').classList.add('hidden');
+            }
+        }
+
+        // PowerPoint Export Funktion
+        function exportToPowerPoint(type) {
+            const pptx = new PptxGenJS();
+            pptx.layout = 'LAYOUT_16x9';
+            pptx.author = 'API-Katalog Manager';
+            
+            if (type === 'selection') {
+                createSelectionPresentation(pptx);
+            } else if (type === 'comparison') {
+                createComparisonPresentation(pptx);
+            }
+            
+            const fileName = type === 'selection' 
+                ? `API-Auswahl_${new Date().toISOString().split('T')[0]}.pptx`
+                : `API-Quartalsvergleich_${new Date().toISOString().split('T')[0]}.pptx`;
+            
+            pptx.writeFile({ fileName });
+        }
+
+        function createSelectionPresentation(pptx) {
+            const selected = mainData.filter(row => selectedAPIs.has(row.Name));
+            
+            // Farben
+            const primaryColor = '1E2761';
+            const accentColor = 'CADCFC';
+            const textColor = '333333';
+            
+            // Slide 1: Titelfolie
+            const slide1 = pptx.addSlide();
+            slide1.background = { color: primaryColor };
+            
+            slide1.addText('API-Katalog Auswahl', {
+                x: 0.5, y: 2, w: 9, h: 0.8,
+                fontSize: 44, bold: true, color: 'FFFFFF',
+                align: 'center'
+            });
+            
+            slide1.addText(`${selected.length} ausgewählte APIs`, {
+                x: 0.5, y: 3, w: 9, h: 0.5,
+                fontSize: 24, color: accentColor,
+                align: 'center'
+            });
+            
+            const today = new Date().toLocaleDateString('de-DE', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            
+            slide1.addText(today, {
+                x: 0.5, y: 4.8, w: 9, h: 0.3,
+                fontSize: 14, color: accentColor,
+                align: 'center'
+            });
+
+            // Slide 2: Zusammenfassung
+            const slide2 = pptx.addSlide();
+            slide2.background = { color: 'F5F7FA' };
+            
+            slide2.addText('Zusammenfassung', {
+                x: 0.5, y: 0.5, w: 9, h: 0.6,
+                fontSize: 36, bold: true, color: primaryColor,
+                margin: 0
+            });
+
+            // Statistiken berechnen
+            const totalLicense = selected.reduce((sum, row) => {
+                const fee = parseFloat(row['Jährl. Lizenzgebühr']);
+                return sum + (isNaN(fee) ? 0 : fee);
+            }, 0);
+
+            const availability = {};
+            selected.forEach(row => {
+                const status = row.Verfügbarkeit || 'Unbekannt';
+                availability[status] = (availability[status] || 0) + 1;
+            });
+
+            const packages = new Set();
+            selected.forEach(row => {
+                if (row.Paket) packages.add(row.Paket);
+            });
+
+            // Stats-Boxen
+            const statsY = 1.5;
+            const boxHeight = 0.8;
+            const gap = 0.1;
+            
+            // Box 1: Gesamt
+            slide2.addShape(pptx.shapes.RECTANGLE, {
+                x: 0.5, y: statsY, w: 2.2, h: boxHeight,
+                fill: { color: 'EFF6FF' },
+                line: { type: 'none' }
+            });
+            
+            slide2.addText('Gesamt ausgewählt', {
+                x: 0.5, y: statsY + 0.15, w: 2.2, h: 0.3,
+                fontSize: 12, color: '6B7280', align: 'center'
+            });
+            
+            slide2.addText(String(selected.length), {
+                x: 0.5, y: statsY + 0.35, w: 2.2, h: 0.4,
+                fontSize: 32, bold: true, color: '2563EB', align: 'center'
+            });
+
+            // Box 2: Lizenzgebühr
+            slide2.addShape(pptx.shapes.RECTANGLE, {
+                x: 2.8, y: statsY, w: 2.2, h: boxHeight,
+                fill: { color: 'F0FDF4' },
+                line: { type: 'none' }
+            });
+            
+            slide2.addText('Jährl. Lizenzgebühr', {
+                x: 2.8, y: statsY + 0.15, w: 2.2, h: 0.3,
+                fontSize: 12, color: '6B7280', align: 'center'
+            });
+            
+            slide2.addText(totalLicense > 0 ? `${totalLicense.toLocaleString('de-DE')} €` : 'N/A', {
+                x: 2.8, y: statsY + 0.35, w: 2.2, h: 0.4,
+                fontSize: totalLicense > 0 ? 24 : 32, bold: true, color: '16A34A', align: 'center'
+            });
+
+            // Box 3: Pakete
+            slide2.addShape(pptx.shapes.RECTANGLE, {
+                x: 5.1, y: statsY, w: 2.2, h: boxHeight,
+                fill: { color: 'FAF5FF' },
+                line: { type: 'none' }
+            });
+            
+            slide2.addText('Pakete', {
+                x: 5.1, y: statsY + 0.15, w: 2.2, h: 0.3,
+                fontSize: 12, color: '6B7280', align: 'center'
+            });
+            
+            slide2.addText(String(packages.size), {
+                x: 5.1, y: statsY + 0.35, w: 2.2, h: 0.4,
+                fontSize: 32, bold: true, color: '9333EA', align: 'center'
+            });
+
+            // Box 4: Verfügbarkeit
+            slide2.addShape(pptx.shapes.RECTANGLE, {
+                x: 7.4, y: statsY, w: 2.2, h: boxHeight,
+                fill: { color: 'FFF7ED' },
+                line: { type: 'none' }
+            });
+            
+            slide2.addText('Verfügbarkeit', {
+                x: 7.4, y: statsY + 0.15, w: 2.2, h: 0.3,
+                fontSize: 12, color: '6B7280', align: 'center'
+            });
+            
+            const availText = Object.entries(availability)
+                .map(([status, count]) => `${status}: ${count}`)
+                .join('\n');
+            
+            slide2.addText(availText, {
+                x: 7.4, y: statsY + 0.35, w: 2.2, h: 0.5,
+                fontSize: 11, bold: true, color: 'EA580C', align: 'center', valign: 'top'
+            });
+
+            // Verfügbarkeitsdetails
+            slide2.addText('Verfügbarkeitsdetails:', {
+                x: 0.5, y: 2.8, w: 9, h: 0.4,
+                fontSize: 18, bold: true, color: primaryColor
+            });
+
+            let detailY = 3.3;
+            Object.entries(availability).forEach(([status, count]) => {
+                slide2.addText(`• ${status}: ${count} APIs`, {
+                    x: 0.8, y: detailY, w: 8.5, h: 0.3,
+                    fontSize: 14, color: textColor
+                });
+                detailY += 0.35;
+            });
+
+            // Paketdetails
+            if (packages.size > 0) {
+                slide2.addText('Betroffene Pakete:', {
+                    x: 0.5, y: detailY + 0.2, w: 9, h: 0.4,
+                    fontSize: 18, bold: true, color: primaryColor
+                });
+
+                slide2.addText(Array.from(packages).join(', '), {
+                    x: 0.8, y: detailY + 0.7, w: 8.5, h: 0.8,
+                    fontSize: 14, color: textColor
+                });
+            }
+
+            // Slide 3+: API-Details (max 15 pro Slide)
+            const itemsPerSlide = 15;
+            for (let i = 0; i < selected.length; i += itemsPerSlide) {
+                const slideAPIs = selected.slice(i, i + itemsPerSlide);
+                const slideNum = Math.floor(i / itemsPerSlide) + 3;
+                
+                const slide = pptx.addSlide();
+                slide.background = { color: 'F5F7FA' };
+                
+                slide.addText(`Ausgewählte APIs (${i + 1}-${Math.min(i + itemsPerSlide, selected.length)} von ${selected.length})`, {
+                    x: 0.5, y: 0.5, w: 9, h: 0.6,
+                    fontSize: 28, bold: true, color: primaryColor,
+                    margin: 0
+                });
+
+                // Tabelle erstellen
+                const rows = [
+                    [
+                        { text: 'Name', options: { bold: true, fontSize: 11, color: 'FFFFFF' } },
+                        { text: 'Paket', options: { bold: true, fontSize: 11, color: 'FFFFFF' } },
+                        { text: 'Lizenzgebühr', options: { bold: true, fontSize: 11, color: 'FFFFFF' } },
+                        { text: 'Verfügbarkeit', options: { bold: true, fontSize: 11, color: 'FFFFFF' } }
+                    ]
+                ];
+
+                slideAPIs.forEach(api => {
+                    rows.push([
+                        { text: api.Name || '-', options: { fontSize: 10 } },
+                        { text: api.Paket || '-', options: { fontSize: 10 } },
+                        { text: api['Jährl. Lizenzgebühr'] ? `${parseFloat(api['Jährl. Lizenzgebühr']).toLocaleString('de-DE')} €` : '-', options: { fontSize: 10 } },
+                        { text: api.Verfügbarkeit || 'Unbekannt', options: { fontSize: 10 } }
+                    ]);
+                });
+
+                slide.addTable(rows, {
+                    x: 0.5,
+                    y: 1.3,
+                    w: 9,
+                    h: 4,
+                    colW: [3.5, 1.8, 1.8, 1.9],
+                    fill: { color: 'FFFFFF' },
+                    border: { pt: 1, color: 'D1D5DB' },
+                    rowH: 0.3,
+                    fontSize: 10,
+                    color: textColor,
+                    align: 'left',
+                    valign: 'middle'
+                });
+
+                // Header-Hintergrund
+                slide.addShape(pptx.shapes.RECTANGLE, {
+                    x: 0.5,
+                    y: 1.3,
+                    w: 9,
+                    h: 0.3,
+                    fill: { color: primaryColor },
+                    line: { type: 'none' }
+                });
+            }
+        }
+
+        function createComparisonPresentation(pptx) {
+            if (!comparisonResult) return;
+
+            const currentQ = document.getElementById('mainQuarter').value || 'Aktuell';
+            const compareQ = document.getElementById('compareQuarter').value || 'Vorherig';
+
+            // Farben
+            const primaryColor = '028090';
+            const accentColor = '00A896';
+            const textColor = '333333';
+
+            // Slide 1: Titelfolie
+            const slide1 = pptx.addSlide();
+            slide1.background = { color: primaryColor };
+            
+            slide1.addText('API-Katalog Quartalsvergleich', {
+                x: 0.5, y: 2, w: 9, h: 0.8,
+                fontSize: 44, bold: true, color: 'FFFFFF',
+                align: 'center'
+            });
+            
+            slide1.addText(`${currentQ} vs ${compareQ}`, {
+                x: 0.5, y: 3, w: 9, h: 0.5,
+                fontSize: 28, color: 'FFFFFF',
+                align: 'center'
+            });
+            
+            const today = new Date().toLocaleDateString('de-DE', { 
+                year: 'numeric', month: 'long', day: 'numeric' 
+            });
+            
+            slide1.addText(today, {
+                x: 0.5, y: 4.8, w: 9, h: 0.3,
+                fontSize: 14, color: 'FFFFFF',
+                align: 'center'
+            });
+
+            // Slide 2: Übersicht
+            const slide2 = pptx.addSlide();
+            slide2.background = { color: 'F5F7FA' };
+            
+            slide2.addText('Vergleichsübersicht', {
+                x: 0.5, y: 0.5, w: 9, h: 0.6,
+                fontSize: 36, bold: true, color: primaryColor,
+                margin: 0
+            });
+
+            // Stats-Boxen
+            const statsY = 1.5;
+            const boxWidth = 2.2;
+            const boxHeight = 1;
+            
+            // Box 1: Neu
+            slide2.addShape(pptx.shapes.RECTANGLE, {
+                x: 0.5, y: statsY, w: boxWidth, h: boxHeight,
+                fill: { color: 'F0FDF4' },
+                line: { type: 'none' }
+            });
+            
+            slide2.addText('Neu hinzugekommen', {
+                x: 0.5, y: statsY + 0.2, w: boxWidth, h: 0.3,
+                fontSize: 13, color: '6B7280', align: 'center'
+            });
+            
+            slide2.addText(String(comparisonResult.new.length), {
+                x: 0.5, y: statsY + 0.45, w: boxWidth, h: 0.5,
+                fontSize: 40, bold: true, color: '16A34A', align: 'center'
+            });
+
+            // Box 2: Entfernt
+            slide2.addShape(pptx.shapes.RECTANGLE, {
+                x: 2.9, y: statsY, w: boxWidth, h: boxHeight,
+                fill: { color: 'FEF2F2' },
+                line: { type: 'none' }
+            });
+            
+            slide2.addText('Entfernt', {
+                x: 2.9, y: statsY + 0.2, w: boxWidth, h: 0.3,
+                fontSize: 13, color: '6B7280', align: 'center'
+            });
+            
+            slide2.addText(String(comparisonResult.removed.length), {
+                x: 2.9, y: statsY + 0.45, w: boxWidth, h: 0.5,
+                fontSize: 40, bold: true, color: 'DC2626', align: 'center'
+            });
+
+            // Box 3: Unverändert
+            slide2.addShape(pptx.shapes.RECTANGLE, {
+                x: 5.3, y: statsY, w: boxWidth, h: boxHeight,
+                fill: { color: 'EFF6FF' },
+                line: { type: 'none' }
+            });
+            
+            slide2.addText('Unverändert', {
+                x: 5.3, y: statsY + 0.2, w: boxWidth, h: 0.3,
+                fontSize: 13, color: '6B7280', align: 'center'
+            });
+            
+            slide2.addText(String(comparisonResult.common.length), {
+                x: 5.3, y: statsY + 0.45, w: boxWidth, h: 0.5,
+                fontSize: 40, bold: true, color: '2563EB', align: 'center'
+            });
+
+            // Box 4: Gesamt
+            slide2.addShape(pptx.shapes.RECTANGLE, {
+                x: 7.7, y: statsY, w: boxWidth, h: boxHeight,
+                fill: { color: 'FAF5FF' },
+                line: { type: 'none' }
+            });
+            
+            slide2.addText('Gesamt aktuell', {
+                x: 7.7, y: statsY + 0.2, w: boxWidth, h: 0.3,
+                fontSize: 13, color: '6B7280', align: 'center'
+            });
+            
+            slide2.addText(String(comparisonResult.totalCurrent), {
+                x: 7.7, y: statsY + 0.45, w: boxWidth, h: 0.5,
+                fontSize: 40, bold: true, color: '9333EA', align: 'center'
+            });
+
+            // Zusammenfassung
+            slide2.addText('Zusammenfassung:', {
+                x: 0.5, y: 3, w: 9, h: 0.4,
+                fontSize: 18, bold: true, color: primaryColor
+            });
+
+            const summaryText = [
+                { text: `• Im Vergleich zu ${compareQ} wurden ${comparisonResult.new.length} neue APIs hinzugefügt.`, options: { breakLine: true } },
+                { text: `• ${comparisonResult.removed.length} APIs wurden entfernt.`, options: { breakLine: true } },
+                { text: `• ${comparisonResult.common.length} APIs sind unverändert geblieben.`, options: { breakLine: true } },
+                { text: `• Der aktuelle Katalog (${currentQ}) enthält insgesamt ${comparisonResult.totalCurrent} APIs.` }
+            ];
+
+            slide2.addText(summaryText, {
+                x: 0.8, y: 3.5, w: 8.5, h: 1.5,
+                fontSize: 14, color: textColor, lineSpacing: 24
+            });
+
+            // Slide 3+: Neue APIs
+            if (comparisonResult.new.length > 0) {
+                const itemsPerSlide = 15;
+                for (let i = 0; i < comparisonResult.new.length; i += itemsPerSlide) {
+                    const slideAPIs = comparisonResult.new.slice(i, i + itemsPerSlide);
+                    
+                    const slide = pptx.addSlide();
+                    slide.background = { color: 'F5F7FA' };
+                    
+                    slide.addText(`✨ Neu hinzugekommen (${i + 1}-${Math.min(i + itemsPerSlide, comparisonResult.new.length)} von ${comparisonResult.new.length})`, {
+                        x: 0.5, y: 0.5, w: 9, h: 0.6,
+                        fontSize: 28, bold: true, color: '16A34A',
+                        margin: 0
+                    });
+
+                    // Tabelle
+                    const rows = [
+                        [
+                            { text: 'Name', options: { bold: true, fontSize: 11, color: 'FFFFFF' } },
+                            { text: 'Paket', options: { bold: true, fontSize: 11, color: 'FFFFFF' } },
+                            { text: 'Verfügbarkeit', options: { bold: true, fontSize: 11, color: 'FFFFFF' } },
+                            { text: 'Lizenzgebühr', options: { bold: true, fontSize: 11, color: 'FFFFFF' } }
+                        ]
+                    ];
+
+                    slideAPIs.forEach(api => {
+                        rows.push([
+                            { text: api.Name || '-', options: { fontSize: 10 } },
+                            { text: api.Paket || '-', options: { fontSize: 10 } },
+                            { text: api.Verfügbarkeit || 'Unbekannt', options: { fontSize: 10 } },
+                            { text: api['Jährl. Lizenzgebühr'] ? `${parseFloat(api['Jährl. Lizenzgebühr']).toLocaleString('de-DE')} €` : '-', options: { fontSize: 10 } }
+                        ]);
+                    });
+
+                    slide.addTable(rows, {
+                        x: 0.5, y: 1.3, w: 9, h: 4,
+                        colW: [3.5, 1.8, 1.8, 1.9],
+                        fill: { color: 'FFFFFF' },
+                        border: { pt: 1, color: 'D1D5DB' },
+                        rowH: 0.3,
+                        fontSize: 10,
+                        color: textColor,
+                        align: 'left',
+                        valign: 'middle'
+                    });
+
+                    slide.addShape(pptx.shapes.RECTANGLE, {
+                        x: 0.5, y: 1.3, w: 9, h: 0.3,
+                        fill: { color: '16A34A' },
+                        line: { type: 'none' }
+                    });
+                }
+            }
+
+            // Slide: Entfernte APIs
+            if (comparisonResult.removed.length > 0) {
+                const itemsPerSlide = 15;
+                for (let i = 0; i < comparisonResult.removed.length; i += itemsPerSlide) {
+                    const slideAPIs = comparisonResult.removed.slice(i, i + itemsPerSlide);
+                    
+                    const slide = pptx.addSlide();
+                    slide.background = { color: 'F5F7FA' };
+                    
+                    slide.addText(`🗑️ Entfernt (${i + 1}-${Math.min(i + itemsPerSlide, comparisonResult.removed.length)} von ${comparisonResult.removed.length})`, {
+                        x: 0.5, y: 0.5, w: 9, h: 0.6,
+                        fontSize: 28, bold: true, color: 'DC2626',
+                        margin: 0
+                    });
+
+                    // Tabelle
+                    const rows = [
+                        [
+                            { text: 'Name', options: { bold: true, fontSize: 11, color: 'FFFFFF' } },
+                            { text: 'Paket', options: { bold: true, fontSize: 11, color: 'FFFFFF' } },
+                            { text: 'Verfügbarkeit', options: { bold: true, fontSize: 11, color: 'FFFFFF' } }
+                        ]
+                    ];
+
+                    slideAPIs.forEach(api => {
+                        rows.push([
+                            { text: api.Name || '-', options: { fontSize: 10 } },
+                            { text: api.Paket || '-', options: { fontSize: 10 } },
+                            { text: api.Verfügbarkeit || 'Unbekannt', options: { fontSize: 10 } }
+                        ]);
+                    });
+
+                    slide.addTable(rows, {
+                        x: 0.5, y: 1.3, w: 9, h: 4,
+                        colW: [4.5, 2.25, 2.25],
+                        fill: { color: 'FFFFFF' },
+                        border: { pt: 1, color: 'D1D5DB' },
+                        rowH: 0.3,
+                        fontSize: 10,
+                        color: textColor,
+                        align: 'left',
+                        valign: 'middle'
+                    });
+
+                    slide.addShape(pptx.shapes.RECTANGLE, {
+                        x: 0.5, y: 1.3, w: 9, h: 0.3,
+                        fill: { color: 'DC2626' },
+                        line: { type: 'none' }
+                    });
+                }
+            }
+        }
+    </script>
+</body>
+</html>
