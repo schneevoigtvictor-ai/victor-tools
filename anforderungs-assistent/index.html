@@ -67,10 +67,14 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 .landing-tag{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue-strong);margin-bottom:8px;}
 .landing-title{font-family:'Fraunces',serif;font-size:32px;font-weight:600;color:var(--tx);margin-bottom:10px;line-height:1.25;}
 .landing-desc{font-size:15.5px;color:var(--mu);line-height:1.7;margin-bottom:32px;}
-.mode-primary{background:var(--sf);border:2px solid var(--bd);border-radius:var(--r);padding:28px;cursor:pointer;transition:all .25s var(--ease);margin-bottom:14px;position:relative;overflow:hidden;}
+
+/* Modus-Karten */
+.mode-cards{display:flex;flex-direction:column;gap:12px;margin-bottom:14px;}
+.mode-primary{background:var(--sf);border:2px solid var(--bd);border-radius:var(--r);padding:28px;cursor:pointer;transition:all .25s var(--ease);position:relative;overflow:hidden;}
 .mode-primary:hover{border-color:var(--blue-strong);box-shadow:var(--shadow-lg);transform:translateY(-2px);}
 .mode-primary:hover .mode-arrow{transform:translateX(4px);}
 .mode-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue-strong);background:rgba(43,108,176,.08);border:1px solid rgba(43,108,176,.15);border-radius:4px;padding:3px 8px;display:inline-block;margin-bottom:12px;}
+.mode-badge.green{color:var(--green);background:rgba(22,163,74,.08);border-color:rgba(22,163,74,.15);}
 .mode-primary h3{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--tx);margin-bottom:6px;}
 .mode-primary p{font-size:14px;color:var(--mu);line-height:1.6;}
 .mode-arrow{position:absolute;right:24px;top:50%;transform:translateY(-50%);font-size:20px;color:var(--dm);transition:transform .2s var(--ease);}
@@ -83,6 +87,8 @@ body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 .tok-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--dm);font-size:15px;padding:3px;border-radius:4px;}
 .tok-toggle:hover{color:var(--tx);}
 .tok-hint{font-size:12px;color:var(--dm);margin-top:6px;line-height:1.5;}
+.help-link{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:13px;color:var(--blue-strong);cursor:pointer;border:none;background:none;font-family:inherit;text-decoration:underline;text-underline-offset:3px;transition:color .2s var(--ease);}
+.help-link:hover{color:var(--blue-deep);}
 
 /* FORMS */
 textarea.fi,input.fi{width:100%;background:var(--sf);border:1.5px solid var(--bd);border-radius:var(--rs);padding:11px 14px;color:var(--tx);font-family:inherit;font-size:14.5px;outline:none;transition:border-color .2s var(--ease),box-shadow .2s var(--ease);resize:vertical;}
@@ -102,6 +108,15 @@ textarea.fi{min-height:80px;}
 .fhint{font-size:12px;color:var(--dm);margin-top:5px;line-height:1.5;}
 .ferr{font-size:12px;color:var(--red);margin-top:5px;display:none;}
 .ferr.on{display:block;}
+
+/* Spracheingabe-Button */
+.speech-wrap{position:relative;}
+.speech-btn{position:absolute;right:10px;bottom:10px;width:32px;height:32px;border-radius:50%;background:var(--sf2);border:1.5px solid var(--bd);color:var(--mu);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s var(--ease);z-index:2;}
+.speech-btn:hover{background:var(--blue-pale);border-color:var(--blue-strong);color:var(--blue-strong);}
+.speech-btn.recording{background:var(--red-light);border-color:var(--red);color:var(--red);animation:pulse 1.2s ease-in-out infinite;}
+.speech-btn svg{width:16px;height:16px;fill:currentColor;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+.speech-btn[hidden]{display:none;}
 
 /* SPLIT VIEW */
 .app{margin-top:var(--tb);display:flex;min-height:calc(100vh - var(--tb));}
@@ -133,14 +148,17 @@ textarea.fi{min-height:80px;}
 
 /* CHAT */
 .chat-panel{flex:1;display:flex;flex-direction:column;min-width:0;}
-.intake{padding:32px 36px;max-width:680px;}
+.intake{padding:32px 36px;max-width:720px;}
 .intake-title{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--tx);margin-bottom:6px;}
 .intake-desc{font-size:14.5px;color:var(--mu);line-height:1.65;margin-bottom:20px;}
 .intake-type-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
 .type-chip{background:var(--sf);border:1.5px solid var(--bd);border-radius:20px;padding:6px 16px;font-family:inherit;font-size:13px;color:var(--mu);cursor:pointer;transition:all .2s var(--ease);}
 .type-chip:hover{border-color:var(--blue-strong);color:var(--blue-strong);}
 .type-chip.sel{background:rgba(43,108,176,.06);border-color:var(--blue-strong);color:var(--blue-strong);font-weight:600;}
-.intake-actions{display:flex;gap:10px;align-items:center;margin-top:14px;}
+.intake-actions{display:flex;gap:10px;align-items:center;margin-top:18px;}
+.intake-fields{display:flex;flex-direction:column;gap:16px;}
+.intake-field-group{position:relative;}
+.intake-field-group .flbl{margin-bottom:4px;}
 .chat-messages{flex:1;overflow-y:auto;padding:24px 32px;display:flex;flex-direction:column;gap:16px;}
 .msg{display:flex;gap:10px;align-items:flex-start;animation:fadeIn .3s var(--ease-out);}
 .msg.user{justify-content:flex-end;}
@@ -174,7 +192,8 @@ textarea.fi{min-height:80px;}
 .rq-submit:disabled{opacity:.4;cursor:not-allowed;}
 .rq-submit-hint{font-size:11.5px;color:var(--dm);}
 .chat-input-bar{padding:14px 20px;border-top:1px solid var(--bd);background:var(--sf);display:flex;gap:8px;align-items:flex-end;}
-.chat-input{flex:1;background:var(--sf2);border:1.5px solid var(--bd);border-radius:var(--rs);padding:11px 14px;font-family:inherit;font-size:14.5px;color:var(--tx);outline:none;resize:none;min-height:44px;max-height:120px;line-height:1.55;transition:border-color .2s var(--ease);}
+.chat-input-wrap{flex:1;position:relative;}
+.chat-input{width:100%;background:var(--sf2);border:1.5px solid var(--bd);border-radius:var(--rs);padding:11px 44px 11px 14px;font-family:inherit;font-size:14.5px;color:var(--tx);outline:none;resize:none;min-height:44px;max-height:120px;line-height:1.55;transition:border-color .2s var(--ease);}
 .chat-input:focus{border-color:var(--blue-vivid);box-shadow:0 0 0 3px rgba(49,130,206,.08);}
 .chat-input::placeholder{color:var(--dm);}
 .chat-send{background:var(--blue-strong);color:#fff;border:none;border-radius:var(--rs);height:44px;padding:0 20px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s var(--ease);white-space:nowrap;}
@@ -208,6 +227,48 @@ textarea.fi{min-height:80px;}
 .rendered p{margin-bottom:8px;}
 .rendered p:last-child{margin-bottom:0;}
 
+/* Strukturierter IST-Text Output */
+.ist-structured{display:flex;flex-direction:column;gap:0;}
+.ist-section{padding:16px 20px;border-left:3px solid var(--bd);position:relative;transition:border-color .2s var(--ease);}
+.ist-section:not(:last-child){border-bottom:1px solid var(--bd2);}
+.ist-section:hover{border-left-color:var(--blue-strong);background:rgba(0,0,0,.008);}
+.ist-section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue-strong);margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+.ist-section-label .ist-icon{width:18px;height:18px;border-radius:5px;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ist-section-label .ist-icon svg{width:10px;height:10px;stroke:var(--blue-strong);fill:none;stroke-width:2.5;}
+.ist-section-body{font-size:14px;line-height:1.75;color:var(--tx2);}
+.ist-section-body strong{color:var(--tx);font-weight:600;}
+.ist-section-body ul{padding-left:20px;margin:8px 0;}
+.ist-section-body li{margin-bottom:5px;line-height:1.6;}
+.ist-section-body p{margin-bottom:8px;}
+.ist-section-body p:last-child{margin-bottom:0;}
+/* Farbige Varianten fuer verschiedene Sektionen */
+.ist-section.s-trigger{border-left-color:var(--green);}
+.ist-section.s-trigger:hover{border-left-color:#0e7c32;}
+.ist-section.s-trigger .ist-section-label{color:var(--green);}
+.ist-section.s-trigger .ist-icon{background:var(--green-light);}
+.ist-section.s-trigger .ist-icon svg{stroke:var(--green);}
+.ist-section.s-steps{border-left-color:var(--blue-strong);}
+.ist-section.s-steps .ist-section-label{color:var(--blue-strong);}
+.ist-section.s-special{border-left-color:var(--lila);}
+.ist-section.s-special:hover{border-left-color:#553c9a;}
+.ist-section.s-special .ist-section-label{color:var(--lila);}
+.ist-section.s-special .ist-icon{background:var(--lila-light);}
+.ist-section.s-special .ist-icon svg{stroke:var(--lila);}
+.ist-section.s-output{border-left-color:var(--orange);}
+.ist-section.s-output:hover{border-left-color:#9c4221;}
+.ist-section.s-output .ist-section-label{color:var(--orange);}
+.ist-section.s-output .ist-icon{background:rgba(192,86,33,.08);}
+.ist-section.s-output .ist-icon svg{stroke:var(--orange);}
+/* Tab-Ansicht fuer Text/Tabelle im Output */
+.ist-output-tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:0;}
+.ist-output-tab{flex:1;padding:10px 16px;font-family:inherit;font-size:13px;font-weight:600;color:var(--mu);background:var(--sf2);border:none;cursor:pointer;transition:all .2s var(--ease);text-align:center;}
+.ist-output-tab:first-child{border-radius:var(--rs) 0 0 0;}
+.ist-output-tab:last-child{border-radius:0 var(--rs) 0 0;}
+.ist-output-tab.active{color:var(--blue-strong);background:var(--sf);box-shadow:inset 0 -2px 0 var(--blue-strong);}
+.ist-output-tab:hover:not(.active){background:var(--blue-pale);color:var(--blue-strong);}
+.ist-output-pane{display:none;padding:0;}
+.ist-output-pane.active{display:block;}
+
 /* TESTFALL TABLE */
 .tf-table-wrap{overflow-x:auto;}
 .tf-table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;}
@@ -231,6 +292,35 @@ textarea.fi{min-height:80px;}
 .toast.ok{background:var(--green);}
 .toast.warn{background:var(--orange);}
 .toast.err{background:var(--red);}
+
+/* ONBOARDING MODAL */
+.modal-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,43,82,.45);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s var(--ease);}
+.modal-overlay.open{opacity:1;pointer-events:auto;}
+.modal{background:var(--sf);border-radius:var(--r);max-width:620px;width:100%;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg);padding:32px;transform:translateY(20px);transition:transform .3s var(--ease-out);}
+.modal-overlay.open .modal{transform:translateY(0);}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:20px;color:var(--dm);cursor:pointer;padding:4px;border-radius:4px;}
+.modal-close:hover{color:var(--tx);}
+.modal h2{font-family:'Fraunces',serif;font-size:22px;font-weight:600;color:var(--tx);margin-bottom:8px;}
+.modal h3{font-size:15px;font-weight:700;color:var(--tx);margin:20px 0 8px;}
+.modal p{font-size:14px;color:var(--tx2);line-height:1.7;margin-bottom:10px;}
+.modal .step-list{list-style:none;padding:0;counter-reset:steps;}
+.modal .step-list li{counter-increment:steps;padding:10px 0 10px 40px;position:relative;font-size:14px;color:var(--tx2);line-height:1.6;border-bottom:1px solid var(--bd2);}
+.modal .step-list li:last-child{border-bottom:none;}
+.modal .step-list li::before{content:counter(steps);position:absolute;left:0;top:10px;width:26px;height:26px;border-radius:50%;background:var(--blue-pale);color:var(--blue-strong);font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;}
+
+/* IST-MODUS: Ergebnis-Ansicht */
+.ist-result{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-top:12px;}
+.ist-result-tabs{display:flex;border-bottom:1px solid var(--bd);}
+.ist-result-tab{flex:1;padding:10px;font-family:inherit;font-size:13px;font-weight:600;color:var(--mu);background:var(--sf2);border:none;cursor:pointer;transition:all .2s var(--ease);}
+.ist-result-tab.active{color:var(--blue-strong);background:var(--sf);box-shadow:inset 0 -2px 0 var(--blue-strong);}
+.ist-result-body{padding:16px;}
+.ist-result-body .rendered{font-size:13.5px;}
+/* IST-Tabelle */
+.ist-proc-table{width:100%;border-collapse:collapse;font-size:13px;}
+.ist-proc-table th{background:var(--blue-deep);color:#fff;padding:8px 12px;text-align:left;font-size:12px;font-weight:700;}
+.ist-proc-table td{padding:8px 12px;border-bottom:1px solid var(--bd2);vertical-align:top;color:var(--tx2);line-height:1.55;}
+.ist-proc-table tr:nth-child(even){background:var(--sf2);}
+.ist-proc-table tr:hover{background:var(--blue-pale);}
 
 /* RESPONSIVE */
 @media(max-width:900px){
@@ -268,19 +358,53 @@ textarea.fi{min-height:80px;}
   </div>
 </header>
 
+<!-- ONBOARDING MODAL -->
+<div class="modal-overlay" id="helpModal">
+<div class="modal" style="position:relative;">
+  <button class="modal-close" onclick="closeHelp()">&times;</button>
+  <h2>So funktioniert der Anforderungs-Assistent</h2>
+  <p>Der Assistent begleitet dich als Sparringspartner beim Erstellen klarer, JIRA-faehiger Anforderungen. Schritt fuer Schritt, von der ersten Idee bis zu Akzeptanzkriterien und Testfaellen.</p>
+
+  <h3>Ablauf im Ueberblick</h3>
+  <ol class="step-list">
+    <li><strong>Modus waehlen:</strong> Waehle zwischen der <em>allgemeinen Anforderung</em> (IST/SOLL erarbeiten), der <em>IST-Beschreibung</em> (wenn du nur den aktuellen Prozess dokumentieren willst) oder dem <em>Aktionssteuerung-Wizard</em>.</li>
+    <li><strong>Beschreiben:</strong> Gib in den Feldern ein, was du weisst. Du kannst Freitext schreiben, Stichpunkte nutzen oder bestehende JIRA-Texte reinkopieren. Tipp: Nutze das Mikrofon-Symbol, um per Sprache einzugeben.</li>
+    <li><strong>Sparring:</strong> Der Assistent analysiert deine Eingabe, trennt IST und SOLL und stellt gezielte Rueckfragen. Beantworte die Fragen direkt in den Feldern oder nutze das Freitextfeld unten.</li>
+    <li><strong>Dokument waechst mit:</strong> Links siehst du das Living Document. Es wird bei jeder Sparring-Runde aktualisiert. Du kannst jederzeit zwischen Sparring und Dokument wechseln.</li>
+    <li><strong>Abschliessen:</strong> Wenn IST und SOLL stehen, klicke auf <em>Akzeptanzkriterien und Testfaelle generieren</em>. Danach kannst du die fertige Anforderung kopieren oder weiter schaerfen.</li>
+  </ol>
+
+  <h3>Tipps</h3>
+  <p>Je konkreter deine Eingabe, desto besser das Ergebnis. Nenne Fallzahlen, Systeme, beteiligte Rollen und den aktuellen Prozess, wenn moeglich. Der Assistent fragt gezielt nach, was fehlt.</p>
+  <div style="text-align:center;margin-top:20px;">
+    <button class="bprim" onclick="closeHelp()">Verstanden, loslegen</button>
+  </div>
+</div>
+</div>
+
 <!-- LANDING -->
 <div class="view active" id="v-landing">
 <div class="landing"><div class="landing-inner">
   <div class="landing-tag">SBK Anforderungs-Assistent</div>
   <div class="landing-title">Anforderungen gemeinsam erarbeiten und schaerfen</div>
   <div class="landing-desc">Beschreibe deine Anforderung, kopiere einen bestehenden JIRA Text oder starte von null. Der Assistent begleitet dich als Sparringspartner, bis eine klare, verstaendliche Anforderung steht.</div>
-  <div class="mode-primary" onclick="selectMode('general')" role="button" tabindex="0">
-    <div class="mode-badge">Empfohlen</div>
-    <h3>Allgemeine Anforderung</h3>
-    <p>Fachliche Anforderung oder Change Request iterativ erarbeiten. IST und SOLL schaerfen, Akzeptanzkriterien und Testfaelle generieren.</p>
-    <div class="mode-arrow">&#8594;</div>
+
+  <div class="mode-cards">
+    <div class="mode-primary" onclick="selectMode('general')" role="button" tabindex="0">
+      <div class="mode-badge">Empfohlen</div>
+      <h3>Allgemeine Anforderung</h3>
+      <p>Fachliche Anforderung oder Change Request iterativ erarbeiten. IST und SOLL schaerfen, Akzeptanzkriterien und Testfaelle generieren.</p>
+      <div class="mode-arrow">&#8594;</div>
+    </div>
+    <div class="mode-primary" onclick="selectMode('ist')" role="button" tabindex="0">
+      <div class="mode-badge green">Neu</div>
+      <h3>IST-Beschreibung erarbeiten</h3>
+      <p>Nur den aktuellen Prozess dokumentieren. Ideal, wenn vor einer Anforderung erst mal der IST-Zustand sauber beschrieben werden soll.</p>
+      <div class="mode-arrow">&#8594;</div>
+    </div>
   </div>
   <button class="mode-secondary" onclick="selectMode('aktion')">Speziell fuer Aktionssteuerung? Zum gefuehrten Wizard &#8594;</button>
+
   <div class="token-card">
     <h4>KIA Token eingeben</h4>
     <div class="tok-row"><div class="tok-wrap">
@@ -290,6 +414,10 @@ textarea.fi{min-height:80px;}
     <div class="tok-hint">Du findest das Token unter KIA, Einstellungen, Konto. Es wird nur lokal gespeichert.</div>
     <div class="ferr" id="tokErr" role="alert"></div>
   </div>
+  <button class="help-link" onclick="openHelp()">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    Wie funktioniert der Assistent?
+  </button>
 </div></div>
 </div>
 
@@ -305,7 +433,6 @@ textarea.fi{min-height:80px;}
       <div class="doc-section" id="ds-kz" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Kennzahlen</div><div class="doc-sec-status empty" id="dss-kz">Offen</div></div><div class="doc-sec-content empty" id="dc-kz">Fallzahlen und Aufwaende noch offen</div></div>
       <div class="doc-section" id="ds-ak" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Akzeptanzkriterien</div><div class="doc-sec-status empty" id="dss-ak">Offen</div></div><div class="doc-sec-content empty" id="dc-ak">Werden nach IST/SOLL generiert</div></div>
       <div class="doc-section" id="ds-tf" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Testfaelle</div><div class="doc-sec-status empty" id="dss-tf">Offen</div></div><div class="doc-sec-content empty" id="dc-tf">Werden nach IST/SOLL generiert</div></div>
-      <div class="doc-section" id="ds-open" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Offene Punkte</div></div><div class="doc-sec-content empty" id="dc-open"></div></div>
     </div>
     <div class="doc-footer"><div class="doc-footer-btns">
       <button class="bsec" onclick="copyAllSections()" id="btnCopyReq" disabled>Alles kopieren</button>
@@ -316,17 +443,44 @@ textarea.fi{min-height:80px;}
   <div class="chat-panel" id="chatPanel">
     <div id="intakeArea" class="intake">
       <div class="intake-title">Beschreibe deine Anforderung</div>
-      <div class="intake-desc">Gib einen Freitext ein, kopiere einen bestehenden JIRA Text oder beschreibe in Stichpunkten, worum es geht.</div>
+      <div class="intake-desc">Gib ein, was du bereits weisst. Du kannst Freitext nutzen, Stichpunkte schreiben oder bestehende JIRA-Texte reinkopieren. Felder, die du noch nicht fuellen kannst, lasse einfach leer.</div>
       <div class="flbl">Art der Anforderung <span style="font-weight:400;color:var(--dm)">(optional)</span></div>
       <div class="intake-type-row">
         <button class="type-chip" data-type="fachlich" onclick="selType(this)" type="button">Fachliche Anforderung</button>
         <button class="type-chip" data-type="change" onclick="selType(this)" type="button">Change Request</button>
         <button class="type-chip" data-type="technisch" onclick="selType(this)" type="button">Technische Anforderung</button>
       </div>
-      <div class="flbl" style="margin-top:16px">Deine Beschreibung</div>
-      <textarea class="fi" id="intakeText" placeholder="Zum Beispiel: Aktuell muessen die Sachbearbeiter bei jedem Vorgang manuell ..." style="min-height:160px;"></textarea>
-      <div class="fhint">Du kannst auch einen bestehenden JIRA Text hier reinkopieren.</div>
-      <div class="ferr" id="intakeErr">Bitte beschreibe kurz, worum es geht.</div>
+      <div class="intake-fields">
+        <div class="intake-field-group">
+          <div class="flbl">IST-Zustand <span style="font-weight:400;color:var(--dm)">(Wie ist es aktuell?)</span></div>
+          <div class="speech-wrap">
+            <textarea class="fi" id="intakeIst" placeholder="Beschreibe den aktuellen Zustand, z.B.: Aktuell muessen Sachbearbeiter bei jedem Vorgang manuell ..." style="min-height:100px;padding-right:48px;"></textarea>
+            <button class="speech-btn" onclick="toggleSpeech('intakeIst')" title="Spracheingabe" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="intake-field-group">
+          <div class="flbl">SOLL-Zustand <span style="font-weight:400;color:var(--dm)">(Was soll sich aendern?)</span></div>
+          <div class="speech-wrap">
+            <textarea class="fi" id="intakeSoll" placeholder="Beschreibe den gewuenschten Zustand, z.B.: Die Sachbearbeiter sollen per Knopfdruck ..." style="min-height:100px;padding-right:48px;"></textarea>
+            <button class="speech-btn" onclick="toggleSpeech('intakeSoll')" title="Spracheingabe" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="intake-field-group">
+          <div class="flbl">Sonstiges <span style="font-weight:400;color:var(--dm)">(Kennzahlen, Kontext, Anmerkungen)</span></div>
+          <div class="speech-wrap">
+            <textarea class="fi" id="intakeMisc" placeholder="Z.B. Fallzahlen, beteiligte Systeme, Rollen, Zeitaufwaende ..." style="min-height:80px;padding-right:48px;"></textarea>
+            <button class="speech-btn" onclick="toggleSpeech('intakeMisc')" title="Spracheingabe" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="fhint">Mindestens ein Feld muss ausgefuellt sein. Du kannst auch einen bestehenden JIRA-Text in ein beliebiges Feld kopieren.</div>
+      <div class="ferr" id="intakeErr">Bitte fuelle mindestens ein Feld aus.</div>
       <div class="intake-actions">
         <button class="bprim" onclick="startSparring()">Sparring starten</button>
         <button class="bghost" onclick="backToLanding()">Zurueck</button>
@@ -334,7 +488,12 @@ textarea.fi{min-height:80px;}
     </div>
     <div class="chat-messages" id="chatMessages" style="display:none"></div>
     <div class="chat-input-bar" id="chatInputBar" style="display:none">
-      <textarea class="chat-input" id="chatInput" placeholder="Antwort eingeben oder Rueckfragen beantworten ... (Enter = senden)"></textarea>
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chatInput" placeholder="Antwort eingeben oder Rueckfragen beantworten ... (Enter = senden)"></textarea>
+        <button class="speech-btn" onclick="toggleSpeech('chatInput')" title="Spracheingabe" type="button" style="right:8px;bottom:8px;">
+          <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
       <button class="chat-send" id="btnSend" onclick="sendChat()">Senden</button>
     </div>
     <div class="actions-bar hidden" id="actionsBar">
@@ -350,14 +509,122 @@ textarea.fi{min-height:80px;}
 </div>
 </div>
 
+<!-- IST-MODUS -->
+<div class="view" id="v-ist">
+<div class="app">
+  <div class="doc-panel" id="docPanelIst">
+    <div class="doc-header"><div class="doc-header-title">IST-Beschreibung (Entwurf)</div><div class="doc-header-sub">Wird laufend aktualisiert</div></div>
+    <div class="doc-body" id="docBodyIst">
+      <div class="doc-section"><div class="doc-sec-head"><div class="doc-sec-label">Titel</div><div class="doc-sec-status empty" id="dss-ist-titel">Offen</div></div><div class="doc-sec-content empty" id="dc-ist-titel">Wird im Sparring erarbeitet</div></div>
+      <div class="doc-section"><div class="doc-sec-head"><div class="doc-sec-label">IST-Beschreibung (Text)</div><div class="doc-sec-status empty" id="dss-ist-text">Offen</div></div><div class="doc-sec-content empty" id="dc-ist-text">Prozessbeschreibung noch nicht erfasst</div></div>
+      <div class="doc-section"><div class="doc-sec-head"><div class="doc-sec-label">Prozesstabelle</div><div class="doc-sec-status empty" id="dss-ist-tabelle">Offen</div></div><div class="doc-sec-content empty" id="dc-ist-tabelle">Wird aus der Beschreibung generiert</div></div>
+      <div class="doc-section"><div class="doc-sec-head"><div class="doc-sec-label">Kennzahlen</div><div class="doc-sec-status empty" id="dss-ist-kz">Offen</div></div><div class="doc-sec-content empty" id="dc-ist-kz">Fallzahlen und Aufwaende noch offen</div></div>
+    </div>
+    <div class="doc-footer"><div class="doc-footer-btns">
+      <button class="bsec" onclick="copyIstAll()" id="btnCopyIst" disabled>Alles kopieren</button>
+      <button class="bprim" onclick="finalizeIst()" id="btnFinalizeIst" disabled>IST abschliessen</button>
+    </div></div>
+  </div>
+  <div class="chat-panel" id="chatPanelIst">
+    <div id="intakeAreaIst" class="intake">
+      <div class="intake-title">IST-Beschreibung erarbeiten</div>
+      <div class="intake-desc">Beschreibe den aktuellen Prozess so, wie er heute ablaeuft. Der Assistent hilft dir, die Beschreibung zu strukturieren und erstellt eine uebersichtliche Tabelle dazu.</div>
+      <details style="margin-bottom:16px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sf);">
+        <summary style="padding:12px 16px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--blue-strong);list-style:none;display:flex;align-items:center;gap:8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          Best-Practice-Beispiele anzeigen
+        </summary>
+        <div style="padding:0 16px 16px;font-size:13px;color:var(--tx2);line-height:1.6;">
+          <p><strong>Gute IST-Beschreibungen enthalten:</strong></p>
+          <p>- Den Prozessausloeser (Was startet den Prozess?)<br>
+          - Die einzelnen Bearbeitungsschritte mit Prueflogik<br>
+          - Beteiligte Systeme und Rollen<br>
+          - Pruefschritte mit Ja/Nein-Logik<br>
+          - Erfassung in Fachsystemen (z.B. 21c, Helic)<br>
+          - Benachrichtigungen an Kunden (Briefe, Serienbriefe)</p>
+
+          <p style="margin-top:14px;"><strong>Beispiel Hautkrebsvorsorge (verkuerzt):</strong></p>
+          <p style="font-size:12.5px;background:var(--sf2);padding:12px;border-radius:var(--rs);border:1px solid var(--bd2);">
+          <strong>Prozessausloeser:</strong> Einreichung der Hautkrebsvorsorge-Rechnung durch den Kunden ueber MeineSBK. Der Kunde fuellt ein Miniformular aus (Dateiupload, Rechnungsbetrag, Bundesland, Bankverbindung, Behandlungstag, Kommentar, Datenschutz).<br><br>
+          <strong>Systemerfassung:</strong> Der Eingang wird in Helic als offener Fall angelegt.<br><br>
+          <strong>Pruefschritte durch Sachbearbeitung (Abrechnungsmanagement):</strong><br>
+          - Versicherungsverhaeltnis pruefen (richtiger Versicherter, offenes Verhaeltnis)<br>
+          - Doppeleinreichung pruefen<br>
+          - Art der Leistung pruefen (nur Hautkrebsvorsorge zulaessig)<br>
+          - Alterspruefung (ueber 35 Jahre = Ablehnung)<br>
+          - Bundesland-Sonderregeln: Bremen ab 01.01.2025, Niedersachsen ab 01.01.2024<br>
+          - Verjaehrung (Rechnungsdatum < 4 Jahre)<br>
+          - Jahresanspruch 1x/Kalenderjahr<br>
+          - Erstattungsbetrag: unter 25 EUR = voller Betrag, sonst 25 EUR<br><br>
+          <strong>Spezialfaelle:</strong> VIP-Weiterleitung an GST, KOE13/2-Weiterleitung, Einmalzahladresse (Erfassung im ZVK).<br><br>
+          <strong>Erfassung:</strong> Kassenspezifische Leistungen im 21cng, LA: Hautkrebsscreening, Pos: Haut.<br>
+          <strong>Benachrichtigung:</strong> Erstattungsbrief 21C1584 (manuell) oder Serienbrief S5208. Bei Ablehnung: Weiterleitung an Kundenberater.
+          </p>
+
+          <p style="margin-top:10px;"><strong>Dieselbe IST-Beschreibung als Prozesstabelle (verkuerzt):</strong></p>
+          <div style="overflow-x:auto;margin-top:6px;">
+            <table style="width:100%;border-collapse:collapse;font-size:12px;line-height:1.5;">
+              <thead><tr style="background:var(--blue-deep);color:#fff;">
+                <th style="padding:6px 8px;text-align:left;font-weight:700;">Nr.</th>
+                <th style="padding:6px 8px;text-align:left;font-weight:700;">Bearbeitungsschritt</th>
+                <th style="padding:6px 8px;text-align:left;font-weight:700;">Erlaeuterung</th>
+              </tr></thead>
+              <tbody>
+                <tr><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">1</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Antragseingang</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Miniformular ueber MeineSBK mit Upload, Betrag, Bundesland</td></tr>
+                <tr style="background:var(--sf2);"><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">2</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Erfassung in Helic</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Offener Fall wird angelegt</td></tr>
+                <tr><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">3</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">VV pruefen</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Richtiger Versicherter? Offen? Ja=weiter, Nein=Ablehnung</td></tr>
+                <tr style="background:var(--sf2);"><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">4-10</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Weitere Pruefschritte</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Doppeleinreichung, Leistungsart, Alter, Bundesland, Verjaehrung, Anspruch, Betrag</td></tr>
+                <tr><td style="padding:5px 8px;">11</td><td style="padding:5px 8px;">Benachrichtigung</td><td style="padding:5px 8px;">Erstattungsbrief 21C1584 / S5208</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="margin-top:8px;font-size:11.5px;color:var(--dm);font-style:italic;">Dies ist ein verkuerztes Beispiel. Im Sparring wird die Beschreibung gemeinsam detaillierter ausgearbeitet.</p>
+        </div>
+      </details>
+      <div class="flbl">Aktueller Prozess</div>
+      <div class="speech-wrap">
+        <textarea class="fi" id="intakeIstText" placeholder="Beschreibe den aktuellen Prozess: Was loest ihn aus? Welche Schritte durchlauft ein Sachbearbeiter? Welche Systeme sind beteiligt?" style="min-height:160px;padding-right:48px;"></textarea>
+        <button class="speech-btn" onclick="toggleSpeech('intakeIstText')" title="Spracheingabe" type="button">
+          <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="fhint">Beschreibe den Prozess so detailliert wie moeglich. Der Assistent fragt gezielt nach, was fehlt.</div>
+      <div class="ferr" id="intakeIstErr">Bitte beschreibe den aktuellen Prozess.</div>
+      <div class="intake-actions">
+        <button class="bprim" onclick="startIstSparring()">IST-Sparring starten</button>
+        <button class="bghost" onclick="backToLanding()">Zurueck</button>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessagesIst" style="display:none"></div>
+    <div class="chat-input-bar" id="chatInputBarIst" style="display:none">
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chatInputIst" placeholder="Antwort eingeben ... (Enter = senden)"></textarea>
+        <button class="speech-btn" onclick="toggleSpeech('chatInputIst')" title="Spracheingabe" type="button" style="right:8px;bottom:8px;">
+          <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <button class="chat-send" id="btnSendIst" onclick="sendChatIst()">Senden</button>
+    </div>
+    <div class="actions-bar hidden" id="actionsBarIst">
+      <button class="bprim" onclick="finalizeIst()">IST-Beschreibung abschliessen</button>
+      <span style="font-size:12px;color:var(--dm);">Klicke auf Abschliessen, wenn die IST-Beschreibung vollstaendig ist.</span>
+    </div>
+  </div>
+</div>
+<div class="mobile-tabs" id="mobileTabsIst" style="display:none;">
+  <button class="mobile-tab active" onclick="mobileTabIst('chat')" id="mtChatIst">Sparring</button>
+  <button class="mobile-tab" onclick="mobileTabIst('doc')" id="mtDocIst">Dokument</button>
+</div>
+</div>
+
 <!-- FINAL OUTPUT -->
 <div class="view" id="v-final">
 <div class="final-view">
   <div class="final-top">
-    <div><div class="landing-tag">Anforderungs-Assistent</div><div class="landing-title" style="margin-bottom:0;font-size:26px;">Fertige Anforderung</div></div>
+    <div><div class="landing-tag">Anforderungs-Assistent</div><div class="landing-title" style="margin-bottom:0;font-size:26px;" id="finalTitle">Fertige Anforderung</div></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <button class="bprim" onclick="copyAllSections()">Alles kopieren</button>
-      <button class="bsec" onclick="showView('v-general')">Zurueck zum Sparring</button>
+      <button class="bsec" id="btnBackSparring" onclick="showView('v-general')">Zurueck zum Sparring</button>
       <button class="bsec" onclick="confirmNewReq()">Neue Anforderung</button>
     </div>
   </div>
@@ -384,6 +651,10 @@ const MODEL='openai/gpt-oss-120b';
 
 const STYLE=`Schreibe in einem klaren, strukturierten und praxisnahen Stil. Verstaendlich und menschlich, ohne formell oder buerokratisch zu sein. Einfache, direkte Saetze. Loesungsorientiert. Nummerierte Listen fuer Rueckfragen. Sachlich, ruhig, kollegial, wertschaetzend. Immer Du-Form. Keine Emojis. Verwende **Fettdruck** fuer wichtige Begriffe und Schluesselpunkte.`;
 
+/* ═══ SYSTEM-PROMPTS ═══ */
+
+/* Haupt-Sparring – ÄNDERUNG: Alle Rückfragen gebuendelt in einer Runde (5-7 max), 
+   "Offene Punkte" entfernt, klarere Anweisungen */
 const SYS_GENERAL=`Du bist der Anforderungs-Assistent der SBK. Du agierst als erfahrener Business Analyst und Sparringspartner.
 
 ${STYLE}
@@ -395,8 +666,8 @@ Technischer Hinweis: Du arbeitest auf einem aktuellen Open-Source-KI-Modell. Hal
 
 Ablauf:
 1. VERSTEHEN: Analysiere die Eingabe. Trenne IST (aktueller Zustand) und SOLL (gewuenschter Zustand). Fasse zusammen was du verstanden hast.
-2. HINTERFRAGEN: Stelle maximal 3 nummerierte Rueckfragen pro Runde. Nur zu dem was wirklich fehlt oder unklar ist. Frage auch nach Kennzahlen (Fallzahlen pro Zeitraum, Zeitaufwand aktuell vs. gewuenscht, betroffene Nutzeranzahl) wenn diese fehlen.
-3. SCHAERFEN: Nach jeder Antwort aktualisiere dein Verstaendnis. Wiederhole die aktuelle Version von IST und SOLL.
+2. HINTERFRAGEN: Stelle ALLE deine Rueckfragen in EINER Runde. Maximal 3 bis 5 nummerierte Rueckfragen, die das Wichtigste abdecken. Fokussiere auf fachliche Aspekte: Welcher Prozess ist betroffen? Welche Rollen und Systeme sind involviert? Was genau soll sich aendern? Welche Fallzahlen und Zeitaufwaende gibt es? WICHTIG: Stelle KEINE technischen Detailfragen (z.B. Feldnamen, API-Bezeichnungen, Datenbankstrukturen). Die Anforderung wird von fachlichen Kollegen geschrieben, nicht von der IT. Stelle alle Fragen auf einmal, nicht ueber mehrere Runden verteilt.
+3. SCHAERFEN: Nach der Antwort aktualisiere dein Verstaendnis und die aktuelle Version von IST und SOLL. Stelle nur dann erneut Rueckfragen, wenn wirklich wesentliche fachliche Unklarheiten bestehen (maximal 2-3 Nachfragen). Wenn alles ausreichend klar ist, stelle KEINE weiteren Fragen.
 4. ABSCHLIESSEN: Wenn IST und SOLL ausreichend klar sind, sage: "IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen."
 
 Nutze **Fettdruck** fuer Schluesselbegriffe in IST und SOLL.
@@ -421,14 +692,16 @@ ANALYSE:
 RUECKFRAGEN:
 1. [Erste Rueckfrage]
 2. [Zweite Rueckfrage]
-3. [Dritte Rueckfrage, falls noetig]
+...maximal 3 bis 5 fachliche Fragen. Keine technischen Detailfragen. Stelle alle Fragen auf einmal. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
 
-OFFENE PUNKTE:
-[Liste noch ungeklaerter Aspekte, falls vorhanden. Sonst "Keine."]
+Falls keine Rueckfragen mehr noetig sind, schreibe:
+RUECKFRAGEN:
+Keine weiteren Rueckfragen. IST und SOLL stehen.
 
 Wenn du keinen IST oder SOLL Zustand ableiten kannst, setze "[Noch nicht erfasst]" ein und frage danach.
 Wenn die Eingabe ein bestehender JIRA Text ist, analysiere ihn kritisch und zeige Verbesserungspotenzial auf.`;
 
+/* System-Prompt fuer Akzeptanzkriterien und Testfaelle */
 const SYS_AKTF=`Du bist der Anforderungs-Assistent der SBK. Generiere Akzeptanzkriterien und Testfaelle.
 
 ${STYLE}
@@ -460,10 +733,122 @@ Nr.|ID|Beschreibung|Vorbedingung|Aktion|Erwartetes Ergebnis|Prioritaet
 1|TF-001|...|...|...|...|...
 ...`;
 
+/* System-Prompt fuer IST-Modus */
+const SYS_IST=`Du bist der Anforderungs-Assistent der SBK. Du hilfst dabei, den IST-Zustand eines Prozesses sauber zu dokumentieren.
+
+${STYLE}
+
+Deine Aufgabe:
+Du hilfst dem Nutzer, den aktuellen Prozess (IST-Zustand) strukturiert zu beschreiben. Du hinterfragst, ergaenzt und strukturierst, bis eine klare IST-Beschreibung steht, die als Grundlage fuer eine spaetere Anforderung dienen kann.
+
+Ablauf:
+1. VERSTEHEN: Analysiere die Eingabe und fasse zusammen, was du verstanden hast.
+2. HINTERFRAGEN: Stelle ALLE Rueckfragen in EINER Runde (maximal 3 bis 5). Fokussiere auf fachliche Aspekte:
+   - Prozessausloeser (Was startet den Prozess?)
+   - Bearbeitungsschritte mit Logik (Was passiert in welcher Reihenfolge?)
+   - Pruefschritte mit Ja/Nein-Logik (Welche Entscheidungen werden getroffen?)
+   - Beteiligte Systeme und Rollen
+   - Kennzahlen (Fallzahlen, Zeitaufwand, Haeufigkeit)
+   Stelle KEINE technischen Detailfragen. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
+3. SCHAERFEN: Nach jeder Antwort aktualisiere die IST-Beschreibung. Stelle nur bei wesentlichen Luecken erneut 2-3 Nachfragen.
+4. ABSCHLIESSEN: Wenn der Prozess ausreichend klar ist, sage: "Die IST-Beschreibung steht. Du kannst sie jetzt abschliessen."
+
+Ausgabeformat fuer jede Antwort:
+
+TITEL: [Kurzbezeichnung des Prozesses]
+
+IST-TEXT:
+[Fliesstext-Beschreibung des Prozesses. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter. 5-15 Saetze. Strukturiert und verstaendlich.]
+
+IST-TABELLE:
+Nr.|Bearbeitungsschritt|Erlaeuterung
+1|[Schritt]|[Details]
+2|[Schritt]|[Details]
+...
+
+KENNZAHLEN:
+[Falls bekannt: Fallzahlen, Zeitaufwaende, Haeufigkeiten. Sonst "Noch nicht erfasst."]
+
+ANALYSE:
+[Was gut erfasst ist und was fehlt. 1-3 Saetze.]
+
+RUECKFRAGEN:
+1. [Frage]
+...maximal 3 bis 5 fachliche Fragen. Keine technischen Detailfragen. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
+
+Falls keine Fragen mehr noetig:
+RUECKFRAGEN:
+Keine weiteren Rueckfragen. Die IST-Beschreibung steht.`;
+
 /* ═══ STATE ═══ */
 let apiToken='',selectedMode='',reqType='',msgs=[],isRunning=false,currentPhase=0,sparringCount=0;
 let docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};
+/* BUGFIX: Separate Variable fuer tatsaechliche TF-Daten (wird nicht durch Display-Text ueberschrieben) */
+let tfRawData='';
 const PHASES=[{label:'Einstieg'},{label:'Verstehen'},{label:'Schaerfen'},{label:'Strukturieren'},{label:'Absichern'}];
+
+/* IST-Modus State */
+let istMsgs=[],istState={titel:'',text:'',tabelle:'',kz:''};
+let istSparringCount=0;
+
+/* ═══ SPEECH RECOGNITION (Spracheingabe) ═══ */
+let speechRecognition=null, speechTarget=null;
+const hasSpeech='webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+
+/* Spracheingabe-Buttons ausblenden wenn nicht unterstuetzt */
+if(!hasSpeech){document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.speech-btn').forEach(b=>b.hidden=true);});}
+
+function toggleSpeech(targetId){
+  if(!hasSpeech){showToast('Spracheingabe wird in diesem Browser nicht unterstuetzt.','warn');return;}
+  const target=g(targetId);if(!target)return;
+  const btn=target.closest('.speech-wrap')?.querySelector('.speech-btn')
+    || target.closest('.chat-input-wrap')?.querySelector('.speech-btn');
+
+  /* Bereits aktiv – stoppen */
+  if(speechRecognition && speechTarget===targetId){
+    speechRecognition.stop();return;
+  }
+  /* Falls andere Aufnahme laeuft, zuerst stoppen */
+  if(speechRecognition){speechRecognition.stop();speechRecognition=null;}
+
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  speechRecognition=new SR();
+  speechRecognition.lang='de-DE';
+  speechRecognition.interimResults=true;
+  speechRecognition.continuous=true;
+  speechTarget=targetId;
+
+  let finalTranscript='';
+  if(btn)btn.classList.add('recording');
+
+  speechRecognition.onresult=e=>{
+    let interim='';
+    for(let i=e.resultIndex;i<e.results.length;i++){
+      if(e.results[i].isFinal) finalTranscript+=e.results[i][0].transcript+' ';
+      else interim+=e.results[i][0].transcript;
+    }
+    /* Bestehenden Text beibehalten, neuen anfuegen */
+    const existing=target.dataset.preText||'';
+    target.value=existing+(existing&&!existing.endsWith(' ')?' ':'')+finalTranscript+interim;
+    autoResize(target);
+  };
+  speechRecognition.onstart=()=>{
+    /* Bestehenden Text merken */
+    target.dataset.preText=target.value;
+    finalTranscript='';
+  };
+  speechRecognition.onend=()=>{
+    if(btn)btn.classList.remove('recording');
+    speechRecognition=null;speechTarget=null;
+    delete target.dataset.preText;
+  };
+  speechRecognition.onerror=ev=>{
+    if(btn)btn.classList.remove('recording');
+    if(ev.error!=='aborted')showToast('Spracheingabe-Fehler: '+ev.error,'warn');
+    speechRecognition=null;speechTarget=null;
+  };
+  speechRecognition.start();
+}
 
 /* ═══ HELPERS ═══ */
 const g=id=>document.getElementById(id);
@@ -490,6 +875,211 @@ function renderMd(text){
 
 function stripMd(t){return(t||'').replace(/\*\*(.+?)\*\*/g,'$1');}
 
+/* ═══ STRUKTURIERTER IST-TEXT RENDERER ═══ */
+/* Erkennt Absaetze/Sektionen im IST-Text und rendert sie visuell getrennt */
+function renderIstTextStructured(text){
+  if(!text)return'';
+  const blocks=splitIstIntoBlocks(text);
+
+  /* Hilfsfunktion: Bloecke rendern */
+  function renderBlocks(bArr){
+    let html='<div class="ist-structured">';
+    bArr.forEach(b=>{
+      const cat=categorizeBlock(b.label, b.content);
+      const icon=getSectionIcon(cat);
+      html+=`<div class="ist-section s-${cat}">`;
+      if(b.label) html+=`<div class="ist-section-label"><span class="ist-icon">${icon}</span>${escH(b.label)}</div>`;
+      html+=`<div class="ist-section-body">${renderMd(b.content)}</div>`;
+      html+=`</div>`;
+    });
+    html+='</div>';
+    return html;
+  }
+
+  /* Genug Bloecke erkannt → direkt rendern */
+  if(blocks.length>=2) return renderBlocks(blocks);
+
+  /* Nur 1 Block aber langer Text: auf Absaetze splitten und auto-labeln */
+  if(text.length>200){
+    const paragraphs=text.split(/\n\s*\n/).filter(p=>p.trim());
+    if(paragraphs.length>=2){
+      const autoBlocks=paragraphs.map((para,idx)=>({label:guessBlockLabel(para,idx), content:para.trim()}));
+      return renderBlocks(autoBlocks);
+    }
+  }
+
+  /* Kurzer Text oder keine Absaetze → einfach rendern */
+  return '<div class="ist-structured"><div class="ist-section s-steps"><div class="ist-section-body">'+renderMd(text)+'</div></div></div>';
+}
+
+/* IST-Text in Bloecke aufteilen (anhand von Fettdruck-Headern, Absaetzen oder Sternchen) */
+function splitIstIntoBlocks(text){
+  const lines=text.split('\n');
+  const blocks=[];
+  let curLabel='', curLines=[];
+
+  function flush(){
+    if(curLines.length>0||curLabel){
+      const content=curLines.join('\n').trim();
+      if(content) blocks.push({label:curLabel, content:content});
+    }
+    curLabel='';curLines=[];
+  }
+
+  for(let i=0;i<lines.length;i++){
+    const trimmed=lines[i].trim();
+
+    /* Leere Zeile = potenzieller Block-Break */
+    if(!trimmed){
+      /* Schaue voraus: Naechste nicht-leere Zeile ein Header? Dann Flush. */
+      let next='';
+      for(let j=i+1;j<lines.length;j++){if(lines[j].trim()){next=lines[j].trim();break;}}
+      const nextIsBoldHeader=next.match(/^\*\*(.+?)\*\*\s*[:.]?\s*/);
+      const nextIsCapsHeader=next.match(/^([A-ZÄÖÜ][a-zäöüß]*(?:[-\s][A-Za-zäöüß]+){0,3})\s*:\s*/);
+      const nextIsStarLine=next.match(/^\*[^*]/);
+      /* Auch splitten wenn aktueller Block schon substanziell ist (>100 Zeichen) */
+      const curLen=curLines.join(' ').length;
+      if(nextIsBoldHeader||nextIsCapsHeader||(curLen>100 && (nextIsStarLine || next.length>20))){
+        flush();
+      } else if(curLines.length>0){
+        curLines.push(''); /* Leerzeile beibehalten fuer Absatz-Rendering */
+      }
+      continue;
+    }
+
+    /* Erkennung: **Label:** am Zeilenanfang */
+    const boldHeaderMatch=trimmed.match(/^\*\*(.+?)\*\*\s*[:.]?\s*(.*)/);
+    const capsHeaderMatch=!boldHeaderMatch && trimmed.match(/^([A-ZÄÖÜ][a-zäöüß]*(?:[-\s][A-Za-zäöüß]+){0,3})\s*:\s*(.*)/);
+    const headerMatch=boldHeaderMatch||capsHeaderMatch;
+
+    if(headerMatch){
+      const label=headerMatch[1].replace(/\*\*/g,'').replace(/:\s*$/,'').trim();
+      const rest=headerMatch[2]||'';
+      if(label.length<60){
+        flush();
+        curLabel=label;
+        curLines=rest?[rest]:[];
+        continue;
+      }
+    }
+
+    /* Sternchen-Zeilen (*Text) als eigenen Block, wenn vorher schon Content da */
+    if(trimmed.match(/^\*[^*]/) && curLines.join(' ').length>80 && !curLabel.match(/spezial|sonder|hinweis/i)){
+      flush();
+      /* Auto-Label: "Hinweis" fuer Sternchen-Absaetze */
+      curLabel='Hinweis';
+      curLines=[trimmed];
+      continue;
+    }
+
+    curLines.push(trimmed);
+  }
+  flush();
+
+  /* Post-Processing: Wenn nur 1 Block mit viel Text, versuche auf Saetze zu splitten */
+  if(blocks.length===1 && blocks[0].content.length>300){
+    const singleText=blocks[0].content;
+    const paragraphs=singleText.split(/\n\s*\n/).filter(p=>p.trim());
+    if(paragraphs.length>=2){
+      /* Mehrere Absaetze gefunden – in Bloecke aufteilen */
+      blocks.length=0;
+      paragraphs.forEach((para,idx)=>{
+        const autoLabel=guessBlockLabel(para, idx);
+        blocks.push({label:autoLabel, content:para.trim()});
+      });
+    }
+  }
+
+  return blocks;
+}
+
+/* Auto-Label basierend auf Absatz-Inhalt erraten */
+function guessBlockLabel(text, index){
+  const t=text.toLowerCase();
+  if(index===0 && t.match(/prozess\s*start|einreichung|eingang|ausloes|formular|portal|der prozess startet/)) return 'Prozessausloeser';
+  if(t.match(/gesamt.*bearbeitung|durchschnitt|im schnitt|dauer|pro jahr.*eingereicht|fallvolumen/)) return 'Bearbeitungszeiten';
+  /* Ablehnungsprozess VOR Pruefschritte pruefen (weil Texte oft auch "Pruefung" enthalten) */
+  if(t.match(/ergibt.*pr[uü]e?fung.*nein|weitergeleit.*ablehnung|kb.*ablehnung|ablehn.*telefon|kundenberater.*gespr[aä]ch/)) return 'Ablehnungsprozess';
+  if(t.match(/alter.*weitergeleitet.*kundenberater|kundenberater.*ablehnungsgespr/)) return 'Ablehnungsprozess';
+  if(t.match(/erfassung|21c|kassenspezifisch.*leistung|rechnung.*erfasst|erstattung.*ausgezahlt/)) return 'Erfassung & Erstattung';
+  if(t.match(/pr[uü]e?f|versicherungsverh|doppeleinreich|leistungsart|alter.*35/)) return 'Pruefschritte';
+  if(t.match(/brief|serienbrief|erstattungsbrief|automatisiert.*brief|versendet.*kunde/)) return 'Benachrichtigung';
+  if(t.match(/spezial|vip|koe.*13|einmalzahl|sonderfall/)) return 'Spezialfaelle';
+  if(t.match(/kennzahl|kpi|minuten.*fall|bearbeitungszeit/)) return 'Kennzahlen';
+  return '';
+}
+
+/* Block-Kategorie bestimmen (fuer Farbgebung) */
+function categorizeBlock(label, content){
+  const l=(label||'').toLowerCase();
+  const c=(content||'').toLowerCase();
+  /* Label-basiert */
+  if(l.match(/ausloes|trigger|eingang|start|einreichung|formular|antrag/)) return 'trigger';
+  if(l.match(/spezial|sonder|ausnahme|weiterleitung|hinweis|achtung/)) return 'special';
+  if(l.match(/benachricht|brief|erstattung|ablehnung|output|ergebnis|kommunikation|kunde.*info/)) return 'output';
+  if(l.match(/erfassung|system|21c|helic|buchung|dokumentation/)) return 'steps';
+  if(l.match(/pruef|prüf|validier|kontroll|check/)) return 'steps';
+  if(l.match(/kennzahl|kpi|metrik|volumen|bearbeitungszeit/)) return 'special';
+  /* Inhalt-basiert */
+  if(c.match(/prozessausloes|eingang.*formular|einreichung.*ueber|der prozess startet/)) return 'trigger';
+  if(c.match(/brief|serienbrief|benachricht|erstattungsbrief|automatisiert.*brief/)) return 'output';
+  if(c.match(/vip|koe.*13|einmalzahl|spezial|sonderfall|weitergeleit/)) return 'special';
+  if(c.match(/ablehnung.*telefon|kundenberater.*anruf|ablehnungsgespraech/)) return 'output';
+  if(c.match(/fallvolumen|pro jahr|minuten.*bearbeitung|bearbeitungszeit/)) return 'special';
+  return 'steps';
+}
+
+/* SVG-Icons pro Kategorie */
+function getSectionIcon(cat){
+  switch(cat){
+    case 'trigger': return '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
+    case 'special': return '<svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    case 'output':  return '<svg viewBox="0 0 24 24"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+    default:        return '<svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>';
+  }
+}
+
+/* Kombinierte Text+Tabelle Karte fuer IST-Output */
+function renderIstOutputCard(textContent, tableContent){
+  const hasText=textContent&&textContent!=='[Noch nicht erfasst]';
+  const hasTable=tableContent&&tableContent!=='[Noch nicht erfasst]';
+  if(!hasText&&!hasTable) return '';
+
+  /* Wenn nur eins vorhanden, direkt rendern */
+  if(hasText&&!hasTable) return renderIstTextStructured(textContent);
+  if(!hasText&&hasTable) return renderIstTable(tableContent);
+
+  /* Beides vorhanden: Tab-Ansicht */
+  const tabId='ist-tab-'+Date.now();
+  let html=`<div class="ist-output-tabs">
+    <button class="ist-output-tab active" onclick="switchIstTab('${tabId}','text',this)">Fliesstext</button>
+    <button class="ist-output-tab" onclick="switchIstTab('${tabId}','table',this)">Prozesstabelle</button>
+  </div>`;
+  html+=`<div id="${tabId}-text" class="ist-output-pane active">${renderIstTextStructured(textContent)}</div>`;
+  html+=`<div id="${tabId}-table" class="ist-output-pane">${renderIstTable(tableContent)}</div>`;
+  return html;
+}
+
+/* ═══ ONBOARDING / HILFE ═══ */
+function openHelp(){g('helpModal').classList.add('open');}
+function closeHelp(){g('helpModal').classList.remove('open');}
+
+/* Tab-Wechsel fuer IST-Output (Text/Tabelle) */
+function switchIstTab(tabId,pane,btn){
+  /* Alle Panes verstecken */
+  const textPane=g(tabId+'-text'), tablePane=g(tabId+'-table');
+  if(textPane)textPane.classList.remove('active');
+  if(tablePane)tablePane.classList.remove('active');
+  /* Gewaehlten Pane anzeigen */
+  const target=g(tabId+'-'+pane);
+  if(target)target.classList.add('active');
+  /* Tab-Buttons aktualisieren */
+  btn.parentElement.querySelectorAll('.ist-output-tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+/* Modal schliessen bei Klick auf Overlay */
+g('helpModal').addEventListener('click',e=>{if(e.target===g('helpModal'))closeHelp();});
+
 /* ═══ VIEWS ═══ */
 function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));const el=g(id);if(el)el.classList.add('active');}
 function backToLanding(){showView('v-landing');g('phasePill').classList.add('hidden');g('btnNew').classList.remove('on');}
@@ -497,6 +1087,7 @@ function selectMode(mode){
   if(!apiToken){showToast('Bitte zuerst das KIA Token eingeben.','warn');g('tokIn').focus();return;}
   selectedMode=mode;
   if(mode==='general'){showView('v-general');g('btnNew').classList.add('on');updatePhase(0);}
+  else if(mode==='ist'){showView('v-ist');g('btnNew').classList.add('on');updatePhase(0);}
   else{showView('v-aktion');g('btnNew').classList.add('on');}
 }
 
@@ -520,7 +1111,7 @@ function updatePhase(p){
 /* ═══ TYPE ═══ */
 function selType(btn){document.querySelectorAll('.type-chip').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');reqType=btn.dataset.type;}
 
-/* ═══ LIVING DOC ═══ */
+/* ═══ LIVING DOC (Allgemein) ═══ */
 function updateDoc(field,content,status){
   docState[field]=content;
   const el=g('dc-'+field),st=g('dss-'+field);if(!el)return;
@@ -530,12 +1121,13 @@ function updateDoc(field,content,status){
     if(st){st.className='doc-sec-status '+(status||'draft');st.textContent=status==='done'?'Steht':'Entwurf';}
   }else{
     el.className='doc-sec-content empty';
-    const ph={titel:'Wird im Sparring erarbeitet',ist:'Aktueller Zustand noch nicht erfasst',soll:'Gewuenschter Zustand noch nicht erfasst',kz:'Fallzahlen und Aufwaende noch offen',ak:'Werden nach IST/SOLL generiert',tf:'Werden nach IST/SOLL generiert',open:''};
+    const ph={titel:'Wird im Sparring erarbeitet',ist:'Aktueller Zustand noch nicht erfasst',soll:'Gewuenschter Zustand noch nicht erfasst',kz:'Fallzahlen und Aufwaende noch offen',ak:'Werden nach IST/SOLL generiert',tf:'Werden nach IST/SOLL generiert'};
     el.textContent=ph[field]||'';
     if(st){st.className='doc-sec-status empty';st.textContent='Offen';}
   }
   checkReady();
 }
+
 function checkReady(){
   const ok=f=>docState[f]&&docState[f]!=='[Noch nicht erfasst]'&&docState[f]!=='Noch nicht erfasst.';
   if(ok('ist')&&ok('soll')){
@@ -543,6 +1135,54 @@ function checkReady(){
     g('btnFinalize').disabled=false;g('btnFinalizeChat')&&(g('btnFinalizeChat').disabled=false);
     g('actionsBar').classList.remove('hidden');g('btnCopyReq').disabled=false;
   }
+  /* BUGFIX: Actions-Bar auch einblenden wenn mindestens IST oder SOLL steht
+     und bereits mehrere Sparring-Runden gelaufen sind */
+  if((ok('ist')||ok('soll'))&&sparringCount>=2){
+    g('actionsBar').classList.remove('hidden');
+  }
+}
+
+/* ═══ LIVING DOC (IST-Modus) ═══ */
+function updateIstDoc(field,content,status){
+  istState[field]=content;
+  const el=g('dc-ist-'+field),st=g('dss-ist-'+field);if(!el)return;
+  const empty=!content||content==='[Noch nicht erfasst]'||content==='Noch nicht erfasst.';
+  if(!empty){
+    el.className='doc-sec-content';
+    if(field==='tabelle') el.innerHTML=renderIstTable(content);
+    else el.innerHTML=renderMd(content);
+    if(st){st.className='doc-sec-status '+(status||'draft');st.textContent=status==='done'?'Steht':'Entwurf';}
+  }else{
+    el.className='doc-sec-content empty';
+    const ph={titel:'Wird im Sparring erarbeitet',text:'Prozessbeschreibung noch nicht erfasst',tabelle:'Wird aus der Beschreibung generiert',kz:'Fallzahlen und Aufwaende noch offen'};
+    el.textContent=ph[field]||'';
+    if(st){st.className='doc-sec-status empty';st.textContent='Offen';}
+  }
+  /* Check ob IST-Modus fertig */
+  if(istState.text&&istState.text!=='[Noch nicht erfasst]'){
+    g('btnCopyIst').disabled=false;g('btnFinalizeIst').disabled=false;
+    g('actionsBarIst').classList.remove('hidden');
+  }
+}
+
+function renderIstTable(raw){
+  if(!raw)return'<p style="color:var(--dm)">Keine Tabellendaten.</p>';
+  const lines=raw.split('\n').filter(l=>l.includes('|'));
+  if(lines.length<2)return'<div class="rendered">'+renderMd(raw)+'</div>';
+  /* Header erkennen */
+  let headers=lines[0].split('|').map(c=>c.trim()).filter(c=>c);
+  let data=lines.slice(1);
+  /* Separator-Zeilen ueberspringen (---) */
+  data=data.filter(l=>!l.match(/^[\s|:-]+$/));
+  let h='<div class="tf-table-wrap"><table class="ist-proc-table"><thead><tr>';
+  headers.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
+  h+='</tr></thead><tbody>';
+  data.forEach(row=>{
+    const cells=row.split('|').map(c=>c.trim()).filter(c=>c);
+    h+='<tr>';cells.forEach(c=>{h+=`<td>${escH(c)}</td>`;});h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+  return h;
 }
 
 /* ═══ PARSE ═══ */
@@ -556,10 +1196,11 @@ function parseKIA(text){
   let titel='',ist='',soll='',kz='',analyse='',open='',ak='',tf='';
   let questions=[],mode=null;
 
-  // Normalize a string for header matching only (not for content)
   function norm(s){
     return s.replace(/\u00fc/gi,'ue').replace(/\u00e4/gi,'ae').replace(/\u00f6/gi,'oe')
-            .replace(/\u00dc/gi,'UE').replace(/\u00c4/gi,'AE').replace(/\u00d6/gi,'OE');
+            .replace(/\u00dc/gi,'UE').replace(/\u00c4/gi,'AE').replace(/\u00d6/gi,'OE')
+            /* Spezielle Bindestriche normalisieren (U+2011, U+2013, U+2014) */
+            .replace(/[\u2011\u2013\u2014]/g,'-');
   }
 
   const H_TITEL   = [/^TITEL\s*:/i];
@@ -567,7 +1208,8 @@ function parseKIA(text){
   const H_SOLL    = [/^SOLL[\s-]*(?:BESCHREIBUNG|ZUSTAND)?\s*:/i, /^SOLL\s*:/i];
   const H_KZ      = [/^KENNZAHLEN\s*:/i];
   const H_ANALYSE = [/^ANALYSE\s*:/i];
-  const H_RUECK   = [/^RUE?CKFRAGEN\s*:/i, /^FRAGEN\s*:/i];
+  /* Rueckfragen-Header: erkennt auch "RÜCKFRAGEN (Nachfolge-Runde – maximal 3):" etc. */
+  const H_RUECK   = [/^RUE?CKFRAGEN[\s(]/i, /^RUE?CKFRAGEN\s*:/i, /^FRAGEN\s*:/i];
   const H_OPEN    = [/^OFFENE\s*PUNKTE\s*:/i];
   const H_AK      = [/^AKZEPTANZKRITERIEN\s*:/i];
   const H_TF      = [/^TESTFAE?LLE\s*:/i];
@@ -575,12 +1217,10 @@ function parseKIA(text){
   for(const line of lines){
     const raw = line.trim();
     if(!raw) continue;
-    // Clean for header detection: strip bold markers, bullets, #
-    const cl = raw.replace(/^\s*[-*\u2022#]+\s*/,'').replace(/\*\*/g,'').trim();
-    // Normalized version for matching
+    /* Spezielle Bindestriche auch fuer Header-Matching normalisieren */
+    const cl = raw.replace(/[\u2011\u2013\u2014]/g,'-').replace(/^\s*[-*\u2022#]+\s*/,'').replace(/\*\*/g,'').trim();
     const nCl = norm(cl);
 
-    // Detect section headers
     if(isHeader(nCl, H_TITEL)){
       titel = cl.replace(/^TITEL\s*:\s*/i,'').trim();
       mode = null; continue;
@@ -614,7 +1254,6 @@ function parseKIA(text){
     if(isHeader(nCl, H_AK)){ mode = 'ak'; continue; }
     if(isHeader(nCl, H_TF)){ mode = 'tf'; continue; }
 
-    // Accumulate content per section (use original raw text to preserve umlauts)
     if(mode==='ist') ist += (ist?'\n':'') + raw;
     else if(mode==='soll') soll += (soll?'\n':'') + raw;
     else if(mode==='kz') kz += (kz?'\n':'') + raw;
@@ -622,47 +1261,166 @@ function parseKIA(text){
     else if(mode==='q'){
       const qm = raw.replace(/\*\*/g,'').match(/^\d+[.)]\s*(.+)/);
       if(qm) questions.push(qm[1].trim());
-      else if(raw.length > 15 && !raw.match(/^[-*\u2022]/) && raw.includes('?')) questions.push(raw);
+      /* Sub-Bullets/Aufzaehlungen zu letzter Frage hinzufuegen */
+      else if(raw.match(/^[-*\u2022]/) && questions.length>0) questions[questions.length-1]+='\n'+raw;
+      /* Folgezeilen einer mehrzeiligen Frage an letzte Frage anfuegen */
+      else if(questions.length>0 && raw.length>10 && !raw.match(/keine\s*(weiteren)?\s*(rueckfragen|fragen)/i)) questions[questions.length-1]+='\n'+raw;
+      /* Freitext-Frage mit Fragezeichen */
+      else if(raw.length > 15 && raw.includes('?')) questions.push(raw);
+      /* "Keine weiteren" erkennen */
+      else if(raw.match(/keine\s*(weiteren)?\s*(rueckfragen|fragen)/i)) { /* keine Fragen */ }
     }
     else if(mode==='open') open += (open?'\n':'') + raw;
     else if(mode==='ak') ak += (ak?'\n':'') + raw;
     else if(mode==='tf') tf += (tf?'\n':'') + raw;
   }
 
-  console.log('parseKIA:', {titel:!!titel,ist:!!ist,soll:!!soll,kz:!!kz,analyse:!!analyse,q:questions.length,open:!!open});
+  console.log('parseKIA:', {titel:!!titel,ist:!!ist,soll:!!soll,kz:!!kz,analyse:!!analyse,q:questions.length});
   return{titel,ist,soll,kz,analyse,questions,open,ak,tf};
 }
 
-/* ═══ SPARRING START ═══ */
+/* IST-Modus Parser */
+function parseIST(text){
+  const lines=text.split('\n');
+  let titel='',istText='',tabelle='',kz='',analyse='';
+  let questions=[],mode=null;
+
+  function norm(s){
+    return s.replace(/\u00fc/gi,'ue').replace(/\u00e4/gi,'ae').replace(/\u00f6/gi,'oe')
+            .replace(/\u00dc/gi,'UE').replace(/\u00c4/gi,'AE').replace(/\u00d6/gi,'OE')
+            /* Spezielle Bindestriche normalisieren (U+2011, U+2013, U+2014) */
+            .replace(/[\u2011\u2013\u2014]/g,'-');
+  }
+
+  const H_TITEL   = [/^TITEL\s*:/i];
+  /* IST-TEXT erkennt auch: IST:, IST-BESCHREIBUNG:, IST BESCHREIBUNG:, IST-ZUSTAND: etc. */
+  const H_IST_TEXT= [/^IST[\s-]*TEXT\s*:/i, /^IST[\s-]*(?:BESCHREIBUNG|ZUSTAND|SITUATION)\s*:/i, /^IST\s*:/i];
+  const H_IST_TAB = [/^IST[\s-]*TABELLE\s*:/i, /^PROZESS[\s-]*TABELLE\s*:/i];
+  const H_KZ      = [/^KENNZAHLEN\s*:/i];
+  const H_ANALYSE = [/^ANALYSE\s*:/i];
+  /* Rueckfragen-Header erkennt auch Varianten wie "RÜCKFRAGEN (Nachfolge-Runde):" */
+  const H_RUECK   = [/^RUE?CKFRAGEN[\s(]/i, /^RUE?CKFRAGEN\s*:/i, /^FRAGEN\s*:/i];
+
+  for(const line of lines){
+    const raw = line.trim();
+    if(!raw) continue;
+    /* Spezielle Bindestriche auch im raw fuer Header-Matching normalisieren */
+    const cl = raw.replace(/[\u2011\u2013\u2014]/g,'-').replace(/^\s*[-*\u2022#]+\s*/,'').replace(/\*\*/g,'').trim();
+    const nCl = norm(cl);
+
+    if(isHeader(nCl, H_TITEL)){ titel=cl.replace(/^TITEL\s*:\s*/i,'').trim(); mode=null; continue; }
+    /* IST-TABELLE muss VOR IST-TEXT geprueft werden (sonst greift IST: zuerst) */
+    if(isHeader(nCl, H_IST_TAB)){ mode='tabelle'; continue; }
+    if(isHeader(nCl, H_IST_TEXT)){ const v=cl.replace(/^IST[\s\-A-Za-z]*:\s*/i,'').trim(); if(v)istText=v; mode='text'; continue; }
+    if(isHeader(nCl, H_KZ)){ const v=cl.replace(/^KENNZAHLEN\s*:\s*/i,'').trim(); if(v)kz=v; mode='kz'; continue; }
+    if(isHeader(nCl, H_ANALYSE)){ const v=cl.replace(/^ANALYSE\s*:\s*/i,'').trim(); if(v)analyse=v; mode='analyse'; continue; }
+    if(isHeader(nCl, H_RUECK)){ mode='q'; continue; }
+
+    /* Im Text-Modus: Pipe-Zeilen (Tabellenzeilen) automatisch in Tabelle umleiten */
+    if(mode==='text'){
+      /* Zeile mit 2+ Pipes und kein Fliesstext = Tabellenzeile */
+      const pipeCount=(raw.match(/\|/g)||[]).length;
+      if(pipeCount>=2 && !raw.match(/^[A-Za-zÄÖÜäöüß]{10,}[^|]*$/)){
+        /* Separator-Zeilen ueberspringen */
+        if(!raw.match(/^[\s|:-]+$/)){
+          tabelle+=(tabelle?'\n':'')+raw;
+        }
+      } else {
+        istText+=(istText?'\n':'')+raw;
+      }
+    }
+    else if(mode==='tabelle') tabelle+=(tabelle?'\n':'')+raw;
+    else if(mode==='kz') kz+=(kz?'\n':'')+raw;
+    else if(mode==='analyse') analyse+=(analyse?'\n':'')+raw;
+    else if(mode==='q'){
+      /* Nummerierte Frage erkennen (1. oder 1) am Anfang) */
+      const qm=raw.replace(/\*\*/g,'').match(/^\d+[.)]\s*(.+)/);
+      if(qm) questions.push(qm[1].trim());
+      /* Sub-Bullets zu letzter Frage hinzufuegen statt neue Frage */
+      else if(raw.match(/^[-*\u2022]/) && questions.length>0) questions[questions.length-1]+='\n'+raw;
+      /* Freitext-Zeilen mit ? als Frage, oder Folgezeilen an letzte Frage anfuegen */
+      else if(raw.length>15 && raw.includes('?')) questions.push(raw);
+      else if(questions.length>0 && raw.length>10) questions[questions.length-1]+='\n'+raw;
+    }
+  }
+
+  /* Post-Processing: Falls Text Pipe-Tabellen enthaelt die durchgerutscht sind */
+  if(istText && !tabelle){
+    const textLines=istText.split('\n');
+    const pureText=[],pipeLines=[];
+    for(const l of textLines){
+      if((l.match(/\|/g)||[]).length>=2 && !l.match(/^[\s|:-]+$/)) pipeLines.push(l);
+      else pureText.push(l);
+    }
+    if(pipeLines.length>=2){
+      istText=pureText.join('\n').trim();
+      tabelle=pipeLines.join('\n');
+    }
+  }
+
+  console.log('parseIST:', {titel:!!titel,text:!!istText,tabelle:!!tabelle,kz:!!kz,analyse:!!analyse,q:questions.length});
+  return{titel,istText,tabelle,kz,analyse,questions};
+}
+
+/* ═══ SPARRING START (Allgemein) ═══ */
 async function startSparring(){
-  const text=val('intakeText');
-  if(!text){g('intakeErr').classList.add('on');g('intakeText').classList.add('inv');g('intakeText').focus();return;}
-  g('intakeErr').classList.remove('on');g('intakeText').classList.remove('inv');
+  const istText=val('intakeIst');
+  const sollText=val('intakeSoll');
+  const miscText=val('intakeMisc');
+
+  if(!istText&&!sollText&&!miscText){
+    g('intakeErr').classList.add('on');return;
+  }
+  g('intakeErr').classList.remove('on');
   g('intakeArea').style.display='none';g('chatMessages').style.display='flex';g('chatInputBar').style.display='flex';
   updatePhase(1);
+
   const tl=reqType==='fachlich'?'Fachliche Anforderung':reqType==='change'?'Change Request':reqType==='technisch'?'Technische Anforderung':'Nicht angegeben';
-  const prompt=`Anforderungstyp: ${tl}\n\nEingabe des Nutzers:\n${text}\n\nAnalysiere diese Eingabe. Trenne IST und SOLL. Fasse zusammen was du verstanden hast und stelle gezielte Rueckfragen.`;
-  addMsg('user',text);msgs=[{role:'user',content:prompt}];sparringCount++;
+
+  /* Eingabe zusammenbauen */
+  let parts=[];
+  if(istText)parts.push(`IST-Zustand (vom Nutzer):\n${istText}`);
+  if(sollText)parts.push(`SOLL-Zustand (vom Nutzer):\n${sollText}`);
+  if(miscText)parts.push(`Sonstiges (Kennzahlen, Kontext):\n${miscText}`);
+
+  const userSummary=[istText,sollText,miscText].filter(Boolean).join('\n\n');
+  const prompt=`Anforderungstyp: ${tl}\n\n${parts.join('\n\n')}\n\nAnalysiere diese Eingabe. Trenne IST und SOLL. Fasse zusammen was du verstanden hast und stelle ALLE deine Rueckfragen in einer Runde.`;
+  addMsg('user',userSummary);msgs=[{role:'user',content:prompt}];sparringCount++;
   await callAndRender();
 }
 
-/* ═══ CHAT ═══ */
+/* ═══ SPARRING START (IST-Modus) ═══ */
+async function startIstSparring(){
+  const text=val('intakeIstText');
+  if(!text){g('intakeIstErr').classList.add('on');g('intakeIstText').classList.add('inv');g('intakeIstText').focus();return;}
+  g('intakeIstErr').classList.remove('on');g('intakeIstText').classList.remove('inv');
+  g('intakeAreaIst').style.display='none';g('chatMessagesIst').style.display='flex';g('chatInputBarIst').style.display='flex';
+  updatePhase(1);
+
+  const prompt=`Der Nutzer moechte den IST-Zustand eines Prozesses dokumentieren.\n\nEingabe:\n${text}\n\nAnalysiere den Prozess. Erstelle eine strukturierte IST-Beschreibung (Fliesstext und Tabelle). Stelle ALLE Rueckfragen in einer Runde.`;
+  addMsgIst('user',text);istMsgs=[{role:'user',content:prompt}];istSparringCount++;
+  await callAndRenderIst();
+}
+
+/* ═══ CHAT (Allgemein) ═══ */
 function addMsg(role,content,html){
   const c=g('chatMessages'),d=document.createElement('div');d.className='msg '+role;
   if(role==='kia')d.innerHTML=`<div class="msg-avatar kia">K</div><div class="msg-bubble kia">${html||renderMd(content)}</div>`;
   else d.innerHTML=`<div class="msg-bubble user">${escH(content).replace(/\n/g,'<br>')}</div>`;
   c.appendChild(d);c.scrollTop=c.scrollHeight;
 }
-function addLoading(){const c=g('chatMessages'),d=document.createElement('div');d.className='loading-msg';d.id='loadingMsg';d.innerHTML='<div class="spin"></div><span>KIA analysiert ...</span>';c.appendChild(d);c.scrollTop=c.scrollHeight;}
+function addLoading(containerId){
+  const c=g(containerId||'chatMessages'),d=document.createElement('div');d.className='loading-msg';d.id='loadingMsg';d.innerHTML='<div class="spin"></div><span>KIA analysiert ...</span>';c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
 function removeLoading(){const e=g('loadingMsg');if(e)e.remove();}
 
 function renderKIAMsg(p, rawText){
   let h='';
 
-  // Show analyse if present
+  /* Analyse anzeigen */
   if(p.analyse) h+=`<h4>Analyse</h4>${renderMd(p.analyse)}`;
 
-  // Show questions as interactive fields
+  /* Rueckfragen als interaktive Felder (KEINE "Offene Punkte" mehr) */
   if(p.questions.length>0){
     const bid='rq-'+Date.now();
     h+=`<h4>Rueckfragen</h4><div class="rq-block" id="${bid}">`;
@@ -672,21 +1430,18 @@ function renderKIAMsg(p, rawText){
     h+=`<div class="rq-submit-row"><button class="rq-submit" onclick="submitAnswers('${bid}',${p.questions.length})">Antworten uebernehmen</button><span class="rq-submit-hint">Schickt alle Antworten an KIA</span></div></div>`;
   }
 
-  // Show open points
-  if(p.open&&!p.open.match(/^keine\.?$/i)) h+=`<h4>Offene Punkte</h4>${renderMd(p.open)}`;
-
-  // Completion signal
+  /* Abschluss-Signal – nur zeigen wenn wirklich keine Fragen mehr */
   const istOk=p.ist&&p.ist!=='[Noch nicht erfasst]';
   const sollOk=p.soll&&p.soll!=='[Noch nicht erfasst]';
-  if(istOk&&sollOk&&p.questions.length===0)
+  /* Sicherheitscheck: Rohtext auf Fragezeichen in nummerierten Zeilen pruefen */
+  const hasHiddenQuestions=rawText && rawText.match(/^\d+[.)]\s*.+\?/m);
+  if(istOk&&sollOk&&p.questions.length===0&&!hasHiddenQuestions)
     h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen.</div>`;
 
-  // FALLBACK: If parsing produced nothing useful, try to extract questions from raw text
-  // and still render the full response formatted
+  /* FALLBACK: falls Parsing nichts Nuetzliches ergab */
   if(!h && rawText){
     console.warn('parseKIA produced empty render, using fallback');
     h = renderMd(rawText);
-    // Try to find numbered questions in raw text and append interactive fields
     const fallbackQs = [];
     const rawLines = rawText.split('\n');
     for(const line of rawLines){
@@ -703,14 +1458,12 @@ function renderKIAMsg(p, rawText){
     }
   }
 
-  // Always add hint about free text input
   if(h) h+=`<div style="margin-top:10px;font-size:11.5px;color:var(--dm);">Du kannst auch jederzeit im Freitextfeld unten antworten.</div>`;
-
   return h;
 }
 
 async function callAndRender(){
-  if(isRunning)return;isRunning=true;addLoading();g('btnSend').disabled=true;
+  if(isRunning)return;isRunning=true;addLoading('chatMessages');g('btnSend').disabled=true;
   try{
     const r=await callKIA(msgs,SYS_GENERAL);msgs.push({role:'assistant',content:r});removeLoading();
     const p=parseKIA(r);
@@ -718,9 +1471,7 @@ async function callAndRender(){
     if(p.ist)updateDoc('ist',p.ist,p.ist!=='[Noch nicht erfasst]'?'draft':null);
     if(p.soll)updateDoc('soll',p.soll,p.soll!=='[Noch nicht erfasst]'?'draft':null);
     if(p.kz)updateDoc('kz',p.kz,p.kz!=='Noch nicht erfasst.'?'draft':null);
-    if(p.open)updateDoc('open',p.open);
     if(p.kz&&p.kz!=='Noch nicht erfasst.')g('ds-kz').style.display='';
-    // Pass raw text as fallback
     const html=renderKIAMsg(p, r);
     addMsg('kia','',html || renderMd(r));
     if(sparringCount>=2&&currentPhase<2)updatePhase(2);
@@ -729,6 +1480,148 @@ async function callAndRender(){
   finally{isRunning=false;g('btnSend').disabled=false;}
 }
 
+/* ═══ CHAT (IST-Modus) ═══ */
+function addMsgIst(role,content,html){
+  const c=g('chatMessagesIst'),d=document.createElement('div');d.className='msg '+role;
+  if(role==='kia')d.innerHTML=`<div class="msg-avatar kia">K</div><div class="msg-bubble kia">${html||renderMd(content)}</div>`;
+  else d.innerHTML=`<div class="msg-bubble user">${escH(content).replace(/\n/g,'<br>')}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+
+function renderIstMsg(p, rawText){
+  let h='';
+  if(p.analyse) h+=`<h4>Analyse</h4>${renderMd(p.analyse)}`;
+  if(p.questions.length>0){
+    const bid='rqi-'+Date.now();
+    h+=`<h4>Rueckfragen</h4><div class="rq-block" id="${bid}">`;
+    p.questions.forEach((q,i)=>{const qid=bid+'-'+i;
+      h+=`<div class="rq-item"><div class="rq-q"><span class="rq-q-num">Frage ${i+1}</span>${renderMd(q)}</div><div class="rq-answer-row"><textarea class="rq-answer" id="${qid}" placeholder="Deine Antwort ..." rows="1" oninput="autoResize(this)"></textarea><button class="rq-skip" id="${qid}-skip" onclick="toggleSkip('${qid}')" type="button">Entfaellt</button></div></div>`;
+    });
+    h+=`<div class="rq-submit-row"><button class="rq-submit" onclick="submitIstAnswers('${bid}',${p.questions.length})">Antworten uebernehmen</button><span class="rq-submit-hint">Schickt alle Antworten an KIA</span></div></div>`;
+  }
+  if(p.istText&&p.questions.length===0&&!(rawText&&rawText.match(/^\d+[.)]\s*.+\?/m)))
+    h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">Die IST-Beschreibung steht. Du kannst sie jetzt abschliessen oder weiter schaerfen.</div>`;
+  if(!h&&rawText){h=renderMd(rawText);}
+  if(h) h+=`<div style="margin-top:10px;font-size:11.5px;color:var(--dm);">Du kannst auch jederzeit im Freitextfeld unten antworten.</div>`;
+  return h;
+}
+
+async function callAndRenderIst(){
+  if(isRunning)return;isRunning=true;addLoading('chatMessagesIst');g('btnSendIst').disabled=true;
+  try{
+    const r=await callKIA(istMsgs,SYS_IST);istMsgs.push({role:'assistant',content:r});removeLoading();
+    const p=parseIST(r);
+    if(p.titel)updateIstDoc('titel',p.titel,'draft');
+    if(p.istText)updateIstDoc('text',p.istText,'draft');
+    if(p.tabelle)updateIstDoc('tabelle',p.tabelle,'draft');
+    if(p.kz)updateIstDoc('kz',p.kz,p.kz!=='Noch nicht erfasst.'?'draft':null);
+
+    /* BUGFIX: Falls IST-TEXT nicht geparst wurde, aber die Antwort Inhalt hat,
+       versuche den gesamten Text vor der ANALYSE als IST-Text zu verwenden */
+    if(!p.istText && istSparringCount>=2){
+      /* Fallback: Alles zwischen TITEL und ANALYSE/RUECKFRAGEN als IST-Text */
+      const fallbackMatch = r.match(/TITEL\s*:[^\n]*\n([\s\S]*?)(?=\n\s*(?:ANALYSE|RUE?CKFRAGEN|KENNZAHLEN|IST[\s-]*TABELLE))/i);
+      if(fallbackMatch && fallbackMatch[1].trim().length>50){
+        updateIstDoc('text',fallbackMatch[1].trim(),'draft');
+      }
+    }
+
+    const html=renderIstMsg(p,r);
+    addMsgIst('kia','',html||renderMd(r));
+    if(istSparringCount>=2&&currentPhase<2)updatePhase(2);
+
+    /* BUGFIX: Buttons immer freischalten wenn Sparring fortgeschritten und keine Fragen mehr */
+    if(istSparringCount>=2 && p.questions.length===0){
+      g('btnCopyIst').disabled=false;g('btnFinalizeIst').disabled=false;
+      g('actionsBarIst').classList.remove('hidden');
+    }
+  }catch(e){removeLoading();showToast('Fehler: '+e.message,'err');}
+  finally{isRunning=false;g('btnSendIst').disabled=false;}
+}
+
+/* Antworten senden (IST-Modus) */
+async function submitIstAnswers(bid,cnt){
+  let parts=[],any=false;
+  for(let i=0;i<cnt;i++){const inp=g(bid+'-'+i),v=inp?inp.value.trim():'';if(v&&v!=='[Entfaellt]')any=true;
+    const qT=inp?.closest('.rq-item')?.querySelector('.rq-q')?.textContent?.replace(/^Frage \d+\s*/,'').trim()||'';
+    parts.push(`Frage ${i+1}: ${qT}\nAntwort: ${v||'[Keine Antwort]'}`);if(inp){inp.disabled=true;inp.classList.add('done');}}
+  if(!any){showToast('Bitte mindestens eine Frage beantworten.','warn');return;}
+  const t=parts.join('\n\n');addMsgIst('user',t);istMsgs.push({role:'user',content:t});istSparringCount++;await callAndRenderIst();
+}
+
+g('chatInputIst').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatIst();}});
+g('chatInputIst').addEventListener('input',function(){autoResize(this);});
+async function sendChatIst(){const t=g('chatInputIst').value.trim();if(!t||isRunning)return;g('chatInputIst').value='';g('chatInputIst').style.height='auto';addMsgIst('user',t);istMsgs.push({role:'user',content:t});istSparringCount++;await callAndRenderIst();}
+
+/* IST Finalisieren */
+function finalizeIst(){
+  /* BUGFIX: Falls IST-Text nie geparst wurde, aus letzter KIA-Antwort extrahieren */
+  if(!istState.text || istState.text==='[Noch nicht erfasst]'){
+    for(let i=istMsgs.length-1;i>=0;i--){
+      if(istMsgs[i].role==='assistant'){
+        const p=parseIST(istMsgs[i].content);
+        if(p.istText){istState.text=p.istText;istState.tabelle=p.tabelle||istState.tabelle;break;}
+        /* Letzter Fallback: gesamten Antworttext nehmen */
+        if(istMsgs[i].content.length>100){istState.text=istMsgs[i].content;break;}
+      }
+    }
+  }
+  const c=g('finalSections');c.innerHTML='';
+  g('finalTitle').textContent='IST-Beschreibung';
+  g('btnBackSparring').onclick=()=>showView('v-ist');
+
+  let num=0;
+
+  /* Titel-Karte */
+  if(istState.titel && istState.titel!=='[Noch nicht erfasst]'){
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-deep)">${num}</div><div class="sec-card-title">Titel</div><button class="sec-card-copy" onclick="copyIstSec('titel',this)" type="button">Kopieren</button></div><div class="sec-card-body"><div class="rendered" style="font-size:20px;font-weight:700;font-family:'Fraunces',serif;">${escH(stripMd(istState.titel))}</div></div>`;
+    c.appendChild(card);
+  }
+
+  /* Kombinierte IST-Karte (Text + Tabelle mit Tabs) */
+  const hasText=istState.text && istState.text!=='[Noch nicht erfasst]';
+  const hasTable=istState.tabelle && istState.tabelle!=='[Noch nicht erfasst]';
+  if(hasText||hasTable){
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    const body=renderIstOutputCard(istState.text, istState.tabelle);
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">${num}</div><div class="sec-card-title">IST-Beschreibung</div><button class="sec-card-copy" onclick="copyIstSec('text',this)" type="button">Text kopieren</button></div><div class="sec-card-body" style="padding:0;">${body}</div>`;
+    c.appendChild(card);
+  }
+
+  /* Kennzahlen-Karte */
+  if(istState.kz && istState.kz!=='[Noch nicht erfasst]' && istState.kz!=='Noch nicht erfasst.'){
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--lila)">${num}</div><div class="sec-card-title">Kennzahlen</div><button class="sec-card-copy" onclick="copyIstSec('kz',this)" type="button">Kopieren</button></div><div class="sec-card-body"><div class="rendered">${renderMd(istState.kz)}</div></div>`;
+    c.appendChild(card);
+  }
+
+  showView('v-final');
+}
+
+function copyIstSec(key,btn){
+  let v=istState[key]||'';
+  v=stripMd(v);
+  navigator.clipboard.writeText(v).then(()=>{
+    btn.classList.add('copied');btn.textContent='Kopiert';
+    setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Kopieren';},2000);
+  });
+}
+function copyIstAll(){
+  const order=['titel','text','tabelle','kz'];
+  const labels={titel:'TITEL',text:'IST-BESCHREIBUNG',tabelle:'PROZESSTABELLE',kz:'KENNZAHLEN'};
+  let parts=[];
+  order.forEach(k=>{
+    const v=istState[k];if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.')return;
+    parts.push(labels[k]+':\n'+stripMd(v));
+  });
+  navigator.clipboard.writeText(parts.join('\n\n')).then(()=>showToast('IST-Beschreibung kopiert','ok'));
+}
+
+/* ═══ ALLGEMEIN: Rueckfragen & Chat ═══ */
 function toggleSkip(qid){const i=g(qid),b=g(qid+'-skip');if(!i||!b)return;if(b.classList.contains('active')){b.classList.remove('active');b.textContent='Entfaellt';i.value='';i.disabled=false;}else{b.classList.add('active');b.textContent='Uebersprungen';i.value='[Entfaellt]';i.disabled=true;}}
 
 async function submitAnswers(bid,cnt){
@@ -748,13 +1641,21 @@ async function sendChat(){const t=val('chatInput');if(!t||isRunning)return;g('ch
 async function generateAkTf(){
   if(isRunning)return;
   if(!docState.soll||docState.soll==='[Noch nicht erfasst]'){showToast('Bitte zuerst SOLL erarbeiten.','warn');return;}
-  isRunning=true;updatePhase(4);addLoading();
+  isRunning=true;updatePhase(4);addLoading('chatMessages');
   const prompt=`Basierend auf folgender Anforderung:\n\nTITEL: ${docState.titel}\n\nIST: ${stripMd(docState.ist)}\n\nSOLL: ${stripMd(docState.soll)}\n\nKENNZAHLEN: ${stripMd(docState.kz)||'Nicht angegeben'}\n\nGeneriere passende Akzeptanzkriterien und Testfaelle.`;
   try{
     const r=await callKIA([{role:'user',content:prompt}],SYS_AKTF);removeLoading();
     const p=parseKIA(r);
     if(p.ak){docState.ak=p.ak;updateDoc('ak',p.ak,'draft');g('ds-ak').style.display='';}
-    if(p.tf){docState.tf=p.tf;updateDoc('tf','Testfaelle generiert (siehe Ausgabe)','draft');g('ds-tf').style.display='';}
+    /* BUGFIX: TF-Rohdaten separat speichern, damit sie nicht durch updateDoc ueberschrieben werden */
+    if(p.tf){
+      tfRawData=p.tf;
+      /* Im Doc-Panel nur Statusanzeige, echte Daten in tfRawData */
+      const tfEl=g('dc-tf'),tfSt=g('dss-tf');
+      if(tfEl){tfEl.className='doc-sec-content';tfEl.innerHTML=renderTfTable(p.tf);}
+      if(tfSt){tfSt.className='doc-sec-status draft';tfSt.textContent='Entwurf';}
+      g('ds-tf').style.display='';
+    }
     let html='<h4>Akzeptanzkriterien</h4><div class="rendered">'+renderMd(p.ak||'')+'</div>';
     html+='<h4>Testfaelle</h4>'+renderTfTable(p.tf||'');
     html+=`<div style="margin-top:12px;padding:10px 14px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);font-size:12.5px;color:var(--mu);">Du kannst Anpassungen direkt im Chat vorschlagen.</div>`;
@@ -789,8 +1690,9 @@ function renderTfTable(raw){
 function parseTfRows(raw){
   const lines=raw.split('\n').filter(l=>l.includes('|'));
   if(lines.length<2)return[];
-  // Skip header if present
   let data=lines;if(lines[0].match(/Nr|ID|Beschreibung/i))data=lines.slice(1);
+  /* Separator-Zeilen ueberspringen */
+  data=data.filter(l=>!l.match(/^[\s|:-]+$/));
   return data.map(l=>l.split('|').map(c=>c.trim()).filter(c=>c));
 }
 
@@ -802,9 +1704,12 @@ function tfToPlaintext(raw){
   return t;
 }
 
-/* ═══ FINALIZE ═══ */
+/* ═══ FINALIZE (Allgemein) ═══ */
 function startFinalize(){
   updatePhase(4);
+  g('finalTitle').textContent='Fertige Anforderung';
+  g('btnBackSparring').onclick=()=>showView('v-general');
+
   const c=g('finalSections');c.innerHTML='';
   const secs=[
     {key:'titel',label:'Titel',color:'var(--blue-deep)',type:'title'},
@@ -816,13 +1721,18 @@ function startFinalize(){
   ];
   let num=0;
   secs.forEach(sec=>{
-    const v=docState[sec.key];
-    if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.'||v==='Testfaelle generiert (siehe Ausgabe)'&&!docState.tf)return;
+    /* BUGFIX: fuer Testfaelle tfRawData verwenden statt docState.tf */
+    const v = sec.key==='tf' ? tfRawData : docState[sec.key];
+    if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.')return;
     num++;
     const card=document.createElement('div');card.className='sec-card';
     let body='';
     if(sec.type==='title')body=`<div class="rendered" style="font-size:20px;font-weight:700;font-family:'Fraunces',serif;">${escH(stripMd(v))}</div>`;
-    else if(sec.type==='md')body=`<div class="rendered">${renderMd(v)}</div>`;
+    else if(sec.type==='md'){
+      /* IST und SOLL strukturiert rendern wenn lang genug */
+      if((sec.key==='ist'||sec.key==='soll') && v.length>200) body=renderIstTextStructured(v);
+      else body=`<div class="rendered">${renderMd(v)}</div>`;
+    }
     else if(sec.type==='table')body=renderTfTable(v);
     card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:${sec.color}">${num}</div><div class="sec-card-title">${sec.label}</div><button class="sec-card-copy" onclick="copySec('${sec.key}',this)" type="button">Kopieren</button></div><div class="sec-card-body">${body}</div>`;
     c.appendChild(card);
@@ -832,8 +1742,9 @@ function startFinalize(){
 
 /* ═══ COPY ═══ */
 function getPlain(key){
+  /* BUGFIX: TF-Daten aus tfRawData holen */
+  if(key==='tf')return tfToPlaintext(tfRawData);
   const v=docState[key]||'';
-  if(key==='tf')return tfToPlaintext(v);
   return stripMd(v);
 }
 function copySec(key,btn){
@@ -849,9 +1760,11 @@ function copyAllSections(){
   const labels={titel:'TITEL',ist:'IST BESCHREIBUNG',soll:'SOLL BESCHREIBUNG',kz:'KENNZAHLEN',ak:'AKZEPTANZKRITERIEN',tf:'TESTFAELLE'};
   let parts=[];
   order.forEach(k=>{
-    const v=docState[k];if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.')return;
-    if(k==='titel')parts.push(labels[k]+': '+getPlain(k));
-    else parts.push(labels[k]+':\n'+getPlain(k));
+    const v = k==='tf' ? tfRawData : docState[k];
+    if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.')return;
+    if(k==='titel')parts.push(labels[k]+': '+stripMd(v));
+    else if(k==='tf')parts.push(labels[k]+':\n'+tfToPlaintext(v));
+    else parts.push(labels[k]+':\n'+stripMd(v));
   });
   navigator.clipboard.writeText(parts.join('\n\n')).then(()=>showToast('Gesamte Anforderung kopiert','ok'));
 }
@@ -859,20 +1772,34 @@ function copyAllSections(){
 /* ═══ RESET ═══ */
 function confirmNewReq(){
   if(!confirm('Neue Anforderung starten? Aktuelle Eingaben gehen verloren.'))return;
-  msgs=[];docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};sparringCount=0;reqType='';isRunning=false;
+  msgs=[];docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};tfRawData='';sparringCount=0;reqType='';isRunning=false;
+  istMsgs=[];istState={titel:'',text:'',tabelle:'',kz:''};istSparringCount=0;
+  /* General Reset */
   g('intakeArea').style.display='';g('chatMessages').style.display='none';g('chatMessages').innerHTML='';
-  g('chatInputBar').style.display='none';g('actionsBar').classList.add('hidden');g('intakeText').value='';
+  g('chatInputBar').style.display='none';g('actionsBar').classList.add('hidden');
+  g('intakeIst').value='';g('intakeSoll').value='';g('intakeMisc').value='';
   document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('sel'));
-  ['titel','ist','soll','kz','ak','tf','open'].forEach(f=>updateDoc(f,'',null));
-  ['ds-kz','ds-ak','ds-tf','ds-open'].forEach(id=>{g(id).style.display='none';});
+  ['titel','ist','soll','kz','ak','tf'].forEach(f=>updateDoc(f,'',null));
+  ['ds-kz','ds-ak','ds-tf'].forEach(id=>{g(id).style.display='none';});
   g('btnCopyReq').disabled=true;g('btnFinalize').disabled=true;
-  showView('v-general');updatePhase(0);
+  /* IST Reset */
+  g('intakeAreaIst').style.display='';g('chatMessagesIst').style.display='none';g('chatMessagesIst').innerHTML='';
+  g('chatInputBarIst').style.display='none';g('actionsBarIst').classList.add('hidden');
+  g('intakeIstText').value='';
+  ['titel','text','tabelle','kz'].forEach(f=>updateIstDoc(f,'',null));
+  g('btnCopyIst').disabled=true;g('btnFinalizeIst').disabled=true;
+
+  backToLanding();
 }
 
 /* ═══ MOBILE ═══ */
 function mobileTab(t){
   if(t==='doc'){g('docPanel').classList.add('mobile-show');g('chatPanel').classList.add('mobile-hide');g('mtDoc').classList.add('active');g('mtChat').classList.remove('active');}
   else{g('docPanel').classList.remove('mobile-show');g('chatPanel').classList.remove('mobile-hide');g('mtChat').classList.add('active');g('mtDoc').classList.remove('active');}
+}
+function mobileTabIst(t){
+  if(t==='doc'){g('docPanelIst').classList.add('mobile-show');g('chatPanelIst').classList.add('mobile-hide');g('mtDocIst').classList.add('active');g('mtChatIst').classList.remove('active');}
+  else{g('docPanelIst').classList.remove('mobile-show');g('chatPanelIst').classList.remove('mobile-hide');g('mtChatIst').classList.add('active');g('mtDocIst').classList.remove('active');}
 }
 
 /* ═══ API ═══ */
