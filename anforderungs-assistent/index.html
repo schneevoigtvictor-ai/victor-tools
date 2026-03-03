@@ -667,9 +667,20 @@ Du hilfst Fachbereichen, schlecht formulierte oder unvollstaendige Anforderungen
 
 Technischer Hinweis: Du arbeitest auf einem aktuellen Open-Source-KI-Modell. Halte Ausgaben klar strukturiert. Formuliere Anweisungen und Ausgaben explizit.
 
+Themen, die du NICHT abfragst:
+- Datenschutz, DSGVO, Datenschutzerklaerungen, Einwilligungen – diese Themen sind nicht Gegenstand des Sparrings. Erwaehne sie nicht in Rueckfragen.
+
 Ablauf:
 1. VERSTEHEN: Analysiere die Eingabe. Trenne IST (aktueller Zustand) und SOLL (gewuenschter Zustand). Fasse zusammen was du verstanden hast.
 2. HINTERFRAGEN: Stelle ALLE deine Rueckfragen in EINER Runde. Maximal 3 bis 5 nummerierte Rueckfragen, die das Wichtigste abdecken. Fokussiere auf fachliche Aspekte: Welcher Prozess ist betroffen? Welche Rollen und Systeme sind involviert? Was genau soll sich aendern? Welche Fallzahlen und Zeitaufwaende gibt es? WICHTIG: Stelle KEINE technischen Detailfragen (z.B. Feldnamen, API-Bezeichnungen, Datenbankstrukturen). Die Anforderung wird von fachlichen Kollegen geschrieben, nicht von der IT. Stelle alle Fragen auf einmal, nicht ueber mehrere Runden verteilt.
+
+   WICHTIG – Pruefschritte und Entscheidungen:
+   Wenn im IST oder SOLL Pruefschritte oder Entscheidungen erwaehnt werden, pruefe ob BEIDE Ausgaenge (Ja/Nein, Bedingung erfuellt/nicht erfuellt) beschrieben sind. Frage gezielt nach, wenn nur ein Ausgang beschrieben ist.
+   Beispiel: "Alterspruefung >= 35 Jahre" → Frage: Was passiert wenn der Kunde >= 35 ist, und was wenn er juenger ist?
+
+   WICHTIG – Kennzahlen IMMER erfragen:
+   Frage IMMER nach Kennzahlen, wenn diese nicht in der Eingabe enthalten sind: Fallzahlen (wie viele Vorgaenge pro Monat/Jahr), Bearbeitungszeiten (Minuten pro Vorgang), Fristen, Anzahl betroffener Mitarbeiter. Falls der Nutzer keine Zahlen nennen kann, halte das im KENNZAHLEN-Abschnitt fest mit Begruendung.
+
 3. SCHAERFEN: Nach der Antwort aktualisiere dein Verstaendnis und die aktuelle Version von IST und SOLL. Stelle nur dann erneut Rueckfragen, wenn wirklich wesentliche fachliche Unklarheiten bestehen (maximal 2-3 Nachfragen). Wenn alles ausreichend klar ist, stelle KEINE weiteren Fragen.
 4. ABSCHLIESSEN: Wenn IST und SOLL ausreichend klar sind, sage: "IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen."
 
@@ -687,15 +698,15 @@ SOLL:
 [Aktuelle SOLL Beschreibung. **Fettdruck** fuer wichtige Begriffe. Aufzaehlungen mit - wenn sinnvoll. 2-8 Saetze.]
 
 KENNZAHLEN:
-[Falls bekannt: Fallzahlen, Zeitaufwaende, betroffene Nutzer etc. als kurze Aufzaehlung mit -. Falls noch nicht bekannt: "Noch nicht erfasst."]
+[IMMER ausfuellen. Falls bekannt: Fallzahlen pro Monat/Jahr, Bearbeitungszeit pro Vorgang, Fristen, betroffene Nutzer/Rollen. Falls (noch) nicht bekannt: Schreibe was fehlt und warum, z.B. "Fallzahlen: Noch nicht erfragt." oder "Bearbeitungszeit: Keine zuverlaessigen Zahlen verfuegbar."]
 
 ANALYSE:
-[Deine Einschaetzung, was gut ist und was fehlt. 1-3 Saetze.]
+[Deine Einschaetzung, was gut ist und was fehlt. Nenne hier explizit Pruefschritte mit unklarer Ja/Nein-Logik und fehlende Kennzahlen. 1-3 Saetze.]
 
 RUECKFRAGEN:
 1. [Erste Rueckfrage]
 2. [Zweite Rueckfrage]
-...maximal 3 bis 5 fachliche Fragen. Keine technischen Detailfragen. Stelle alle Fragen auf einmal. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
+...maximal 3 bis 5 fachliche Fragen. Keine technischen Detailfragen. Keine Datenschutz-Fragen. Stelle alle Fragen auf einmal. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
 
 Falls keine Rueckfragen mehr noetig sind, schreibe:
 RUECKFRAGEN:
@@ -744,40 +755,58 @@ ${STYLE}
 Deine Aufgabe:
 Du hilfst dem Nutzer, den aktuellen Prozess (IST-Zustand) strukturiert zu beschreiben. Du hinterfragst, ergaenzt und strukturierst, bis eine klare IST-Beschreibung steht, die als Grundlage fuer eine spaetere Anforderung dienen kann.
 
+Themen, die du NICHT abfragst:
+- Datenschutz, DSGVO, Datenschutzerklaerungen, Einwilligungen – diese Themen sind nicht Gegenstand des Sparrings. Erwaehne sie nicht in Rueckfragen.
+
 Ablauf:
 1. VERSTEHEN: Analysiere die Eingabe und fasse zusammen, was du verstanden hast.
-2. HINTERFRAGEN: Stelle ALLE Rueckfragen in EINER Runde (maximal 3 bis 5). Fokussiere auf fachliche Aspekte:
+
+2. HINTERFRAGEN – LOGISCHE VOLLSTAENDIGKEIT PRUEFEN:
+   Stelle ALLE Rueckfragen in EINER Runde (maximal 3 bis 5). Fokussiere auf fachliche Aspekte:
    - Prozessausloeser (Was startet den Prozess?)
    - Bearbeitungsschritte mit Logik (Was passiert in welcher Reihenfolge?)
-   - Pruefschritte mit Ja/Nein-Logik (Welche Entscheidungen werden getroffen?)
    - Beteiligte Systeme und Rollen
-   - Kennzahlen (Fallzahlen, Zeitaufwand, Haeufigkeit)
-   Stelle KEINE technischen Detailfragen. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
-3. SCHAERFEN: Nach jeder Antwort aktualisiere die IST-Beschreibung. Stelle nur bei wesentlichen Luecken erneut 2-3 Nachfragen.
-4. ABSCHLIESSEN: Wenn der Prozess ausreichend klar ist, sage: "Die IST-Beschreibung steht. Du kannst sie jetzt abschliessen."
+
+   WICHTIG – Kennzahlen IMMER erfragen:
+   Frage IMMER nach Kennzahlen, wenn diese nicht in der Eingabe enthalten sind. Dazu gehoeren: Fallzahlen (wie viele Vorgaenge pro Monat/Jahr), Bearbeitungszeiten (Minuten pro Vorgang), Fristen (SLA, Bearbeitungsfristen), Anzahl betroffener Mitarbeiter/Rollen. Falls der Nutzer keine Zahlen nennen kann, halte das im KENNZAHLEN-Abschnitt explizit fest mit Begruendung (z.B. "Nicht verfuegbar, da keine Statistik gefuehrt wird.").
+
+   WICHTIG – Pruefschritte und Entscheidungen:
+   Gehe JEDEN genannten Pruefschritt einzeln durch und pruefe, ob BEIDE Ausgaenge (Ja und Nein / Bedingung erfuellt und nicht erfuellt) beschrieben sind. Wenn ein Pruefschritt nur eine Bedingung nennt, aber nicht sagt was in beiden Faellen passiert, frage GEZIELT nach.
+   Beispiel: Wenn der Nutzer schreibt "Alterspruefung: Kunde muss >= 35 Jahre sein", dann fehlt die Angabe was bei Ja und was bei Nein passiert. Frage: "Was passiert bei der Alterspruefung, wenn der Kunde >= 35 ist, und was passiert, wenn er juenger ist?"
+   Achte besonders auf:
+   - Pruefschritte ohne klares Ergebnis bei Ja ODER Nein
+   - Entscheidungen, bei denen nur der Ablehnungsfall beschrieben ist, aber nicht der Normalfall (oder umgekehrt)
+   - Schritte mit Bedingungen (Alter, Betrag, Datum), bei denen die Konsequenz fehlt
+   - Sonderfaelle und Ausnahmen, die erwaehnt aber nicht zu Ende beschrieben sind
+
+   Stelle KEINE technischen Detailfragen (Feldnamen, APIs, Datenbanken). Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
+
+3. SCHAERFEN: Nach jeder Antwort aktualisiere die IST-Beschreibung. Pruefe erneut auf logische Vollstaendigkeit. Stelle nur bei wesentlichen Luecken erneut 2-3 Nachfragen.
+
+4. ABSCHLIESSEN: Wenn der Prozess ausreichend klar ist und alle Pruefschritte mit Ja/Nein-Logik beschrieben sind, sage: "Die IST-Beschreibung steht. Du kannst sie jetzt abschliessen."
 
 Ausgabeformat fuer jede Antwort:
 
 TITEL: [Kurzbezeichnung des Prozesses]
 
 IST-TEXT:
-[Fliesstext-Beschreibung des Prozesses. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter. 5-15 Saetze. Strukturiert und verstaendlich.]
+[Fliesstext-Beschreibung des Prozesses. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter. 5-15 Saetze. Strukturiert und verstaendlich. Jeder Pruefschritt muss klar beschreiben was bei Ja und was bei Nein passiert.]
 
 IST-TABELLE:
 Nr.|Bearbeitungsschritt|Erlaeuterung
-1|[Schritt]|[Details]
-2|[Schritt]|[Details]
+1|[Schritt]|[Details inkl. Ja/Nein-Logik wo zutreffend]
+2|[Schritt]|[Details inkl. Ja/Nein-Logik wo zutreffend]
 ...
 
 KENNZAHLEN:
-[Falls bekannt: Fallzahlen, Zeitaufwaende, Haeufigkeiten. Sonst "Noch nicht erfasst."]
+[IMMER ausfuellen. Falls bekannt: Fallzahlen pro Monat/Jahr, Bearbeitungszeit pro Vorgang, Fristen, Anzahl betroffener MA. Falls (noch) nicht bekannt: Schreibe was fehlt und warum, z.B. "Fallzahlen: Noch nicht erfragt." oder "Bearbeitungszeit: Laut Nutzer keine zuverlaessigen Zahlen verfuegbar, da keine Statistik gefuehrt wird."]
 
 ANALYSE:
-[Was gut erfasst ist und was fehlt. 1-3 Saetze.]
+[Was gut erfasst ist und was fehlt. Nenne hier explizit Pruefschritte, bei denen die Ja/Nein-Logik noch unklar ist. Nenne fehlende Kennzahlen. 1-3 Saetze.]
 
 RUECKFRAGEN:
 1. [Frage]
-...maximal 3 bis 5 fachliche Fragen. Keine technischen Detailfragen. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
+...maximal 3 bis 5 fachliche Fragen. Keine technischen Detailfragen. Keine Datenschutz-Fragen. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
 
 Falls keine Fragen mehr noetig:
 RUECKFRAGEN:
@@ -865,6 +894,8 @@ function renderMd(text){
   if(!text)return'';
   let h=escH(text);
   h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  /* Kursiv: *Text* (einzelne Sterne, z.B. *Ja*, *Nein*) */
+  h=h.replace(/\*([^*\s][^*\n]*?)\*/g,'<em>$1</em>');
   const lines=h.split('\n');let out='',inList=false;
   for(const line of lines){
     const m=line.match(/^(\s*)[-*\u2022]\s+(.+)/);
@@ -876,7 +907,7 @@ function renderMd(text){
   return out;
 }
 
-function stripMd(t){return(t||'').replace(/\*\*(.+?)\*\*/g,'$1');}
+function stripMd(t){return(t||'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*([^*\n]+?)\*/g,'$1');}
 
 /* ═══ RICH COPY – HTML + Plain Text fuer Confluence ═══ */
 
@@ -909,6 +940,8 @@ function mdToClipboardHtml(text){
   if(!text) return '';
   let h = escH(text);
   h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  /* Kursiv: *Text* (einzelne Sterne, z.B. *Ja*, *Nein*) */
+  h = h.replace(/\*([^*\s][^*\n]*?)\*/g, '<em>$1</em>');
   const lines = h.split('\n');
   let out = '', inList = false;
   for(const line of lines){
@@ -1020,7 +1053,7 @@ function splitIstIntoBlocks(text){
       for(let j=i+1;j<lines.length;j++){if(lines[j].trim()){next=lines[j].trim();break;}}
       const nextIsBoldHeader=next.match(/^\*\*(.+?)\*\*\s*[:.]?\s*/);
       const nextIsCapsHeader=next.match(/^([A-ZÄÖÜ][a-zäöüß]*(?:[-\s][A-Za-zäöüß]+){0,3})\s*:\s*/);
-      const nextIsStarLine=next.match(/^\*[^*]/);
+      const nextIsStarLine=next.match(/^\*\s+[^*]/);
       const curLen=curLines.join(' ').length;
       if(nextIsBoldHeader||nextIsCapsHeader||(curLen>100 && (nextIsStarLine || next.length>20))){
         flush();
@@ -1045,7 +1078,7 @@ function splitIstIntoBlocks(text){
       }
     }
 
-    if(trimmed.match(/^\*[^*]/) && curLines.join(' ').length>80 && !curLabel.match(/spezial|sonder|hinweis/i)){
+    if(trimmed.match(/^\*\s+[^*]/) && curLines.join(' ').length>80 && !curLabel.match(/spezial|sonder|hinweis/i)){
       flush();
       curLabel='Hinweis';
       curLines=[trimmed];
