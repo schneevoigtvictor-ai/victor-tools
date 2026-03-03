@@ -547,40 +547,58 @@ textarea.fi{min-height:80px;}
           - Erfassung in Fachsystemen (z.B. 21c, Helic)<br>
           - Benachrichtigungen an Kunden (Briefe, Serienbriefe)</p>
 
-          <p style="margin-top:14px;"><strong>Beispiel Hautkrebsvorsorge (verkuerzt):</strong></p>
-          <p style="font-size:12.5px;background:var(--sf2);padding:12px;border-radius:var(--rs);border:1px solid var(--bd2);">
-          <strong>Prozessausloeser:</strong> Einreichung der Hautkrebsvorsorge-Rechnung durch den Kunden ueber MeineSBK. Der Kunde fuellt ein Miniformular aus (Dateiupload, Rechnungsbetrag, Bundesland, Bankverbindung, Behandlungstag, Kommentar, Datenschutz).<br><br>
-          <strong>Systemerfassung:</strong> Der Eingang wird in Helic als offener Fall angelegt.<br><br>
-          <strong>Pruefschritte durch Sachbearbeitung (Abrechnungsmanagement):</strong><br>
-          - Versicherungsverhaeltnis pruefen (richtiger Versicherter, offenes Verhaeltnis)<br>
-          - Doppeleinreichung pruefen<br>
-          - Art der Leistung pruefen (nur Hautkrebsvorsorge zulaessig)<br>
-          - Alterspruefung (ueber 35 Jahre = Ablehnung)<br>
-          - Bundesland-Sonderregeln: Bremen ab 01.01.2025, Niedersachsen ab 01.01.2024<br>
-          - Verjaehrung (Rechnungsdatum < 4 Jahre)<br>
-          - Jahresanspruch 1x/Kalenderjahr<br>
-          - Erstattungsbetrag: unter 25 EUR = voller Betrag, sonst 25 EUR<br><br>
-          <strong>Spezialfaelle:</strong> VIP-Weiterleitung an GST, KOE13/2-Weiterleitung, Einmalzahladresse (Erfassung im ZVK).<br><br>
-          <strong>Erfassung:</strong> Kassenspezifische Leistungen im 21cng, LA: Hautkrebsscreening, Pos: Haut.<br>
-          <strong>Benachrichtigung:</strong> Erstattungsbrief 21C1584 (manuell) oder Serienbrief S5208. Bei Ablehnung: Weiterleitung an Kundenberater.
-          </p>
+          <p style="margin-top:14px;font-weight:700;margin-bottom:8px;">Beispiel: Erstattung Hautkrebsvorsorge-Rechnung</p>
+          <div style="font-size:12.5px;display:flex;flex-direction:column;gap:0;border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;">
 
-          <p style="margin-top:10px;"><strong>Dieselbe IST-Beschreibung als Prozesstabelle (verkuerzt):</strong></p>
-          <div style="overflow-x:auto;margin-top:6px;">
-            <table style="width:100%;border-collapse:collapse;font-size:12px;line-height:1.5;">
-              <thead><tr style="background:var(--blue-deep);color:#fff;">
-                <th style="padding:6px 8px;text-align:left;font-weight:700;">Nr.</th>
-                <th style="padding:6px 8px;text-align:left;font-weight:700;">Bearbeitungsschritt</th>
-                <th style="padding:6px 8px;text-align:left;font-weight:700;">Erlaeuterung</th>
-              </tr></thead>
-              <tbody>
-                <tr><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">1</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Antragseingang</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Miniformular ueber MeineSBK mit Upload, Betrag, Bundesland</td></tr>
-                <tr style="background:var(--sf2);"><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">2</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Erfassung in Helic</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Offener Fall wird angelegt</td></tr>
-                <tr><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">3</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">VV pruefen</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Richtiger Versicherter? Offen? Ja=weiter, Nein=Ablehnung</td></tr>
-                <tr style="background:var(--sf2);"><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">4-10</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Weitere Pruefschritte</td><td style="padding:5px 8px;border-bottom:1px solid var(--bd2);">Doppeleinreichung, Leistungsart, Alter, Bundesland, Verjaehrung, Anspruch, Betrag</td></tr>
-                <tr><td style="padding:5px 8px;">11</td><td style="padding:5px 8px;">Benachrichtigung</td><td style="padding:5px 8px;">Erstattungsbrief 21C1584 / S5208</td></tr>
-              </tbody>
-            </table>
+            <!-- Prozessausloeser -->
+            <div style="padding:10px 14px;border-left:3px solid var(--green);background:var(--sf2);border-bottom:1px solid var(--bd2);">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:4px;">&#9889; Prozessausloeser</div>
+              <div>Kunde reicht Hautkrebsvorsorge-Rechnung ueber <strong>MeineSBK</strong> ein (Miniformular: Dateiupload, Rechnungsbetrag, Bundesland, Bankverbindung, Behandlungstag).</div>
+            </div>
+
+            <!-- Bearbeitungsschritte -->
+            <div style="padding:10px 14px;border-left:3px solid var(--blue-strong);background:var(--sf);border-bottom:1px solid var(--bd2);">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-strong);margin-bottom:4px;">&#128203; Bearbeitungsschritte &amp; Prueflogik (Rolle: Sachbearbeitung Abrechnungsmanagement)</div>
+              <div style="display:flex;flex-direction:column;gap:3px;">
+                <div>1. Eingang in <strong>Helic</strong> als offener Fall anlegen</div>
+                <div>2. Versicherungsverhaeltnis pruefen &rarr; <em>Ja:</em> weiter &middot; <em>Nein:</em> Ablehnung an KB</div>
+                <div>3. Doppeleinreichung pruefen &rarr; <em>Ja:</em> Ablehnung an KB &middot; <em>Nein:</em> weiter</div>
+                <div>4. Art der Leistung pruefen (nur Hautkrebsvorsorge) &rarr; <em>Ja:</em> weiter &middot; <em>Nein:</em> Ablehnung an KB</div>
+                <div>5. Alterspruefung (&ge;35 Jahre) &rarr; <em>Ja:</em> weiter &middot; <em>Nein:</em> Ablehnung ueber KB, Ablehnungsgespraech</div>
+                <div>6. Bundesland-Sonderregeln pruefen: Bremen ab 01.01.2025, Niedersachsen ab 01.01.2024</div>
+                <div>7. Verjaehrung pruefen (Rechnungsdatum &lt; 4 Jahre)</div>
+                <div>8. Jahresanspruch pruefen: 1x pro Kalenderjahr</div>
+                <div>9. Erstattungsbetrag berechnen: &le;25 EUR = voller Betrag, sonst 25 EUR</div>
+              </div>
+            </div>
+
+            <!-- Beteiligte Rollen und Systeme -->
+            <div style="padding:10px 14px;border-left:3px solid var(--blue-strong);background:var(--sf2);border-bottom:1px solid var(--bd2);">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-strong);margin-bottom:4px;">&#128101; Beteiligte Rollen &amp; Systeme</div>
+              <div><strong>Rollen:</strong> Sachbearbeitung Abrechnungsmanagement, Kundenberater (KB), ggf. GST (bei VIP).<br>
+              <strong>Systeme:</strong> MeineSBK (Eingang), Helic (Fallsteuerung), 21c_ng (Leistungserfassung), ZVK (Zahlung).</div>
+            </div>
+
+            <!-- Erfassung in Fachsystemen -->
+            <div style="padding:10px 14px;border-left:3px solid var(--lila);background:var(--sf);border-bottom:1px solid var(--bd2);">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--lila);margin-bottom:4px;">&#128190; Erfassung in Fachsystemen</div>
+              <div>Erfassung in <strong>21c_ng</strong>: Kassenspezifische Leistungen, LA = Hautkrebsscreening, Pos-Nr = Haut.<br>
+              Bei Einmalzahladresse: Zahlung + Aenderung im <strong>ZVK</strong>. Bei neuer BV ohne 2-Faktor: Kontakt mit Kund*in (BV-Abgleich).</div>
+            </div>
+
+            <!-- Kundenkommunikation -->
+            <div style="padding:10px 14px;border-left:3px solid var(--orange);background:var(--sf2);border-bottom:1px solid var(--bd2);">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:4px;">&#9993; Kundenkommunikation</div>
+              <div><strong>Erstattung:</strong> Serienbrief <strong>S5208</strong> (Regelfall) oder manueller Erstattungsbrief <strong>21C1584</strong>.<br>
+              <strong>Ablehnung:</strong> Weiterleitung Helic-Fall an KB &rarr; Ablehnungsgespraech &amp; Dokumentation in <strong>21c_ng</strong>. Keine Erfassung von APK.</div>
+            </div>
+
+            <!-- Sonderfaelle -->
+            <div style="padding:10px 14px;border-left:3px solid var(--lila);background:var(--sf);">
+              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--lila);margin-bottom:4px;">&#9733; Sonderfaelle &amp; Ausnahmen</div>
+              <div><strong>VIP-Kunden:</strong> Weiterleitung an GST. <strong>KOE13/2:</strong> Separate Weiterleitung. <strong>Einmalzahladresse:</strong> Erfassung im ZVK erforderlich.</div>
+            </div>
+
           </div>
           <p style="margin-top:8px;font-size:11.5px;color:var(--dm);font-style:italic;">Dies ist ein verkuerztes Beispiel. Im Sparring wird die Beschreibung gemeinsam detaillierter ausgearbeitet.</p>
         </div>
@@ -672,17 +690,36 @@ Themen, die du NICHT abfragst:
 
 Ablauf:
 1. VERSTEHEN: Analysiere die Eingabe. Trenne IST (aktueller Zustand) und SOLL (gewuenschter Zustand). Fasse zusammen was du verstanden hast.
-2. HINTERFRAGEN: Stelle ALLE deine Rueckfragen in EINER Runde. Maximal 3 bis 5 nummerierte Rueckfragen, die das Wichtigste abdecken. Fokussiere auf fachliche Aspekte: Welcher Prozess ist betroffen? Welche Rollen und Systeme sind involviert? Was genau soll sich aendern? Welche Fallzahlen und Zeitaufwaende gibt es? WICHTIG: Stelle KEINE technischen Detailfragen (z.B. Feldnamen, API-Bezeichnungen, Datenbankstrukturen). Die Anforderung wird von fachlichen Kollegen geschrieben, nicht von der IT. Stelle alle Fragen auf einmal, nicht ueber mehrere Runden verteilt.
+
+2. BEWERTEN: Pruefe die Eingabe anhand dieser fuenf Kriterien:
+   - IST-Prozess beschrieben (Ist der aktuelle Zustand klar?)
+   - SOLL-Zustand klar (Ist der gewuenschte Zustand klar?)
+   - Systeme und Rollen genannt (Sind die beteiligten Systeme und Rollen erkennbar?)
+   - Pruefschritte mit Ja/Nein-Logik (Sind Entscheidungen mit beiden Ausgaengen beschrieben?)
+   - Kennzahlen vorhanden oder begruendet (Gibt es Fallzahlen, Zeiten, Fristen – oder eine Begruendung warum nicht?)
+   Gib fuer jedes Kriterium eine ehrliche Bewertung ab: JA, TEILWEISE oder NEIN.
+
+3. HINTERFRAGEN – DYNAMISCH BASIEREND AUF DER BEWERTUNG:
+   Die Anzahl deiner Rueckfragen richtet sich nach der Bewertung:
+   - Wenn fast alle Kriterien JA sind: Stelle 0-1 Rueckfragen oder schliesse direkt ab.
+   - Wenn die meisten Kriterien TEILWEISE sind: Stelle 2-3 gezielte Rueckfragen.
+   - Wenn viele Kriterien NEIN sind: Stelle bis zu 5 Rueckfragen, die das Wichtigste abdecken.
+
+   Stelle nur Fragen, die du WIRKLICH brauchst. Keine Fragen auf Vorrat. Weniger gute Fragen sind besser als viele mittelmässige. Stelle alle Fragen auf einmal in einer Runde.
+
+   Fokussiere auf fachliche Aspekte: Welcher Prozess ist betroffen? Welche Rollen und Systeme sind involviert? Was genau soll sich aendern? Welche Fallzahlen und Zeitaufwaende gibt es?
+   WICHTIG: Stelle KEINE technischen Detailfragen (z.B. Feldnamen, API-Bezeichnungen, Datenbankstrukturen). Die Anforderung wird von fachlichen Kollegen geschrieben, nicht von der IT.
 
    WICHTIG – Pruefschritte und Entscheidungen:
    Wenn im IST oder SOLL Pruefschritte oder Entscheidungen erwaehnt werden, pruefe ob BEIDE Ausgaenge (Ja/Nein, Bedingung erfuellt/nicht erfuellt) beschrieben sind. Frage gezielt nach, wenn nur ein Ausgang beschrieben ist.
    Beispiel: "Alterspruefung >= 35 Jahre" → Frage: Was passiert wenn der Kunde >= 35 ist, und was wenn er juenger ist?
 
-   WICHTIG – Kennzahlen IMMER erfragen:
-   Frage IMMER nach Kennzahlen, wenn diese nicht in der Eingabe enthalten sind: Fallzahlen (wie viele Vorgaenge pro Monat/Jahr), Bearbeitungszeiten (Minuten pro Vorgang), Fristen, Anzahl betroffener Mitarbeiter. Falls der Nutzer keine Zahlen nennen kann, halte das im KENNZAHLEN-Abschnitt fest mit Begruendung.
+   WICHTIG – Kennzahlen:
+   Frage nach Kennzahlen, wenn diese nicht in der Eingabe enthalten sind: Fallzahlen (wie viele Vorgaenge pro Monat/Jahr), Bearbeitungszeiten (Minuten pro Vorgang), Fristen, Anzahl betroffener Mitarbeiter. Falls der Nutzer keine Zahlen nennen kann, halte das im KENNZAHLEN-Abschnitt fest mit Begruendung.
 
-3. SCHAERFEN: Nach der Antwort aktualisiere dein Verstaendnis und die aktuelle Version von IST und SOLL. Stelle nur dann erneut Rueckfragen, wenn wirklich wesentliche fachliche Unklarheiten bestehen (maximal 2-3 Nachfragen). Wenn alles ausreichend klar ist, stelle KEINE weiteren Fragen.
-4. ABSCHLIESSEN: Wenn IST und SOLL ausreichend klar sind, sage: "IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen."
+4. SCHAERFEN: Nach jeder Antwort aktualisiere die Bewertung, IST und SOLL. Pruefe erneut alle fuenf Kriterien. Stelle nur dann Rueckfragen, wenn Kriterien noch auf NEIN oder TEILWEISE stehen und die Information fachlich relevant ist. Es gibt keine feste Rundenzahl – manche Anforderungen stehen nach einer Runde, andere brauchen vier.
+
+5. ABSCHLIESSEN: Wenn alle oder fast alle Kriterien auf JA stehen, sage: "IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen."
 
 Nutze **Fettdruck** fuer Schluesselbegriffe in IST und SOLL.
 Nutze Aufzaehlungen mit - wenn du mehrere Punkte auflisten musst.
@@ -700,13 +737,20 @@ SOLL:
 KENNZAHLEN:
 [IMMER ausfuellen. Falls bekannt: Fallzahlen pro Monat/Jahr, Bearbeitungszeit pro Vorgang, Fristen, betroffene Nutzer/Rollen. Falls (noch) nicht bekannt: Schreibe was fehlt und warum, z.B. "Fallzahlen: Noch nicht erfragt." oder "Bearbeitungszeit: Keine zuverlaessigen Zahlen verfuegbar."]
 
+BEWERTUNG:
+IST-Prozess beschrieben: [JA/TEILWEISE/NEIN]
+SOLL-Zustand klar: [JA/TEILWEISE/NEIN]
+Systeme und Rollen genannt: [JA/TEILWEISE/NEIN]
+Pruefschritte mit Ja/Nein-Logik: [JA/TEILWEISE/NEIN]
+Kennzahlen vorhanden oder begruendet: [JA/TEILWEISE/NEIN]
+
 ANALYSE:
 [Deine Einschaetzung, was gut ist und was fehlt. Nenne hier explizit Pruefschritte mit unklarer Ja/Nein-Logik und fehlende Kennzahlen. 1-3 Saetze.]
 
 RUECKFRAGEN:
 1. [Erste Rueckfrage]
 2. [Zweite Rueckfrage]
-...maximal 3 bis 5 fachliche Fragen. Keine technischen Detailfragen. Keine Datenschutz-Fragen. Stelle alle Fragen auf einmal. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
+...nur so viele wie noetig (0 bis maximal 5). Keine technischen Detailfragen. Keine Datenschutz-Fragen. Stelle alle Fragen auf einmal. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
 
 Falls keine Rueckfragen mehr noetig sind, schreibe:
 RUECKFRAGEN:
@@ -761,14 +805,22 @@ Themen, die du NICHT abfragst:
 Ablauf:
 1. VERSTEHEN: Analysiere die Eingabe und fasse zusammen, was du verstanden hast.
 
-2. HINTERFRAGEN – LOGISCHE VOLLSTAENDIGKEIT PRUEFEN:
-   Stelle ALLE Rueckfragen in EINER Runde (maximal 3 bis 5). Fokussiere auf fachliche Aspekte:
-   - Prozessausloeser (Was startet den Prozess?)
-   - Bearbeitungsschritte mit Logik (Was passiert in welcher Reihenfolge?)
-   - Beteiligte Systeme und Rollen
+2. BEWERTEN: Pruefe die Eingabe anhand dieser sechs Kriterien fuer eine vollstaendige IST-Beschreibung:
+   - Prozessausloeser beschrieben (Was startet den Prozess? Ist der Ausloeser klar?)
+   - Bearbeitungsschritte vollstaendig (Sind alle Schritte in der richtigen Reihenfolge beschrieben?)
+   - Systeme und Rollen genannt (Welche Systeme und Rollen sind beteiligt?)
+   - Pruefschritte mit Ja/Nein-Logik (Sind Entscheidungen mit BEIDEN Ausgaengen beschrieben?)
+   - Sonderfaelle und Ausnahmen beschrieben (Gibt es Spezialfaelle, Weiterleitungen, Sonderregeln?)
+   - Kennzahlen vorhanden oder begruendet (Fallzahlen, Bearbeitungszeiten, Fristen – oder Begruendung warum nicht?)
+   Gib fuer jedes Kriterium eine ehrliche Bewertung ab: JA, TEILWEISE oder NEIN.
 
-   WICHTIG – Kennzahlen IMMER erfragen:
-   Frage IMMER nach Kennzahlen, wenn diese nicht in der Eingabe enthalten sind. Dazu gehoeren: Fallzahlen (wie viele Vorgaenge pro Monat/Jahr), Bearbeitungszeiten (Minuten pro Vorgang), Fristen (SLA, Bearbeitungsfristen), Anzahl betroffener Mitarbeiter/Rollen. Falls der Nutzer keine Zahlen nennen kann, halte das im KENNZAHLEN-Abschnitt explizit fest mit Begruendung (z.B. "Nicht verfuegbar, da keine Statistik gefuehrt wird.").
+3. HINTERFRAGEN – DYNAMISCH BASIEREND AUF DER BEWERTUNG:
+   Die Anzahl deiner Rueckfragen richtet sich nach der Bewertung:
+   - Wenn fast alle Kriterien JA sind: Stelle 0-1 Rueckfragen oder schliesse direkt ab.
+   - Wenn die meisten Kriterien TEILWEISE sind: Stelle 2-3 gezielte Rueckfragen.
+   - Wenn viele Kriterien NEIN sind: Stelle bis zu 5 Rueckfragen, die das Wichtigste abdecken.
+
+   Stelle nur Fragen, die du WIRKLICH brauchst. Keine Fragen auf Vorrat. Weniger gute Fragen sind besser als viele mittelmässige. Stelle alle Fragen auf einmal in einer Runde.
 
    WICHTIG – Pruefschritte und Entscheidungen:
    Gehe JEDEN genannten Pruefschritt einzeln durch und pruefe, ob BEIDE Ausgaenge (Ja und Nein / Bedingung erfuellt und nicht erfuellt) beschrieben sind. Wenn ein Pruefschritt nur eine Bedingung nennt, aber nicht sagt was in beiden Faellen passiert, frage GEZIELT nach.
@@ -781,9 +833,9 @@ Ablauf:
 
    Stelle KEINE technischen Detailfragen (Feldnamen, APIs, Datenbanken). Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
 
-3. SCHAERFEN: Nach jeder Antwort aktualisiere die IST-Beschreibung. Pruefe erneut auf logische Vollstaendigkeit. Stelle nur bei wesentlichen Luecken erneut 2-3 Nachfragen.
+4. SCHAERFEN: Nach jeder Antwort aktualisiere die Bewertung und die IST-Beschreibung. Pruefe erneut alle acht Kriterien. Stelle nur dann Rueckfragen, wenn Kriterien noch auf NEIN oder TEILWEISE stehen und die Information fachlich relevant ist. Es gibt keine feste Rundenzahl – manche Prozesse stehen nach einer Runde, andere brauchen vier.
 
-4. ABSCHLIESSEN: Wenn der Prozess ausreichend klar ist und alle Pruefschritte mit Ja/Nein-Logik beschrieben sind, sage: "Die IST-Beschreibung steht. Du kannst sie jetzt abschliessen."
+5. ABSCHLIESSEN: Wenn alle oder fast alle Kriterien auf JA stehen, sage: "Die IST-Beschreibung steht. Du kannst sie jetzt abschliessen."
 
 Ausgabeformat fuer jede Antwort:
 
@@ -801,12 +853,20 @@ Nr.|Bearbeitungsschritt|Erlaeuterung
 KENNZAHLEN:
 [IMMER ausfuellen. Falls bekannt: Fallzahlen pro Monat/Jahr, Bearbeitungszeit pro Vorgang, Fristen, Anzahl betroffener MA. Falls (noch) nicht bekannt: Schreibe was fehlt und warum, z.B. "Fallzahlen: Noch nicht erfragt." oder "Bearbeitungszeit: Laut Nutzer keine zuverlaessigen Zahlen verfuegbar, da keine Statistik gefuehrt wird."]
 
+BEWERTUNG:
+Prozessausloeser beschrieben: [JA/TEILWEISE/NEIN]
+Bearbeitungsschritte vollstaendig: [JA/TEILWEISE/NEIN]
+Systeme und Rollen genannt: [JA/TEILWEISE/NEIN]
+Pruefschritte mit Ja/Nein-Logik: [JA/TEILWEISE/NEIN]
+Sonderfaelle und Ausnahmen beschrieben: [JA/TEILWEISE/NEIN]
+Kennzahlen vorhanden oder begruendet: [JA/TEILWEISE/NEIN]
+
 ANALYSE:
 [Was gut erfasst ist und was fehlt. Nenne hier explizit Pruefschritte, bei denen die Ja/Nein-Logik noch unklar ist. Nenne fehlende Kennzahlen. 1-3 Saetze.]
 
 RUECKFRAGEN:
 1. [Frage]
-...maximal 3 bis 5 fachliche Fragen. Keine technischen Detailfragen. Keine Datenschutz-Fragen. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
+...nur so viele wie noetig (0 bis maximal 5). Keine technischen Detailfragen. Keine Datenschutz-Fragen. Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
 
 Falls keine Fragen mehr noetig:
 RUECKFRAGEN:
@@ -1266,12 +1326,14 @@ function renderIstTable(raw){
   let headers=lines[0].split('|').map(c=>c.trim()).filter(c=>c);
   let data=lines.slice(1);
   data=data.filter(l=>!l.match(/^[\s|:-]+$/));
+  /* Hilfsfunktion: HTML-Escape + Markdown-Fett/Kursiv in Tabellenzellen */
+  const cellHtml=t=>{let s=escH(t);s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');return s;};
   let h='<div class="tf-table-wrap"><table class="ist-proc-table"><thead><tr>';
   headers.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
   h+='</tr></thead><tbody>';
   data.forEach(row=>{
     const cells=row.split('|').map(c=>c.trim()).filter(c=>c);
-    h+='<tr>';cells.forEach(c=>{h+=`<td>${escH(c)}</td>`;});h+='</tr>';
+    h+='<tr>';cells.forEach(c=>{h+=`<td>${cellHtml(c)}</td>`;});h+='</tr>';
   });
   h+='</tbody></table></div>';
   return h;
@@ -1283,9 +1345,29 @@ function isHeader(cleaned, patterns){
   return false;
 }
 
+/**
+ * Parst den BEWERTUNG-Block aus der KIA-Antwort.
+ * Erkennt Zeilen wie "IST-Prozess beschrieben: JA" und gibt ein Objekt zurueck.
+ */
+function parseBewertung(raw){
+  if(!raw) return {};
+  const result={};
+  const lines=raw.split('\n');
+  for(const line of lines){
+    const m=line.match(/^(.+?):\s*(JA|TEILWEISE|NEIN)\s*$/i);
+    if(m){
+      const key=m[1].trim().toLowerCase()
+        .replace(/[äÄ]/g,'ae').replace(/[öÖ]/g,'oe').replace(/[üÜ]/g,'ue').replace(/[ß]/g,'ss')
+        .replace(/[-\/]/g,' ').replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+      result[key]=m[2].toUpperCase();
+    }
+  }
+  return result;
+}
+
 function parseKIA(text){
   const lines=text.split('\n');
-  let titel='',ist='',soll='',kz='',analyse='',open='',ak='',tf='';
+  let titel='',ist='',soll='',kz='',analyse='',open='',ak='',tf='',bewertungRaw='';
   let questions=[],mode=null;
 
   function norm(s){
@@ -1298,6 +1380,7 @@ function parseKIA(text){
   const H_IST     = [/^IST[\s-]*(?:BESCHREIBUNG|ZUSTAND|SITUATION)?\s*:/i, /^IST\s*:/i];
   const H_SOLL    = [/^SOLL[\s-]*(?:BESCHREIBUNG|ZUSTAND)?\s*:/i, /^SOLL\s*:/i];
   const H_KZ      = [/^KENNZAHLEN\s*:/i];
+  const H_BEWERTUNG = [/^BEWERTUNG\s*:/i];
   const H_ANALYSE = [/^ANALYSE\s*:/i];
   const H_RUECK   = [/^RUE?CKFRAGEN[\s(]/i, /^RUE?CKFRAGEN\s*:/i, /^FRAGEN\s*:/i];
   const H_OPEN    = [/^OFFENE\s*PUNKTE\s*:/i];
@@ -1329,6 +1412,7 @@ function parseKIA(text){
       if(v) kz = v;
       mode = 'kz'; continue;
     }
+    if(isHeader(nCl, H_BEWERTUNG)){ mode = 'bewertung'; continue; }
     if(isHeader(nCl, H_ANALYSE)){
       const v = cl.replace(/^ANALYSE\s*:\s*/i,'').trim();
       if(v) analyse = v;
@@ -1346,6 +1430,7 @@ function parseKIA(text){
     if(mode==='ist') ist += (ist?'\n':'') + raw;
     else if(mode==='soll') soll += (soll?'\n':'') + raw;
     else if(mode==='kz') kz += (kz?'\n':'') + raw;
+    else if(mode==='bewertung') bewertungRaw += (bewertungRaw?'\n':'') + raw;
     else if(mode==='analyse') analyse += (analyse?'\n':'') + raw;
     else if(mode==='q'){
       const qm = raw.replace(/\*\*/g,'').match(/^\d+[.)]\s*(.+)/);
@@ -1361,13 +1446,17 @@ function parseKIA(text){
   }
 
   console.log('parseKIA:', {titel:!!titel,ist:!!ist,soll:!!soll,kz:!!kz,analyse:!!analyse,q:questions.length});
-  return{titel,ist,soll,kz,analyse,questions,open,ak,tf};
+
+  /* Bewertung parsen: Zeilen wie "IST-Prozess beschrieben: JA" */
+  const bewertung = parseBewertung(bewertungRaw);
+
+  return{titel,ist,soll,kz,analyse,questions,open,ak,tf,bewertung};
 }
 
 /* IST-Modus Parser */
 function parseIST(text){
   const lines=text.split('\n');
-  let titel='',istText='',tabelle='',kz='',analyse='';
+  let titel='',istText='',tabelle='',kz='',analyse='',bewertungRaw='';
   let questions=[],mode=null;
 
   function norm(s){
@@ -1380,6 +1469,7 @@ function parseIST(text){
   const H_IST_TEXT= [/^IST[\s-]*TEXT\s*:/i, /^IST[\s-]*(?:BESCHREIBUNG|ZUSTAND|SITUATION)\s*:/i, /^IST\s*:/i];
   const H_IST_TAB = [/^IST[\s-]*TABELLE\s*:/i, /^PROZESS[\s-]*TABELLE\s*:/i];
   const H_KZ      = [/^KENNZAHLEN\s*:/i];
+  const H_BEWERTUNG = [/^BEWERTUNG\s*:/i];
   const H_ANALYSE = [/^ANALYSE\s*:/i];
   const H_RUECK   = [/^RUE?CKFRAGEN[\s(]/i, /^RUE?CKFRAGEN\s*:/i, /^FRAGEN\s*:/i];
 
@@ -1393,6 +1483,7 @@ function parseIST(text){
     if(isHeader(nCl, H_IST_TAB)){ mode='tabelle'; continue; }
     if(isHeader(nCl, H_IST_TEXT)){ const v=cl.replace(/^IST[\s\-A-Za-z]*:\s*/i,'').trim(); if(v)istText=v; mode='text'; continue; }
     if(isHeader(nCl, H_KZ)){ const v=cl.replace(/^KENNZAHLEN\s*:\s*/i,'').trim(); if(v)kz=v; mode='kz'; continue; }
+    if(isHeader(nCl, H_BEWERTUNG)){ mode='bewertung'; continue; }
     if(isHeader(nCl, H_ANALYSE)){ const v=cl.replace(/^ANALYSE\s*:\s*/i,'').trim(); if(v)analyse=v; mode='analyse'; continue; }
     if(isHeader(nCl, H_RUECK)){ mode='q'; continue; }
 
@@ -1408,6 +1499,7 @@ function parseIST(text){
     }
     else if(mode==='tabelle') tabelle+=(tabelle?'\n':'')+raw;
     else if(mode==='kz') kz+=(kz?'\n':'')+raw;
+    else if(mode==='bewertung') bewertungRaw+=(bewertungRaw?'\n':'')+raw;
     else if(mode==='analyse') analyse+=(analyse?'\n':'')+raw;
     else if(mode==='q'){
       const qm=raw.replace(/\*\*/g,'').match(/^\d+[.)]\s*(.+)/);
@@ -1432,7 +1524,11 @@ function parseIST(text){
   }
 
   console.log('parseIST:', {titel:!!titel,text:!!istText,tabelle:!!tabelle,kz:!!kz,analyse:!!analyse,q:questions.length});
-  return{titel,istText,tabelle,kz,analyse,questions};
+
+  /* Bewertung parsen */
+  const bewertung = parseBewertung(bewertungRaw);
+
+  return{titel,istText,tabelle,kz,analyse,questions,bewertung};
 }
 
 /* ═══ SPARRING START (Allgemein) ═══ */
@@ -1794,6 +1890,8 @@ function renderTfTable(raw){
   if(!raw)return'<p style="color:var(--dm)">Keine Testfaelle.</p>';
   const rows=parseTfRows(raw);
   if(rows.length===0)return'<div class="rendered">'+renderMd(raw)+'</div>';
+  /* Hilfsfunktion: HTML-Escape + Markdown-Fett/Kursiv in Tabellenzellen */
+  const cellMd=t=>{let s=escH(t);s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');return s;};
   let h='<div class="tf-table-wrap"><table class="tf-table"><thead><tr>';
   TF_HEADERS.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
   h+='</tr></thead><tbody>';
@@ -1801,8 +1899,8 @@ function renderTfTable(raw){
     h+='<tr>';
     for(let i=0;i<7;i++){
       let v=row[i]||'';
-      if(i===6){const pc=v.match(/hoch/i)?'prio-high':v.match(/mittel/i)?'prio-medium':'prio-low';h+=`<td class="${pc}">${escH(v)}</td>`;}
-      else h+=`<td>${escH(v)}</td>`;
+      if(i===6){const pc=v.match(/hoch/i)?'prio-high':v.match(/mittel/i)?'prio-medium':'prio-low';h+=`<td class="${pc}">${cellMd(v)}</td>`;}
+      else h+=`<td>${cellMd(v)}</td>`;
     }
     h+='</tr>';
   });
