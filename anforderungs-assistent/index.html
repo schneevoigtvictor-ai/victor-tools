@@ -216,6 +216,10 @@ textarea.fi{min-height:80px;}
 .sec-card-copy{background:none;border:1px solid var(--bd);border-radius:var(--rs);padding:4px 12px;font-family:inherit;font-size:11.5px;color:var(--mu);cursor:pointer;transition:all .2s var(--ease);white-space:nowrap;}
 .sec-card-copy:hover{border-color:var(--blue-strong);color:var(--blue-strong);}
 .sec-card-copy.copied{border-color:var(--green);color:var(--green);background:var(--green-light);}
+
+/* Kopier-Button-Gruppe in Karten-Header */
+.sec-card-copy-group{display:flex;gap:6px;flex-shrink:0;}
+
 .sec-card-body{padding:18px 20px;}
 
 /* RENDERED CONTENT */
@@ -653,8 +657,7 @@ const STYLE=`Schreibe in einem klaren, strukturierten und praxisnahen Stil. Vers
 
 /* ═══ SYSTEM-PROMPTS ═══ */
 
-/* Haupt-Sparring – ÄNDERUNG: Alle Rückfragen gebuendelt in einer Runde (5-7 max), 
-   "Offene Punkte" entfernt, klarere Anweisungen */
+/* Haupt-Sparring */
 const SYS_GENERAL=`Du bist der Anforderungs-Assistent der SBK. Du agierst als erfahrener Business Analyst und Sparringspartner.
 
 ${STYLE}
@@ -875,13 +878,100 @@ function renderMd(text){
 
 function stripMd(t){return(t||'').replace(/\*\*(.+?)\*\*/g,'$1');}
 
+/* ═══ RICH COPY – HTML + Plain Text fuer Confluence ═══ */
+
+/**
+ * Kopiert sowohl text/html als auch text/plain in die Zwischenablage.
+ * Confluence (und andere Rich-Text-Editoren) uebernehmen dann die Formatierung.
+ * Fallback auf reines writeText wenn ClipboardItem nicht unterstuetzt wird.
+ */
+async function copyRich(plain, html){
+  try {
+    const htmlBlob = new Blob([html], {type:'text/html'});
+    const textBlob = new Blob([plain], {type:'text/plain'});
+    await navigator.clipboard.write([
+      new ClipboardItem({'text/html': htmlBlob, 'text/plain': textBlob})
+    ]);
+    return true;
+  } catch(e) {
+    /* Fallback: Nur Plain-Text (z.B. Firefox ohne Permissions) */
+    console.warn('Rich-Copy fehlgeschlagen, Fallback auf Plain-Text:', e);
+    await navigator.clipboard.writeText(plain);
+    return true;
+  }
+}
+
+/**
+ * Wandelt Markdown-aehnlichen Text in sauberes HTML fuer die Zwischenablage.
+ * Confluence interpretiert <strong>, <ul>/<li>, <p> korrekt.
+ */
+function mdToClipboardHtml(text){
+  if(!text) return '';
+  let h = escH(text);
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  const lines = h.split('\n');
+  let out = '', inList = false;
+  for(const line of lines){
+    const m = line.match(/^(\s*)[-*\u2022]\s+(.+)/);
+    if(m){ if(!inList){out+='<ul>';inList=true;} out+='<li>'+m[2]+'</li>'; }
+    else { if(inList){out+='</ul>';inList=false;} if(line.trim()) out+='<p>'+line+'</p>'; }
+  }
+  if(inList) out+='</ul>';
+  if(!out.includes('<p>') && !out.includes('<ul>')) out = '<p>'+h.replace(/\n/g,'<br>')+'</p>';
+  return out;
+}
+
+/**
+ * Wandelt eine Pipe-getrennte Tabelle in eine HTML-Tabelle fuer die Zwischenablage.
+ * Confluence erkennt <table> mit border-Attribut zuverlaessig als Tabelle.
+ */
+function pipeTableToClipboardHtml(raw){
+  if(!raw) return '';
+  const lines = raw.split('\n').filter(l=>l.includes('|'));
+  if(lines.length < 1) return '<p>'+escH(raw)+'</p>';
+
+  /* Erste Zeile = Header */
+  const headers = lines[0].split('|').map(c=>c.trim()).filter(c=>c);
+  let data = lines.slice(1).filter(l=>!l.match(/^[\s|:-]+$/));
+
+  let h = '<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;">';
+  h += '<thead><tr>';
+  headers.forEach(hd=>{
+    h += '<th style="background-color:#002B52;color:#ffffff;padding:8px 12px;text-align:left;font-weight:bold;border:1px solid #cbd5e0;">'+escH(hd)+'</th>';
+  });
+  h += '</tr></thead><tbody>';
+  data.forEach((row,idx)=>{
+    const cells = row.split('|').map(c=>c.trim()).filter(c=>c);
+    const bg = idx % 2 === 0 ? '#ffffff' : '#f7fafc';
+    h += '<tr>';
+    cells.forEach(c=>{
+      h += '<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:'+bg+';vertical-align:top;">'+escH(c)+'</td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  return h;
+}
+
+/**
+ * Wandelt eine Pipe-getrennte Tabelle in Tab-getrennten Plain-Text.
+ * Kann in Excel oder Confluence als Tabelle eingefuegt werden.
+ */
+function pipeTableToPlaintext(raw){
+  if(!raw) return '';
+  const lines = raw.split('\n').filter(l=>l.includes('|'));
+  if(lines.length < 1) return stripMd(raw);
+  return lines
+    .filter(l=>!l.match(/^[\s|:-]+$/))
+    .map(l=> l.split('|').map(c=>c.trim()).filter(c=>c).join('\t'))
+    .join('\n');
+}
+
 /* ═══ STRUKTURIERTER IST-TEXT RENDERER ═══ */
-/* Erkennt Absaetze/Sektionen im IST-Text und rendert sie visuell getrennt */
 function renderIstTextStructured(text){
   if(!text)return'';
   const blocks=splitIstIntoBlocks(text);
 
-  /* Hilfsfunktion: Bloecke rendern */
   function renderBlocks(bArr){
     let html='<div class="ist-structured">';
     bArr.forEach(b=>{
@@ -896,10 +986,8 @@ function renderIstTextStructured(text){
     return html;
   }
 
-  /* Genug Bloecke erkannt → direkt rendern */
   if(blocks.length>=2) return renderBlocks(blocks);
 
-  /* Nur 1 Block aber langer Text: auf Absaetze splitten und auto-labeln */
   if(text.length>200){
     const paragraphs=text.split(/\n\s*\n/).filter(p=>p.trim());
     if(paragraphs.length>=2){
@@ -908,11 +996,9 @@ function renderIstTextStructured(text){
     }
   }
 
-  /* Kurzer Text oder keine Absaetze → einfach rendern */
   return '<div class="ist-structured"><div class="ist-section s-steps"><div class="ist-section-body">'+renderMd(text)+'</div></div></div>';
 }
 
-/* IST-Text in Bloecke aufteilen (anhand von Fettdruck-Headern, Absaetzen oder Sternchen) */
 function splitIstIntoBlocks(text){
   const lines=text.split('\n');
   const blocks=[];
@@ -929,25 +1015,21 @@ function splitIstIntoBlocks(text){
   for(let i=0;i<lines.length;i++){
     const trimmed=lines[i].trim();
 
-    /* Leere Zeile = potenzieller Block-Break */
     if(!trimmed){
-      /* Schaue voraus: Naechste nicht-leere Zeile ein Header? Dann Flush. */
       let next='';
       for(let j=i+1;j<lines.length;j++){if(lines[j].trim()){next=lines[j].trim();break;}}
       const nextIsBoldHeader=next.match(/^\*\*(.+?)\*\*\s*[:.]?\s*/);
       const nextIsCapsHeader=next.match(/^([A-ZÄÖÜ][a-zäöüß]*(?:[-\s][A-Za-zäöüß]+){0,3})\s*:\s*/);
       const nextIsStarLine=next.match(/^\*[^*]/);
-      /* Auch splitten wenn aktueller Block schon substanziell ist (>100 Zeichen) */
       const curLen=curLines.join(' ').length;
       if(nextIsBoldHeader||nextIsCapsHeader||(curLen>100 && (nextIsStarLine || next.length>20))){
         flush();
       } else if(curLines.length>0){
-        curLines.push(''); /* Leerzeile beibehalten fuer Absatz-Rendering */
+        curLines.push('');
       }
       continue;
     }
 
-    /* Erkennung: **Label:** am Zeilenanfang */
     const boldHeaderMatch=trimmed.match(/^\*\*(.+?)\*\*\s*[:.]?\s*(.*)/);
     const capsHeaderMatch=!boldHeaderMatch && trimmed.match(/^([A-ZÄÖÜ][a-zäöüß]*(?:[-\s][A-Za-zäöüß]+){0,3})\s*:\s*(.*)/);
     const headerMatch=boldHeaderMatch||capsHeaderMatch;
@@ -963,10 +1045,8 @@ function splitIstIntoBlocks(text){
       }
     }
 
-    /* Sternchen-Zeilen (*Text) als eigenen Block, wenn vorher schon Content da */
     if(trimmed.match(/^\*[^*]/) && curLines.join(' ').length>80 && !curLabel.match(/spezial|sonder|hinweis/i)){
       flush();
-      /* Auto-Label: "Hinweis" fuer Sternchen-Absaetze */
       curLabel='Hinweis';
       curLines=[trimmed];
       continue;
@@ -976,12 +1056,10 @@ function splitIstIntoBlocks(text){
   }
   flush();
 
-  /* Post-Processing: Wenn nur 1 Block mit viel Text, versuche auf Saetze zu splitten */
   if(blocks.length===1 && blocks[0].content.length>300){
     const singleText=blocks[0].content;
     const paragraphs=singleText.split(/\n\s*\n/).filter(p=>p.trim());
     if(paragraphs.length>=2){
-      /* Mehrere Absaetze gefunden – in Bloecke aufteilen */
       blocks.length=0;
       paragraphs.forEach((para,idx)=>{
         const autoLabel=guessBlockLabel(para, idx);
@@ -993,12 +1071,10 @@ function splitIstIntoBlocks(text){
   return blocks;
 }
 
-/* Auto-Label basierend auf Absatz-Inhalt erraten */
 function guessBlockLabel(text, index){
   const t=text.toLowerCase();
   if(index===0 && t.match(/prozess\s*start|einreichung|eingang|ausloes|formular|portal|der prozess startet/)) return 'Prozessausloeser';
   if(t.match(/gesamt.*bearbeitung|durchschnitt|im schnitt|dauer|pro jahr.*eingereicht|fallvolumen/)) return 'Bearbeitungszeiten';
-  /* Ablehnungsprozess VOR Pruefschritte pruefen (weil Texte oft auch "Pruefung" enthalten) */
   if(t.match(/ergibt.*pr[uü]e?fung.*nein|weitergeleit.*ablehnung|kb.*ablehnung|ablehn.*telefon|kundenberater.*gespr[aä]ch/)) return 'Ablehnungsprozess';
   if(t.match(/alter.*weitergeleitet.*kundenberater|kundenberater.*ablehnungsgespr/)) return 'Ablehnungsprozess';
   if(t.match(/erfassung|21c|kassenspezifisch.*leistung|rechnung.*erfasst|erstattung.*ausgezahlt/)) return 'Erfassung & Erstattung';
@@ -1009,18 +1085,15 @@ function guessBlockLabel(text, index){
   return '';
 }
 
-/* Block-Kategorie bestimmen (fuer Farbgebung) */
 function categorizeBlock(label, content){
   const l=(label||'').toLowerCase();
   const c=(content||'').toLowerCase();
-  /* Label-basiert */
   if(l.match(/ausloes|trigger|eingang|start|einreichung|formular|antrag/)) return 'trigger';
   if(l.match(/spezial|sonder|ausnahme|weiterleitung|hinweis|achtung/)) return 'special';
   if(l.match(/benachricht|brief|erstattung|ablehnung|output|ergebnis|kommunikation|kunde.*info/)) return 'output';
   if(l.match(/erfassung|system|21c|helic|buchung|dokumentation/)) return 'steps';
   if(l.match(/pruef|prüf|validier|kontroll|check/)) return 'steps';
   if(l.match(/kennzahl|kpi|metrik|volumen|bearbeitungszeit/)) return 'special';
-  /* Inhalt-basiert */
   if(c.match(/prozessausloes|eingang.*formular|einreichung.*ueber|der prozess startet/)) return 'trigger';
   if(c.match(/brief|serienbrief|benachricht|erstattungsbrief|automatisiert.*brief/)) return 'output';
   if(c.match(/vip|koe.*13|einmalzahl|spezial|sonderfall|weitergeleit/)) return 'special';
@@ -1029,7 +1102,6 @@ function categorizeBlock(label, content){
   return 'steps';
 }
 
-/* SVG-Icons pro Kategorie */
 function getSectionIcon(cat){
   switch(cat){
     case 'trigger': return '<svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>';
@@ -1039,17 +1111,14 @@ function getSectionIcon(cat){
   }
 }
 
-/* Kombinierte Text+Tabelle Karte fuer IST-Output */
 function renderIstOutputCard(textContent, tableContent){
   const hasText=textContent&&textContent!=='[Noch nicht erfasst]';
   const hasTable=tableContent&&tableContent!=='[Noch nicht erfasst]';
   if(!hasText&&!hasTable) return '';
 
-  /* Wenn nur eins vorhanden, direkt rendern */
   if(hasText&&!hasTable) return renderIstTextStructured(textContent);
   if(!hasText&&hasTable) return renderIstTable(tableContent);
 
-  /* Beides vorhanden: Tab-Ansicht */
   const tabId='ist-tab-'+Date.now();
   let html=`<div class="ist-output-tabs">
     <button class="ist-output-tab active" onclick="switchIstTab('${tabId}','text',this)">Fliesstext</button>
@@ -1064,20 +1133,15 @@ function renderIstOutputCard(textContent, tableContent){
 function openHelp(){g('helpModal').classList.add('open');}
 function closeHelp(){g('helpModal').classList.remove('open');}
 
-/* Tab-Wechsel fuer IST-Output (Text/Tabelle) */
 function switchIstTab(tabId,pane,btn){
-  /* Alle Panes verstecken */
   const textPane=g(tabId+'-text'), tablePane=g(tabId+'-table');
   if(textPane)textPane.classList.remove('active');
   if(tablePane)tablePane.classList.remove('active');
-  /* Gewaehlten Pane anzeigen */
   const target=g(tabId+'-'+pane);
   if(target)target.classList.add('active');
-  /* Tab-Buttons aktualisieren */
   btn.parentElement.querySelectorAll('.ist-output-tab').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
 }
-/* Modal schliessen bei Klick auf Overlay */
 g('helpModal').addEventListener('click',e=>{if(e.target===g('helpModal'))closeHelp();});
 
 /* ═══ VIEWS ═══ */
@@ -1135,8 +1199,6 @@ function checkReady(){
     g('btnFinalize').disabled=false;g('btnFinalizeChat')&&(g('btnFinalizeChat').disabled=false);
     g('actionsBar').classList.remove('hidden');g('btnCopyReq').disabled=false;
   }
-  /* BUGFIX: Actions-Bar auch einblenden wenn mindestens IST oder SOLL steht
-     und bereits mehrere Sparring-Runden gelaufen sind */
   if((ok('ist')||ok('soll'))&&sparringCount>=2){
     g('actionsBar').classList.remove('hidden');
   }
@@ -1158,7 +1220,6 @@ function updateIstDoc(field,content,status){
     el.textContent=ph[field]||'';
     if(st){st.className='doc-sec-status empty';st.textContent='Offen';}
   }
-  /* Check ob IST-Modus fertig */
   if(istState.text&&istState.text!=='[Noch nicht erfasst]'){
     g('btnCopyIst').disabled=false;g('btnFinalizeIst').disabled=false;
     g('actionsBarIst').classList.remove('hidden');
@@ -1169,10 +1230,8 @@ function renderIstTable(raw){
   if(!raw)return'<p style="color:var(--dm)">Keine Tabellendaten.</p>';
   const lines=raw.split('\n').filter(l=>l.includes('|'));
   if(lines.length<2)return'<div class="rendered">'+renderMd(raw)+'</div>';
-  /* Header erkennen */
   let headers=lines[0].split('|').map(c=>c.trim()).filter(c=>c);
   let data=lines.slice(1);
-  /* Separator-Zeilen ueberspringen (---) */
   data=data.filter(l=>!l.match(/^[\s|:-]+$/));
   let h='<div class="tf-table-wrap"><table class="ist-proc-table"><thead><tr>';
   headers.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
@@ -1199,7 +1258,6 @@ function parseKIA(text){
   function norm(s){
     return s.replace(/\u00fc/gi,'ue').replace(/\u00e4/gi,'ae').replace(/\u00f6/gi,'oe')
             .replace(/\u00dc/gi,'UE').replace(/\u00c4/gi,'AE').replace(/\u00d6/gi,'OE')
-            /* Spezielle Bindestriche normalisieren (U+2011, U+2013, U+2014) */
             .replace(/[\u2011\u2013\u2014]/g,'-');
   }
 
@@ -1208,7 +1266,6 @@ function parseKIA(text){
   const H_SOLL    = [/^SOLL[\s-]*(?:BESCHREIBUNG|ZUSTAND)?\s*:/i, /^SOLL\s*:/i];
   const H_KZ      = [/^KENNZAHLEN\s*:/i];
   const H_ANALYSE = [/^ANALYSE\s*:/i];
-  /* Rueckfragen-Header: erkennt auch "RÜCKFRAGEN (Nachfolge-Runde – maximal 3):" etc. */
   const H_RUECK   = [/^RUE?CKFRAGEN[\s(]/i, /^RUE?CKFRAGEN\s*:/i, /^FRAGEN\s*:/i];
   const H_OPEN    = [/^OFFENE\s*PUNKTE\s*:/i];
   const H_AK      = [/^AKZEPTANZKRITERIEN\s*:/i];
@@ -1217,7 +1274,6 @@ function parseKIA(text){
   for(const line of lines){
     const raw = line.trim();
     if(!raw) continue;
-    /* Spezielle Bindestriche auch fuer Header-Matching normalisieren */
     const cl = raw.replace(/[\u2011\u2013\u2014]/g,'-').replace(/^\s*[-*\u2022#]+\s*/,'').replace(/\*\*/g,'').trim();
     const nCl = norm(cl);
 
@@ -1261,13 +1317,9 @@ function parseKIA(text){
     else if(mode==='q'){
       const qm = raw.replace(/\*\*/g,'').match(/^\d+[.)]\s*(.+)/);
       if(qm) questions.push(qm[1].trim());
-      /* Sub-Bullets/Aufzaehlungen zu letzter Frage hinzufuegen */
       else if(raw.match(/^[-*\u2022]/) && questions.length>0) questions[questions.length-1]+='\n'+raw;
-      /* Folgezeilen einer mehrzeiligen Frage an letzte Frage anfuegen */
       else if(questions.length>0 && raw.length>10 && !raw.match(/keine\s*(weiteren)?\s*(rueckfragen|fragen)/i)) questions[questions.length-1]+='\n'+raw;
-      /* Freitext-Frage mit Fragezeichen */
       else if(raw.length > 15 && raw.includes('?')) questions.push(raw);
-      /* "Keine weiteren" erkennen */
       else if(raw.match(/keine\s*(weiteren)?\s*(rueckfragen|fragen)/i)) { /* keine Fragen */ }
     }
     else if(mode==='open') open += (open?'\n':'') + raw;
@@ -1288,40 +1340,32 @@ function parseIST(text){
   function norm(s){
     return s.replace(/\u00fc/gi,'ue').replace(/\u00e4/gi,'ae').replace(/\u00f6/gi,'oe')
             .replace(/\u00dc/gi,'UE').replace(/\u00c4/gi,'AE').replace(/\u00d6/gi,'OE')
-            /* Spezielle Bindestriche normalisieren (U+2011, U+2013, U+2014) */
             .replace(/[\u2011\u2013\u2014]/g,'-');
   }
 
   const H_TITEL   = [/^TITEL\s*:/i];
-  /* IST-TEXT erkennt auch: IST:, IST-BESCHREIBUNG:, IST BESCHREIBUNG:, IST-ZUSTAND: etc. */
   const H_IST_TEXT= [/^IST[\s-]*TEXT\s*:/i, /^IST[\s-]*(?:BESCHREIBUNG|ZUSTAND|SITUATION)\s*:/i, /^IST\s*:/i];
   const H_IST_TAB = [/^IST[\s-]*TABELLE\s*:/i, /^PROZESS[\s-]*TABELLE\s*:/i];
   const H_KZ      = [/^KENNZAHLEN\s*:/i];
   const H_ANALYSE = [/^ANALYSE\s*:/i];
-  /* Rueckfragen-Header erkennt auch Varianten wie "RÜCKFRAGEN (Nachfolge-Runde):" */
   const H_RUECK   = [/^RUE?CKFRAGEN[\s(]/i, /^RUE?CKFRAGEN\s*:/i, /^FRAGEN\s*:/i];
 
   for(const line of lines){
     const raw = line.trim();
     if(!raw) continue;
-    /* Spezielle Bindestriche auch im raw fuer Header-Matching normalisieren */
     const cl = raw.replace(/[\u2011\u2013\u2014]/g,'-').replace(/^\s*[-*\u2022#]+\s*/,'').replace(/\*\*/g,'').trim();
     const nCl = norm(cl);
 
     if(isHeader(nCl, H_TITEL)){ titel=cl.replace(/^TITEL\s*:\s*/i,'').trim(); mode=null; continue; }
-    /* IST-TABELLE muss VOR IST-TEXT geprueft werden (sonst greift IST: zuerst) */
     if(isHeader(nCl, H_IST_TAB)){ mode='tabelle'; continue; }
     if(isHeader(nCl, H_IST_TEXT)){ const v=cl.replace(/^IST[\s\-A-Za-z]*:\s*/i,'').trim(); if(v)istText=v; mode='text'; continue; }
     if(isHeader(nCl, H_KZ)){ const v=cl.replace(/^KENNZAHLEN\s*:\s*/i,'').trim(); if(v)kz=v; mode='kz'; continue; }
     if(isHeader(nCl, H_ANALYSE)){ const v=cl.replace(/^ANALYSE\s*:\s*/i,'').trim(); if(v)analyse=v; mode='analyse'; continue; }
     if(isHeader(nCl, H_RUECK)){ mode='q'; continue; }
 
-    /* Im Text-Modus: Pipe-Zeilen (Tabellenzeilen) automatisch in Tabelle umleiten */
     if(mode==='text'){
-      /* Zeile mit 2+ Pipes und kein Fliesstext = Tabellenzeile */
       const pipeCount=(raw.match(/\|/g)||[]).length;
       if(pipeCount>=2 && !raw.match(/^[A-Za-zÄÖÜäöüß]{10,}[^|]*$/)){
-        /* Separator-Zeilen ueberspringen */
         if(!raw.match(/^[\s|:-]+$/)){
           tabelle+=(tabelle?'\n':'')+raw;
         }
@@ -1333,18 +1377,14 @@ function parseIST(text){
     else if(mode==='kz') kz+=(kz?'\n':'')+raw;
     else if(mode==='analyse') analyse+=(analyse?'\n':'')+raw;
     else if(mode==='q'){
-      /* Nummerierte Frage erkennen (1. oder 1) am Anfang) */
       const qm=raw.replace(/\*\*/g,'').match(/^\d+[.)]\s*(.+)/);
       if(qm) questions.push(qm[1].trim());
-      /* Sub-Bullets zu letzter Frage hinzufuegen statt neue Frage */
       else if(raw.match(/^[-*\u2022]/) && questions.length>0) questions[questions.length-1]+='\n'+raw;
-      /* Freitext-Zeilen mit ? als Frage, oder Folgezeilen an letzte Frage anfuegen */
       else if(raw.length>15 && raw.includes('?')) questions.push(raw);
       else if(questions.length>0 && raw.length>10) questions[questions.length-1]+='\n'+raw;
     }
   }
 
-  /* Post-Processing: Falls Text Pipe-Tabellen enthaelt die durchgerutscht sind */
   if(istText && !tabelle){
     const textLines=istText.split('\n');
     const pureText=[],pipeLines=[];
@@ -1377,7 +1417,6 @@ async function startSparring(){
 
   const tl=reqType==='fachlich'?'Fachliche Anforderung':reqType==='change'?'Change Request':reqType==='technisch'?'Technische Anforderung':'Nicht angegeben';
 
-  /* Eingabe zusammenbauen */
   let parts=[];
   if(istText)parts.push(`IST-Zustand (vom Nutzer):\n${istText}`);
   if(sollText)parts.push(`SOLL-Zustand (vom Nutzer):\n${sollText}`);
@@ -1417,10 +1456,8 @@ function removeLoading(){const e=g('loadingMsg');if(e)e.remove();}
 function renderKIAMsg(p, rawText){
   let h='';
 
-  /* Analyse anzeigen */
   if(p.analyse) h+=`<h4>Analyse</h4>${renderMd(p.analyse)}`;
 
-  /* Rueckfragen als interaktive Felder (KEINE "Offene Punkte" mehr) */
   if(p.questions.length>0){
     const bid='rq-'+Date.now();
     h+=`<h4>Rueckfragen</h4><div class="rq-block" id="${bid}">`;
@@ -1430,15 +1467,12 @@ function renderKIAMsg(p, rawText){
     h+=`<div class="rq-submit-row"><button class="rq-submit" onclick="submitAnswers('${bid}',${p.questions.length})">Antworten uebernehmen</button><span class="rq-submit-hint">Schickt alle Antworten an KIA</span></div></div>`;
   }
 
-  /* Abschluss-Signal – nur zeigen wenn wirklich keine Fragen mehr */
   const istOk=p.ist&&p.ist!=='[Noch nicht erfasst]';
   const sollOk=p.soll&&p.soll!=='[Noch nicht erfasst]';
-  /* Sicherheitscheck: Rohtext auf Fragezeichen in nummerierten Zeilen pruefen */
   const hasHiddenQuestions=rawText && rawText.match(/^\d+[.)]\s*.+\?/m);
   if(istOk&&sollOk&&p.questions.length===0&&!hasHiddenQuestions)
     h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen.</div>`;
 
-  /* FALLBACK: falls Parsing nichts Nuetzliches ergab */
   if(!h && rawText){
     console.warn('parseKIA produced empty render, using fallback');
     h = renderMd(rawText);
@@ -1516,10 +1550,7 @@ async function callAndRenderIst(){
     if(p.tabelle)updateIstDoc('tabelle',p.tabelle,'draft');
     if(p.kz)updateIstDoc('kz',p.kz,p.kz!=='Noch nicht erfasst.'?'draft':null);
 
-    /* BUGFIX: Falls IST-TEXT nicht geparst wurde, aber die Antwort Inhalt hat,
-       versuche den gesamten Text vor der ANALYSE als IST-Text zu verwenden */
     if(!p.istText && istSparringCount>=2){
-      /* Fallback: Alles zwischen TITEL und ANALYSE/RUECKFRAGEN als IST-Text */
       const fallbackMatch = r.match(/TITEL\s*:[^\n]*\n([\s\S]*?)(?=\n\s*(?:ANALYSE|RUE?CKFRAGEN|KENNZAHLEN|IST[\s-]*TABELLE))/i);
       if(fallbackMatch && fallbackMatch[1].trim().length>50){
         updateIstDoc('text',fallbackMatch[1].trim(),'draft');
@@ -1530,7 +1561,6 @@ async function callAndRenderIst(){
     addMsgIst('kia','',html||renderMd(r));
     if(istSparringCount>=2&&currentPhase<2)updatePhase(2);
 
-    /* BUGFIX: Buttons immer freischalten wenn Sparring fortgeschritten und keine Fragen mehr */
     if(istSparringCount>=2 && p.questions.length===0){
       g('btnCopyIst').disabled=false;g('btnFinalizeIst').disabled=false;
       g('actionsBarIst').classList.remove('hidden');
@@ -1539,7 +1569,6 @@ async function callAndRenderIst(){
   finally{isRunning=false;g('btnSendIst').disabled=false;}
 }
 
-/* Antworten senden (IST-Modus) */
 async function submitIstAnswers(bid,cnt){
   let parts=[],any=false;
   for(let i=0;i<cnt;i++){const inp=g(bid+'-'+i),v=inp?inp.value.trim():'';if(v&&v!=='[Entfaellt]')any=true;
@@ -1553,7 +1582,7 @@ g('chatInputIst').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey
 g('chatInputIst').addEventListener('input',function(){autoResize(this);});
 async function sendChatIst(){const t=g('chatInputIst').value.trim();if(!t||isRunning)return;g('chatInputIst').value='';g('chatInputIst').style.height='auto';addMsgIst('user',t);istMsgs.push({role:'user',content:t});istSparringCount++;await callAndRenderIst();}
 
-/* IST Finalisieren */
+/* ═══ IST Finalisieren ═══ */
 function finalizeIst(){
   /* BUGFIX: Falls IST-Text nie geparst wurde, aus letzter KIA-Antwort extrahieren */
   if(!istState.text || istState.text==='[Noch nicht erfasst]'){
@@ -1561,7 +1590,6 @@ function finalizeIst(){
       if(istMsgs[i].role==='assistant'){
         const p=parseIST(istMsgs[i].content);
         if(p.istText){istState.text=p.istText;istState.tabelle=p.tabelle||istState.tabelle;break;}
-        /* Letzter Fallback: gesamten Antworttext nehmen */
         if(istMsgs[i].content.length>100){istState.text=istMsgs[i].content;break;}
       }
     }
@@ -1580,14 +1608,26 @@ function finalizeIst(){
     c.appendChild(card);
   }
 
-  /* Kombinierte IST-Karte (Text + Tabelle mit Tabs) */
+  /* Kombinierte IST-Karte (Text + Tabelle mit Tabs) – NEU: Mehrere Kopier-Buttons */
   const hasText=istState.text && istState.text!=='[Noch nicht erfasst]';
   const hasTable=istState.tabelle && istState.tabelle!=='[Noch nicht erfasst]';
   if(hasText||hasTable){
     num++;
     const card=document.createElement('div');card.className='sec-card';
     const body=renderIstOutputCard(istState.text, istState.tabelle);
-    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">${num}</div><div class="sec-card-title">IST-Beschreibung</div><button class="sec-card-copy" onclick="copyIstSec('text',this)" type="button">Text kopieren</button></div><div class="sec-card-body" style="padding:0;">${body}</div>`;
+    /* Kopier-Buttons: "Alles" (Text+Tabelle), und optional separater "Tabelle" */
+    let copyBtns = '<div class="sec-card-copy-group">';
+    if(hasText && hasTable){
+      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text+tabelle\',this)" type="button">Alles kopieren</button>';
+      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text\',this)" type="button">Nur Text</button>';
+      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'tabelle\',this)" type="button">Nur Tabelle</button>';
+    } else if(hasText){
+      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text\',this)" type="button">Kopieren</button>';
+    } else {
+      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'tabelle\',this)" type="button">Kopieren</button>';
+    }
+    copyBtns += '</div>';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">${num}</div><div class="sec-card-title">IST-Beschreibung</div>${copyBtns}</div><div class="sec-card-body" style="padding:0;">${body}</div>`;
     c.appendChild(card);
   }
 
@@ -1602,23 +1642,74 @@ function finalizeIst(){
   showView('v-final');
 }
 
-function copyIstSec(key,btn){
-  let v=istState[key]||'';
-  v=stripMd(v);
-  navigator.clipboard.writeText(v).then(()=>{
-    btn.classList.add('copied');btn.textContent='Kopiert';
-    setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Kopieren';},2000);
+/**
+ * IST-Modus: Einzelne Sektion kopieren (Rich-Copy fuer Confluence).
+ * Unterstuetzt jetzt auch 'text+tabelle' als kombinierten Key.
+ */
+function copyIstSec(key, btn){
+  let plain = '', html = '';
+
+  if(key === 'text+tabelle'){
+    /* Text und Tabelle zusammen kopieren */
+    if(istState.text && istState.text !== '[Noch nicht erfasst]'){
+      plain += stripMd(istState.text);
+      html += '<h3>IST-Beschreibung</h3>' + mdToClipboardHtml(istState.text);
+    }
+    if(istState.tabelle && istState.tabelle !== '[Noch nicht erfasst]'){
+      plain += '\n\n' + pipeTableToPlaintext(istState.tabelle);
+      html += '<h3>Prozesstabelle</h3>' + pipeTableToClipboardHtml(istState.tabelle);
+    }
+  } else if(key === 'tabelle'){
+    /* Nur Tabelle kopieren – als echte HTML-Tabelle */
+    plain = pipeTableToPlaintext(istState.tabelle || '');
+    html = pipeTableToClipboardHtml(istState.tabelle || '');
+  } else if(key === 'text'){
+    /* Nur Fliesstext kopieren – mit Formatierung */
+    plain = stripMd(istState.text || '');
+    html = mdToClipboardHtml(istState.text || '');
+  } else {
+    /* Titel, Kennzahlen etc. */
+    plain = stripMd(istState[key] || '');
+    html = mdToClipboardHtml(istState[key] || '');
+  }
+
+  copyRich(plain, html).then(()=>{
+    btn.classList.add('copied'); btn.textContent = 'Kopiert';
+    setTimeout(()=>{ btn.classList.remove('copied'); btn.textContent = btn.dataset.origLabel || 'Kopieren'; }, 2000);
   });
+  /* Original-Label merken fuer Reset */
+  if(!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent;
 }
+
+/**
+ * IST-Modus: Alles kopieren (Rich-Copy fuer Confluence).
+ * Erzeugt HTML mit echten Tabellen, Fettdruck und Listen.
+ */
 function copyIstAll(){
-  const order=['titel','text','tabelle','kz'];
-  const labels={titel:'TITEL',text:'IST-BESCHREIBUNG',tabelle:'PROZESSTABELLE',kz:'KENNZAHLEN'};
-  let parts=[];
+  const order = ['titel','text','tabelle','kz'];
+  const labels = {titel:'Titel', text:'IST-Beschreibung', tabelle:'Prozesstabelle', kz:'Kennzahlen'};
+  let plainParts = [], htmlParts = [];
+
   order.forEach(k=>{
-    const v=istState[k];if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.')return;
-    parts.push(labels[k]+':\n'+stripMd(v));
+    const v = istState[k];
+    if(!v || v === '[Noch nicht erfasst]' || v === 'Noch nicht erfasst.') return;
+
+    if(k === 'tabelle'){
+      plainParts.push('PROZESSTABELLE:\n' + pipeTableToPlaintext(v));
+      htmlParts.push('<h3>' + labels[k] + '</h3>' + pipeTableToClipboardHtml(v));
+    } else if(k === 'titel'){
+      plainParts.push('TITEL: ' + stripMd(v));
+      htmlParts.push('<h2>' + escH(stripMd(v)) + '</h2>');
+    } else {
+      plainParts.push(labels[k].toUpperCase() + ':\n' + stripMd(v));
+      htmlParts.push('<h3>' + labels[k] + '</h3>' + mdToClipboardHtml(v));
+    }
   });
-  navigator.clipboard.writeText(parts.join('\n\n')).then(()=>showToast('IST-Beschreibung kopiert','ok'));
+
+  const plain = plainParts.join('\n\n');
+  const html = htmlParts.join('');
+
+  copyRich(plain, html).then(()=>showToast('IST-Beschreibung kopiert (mit Formatierung)','ok'));
 }
 
 /* ═══ ALLGEMEIN: Rueckfragen & Chat ═══ */
@@ -1647,10 +1738,8 @@ async function generateAkTf(){
     const r=await callKIA([{role:'user',content:prompt}],SYS_AKTF);removeLoading();
     const p=parseKIA(r);
     if(p.ak){docState.ak=p.ak;updateDoc('ak',p.ak,'draft');g('ds-ak').style.display='';}
-    /* BUGFIX: TF-Rohdaten separat speichern, damit sie nicht durch updateDoc ueberschrieben werden */
     if(p.tf){
       tfRawData=p.tf;
-      /* Im Doc-Panel nur Statusanzeige, echte Daten in tfRawData */
       const tfEl=g('dc-tf'),tfSt=g('dss-tf');
       if(tfEl){tfEl.className='doc-sec-content';tfEl.innerHTML=renderTfTable(p.tf);}
       if(tfSt){tfSt.className='doc-sec-status draft';tfSt.textContent='Entwurf';}
@@ -1691,7 +1780,6 @@ function parseTfRows(raw){
   const lines=raw.split('\n').filter(l=>l.includes('|'));
   if(lines.length<2)return[];
   let data=lines;if(lines[0].match(/Nr|ID|Beschreibung/i))data=lines.slice(1);
-  /* Separator-Zeilen ueberspringen */
   data=data.filter(l=>!l.match(/^[\s|:-]+$/));
   return data.map(l=>l.split('|').map(c=>c.trim()).filter(c=>c));
 }
@@ -1721,7 +1809,6 @@ function startFinalize(){
   ];
   let num=0;
   secs.forEach(sec=>{
-    /* BUGFIX: fuer Testfaelle tfRawData verwenden statt docState.tf */
     const v = sec.key==='tf' ? tfRawData : docState[sec.key];
     if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.')return;
     num++;
@@ -1729,7 +1816,6 @@ function startFinalize(){
     let body='';
     if(sec.type==='title')body=`<div class="rendered" style="font-size:20px;font-weight:700;font-family:'Fraunces',serif;">${escH(stripMd(v))}</div>`;
     else if(sec.type==='md'){
-      /* IST und SOLL strukturiert rendern wenn lang genug */
       if((sec.key==='ist'||sec.key==='soll') && v.length>200) body=renderIstTextStructured(v);
       else body=`<div class="rendered">${renderMd(v)}</div>`;
     }
@@ -1740,33 +1826,67 @@ function startFinalize(){
   showView('v-final');
 }
 
-/* ═══ COPY ═══ */
-function getPlain(key){
-  /* BUGFIX: TF-Daten aus tfRawData holen */
-  if(key==='tf')return tfToPlaintext(tfRawData);
-  const v=docState[key]||'';
-  return stripMd(v);
-}
-function copySec(key,btn){
-  const labels={titel:'',ist:'IST BESCHREIBUNG',soll:'SOLL BESCHREIBUNG',kz:'KENNZAHLEN',ak:'AKZEPTANZKRITERIEN',tf:'TESTFAELLE'};
-  const prefix=labels[key]?labels[key]+':\n':'';
-  navigator.clipboard.writeText(prefix+getPlain(key)).then(()=>{
-    btn.classList.add('copied');btn.textContent='Kopiert';
-    setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Kopieren';},2000);
+/* ═══ COPY – Allgemeiner Modus (Rich-Copy fuer Confluence) ═══ */
+
+/**
+ * Einzelne Sektion kopieren – mit HTML fuer Confluence.
+ */
+function copySec(key, btn){
+  const labels = {titel:'', ist:'IST BESCHREIBUNG', soll:'SOLL BESCHREIBUNG', kz:'KENNZAHLEN', ak:'AKZEPTANZKRITERIEN', tf:'TESTFAELLE'};
+  const prefix = labels[key] ? labels[key]+':\n' : '';
+  const htmlPrefix = labels[key] ? '<h3>'+labels[key]+'</h3>' : '';
+
+  let plain = '', html = '';
+
+  if(key === 'tf'){
+    /* Testfaelle als HTML-Tabelle */
+    plain = prefix + tfToPlaintext(tfRawData);
+    html = htmlPrefix + pipeTableToClipboardHtml(tfRawData);
+  } else if(key === 'titel'){
+    const v = stripMd(docState[key] || '');
+    plain = v;
+    html = '<h2>' + escH(v) + '</h2>';
+  } else {
+    const v = docState[key] || '';
+    plain = prefix + stripMd(v);
+    html = htmlPrefix + mdToClipboardHtml(v);
+  }
+
+  copyRich(plain, html).then(()=>{
+    btn.classList.add('copied'); btn.textContent = 'Kopiert';
+    setTimeout(()=>{ btn.classList.remove('copied'); btn.textContent = 'Kopieren'; }, 2000);
   });
 }
+
+/**
+ * Alle Sektionen kopieren – mit HTML fuer Confluence.
+ * Erzeugt ein formatiertes HTML-Dokument mit Ueberschriften, Listen und Tabellen.
+ */
 function copyAllSections(){
-  const order=['titel','ist','soll','kz','ak','tf'];
-  const labels={titel:'TITEL',ist:'IST BESCHREIBUNG',soll:'SOLL BESCHREIBUNG',kz:'KENNZAHLEN',ak:'AKZEPTANZKRITERIEN',tf:'TESTFAELLE'};
-  let parts=[];
+  const order = ['titel','ist','soll','kz','ak','tf'];
+  const labels = {titel:'TITEL', ist:'IST BESCHREIBUNG', soll:'SOLL BESCHREIBUNG', kz:'KENNZAHLEN', ak:'AKZEPTANZKRITERIEN', tf:'TESTFAELLE'};
+  let plainParts = [], htmlParts = [];
+
   order.forEach(k=>{
-    const v = k==='tf' ? tfRawData : docState[k];
-    if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.')return;
-    if(k==='titel')parts.push(labels[k]+': '+stripMd(v));
-    else if(k==='tf')parts.push(labels[k]+':\n'+tfToPlaintext(v));
-    else parts.push(labels[k]+':\n'+stripMd(v));
+    const v = k === 'tf' ? tfRawData : docState[k];
+    if(!v || v === '[Noch nicht erfasst]' || v === 'Noch nicht erfasst.') return;
+
+    if(k === 'titel'){
+      plainParts.push(labels[k] + ': ' + stripMd(v));
+      htmlParts.push('<h2>' + escH(stripMd(v)) + '</h2>');
+    } else if(k === 'tf'){
+      plainParts.push(labels[k] + ':\n' + tfToPlaintext(v));
+      htmlParts.push('<h3>' + labels[k] + '</h3>' + pipeTableToClipboardHtml(v));
+    } else {
+      plainParts.push(labels[k] + ':\n' + stripMd(v));
+      htmlParts.push('<h3>' + labels[k] + '</h3>' + mdToClipboardHtml(v));
+    }
   });
-  navigator.clipboard.writeText(parts.join('\n\n')).then(()=>showToast('Gesamte Anforderung kopiert','ok'));
+
+  const plain = plainParts.join('\n\n');
+  const html = htmlParts.join('');
+
+  copyRich(plain, html).then(()=>showToast('Anforderung kopiert (mit Formatierung)','ok'));
 }
 
 /* ═══ RESET ═══ */
