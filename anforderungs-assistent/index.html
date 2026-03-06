@@ -326,6 +326,20 @@ textarea.fi{min-height:80px;}
 .ist-proc-table tr:nth-child(even){background:var(--sf2);}
 .ist-proc-table tr:hover{background:var(--blue-pale);}
 
+/* ═══ NEU: IST-Modus Auswahlkarten ═══ */
+.ist-mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
+.ist-mode-card{background:var(--sf);border:2px solid var(--bd);border-radius:var(--r);padding:20px;cursor:pointer;transition:all .25s var(--ease);position:relative;}
+.ist-mode-card:hover{border-color:var(--blue-strong);box-shadow:var(--shadow);}
+.ist-mode-card.sel{border-color:var(--blue-strong);background:rgba(43,108,176,.03);box-shadow:var(--shadow);}
+.ist-mode-card.sel::after{content:'';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:var(--blue-strong);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E");background-size:14px;background-repeat:no-repeat;background-position:center;}
+.ist-mode-card h4{font-family:'Fraunces',serif;font-size:17px;font-weight:600;color:var(--tx);margin-bottom:6px;padding-right:30px;}
+.ist-mode-card p{font-size:13px;color:var(--mu);line-height:1.55;margin-bottom:10px;}
+.ist-example-btn{display:inline-flex;align-items:center;gap:5px;font-family:inherit;font-size:12px;color:var(--blue-strong);background:none;border:none;cursor:pointer;padding:4px 0;text-decoration:underline;text-underline-offset:2px;transition:color .2s var(--ease);}
+.ist-example-btn:hover{color:var(--blue-deep);}
+.ist-example-btn svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2;}
+.ist-example-content{margin-top:10px;border-top:1px solid var(--bd2);padding-top:10px;font-size:12.5px;color:var(--tx2);line-height:1.6;}
+@media(max-width:600px){.ist-mode-cards{grid-template-columns:1fr;}}
+
 /* RESPONSIVE */
 @media(max-width:900px){
   .doc-panel{display:none;position:fixed;top:var(--tb);left:0;right:0;bottom:48px;width:100%;z-index:150;border-right:none;}
@@ -394,16 +408,17 @@ textarea.fi{min-height:80px;}
   <div class="landing-desc">Beschreibe deine Anforderung, kopiere einen bestehenden JIRA Text oder starte von null. Der Assistent begleitet dich als Sparringspartner, bis eine klare, verstaendliche Anforderung steht.</div>
 
   <div class="mode-cards">
+    <!-- IST-Beschreibung: Jetzt ERSTE Karte, KEIN Badge -->
+    <div class="mode-primary" onclick="selectMode('ist')" role="button" tabindex="0">
+      <h3>IST-Beschreibung erarbeiten</h3>
+      <p>Den aktuellen Prozess dokumentieren – von einfachen Ablaeufen bis zu Prozessen mit Pruefschritten und Entscheidungslogik. Nach dem Klick waehlst du die passende Variante.</p>
+      <div class="mode-arrow">&#8594;</div>
+    </div>
+    <!-- Allgemeine Anforderung: Jetzt ZWEITE Karte, MIT Badge -->
     <div class="mode-primary" onclick="selectMode('general')" role="button" tabindex="0">
       <div class="mode-badge">Empfohlen</div>
       <h3>Allgemeine Anforderung</h3>
       <p>Fachliche Anforderung oder Change Request iterativ erarbeiten. IST und SOLL schaerfen, Akzeptanzkriterien und Testfaelle generieren.</p>
-      <div class="mode-arrow">&#8594;</div>
-    </div>
-    <div class="mode-primary" onclick="selectMode('ist')" role="button" tabindex="0">
-      <div class="mode-badge green">Neu</div>
-      <h3>IST-Beschreibung erarbeiten</h3>
-      <p>Nur den aktuellen Prozess dokumentieren. Ideal, wenn vor einer Anforderung erst mal der IST-Zustand sauber beschrieben werden soll.</p>
       <div class="mode-arrow">&#8594;</div>
     </div>
   </div>
@@ -533,76 +548,110 @@ textarea.fi{min-height:80px;}
     <div id="intakeAreaIst" class="intake">
       <div class="intake-title">IST-Beschreibung erarbeiten</div>
       <div class="intake-desc">Beschreibe den aktuellen Prozess so, wie er heute ablaeuft. Der Assistent hilft dir, die Beschreibung zu strukturieren und erstellt eine uebersichtliche Tabelle dazu.</div>
-      <details style="margin-bottom:16px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sf);">
-        <summary style="padding:12px 16px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--blue-strong);list-style:none;display:flex;align-items:center;gap:8px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
-          Best-Practice-Beispiele anzeigen
-        </summary>
-        <div style="padding:0 16px 16px;font-size:13px;color:var(--tx2);line-height:1.6;">
-          <p><strong>Gute IST-Beschreibungen enthalten:</strong></p>
-          <p>- Den Prozessausloeser (Was startet den Prozess?)<br>
-          - Die einzelnen Bearbeitungsschritte mit Prueflogik<br>
-          - Beteiligte Systeme und Rollen<br>
-          - Pruefschritte mit Ja/Nein-Logik<br>
-          - Erfassung in Fachsystemen (z.B. 21c, Helic)<br>
-          - Benachrichtigungen an Kunden (Briefe, Serienbriefe)</p>
+      <!-- NEU: Auswahlkarten vereinfacht / ausfuehrlich -->
+      <div class="flbl">Art der IST-Beschreibung</div>
+      <div class="ist-mode-cards">
 
-          <p style="margin-top:14px;font-weight:700;margin-bottom:8px;">Beispiel: Erstattung Hautkrebsvorsorge-Rechnung</p>
-          <div style="font-size:12.5px;display:flex;flex-direction:column;gap:0;border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;">
-
-            <!-- Prozessausloeser -->
-            <div style="padding:10px 14px;border-left:3px solid var(--green);background:var(--sf2);border-bottom:1px solid var(--bd2);">
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:4px;">&#9889; Prozessausloeser</div>
-              <div>Kunde reicht Hautkrebsvorsorge-Rechnung ueber <strong>MeineSBK</strong> ein (Miniformular: Dateiupload, Rechnungsbetrag, Bundesland, Bankverbindung, Behandlungstag).</div>
-            </div>
-
-            <!-- Bearbeitungsschritte -->
-            <div style="padding:10px 14px;border-left:3px solid var(--blue-strong);background:var(--sf);border-bottom:1px solid var(--bd2);">
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-strong);margin-bottom:4px;">&#128203; Bearbeitungsschritte &amp; Prueflogik (Rolle: Sachbearbeitung Abrechnungsmanagement)</div>
-              <div style="display:flex;flex-direction:column;gap:3px;">
-                <div>1. Eingang in <strong>Helic</strong> als offener Fall anlegen</div>
-                <div>2. Versicherungsverhaeltnis pruefen &rarr; <em>Ja:</em> weiter &middot; <em>Nein:</em> Ablehnung an KB</div>
-                <div>3. Doppeleinreichung pruefen &rarr; <em>Ja:</em> Ablehnung an KB &middot; <em>Nein:</em> weiter</div>
-                <div>4. Art der Leistung pruefen (nur Hautkrebsvorsorge) &rarr; <em>Ja:</em> weiter &middot; <em>Nein:</em> Ablehnung an KB</div>
-                <div>5. Alterspruefung (&ge;35 Jahre) &rarr; <em>Ja:</em> weiter &middot; <em>Nein:</em> Ablehnung ueber KB, Ablehnungsgespraech</div>
-                <div>6. Bundesland-Sonderregeln pruefen: Bremen ab 01.01.2025, Niedersachsen ab 01.01.2024</div>
-                <div>7. Verjaehrung pruefen (Rechnungsdatum &lt; 4 Jahre)</div>
-                <div>8. Jahresanspruch pruefen: 1x pro Kalenderjahr</div>
-                <div>9. Erstattungsbetrag berechnen: &le;25 EUR = voller Betrag, sonst 25 EUR</div>
+        <!-- Karte: Vereinfacht -->
+        <div class="ist-mode-card" id="istCardSimple" onclick="selIstMode('simple')" role="button" tabindex="0">
+          <h4>Vereinfacht</h4>
+          <p>Fuer Prozesse ohne Entscheidungslogiken – beschreibt nur den Ablauf von Eingang bis Ergebnis.</p>
+          <button class="ist-example-btn" onclick="event.stopPropagation();toggleIstExample('simple')" type="button">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Praxisbeispiel anzeigen
+          </button>
+          <div class="ist-example-content" id="istExSimple" style="display:none;">
+            <p style="font-weight:700;margin-bottom:8px;">Beispiel: Manuelle Dokumentenklassifizierung (APK)</p>
+            <div style="display:flex;flex-direction:column;gap:0;border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;">
+              <div style="padding:10px 14px;border-left:3px solid var(--green);background:var(--sf2);border-bottom:1px solid var(--bd2);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:4px;">&#9889; Prozessausloeser</div>
+                <div>Dokumente gehen ueber verschiedene Eingangskanaele ein und werden vom System erstmalig automatisch klassifiziert. Fehlklassifizierte oder nicht zuordenbare Dokumente landen im manuellen Nachbearbeitungsstapel bei <strong>APK</strong>.</div>
+              </div>
+              <div style="padding:10px 14px;border-left:3px solid var(--blue-strong);background:var(--sf);border-bottom:1px solid var(--bd2);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-strong);margin-bottom:4px;">&#128203; Bearbeitungsschritte</div>
+                <div style="display:flex;flex-direction:column;gap:3px;">
+                  <div>1. Mitarbeitende <strong>APK</strong> sichten fehlklassifizierte Dokumente im Stapel</div>
+                  <div>2. Manuelle Umbenennung und Neuklassifizierung je Dokument</div>
+                  <div>3. Dokumente fuer externe Dienstleister (z.B. <strong>DAVASO</strong>) werden identifiziert und weitergeleitet</div>
+                </div>
+              </div>
+              <div style="padding:10px 14px;border-left:3px solid var(--blue-strong);background:var(--sf2);border-bottom:1px solid var(--bd2);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-strong);margin-bottom:4px;">&#128101; Beteiligte Rollen &amp; Systeme</div>
+                <div><strong>Rollen:</strong> Mitarbeitende APK.<br><strong>Systeme:</strong> Helic (Dokumentenmanagement).<br><strong>Extern:</strong> DAVASO (Dienstleister).</div>
+              </div>
+              <div style="padding:10px 14px;border-left:3px solid var(--lila);background:var(--sf);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--lila);margin-bottom:4px;">&#128202; Kennzahlen</div>
+                <div>Ca. <strong>20.000 Dokumente</strong> pro Jahr werden manuell umklassifiziert. Prozess ist zeitaufwendig und fehleranfaellig. Keine transparente Uebersicht ueber Umklassifizierungsgruende. Unklar, welche Dokumententypen bei Erstklassifizierung moeglich sind und welche Helic-only-Dokumente sind.</div>
               </div>
             </div>
-
-            <!-- Beteiligte Rollen und Systeme -->
-            <div style="padding:10px 14px;border-left:3px solid var(--blue-strong);background:var(--sf2);border-bottom:1px solid var(--bd2);">
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-strong);margin-bottom:4px;">&#128101; Beteiligte Rollen &amp; Systeme</div>
-              <div><strong>Rollen:</strong> Sachbearbeitung Abrechnungsmanagement, Kundenberater (KB), ggf. GST (bei VIP).<br>
-              <strong>Systeme:</strong> MeineSBK (Eingang), Helic (Fallsteuerung), 21c_ng (Leistungserfassung), ZVK (Zahlung).</div>
-            </div>
-
-            <!-- Erfassung in Fachsystemen -->
-            <div style="padding:10px 14px;border-left:3px solid var(--lila);background:var(--sf);border-bottom:1px solid var(--bd2);">
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--lila);margin-bottom:4px;">&#128190; Erfassung in Fachsystemen</div>
-              <div>Erfassung in <strong>21c_ng</strong>: Kassenspezifische Leistungen, LA = Hautkrebsscreening, Pos-Nr = Haut.<br>
-              Bei Einmalzahladresse: Zahlung + Aenderung im <strong>ZVK</strong>. Bei neuer BV ohne 2-Faktor: Kontakt mit Kund*in (BV-Abgleich).</div>
-            </div>
-
-            <!-- Kundenkommunikation -->
-            <div style="padding:10px 14px;border-left:3px solid var(--orange);background:var(--sf2);border-bottom:1px solid var(--bd2);">
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:4px;">&#9993; Kundenkommunikation</div>
-              <div><strong>Erstattung:</strong> Serienbrief <strong>S5208</strong> (Regelfall) oder manueller Erstattungsbrief <strong>21C1584</strong>.<br>
-              <strong>Ablehnung:</strong> Weiterleitung Helic-Fall an KB &rarr; Ablehnungsgespraech &amp; Dokumentation in <strong>21c_ng</strong>. Keine Erfassung von APK.</div>
-            </div>
-
-            <!-- Sonderfaelle -->
-            <div style="padding:10px 14px;border-left:3px solid var(--lila);background:var(--sf);">
-              <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--lila);margin-bottom:4px;">&#9733; Sonderfaelle &amp; Ausnahmen</div>
-              <div><strong>VIP-Kunden:</strong> Weiterleitung an GST. <strong>KOE13/2:</strong> Separate Weiterleitung. <strong>Einmalzahladresse:</strong> Erfassung im ZVK erforderlich.</div>
-            </div>
-
           </div>
-          <p style="margin-top:8px;font-size:11.5px;color:var(--dm);font-style:italic;">Dies ist ein verkuerztes Beispiel. Im Sparring wird die Beschreibung gemeinsam detaillierter ausgearbeitet.</p>
         </div>
-      </details>
+
+        <!-- Karte: Ausfuehrlich -->
+        <div class="ist-mode-card" id="istCardDetailed" onclick="selIstMode('detailed')" role="button" tabindex="0">
+          <h4>Ausfuehrlich</h4>
+          <p>Fuer Prozesse mit Pruefschritten und Entscheidungslogiken (z.&nbsp;B. Ja/Nein), die den weiteren Ablauf bestimmen.</p>
+          <button class="ist-example-btn" onclick="event.stopPropagation();toggleIstExample('detailed')" type="button">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Praxisbeispiel anzeigen
+          </button>
+          <div class="ist-example-content" id="istExDetailed" style="display:none;">
+            <p style="font-weight:700;margin-bottom:8px;">Beispiel: Erstattung Hautkrebsvorsorge-Rechnung</p>
+            <div style="font-size:12.5px;display:flex;flex-direction:column;gap:0;border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;">
+              <div style="padding:10px 14px;border-left:3px solid var(--green);background:var(--sf2);border-bottom:1px solid var(--bd2);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--green);margin-bottom:4px;">&#9889; Prozessausloeser</div>
+                <div>Kunde reicht Hautkrebsvorsorge-Rechnung ueber <strong>MeineSBK</strong> ein (Miniformular: Dateiupload, Rechnungsbetrag, Bundesland, Bankverbindung, Behandlungstag).</div>
+              </div>
+              <div style="padding:10px 14px;border-left:3px solid var(--blue-strong);background:var(--sf);border-bottom:1px solid var(--bd2);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-strong);margin-bottom:4px;">&#128203; Bearbeitungsschritte &amp; Prueflogik (Rolle: Sachbearbeitung Abrechnungsmanagement)</div>
+                <div style="display:flex;flex-direction:column;gap:3px;">
+                  <div>1. Eingang in <strong>Helic</strong> als offener Fall anlegen</div>
+                  <div>2. Versicherungsverhaeltnis pruefen &rarr; <em>Ja:</em> weiter &middot; <em>Nein:</em> Ablehnung an KB</div>
+                  <div>3. Doppeleinreichung pruefen &rarr; <em>Ja:</em> Ablehnung an KB &middot; <em>Nein:</em> weiter</div>
+                  <div>4. Art der Leistung pruefen (nur Hautkrebsvorsorge) &rarr; <em>Ja:</em> weiter &middot; <em>Nein:</em> Ablehnung an KB</div>
+                  <div>5. Alterspruefung (&ge;35 Jahre) &rarr; <em>Ja:</em> weiter &middot; <em>Nein:</em> Ablehnung ueber KB, Ablehnungsgespraech</div>
+                  <div>6. Bundesland-Sonderregeln pruefen: Bremen ab 01.01.2025, Niedersachsen ab 01.01.2024</div>
+                  <div>7. Verjaehrung pruefen (Rechnungsdatum &lt; 4 Jahre)</div>
+                  <div>8. Jahresanspruch pruefen: 1x pro Kalenderjahr</div>
+                  <div>9. Erstattungsbetrag berechnen: &le;25 EUR = voller Betrag, sonst 25 EUR</div>
+                </div>
+              </div>
+              <div style="padding:10px 14px;border-left:3px solid var(--blue-strong);background:var(--sf2);border-bottom:1px solid var(--bd2);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--blue-strong);margin-bottom:4px;">&#128101; Beteiligte Rollen &amp; Systeme</div>
+                <div><strong>Rollen:</strong> Sachbearbeitung Abrechnungsmanagement, Kundenberater (KB), ggf. GST (bei VIP).<br>
+                <strong>Systeme:</strong> MeineSBK (Eingang), Helic (Fallsteuerung), 21c_ng (Leistungserfassung), ZVK (Zahlung).</div>
+              </div>
+              <div style="padding:10px 14px;border-left:3px solid var(--lila);background:var(--sf);border-bottom:1px solid var(--bd2);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--lila);margin-bottom:4px;">&#128190; Erfassung in Fachsystemen</div>
+                <div>Erfassung in <strong>21c_ng</strong>: Kassenspezifische Leistungen, LA = Hautkrebsscreening, Pos-Nr = Haut.<br>
+                Bei Einmalzahladresse: Zahlung + Aenderung im <strong>ZVK</strong>. Bei neuer BV ohne 2-Faktor: Kontakt mit Kund*in (BV-Abgleich).</div>
+              </div>
+              <div style="padding:10px 14px;border-left:3px solid var(--orange);background:var(--sf2);border-bottom:1px solid var(--bd2);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--orange);margin-bottom:4px;">&#9993; Kundenkommunikation</div>
+                <div><strong>Erstattung:</strong> Serienbrief <strong>S5208</strong> (Regelfall) oder manueller Erstattungsbrief <strong>21C1584</strong>.<br>
+                <strong>Ablehnung:</strong> Weiterleitung Helic-Fall an KB &rarr; Ablehnungsgespraech &amp; Dokumentation in <strong>21c_ng</strong>. Keine Erfassung von APK.</div>
+              </div>
+              <div style="padding:10px 14px;border-left:3px solid var(--lila);background:var(--sf);">
+                <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--lila);margin-bottom:4px;">&#9733; Sonderfaelle &amp; Ausnahmen</div>
+                <div><strong>VIP-Kunden:</strong> Weiterleitung an GST. <strong>KOE13/2:</strong> Separate Weiterleitung. <strong>Einmalzahladresse:</strong> Erfassung im ZVK erforderlich.</div>
+              </div>
+            </div>
+            <p style="margin-top:8px;font-size:11.5px;color:var(--dm);font-style:italic;">Dies ist ein verkuerztes Beispiel. Im Sparring wird die Beschreibung gemeinsam detaillierter ausgearbeitet.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Eingabebereich – wird erst nach Auswahl sichtbar -->
+      <div id="istInputArea" style="display:none;">
+        <!-- Aufklappbares Praxisbeispiel nach Auswahl -->
+        <details id="istSelectedExample" style="margin-bottom:16px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sf);">
+          <summary style="padding:12px 16px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--blue-strong);list-style:none;display:flex;align-items:center;gap:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            <span id="istSelectedExampleLabel">Praxisbeispiel anzeigen</span>
+          </summary>
+          <div style="padding:0 16px 16px;" id="istSelectedExampleBody"></div>
+        </details>
+
       <div class="flbl">Aktueller Prozess</div>
       <div class="speech-wrap">
         <textarea class="fi" id="intakeIstText" placeholder="Beschreibe den aktuellen Prozess: Was loest ihn aus? Welche Schritte durchlauft ein Sachbearbeiter? Welche Systeme sind beteiligt?" style="min-height:160px;padding-right:48px;"></textarea>
@@ -615,6 +664,7 @@ textarea.fi{min-height:80px;}
       <div class="intake-actions">
         <button class="bprim" onclick="startIstSparring()">IST-Sparring starten</button>
         <button class="bghost" onclick="backToLanding()">Zurueck</button>
+      </div>
       </div>
     </div>
     <div class="chat-messages" id="chatMessagesIst" style="display:none"></div>
@@ -872,6 +922,78 @@ Falls keine Fragen mehr noetig:
 RUECKFRAGEN:
 Keine weiteren Rueckfragen. Die IST-Beschreibung steht.`;
 
+/* System-Prompt fuer IST-Modus (vereinfacht – ohne Pruefschritte und Sonderfaelle) */
+const SYS_IST_SIMPLE=`Du bist der Anforderungs-Assistent der SBK. Du hilfst dabei, den IST-Zustand eines einfachen Prozesses sauber zu dokumentieren.
+
+${STYLE}
+
+Deine Aufgabe:
+Du hilfst dem Nutzer, den aktuellen Prozess (IST-Zustand) strukturiert zu beschreiben. Dieser Modus ist fuer einfache, lineare Prozesse OHNE Entscheidungslogik gedacht – z.B. automatisierte Briefe, Weiterleitungen oder repetitive Taetigkeiten ohne Pruefschritte.
+
+WICHTIG – Was du NICHT abfragst:
+- Datenschutz, DSGVO, Datenschutzerklaerungen, Einwilligungen
+- Pruefschritte mit Ja/Nein-Logik oder Entscheidungsbaeume
+- Sonderfaelle und Ausnahmen
+- Verzweigungen oder alternative Pfade im Prozess
+Frage NICHT nach Entscheidungslogiken, auch wenn der Prozess Begriffe wie "pruefen" enthaelt. Dieser Modus beschreibt nur den linearen Ablauf von Eingang bis Ergebnis.
+
+Ablauf:
+1. VERSTEHEN: Analysiere die Eingabe und fasse zusammen, was du verstanden hast.
+
+2. BEWERTEN: Pruefe die Eingabe anhand dieser vier Kriterien:
+   - Prozessausloeser beschrieben (Was startet den Prozess? Ist der Ausloeser klar?)
+   - Bearbeitungsschritte vollstaendig (Sind alle Schritte in der richtigen Reihenfolge beschrieben?)
+   - Systeme und Rollen genannt (Welche Systeme und Rollen sind beteiligt?)
+   - Kennzahlen vorhanden oder begruendet (Fallzahlen, Bearbeitungszeiten, Fristen – oder Begruendung warum nicht?)
+   Gib fuer jedes Kriterium eine ehrliche Bewertung ab: JA, TEILWEISE oder NEIN.
+
+3. HINTERFRAGEN – DYNAMISCH BASIEREND AUF DER BEWERTUNG:
+   Die Anzahl deiner Rueckfragen richtet sich nach der Bewertung:
+   - Wenn fast alle Kriterien JA sind: Stelle 0-1 Rueckfragen oder schliesse direkt ab.
+   - Wenn die meisten Kriterien TEILWEISE sind: Stelle 2-3 gezielte Rueckfragen.
+   - Wenn viele Kriterien NEIN sind: Stelle bis zu 4 Rueckfragen, die das Wichtigste abdecken.
+
+   Stelle nur Fragen, die du WIRKLICH brauchst. Fokussiere auf: Welche Schritte fehlen? Welche Systeme und Rollen sind beteiligt? Welche Mengen und Zeiten gibt es?
+   Stelle KEINE Fragen zu Entscheidungslogik, Pruefschritten, Sonderfaellen oder alternativen Pfaden.
+   Stelle KEINE technischen Detailfragen (Feldnamen, APIs, Datenbanken). Jede Frage besteht aus genau einer nummerierten Zeile (keine Unterpunkte).
+
+4. SCHAERFEN: Nach jeder Antwort aktualisiere die Bewertung und die IST-Beschreibung. Pruefe erneut alle vier Kriterien. Stelle nur dann Rueckfragen, wenn Kriterien noch auf NEIN oder TEILWEISE stehen.
+
+5. ABSCHLIESSEN: Wenn alle oder fast alle Kriterien auf JA stehen, sage: "Die IST-Beschreibung steht. Du kannst sie jetzt abschliessen."
+
+Ausgabeformat fuer jede Antwort:
+
+TITEL: [Kurzbezeichnung des Prozesses]
+
+IST-TEXT:
+[Fliesstext-Beschreibung des Prozesses. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter. 3-10 Saetze. Klar und linear: Schritt fuer Schritt von Ausloeser bis Ergebnis.]
+
+IST-TABELLE:
+Nr.|Bearbeitungsschritt|Erlaeuterung
+1|[Schritt]|[Details]
+2|[Schritt]|[Details]
+...
+
+KENNZAHLEN:
+[IMMER ausfuellen. Falls bekannt: Fallzahlen pro Monat/Jahr, Bearbeitungszeit pro Vorgang, Fristen, Anzahl betroffener MA. Falls (noch) nicht bekannt: Schreibe was fehlt und warum.]
+
+BEWERTUNG:
+Prozessausloeser beschrieben: [JA/TEILWEISE/NEIN]
+Bearbeitungsschritte vollstaendig: [JA/TEILWEISE/NEIN]
+Systeme und Rollen genannt: [JA/TEILWEISE/NEIN]
+Kennzahlen vorhanden oder begruendet: [JA/TEILWEISE/NEIN]
+
+ANALYSE:
+[Was gut erfasst ist und was fehlt. 1-3 Saetze.]
+
+RUECKFRAGEN:
+1. [Frage]
+...nur so viele wie noetig (0 bis maximal 4). Keine Fragen zu Entscheidungslogik oder Sonderfaellen.
+
+Falls keine Fragen mehr noetig:
+RUECKFRAGEN:
+Keine weiteren Rueckfragen. Die IST-Beschreibung steht.`;
+
 /* ═══ STATE ═══ */
 let apiToken='',selectedMode='',reqType='',msgs=[],isRunning=false,currentPhase=0,sparringCount=0;
 let docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};
@@ -882,6 +1004,8 @@ const PHASES=[{label:'Einstieg'},{label:'Verstehen'},{label:'Schaerfen'},{label:
 /* IST-Modus State */
 let istMsgs=[],istState={titel:'',text:'',tabelle:'',kz:''};
 let istSparringCount=0;
+/* NEU: IST-Untermodus ('simple' oder 'detailed') */
+let istSubMode='';
 
 /* ═══ SPEECH RECOGNITION (Spracheingabe) ═══ */
 let speechRecognition=null, speechTarget=null;
@@ -1268,6 +1392,42 @@ function updatePhase(p){
 /* ═══ TYPE ═══ */
 function selType(btn){document.querySelectorAll('.type-chip').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');reqType=btn.dataset.type;}
 
+/* NEU: IST-Untermodus Auswahl */
+function selIstMode(mode){
+  istSubMode=mode;
+  /* Karten-Zustand aktualisieren */
+  g('istCardSimple').classList.toggle('sel', mode==='simple');
+  g('istCardDetailed').classList.toggle('sel', mode==='detailed');
+  /* Eingabebereich einblenden */
+  g('istInputArea').style.display='';
+  /* Passendes Praxisbeispiel in den aufklappbaren Bereich kopieren */
+  const exBody=g('istSelectedExampleBody');
+  const exLabel=g('istSelectedExampleLabel');
+  if(mode==='simple'){
+    exLabel.textContent='Praxisbeispiel (vereinfacht) anzeigen';
+    exBody.innerHTML=g('istExSimple').innerHTML;
+  } else {
+    exLabel.textContent='Praxisbeispiel (ausfuehrlich) anzeigen';
+    exBody.innerHTML=g('istExDetailed').innerHTML;
+  }
+  /* Textarea-Placeholder anpassen */
+  const ta=g('intakeIstText');
+  if(mode==='simple'){
+    ta.placeholder='Beschreibe den Prozess: Was loest ihn aus? Welche Schritte gibt es von Eingang bis Ergebnis? Welche Systeme und Rollen sind beteiligt?';
+  } else {
+    ta.placeholder='Beschreibe den aktuellen Prozess: Was loest ihn aus? Welche Schritte durchlauft ein Sachbearbeiter? Welche Pruefschritte und Entscheidungen gibt es? Welche Systeme sind beteiligt?';
+  }
+  /* Zum Eingabebereich scrollen */
+  g('istInputArea').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function toggleIstExample(mode){
+  const el = mode==='simple' ? g('istExSimple') : g('istExDetailed');
+  if(!el) return;
+  const isVisible = el.style.display !== 'none';
+  el.style.display = isVisible ? 'none' : '';
+}
+
 /* ═══ LIVING DOC (Allgemein) ═══ */
 function updateDoc(field,content,status){
   docState[field]=content;
@@ -1559,13 +1719,15 @@ async function startSparring(){
 
 /* ═══ SPARRING START (IST-Modus) ═══ */
 async function startIstSparring(){
+  if(!istSubMode){showToast('Bitte zuerst eine Variante waehlen (Vereinfacht oder Ausfuehrlich).','warn');return;}
   const text=val('intakeIstText');
   if(!text){g('intakeIstErr').classList.add('on');g('intakeIstText').classList.add('inv');g('intakeIstText').focus();return;}
   g('intakeIstErr').classList.remove('on');g('intakeIstText').classList.remove('inv');
   g('intakeAreaIst').style.display='none';g('chatMessagesIst').style.display='flex';g('chatInputBarIst').style.display='flex';
   updatePhase(1);
 
-  const prompt=`Der Nutzer moechte den IST-Zustand eines Prozesses dokumentieren.\n\nEingabe:\n${text}\n\nAnalysiere den Prozess. Erstelle eine strukturierte IST-Beschreibung (Fliesstext und Tabelle). Stelle ALLE Rueckfragen in einer Runde.`;
+  const modeLabel = istSubMode==='simple' ? 'vereinfachte IST-Beschreibung (ohne Entscheidungslogik)' : 'ausfuehrliche IST-Beschreibung (mit Pruefschritten und Entscheidungslogik)';
+  const prompt=`Der Nutzer moechte eine ${modeLabel} eines Prozesses erstellen.\n\nEingabe:\n${text}\n\nAnalysiere den Prozess. Erstelle eine strukturierte IST-Beschreibung (Fliesstext und Tabelle). Stelle ALLE Rueckfragen in einer Runde.`;
   addMsgIst('user',text);istMsgs=[{role:'user',content:prompt}];istSparringCount++;
   await callAndRenderIst();
 }
@@ -1672,7 +1834,8 @@ function renderIstMsg(p, rawText){
 async function callAndRenderIst(){
   if(isRunning)return;isRunning=true;addLoading('chatMessagesIst');g('btnSendIst').disabled=true;
   try{
-    const r=await callKIA(istMsgs,SYS_IST);istMsgs.push({role:'assistant',content:r});removeLoading();
+    const sysPrompt = istSubMode==='simple' ? SYS_IST_SIMPLE : SYS_IST;
+    const r=await callKIA(istMsgs,sysPrompt);istMsgs.push({role:'assistant',content:r});removeLoading();
     const p=parseIST(r);
     if(p.titel)updateIstDoc('titel',p.titel,'draft');
     if(p.istText)updateIstDoc('text',p.istText,'draft');
@@ -2039,6 +2202,12 @@ function confirmNewReq(){
   g('intakeIstText').value='';
   ['titel','text','tabelle','kz'].forEach(f=>updateIstDoc(f,'',null));
   g('btnCopyIst').disabled=true;g('btnFinalizeIst').disabled=true;
+  istSubMode='';
+  g('istCardSimple').classList.remove('sel');
+  g('istCardDetailed').classList.remove('sel');
+  g('istInputArea').style.display='none';
+  g('istExSimple').style.display='none';
+  g('istExDetailed').style.display='none';
 
   backToLanding();
 }
