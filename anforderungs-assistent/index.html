@@ -381,19 +381,24 @@ textarea.fi{min-height:80px;}
 <div class="modal" style="position:relative;">
   <button class="modal-close" onclick="closeHelp()">&times;</button>
   <h2>So funktioniert der Anforderungs-Assistent</h2>
-  <p>Der Assistent begleitet dich als Sparringspartner beim Erstellen klarer, JIRA-faehiger Anforderungen. Schritt fuer Schritt, von der ersten Idee bis zu Akzeptanzkriterien und Testfaellen.</p>
+  <p>Der Assistent ist dein KI-gestuetzter Sparringspartner: Er hilft dir, Anforderungen und Prozessbeschreibungen Schritt fuer Schritt zu schaerfen – von der ersten Idee bis zur JIRA-fertigen Dokumentation.</p>
 
-  <h3>Ablauf im Ueberblick</h3>
+  <h3>Zwei Modi, ein Ziel: Klarheit</h3>
   <ol class="step-list">
-    <li><strong>Modus waehlen:</strong> Waehle zwischen der <em>allgemeinen Anforderung</em> (IST/SOLL erarbeiten), der <em>IST-Beschreibung</em> (wenn du nur den aktuellen Prozess dokumentieren willst) oder dem <em>Aktionssteuerung-Wizard</em>.</li>
-    <li><strong>Beschreiben:</strong> Gib in den Feldern ein, was du weisst. Du kannst Freitext schreiben, Stichpunkte nutzen oder bestehende JIRA-Texte reinkopieren. Tipp: Nutze das Mikrofon-Symbol, um per Sprache einzugeben.</li>
-    <li><strong>Sparring:</strong> Der Assistent analysiert deine Eingabe, trennt IST und SOLL und stellt gezielte Rueckfragen. Beantworte die Fragen direkt in den Feldern oder nutze das Freitextfeld unten.</li>
-    <li><strong>Dokument waechst mit:</strong> Links siehst du das Living Document. Es wird bei jeder Sparring-Runde aktualisiert. Du kannst jederzeit zwischen Sparring und Dokument wechseln.</li>
-    <li><strong>Abschliessen:</strong> Wenn IST und SOLL stehen, klicke auf <em>Akzeptanzkriterien und Testfaelle generieren</em>. Danach kannst du die fertige Anforderung kopieren oder weiter schaerfen.</li>
+    <li><strong>IST-Beschreibung erarbeiten:</strong> Dokumentiere den aktuellen Prozess strukturiert. Der Assistent fragt nach Prozessausloesern, Bearbeitungsschritten, beteiligten Systemen, Pruefschritten und Sonderfaellen – bis ein vollstaendiges Bild steht. Ideal, wenn du einen bestehenden Ablauf fuer andere nachvollziehbar machen willst.</li>
+    <li><strong>Allgemeine Anforderung:</strong> Erarbeite eine fachliche Anforderung oder einen Change Request. Der Assistent trennt IST und SOLL, hinterfragt Luecken und generiert am Ende Akzeptanzkriterien und Testfaelle.</li>
+  </ol>
+
+  <h3>Ablauf in beiden Modi</h3>
+  <ol class="step-list">
+    <li><strong>Beschreiben:</strong> Gib ein, was du weisst – als Freitext, Stichpunkte oder kopiere bestehende JIRA-Texte rein. Du kannst auch das <strong>Mikrofon</strong> nutzen, um per Sprache einzugeben (Chrome/Edge).</li>
+    <li><strong>Sparring:</strong> Der Assistent analysiert deine Eingabe und stellt gezielte Rueckfragen. Die Anzahl der Fragen richtet sich danach, wie vollstaendig deine Beschreibung bereits ist. Beantworte sie direkt in den Feldern oder markiere einzelne Fragen als <em>Entfaellt</em>.</li>
+    <li><strong>Living Document:</strong> Links waechst dein Dokument mit jeder Sparring-Runde automatisch mit. Du siehst immer den aktuellen Stand deiner Anforderung bzw. Prozessbeschreibung.</li>
+    <li><strong>Abschliessen und kopieren:</strong> Am Ende kannst du das Ergebnis formatiert fuer <strong>Confluence</strong> oder als Plaintext kopieren – einzelne Abschnitte oder alles auf einmal.</li>
   </ol>
 
   <h3>Tipps</h3>
-  <p>Je konkreter deine Eingabe, desto besser das Ergebnis. Nenne Fallzahlen, Systeme, beteiligte Rollen und den aktuellen Prozess, wenn moeglich. Der Assistent fragt gezielt nach, was fehlt.</p>
+  <p>Je konkreter du startest, desto besser das Ergebnis. Nenne Fallzahlen, Systeme, beteiligte Rollen und den aktuellen Ablauf, wenn moeglich. Der Assistent fragt gezielt nach, was fehlt – du musst nicht alles auf einmal wissen.</p>
   <div style="text-align:center;margin-top:20px;">
     <button class="bprim" onclick="closeHelp()">Verstanden, loslegen</button>
   </div>
@@ -416,13 +421,11 @@ textarea.fi{min-height:80px;}
     </div>
     <!-- Allgemeine Anforderung: Jetzt ZWEITE Karte, MIT Badge -->
     <div class="mode-primary" onclick="selectMode('general')" role="button" tabindex="0">
-      <div class="mode-badge">Empfohlen</div>
       <h3>Allgemeine Anforderung</h3>
       <p>Fachliche Anforderung oder Change Request iterativ erarbeiten. IST und SOLL schaerfen, Akzeptanzkriterien und Testfaelle generieren.</p>
       <div class="mode-arrow">&#8594;</div>
     </div>
   </div>
-  <button class="mode-secondary" onclick="selectMode('aktion')">Speziell fuer Aktionssteuerung? Zum gefuehrten Wizard &#8594;</button>
 
   <div class="token-card">
     <h4>KIA Token eingeben</h4>
