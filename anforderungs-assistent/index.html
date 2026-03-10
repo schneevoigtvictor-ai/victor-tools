@@ -274,21 +274,16 @@ textarea.fi{min-height:80px;}
 .ist-output-pane.active{display:block;}
 
 /* TESTFALL TABLE */
-.tf-table-wrap{overflow-x:auto;}
-.tf-table{width:100%;border-collapse:collapse;font-size:13px;line-height:1.55;}
-.tf-table th{background:var(--blue-deep);color:#fff;font-weight:700;text-align:left;padding:10px 12px;white-space:nowrap;font-size:12px;letter-spacing:.02em;}
-.tf-table th:first-child{border-radius:var(--rs) 0 0 0;}
+.tf-table-wrap{overflow-x:auto;margin:4px 0;}
+.tf-table{width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.55;}
+.tf-table th{background:var(--blue-deep);color:#fff;font-weight:700;text-align:left;padding:9px 10px;font-size:11.5px;letter-spacing:.02em;word-wrap:break-word;}
+.tf-table th:first-child{border-radius:var(--rs) 0 0 0;width:40px;}
 .tf-table th:last-child{border-radius:0 var(--rs) 0 0;}
-.tf-table td{padding:10px 12px;border-bottom:1px solid var(--bd2);vertical-align:top;color:var(--tx2);}
+.tf-table td{padding:9px 10px;border-bottom:1px solid var(--bd2);vertical-align:top;color:var(--tx2);word-wrap:break-word;overflow-wrap:break-word;}
 .tf-table tr:last-child td{border-bottom:none;}
 .tf-table tr:nth-child(even){background:var(--sf2);}
 .tf-table tr:hover{background:var(--blue-pale);}
-.tf-table td:first-child{font-weight:700;color:var(--blue-strong);white-space:nowrap;text-align:center;}
-.tf-table td:nth-child(2){white-space:nowrap;font-size:12px;color:var(--mu);font-family:monospace;}
-.tf-table td:last-child{white-space:nowrap;text-align:center;}
-.prio-high{color:var(--red);font-weight:700;}
-.prio-medium{color:var(--orange);font-weight:600;}
-.prio-low{color:var(--green);font-weight:500;}
+.tf-table td:first-child{font-weight:700;color:var(--blue-strong);text-align:center;width:40px;}
 
 /* TOAST */
 .toast{position:fixed;bottom:20px;right:20px;background:var(--blue-deep);color:#fff;border-radius:var(--rs);padding:11px 18px;font-size:13.5px;font-weight:500;box-shadow:var(--shadow-lg);transform:translateY(44px);opacity:0;transition:all .3s var(--ease-bounce);z-index:600;max-width:360px;}
@@ -340,6 +335,57 @@ textarea.fi{min-height:80px;}
 .ist-example-content{margin-top:10px;border-top:1px solid var(--bd2);padding-top:10px;font-size:12.5px;color:var(--tx2);line-height:1.6;}
 @media(max-width:600px){.ist-mode-cards{grid-template-columns:1fr;}}
 
+/* ═══ TEST-ASSISTENT ═══ */
+.test-module-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.test-module-card{background:var(--sf);border:2px solid var(--bd);border-radius:var(--r);padding:18px;cursor:pointer;transition:all .25s var(--ease);position:relative;text-align:center;}
+.test-module-card:hover{border-color:var(--blue-strong);box-shadow:var(--shadow);}
+.test-module-card.sel{border-color:var(--blue-strong);background:rgba(43,108,176,.03);box-shadow:var(--shadow);}
+.test-module-card.sel::after{content:'';position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--blue-strong);background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M5 13l4 4L19 7'/%3E%3C/svg%3E");background-size:12px;background-repeat:no-repeat;background-position:center;}
+.test-module-card .tm-icon{font-size:28px;margin-bottom:8px;}
+.test-module-card h4{font-family:'Fraunces',serif;font-size:15px;font-weight:600;color:var(--tx);margin-bottom:4px;}
+.test-module-card p{font-size:12px;color:var(--mu);line-height:1.45;}
+@media(max-width:700px){.test-module-cards{grid-template-columns:1fr;}}
+
+/* Test-Ergebnis Status-Auswahl */
+.test-status-row{display:flex;gap:10px;margin:12px 0;}
+.test-status-chip{flex:1;padding:10px 14px;border:2px solid var(--bd);border-radius:var(--rs);background:var(--sf);font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s var(--ease);text-align:center;}
+.test-status-chip:hover{border-color:var(--blue-strong);}
+.test-status-chip.sel-ok{border-color:var(--green);background:var(--green-light);color:var(--green);}
+.test-status-chip.sel-fail{border-color:var(--red);background:var(--red-light);color:var(--red);}
+.test-status-chip.sel-partial{border-color:var(--orange);background:var(--yellow-light);color:var(--orange);}
+
+/* Fehlerdetail-Bereich (nur bei Fehler sichtbar) */
+.test-error-details{display:none;margin-top:16px;padding:16px;background:var(--red-light);border:1px solid rgba(197,48,48,.2);border-radius:var(--rs);}
+.test-error-details.visible{display:block;}
+.test-error-details .flbl{color:var(--red);}
+
+/* Testfall-Vorschau im Intake */
+.test-preview{background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);padding:14px;margin-top:12px;font-size:13px;}
+.test-preview-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dm);margin-bottom:6px;}
+
+/* Testfall-Tabellen-Toolbar (Filter + Kopieren) */
+.tf-toolbar{display:flex;align-items:center;gap:8px;margin:8px 0 4px;flex-wrap:wrap;}
+.tf-toolbar-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sf);font-family:inherit;font-size:12px;font-weight:500;color:var(--mu);cursor:pointer;transition:all .2s var(--ease);}
+.tf-toolbar-btn:hover{border-color:var(--blue-strong);color:var(--blue-strong);}
+.tf-toolbar-btn.copied{border-color:var(--green);background:var(--green-light);color:var(--green);}
+.tf-filter-chips{display:flex;gap:4px;flex-wrap:wrap;}
+.tf-filter-chip{padding:4px 10px;border:1.5px solid var(--bd);border-radius:20px;font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;transition:all .2s var(--ease);background:var(--sf);color:var(--mu);}
+.tf-filter-chip:hover{border-color:var(--blue-strong);}
+.tf-filter-chip.on-pos{border-color:var(--green);background:var(--green-light);color:var(--green);}
+.tf-filter-chip.on-grenz{border-color:var(--orange);background:var(--yellow-light);color:var(--orange);}
+.tf-filter-chip.on-neg{border-color:var(--red);background:var(--red-light);color:var(--red);}
+.tf-filter-chip.on-ep{border-color:var(--dm);background:var(--sf3);color:var(--mu);}
+.tf-toolbar-sep{width:1px;height:20px;background:var(--bd);margin:0 4px;}
+/* Ansicht-Toggle (Tabelle/Text) */
+.tf-view-tabs{display:flex;gap:2px;background:var(--sf3);border-radius:var(--rs);padding:2px;}
+.tf-view-tab{padding:4px 12px;border:none;border-radius:6px;font-family:inherit;font-size:11.5px;font-weight:600;cursor:pointer;background:transparent;color:var(--mu);transition:all .2s var(--ease);}
+.tf-view-tab.active{background:var(--sf);color:var(--tx);box-shadow:var(--shadow-sm);}
+.tf-text-view{font-size:13px;line-height:1.65;padding:12px 0;}
+.tf-text-view .tf-text-row{padding:8px 0;border-bottom:1px solid var(--bd2);}
+.tf-text-view .tf-text-row:last-child{border-bottom:none;}
+.tf-text-view .tf-text-label{font-weight:700;color:var(--tx);font-size:12px;margin-bottom:3px;}
+.tf-text-view .tf-text-val{color:var(--tx2);}
+
 /* RESPONSIVE */
 @media(max-width:900px){
   .doc-panel{display:none;position:fixed;top:var(--tb);left:0;right:0;bottom:48px;width:100%;z-index:150;border-right:none;}
@@ -383,13 +429,14 @@ textarea.fi{min-height:80px;}
   <h2>So funktioniert der Anforderungs-Assistent</h2>
   <p>Der Assistent ist dein KI-gestuetzter Sparringspartner: Er hilft dir, Anforderungen und Prozessbeschreibungen Schritt fuer Schritt zu schaerfen – von der ersten Idee bis zur JIRA-fertigen Dokumentation.</p>
 
-  <h3>Zwei Modi, ein Ziel: Klarheit</h3>
+  <h3>Drei Modi, ein Ziel: Klarheit</h3>
   <ol class="step-list">
     <li><strong>IST-Beschreibung erarbeiten:</strong> Dokumentiere den aktuellen Prozess strukturiert. Der Assistent fragt nach Prozessausloesern, Bearbeitungsschritten, beteiligten Systemen, Pruefschritten und Sonderfaellen – bis ein vollstaendiges Bild steht. Ideal, wenn du einen bestehenden Ablauf fuer andere nachvollziehbar machen willst.</li>
     <li><strong>Allgemeine Anforderung:</strong> Erarbeite eine fachliche Anforderung oder einen Change Request. Der Assistent trennt IST und SOLL, hinterfragt Luecken und generiert am Ende Akzeptanzkriterien und Testfaelle.</li>
+    <li><strong>Test-Assistent:</strong> Erstelle Testfaelle aus Anforderungen, verfeinere bestehende Testfaelle oder dokumentiere Testergebnisse strukturiert. Der Assistent sorgt dafuer, dass Vorbedingungen, Testschritte und erwartete Ergebnisse konkret und nachvollziehbar sind – damit die IT sie direkt verwenden kann.</li>
   </ol>
 
-  <h3>Ablauf in beiden Modi</h3>
+  <h3>Ablauf in allen Modi</h3>
   <ol class="step-list">
     <li><strong>Beschreiben:</strong> Gib ein, was du weisst – als Freitext, Stichpunkte oder kopiere bestehende JIRA-Texte rein. Du kannst auch das <strong>Mikrofon</strong> nutzen, um per Sprache einzugeben (Chrome/Edge).</li>
     <li><strong>Sparring:</strong> Der Assistent analysiert deine Eingabe und stellt gezielte Rueckfragen. Die Anzahl der Fragen richtet sich danach, wie vollstaendig deine Beschreibung bereits ist. Beantworte sie direkt in den Feldern oder markiere einzelne Fragen als <em>Entfaellt</em>.</li>
@@ -423,6 +470,13 @@ textarea.fi{min-height:80px;}
     <div class="mode-primary" onclick="selectMode('general')" role="button" tabindex="0">
       <h3>Allgemeine Anforderung</h3>
       <p>Fachliche Anforderung oder Change Request iterativ erarbeiten. IST und SOLL schaerfen, Akzeptanzkriterien und Testfaelle generieren.</p>
+      <div class="mode-arrow">&#8594;</div>
+    </div>
+    <!-- Test-Assistent: NEUE dritte Karte -->
+    <div class="mode-primary" onclick="selectMode('test')" role="button" tabindex="0">
+      <div class="mode-badge green">Neu</div>
+      <h3>Test-Assistent</h3>
+      <p>Testfälle erstellen, verfeinern oder Testergebnisse dokumentieren. Strukturierte Hilfe für präzise Testdokumentation.</p>
       <div class="mode-arrow">&#8594;</div>
     </div>
   </div>
@@ -689,6 +743,158 @@ textarea.fi{min-height:80px;}
 <div class="mobile-tabs" id="mobileTabsIst" style="display:none;">
   <button class="mobile-tab active" onclick="mobileTabIst('chat')" id="mtChatIst">Sparring</button>
   <button class="mobile-tab" onclick="mobileTabIst('doc')" id="mtDocIst">Dokument</button>
+</div>
+</div>
+
+<!-- TEST-ASSISTENT MODUS -->
+<div class="view" id="v-test">
+<div class="app">
+  <div class="doc-panel" id="docPanelTest">
+    <div class="doc-header"><div class="doc-header-title">Test-Dokumentation (Entwurf)</div><div class="doc-header-sub">Wird laufend aktualisiert</div></div>
+    <div class="doc-body" id="docBodyTest">
+      <div class="doc-section"><div class="doc-sec-head"><div class="doc-sec-label">Modul</div><div class="doc-sec-status empty" id="dss-test-modul">Offen</div></div><div class="doc-sec-content empty" id="dc-test-modul">Noch nicht gewählt</div></div>
+      <div class="doc-section"><div class="doc-sec-head"><div class="doc-sec-label">Testfälle</div><div class="doc-sec-status empty" id="dss-test-tf">Offen</div></div><div class="doc-sec-content empty" id="dc-test-tf">Werden im Sparring erarbeitet</div></div>
+      <div class="doc-section" id="ds-test-ergebnis" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Testergebnisse</div><div class="doc-sec-status empty" id="dss-test-erg">Offen</div></div><div class="doc-sec-content empty" id="dc-test-erg">Werden nach Testdurchführung erfasst</div></div>
+    </div>
+    <div class="doc-footer"><div class="doc-footer-btns">
+      <button class="bsec" onclick="copyTestAll()" id="btnCopyTest" disabled>Alles kopieren</button>
+      <button class="bprim" onclick="finalizeTest()" id="btnFinalizeTest" disabled>Abschließen</button>
+    </div></div>
+  </div>
+  <div class="chat-panel" id="chatPanelTest">
+    <div id="intakeAreaTest" class="intake">
+      <div class="intake-title">Test-Assistent</div>
+      <div class="intake-desc">Wähle aus, was du tun möchtest. Der Assistent führt dich durch den Prozess und hilft dir, präzise und nachvollziehbare Testdokumentation zu erstellen.</div>
+      
+      <!-- Modul-Auswahl -->
+      <div class="flbl">Was möchtest du tun?</div>
+      <div class="test-module-cards">
+        <div class="test-module-card" id="testCardCreate" onclick="selTestModule('create')" role="button" tabindex="0">
+          <div class="tm-icon">📝</div>
+          <h4>Testfälle erstellen</h4>
+          <p>Aus Anforderung oder User Story neue Testfälle ableiten</p>
+        </div>
+        <div class="test-module-card" id="testCardRefine" onclick="selTestModule('refine')" role="button" tabindex="0">
+          <div class="tm-icon">🔍</div>
+          <h4>Testfälle verfeinern</h4>
+          <p>Bestehende Testfälle präzisieren und verbessern</p>
+        </div>
+        <div class="test-module-card" id="testCardResult" onclick="selTestModule('result')" role="button" tabindex="0">
+          <div class="tm-icon">📋</div>
+          <h4>Testergebnisse dokumentieren</h4>
+          <p>Durchgeführten Test strukturiert erfassen</p>
+        </div>
+      </div>
+
+      <!-- Eingabebereich – wird nach Modulwahl eingeblendet -->
+      <div id="testInputArea" style="display:none;">
+        
+        <!-- Praxisbeispiel (aufklappbar) -->
+        <details id="testSelectedExample" style="margin-bottom:16px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sf);">
+          <summary style="padding:12px 16px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--blue-strong);list-style:none;display:flex;align-items:center;gap:8px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+            <span id="testExampleLabel">Praxisbeispiel anzeigen</span>
+          </summary>
+          <div style="padding:0 16px 16px;overflow-x:auto;" id="testExampleBody"></div>
+        </details>
+
+        <!-- Modul 1: Testfälle erstellen -->
+        <div id="testInputCreate" style="display:none;">
+          <div class="flbl">Anforderung oder User Story</div>
+          <div class="fhint" style="margin-bottom:8px;">Füge die Anforderung ein, für die du Testfälle erstellen möchtest.</div>
+          <div class="speech-wrap">
+            <textarea class="fi" id="testCreateInput" placeholder="z.B.: Als Sachbearbeiter möchte ich Hautkrebsvorsorge-Erstattungen für Versicherte unter 35 Jahren bearbeiten können, wenn die Rechnung vollständig ist und keine Doppelerfassung vorliegt." style="min-height:140px;padding-right:48px;"></textarea>
+            <button class="speech-btn" onclick="toggleSpeech('testCreateInput')" title="Spracheingabe" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modul 2: Testfälle verfeinern -->
+        <div id="testInputRefine" style="display:none;">
+          <div class="flbl">Bestehende Testfälle</div>
+          <div class="fhint" style="margin-bottom:8px;">Füge die Testfälle ein, die du verbessern möchtest (aus Confluence, Excel oder als Freitext).</div>
+          <div class="speech-wrap">
+            <textarea class="fi" id="testRefineInput" placeholder="z.B.:
+TC-010 | Erstattung prüfen | Funktioniert
+
+Oder als Text:
+Testfall 1: Erstattung prüfen - sollte funktionieren" style="min-height:140px;padding-right:48px;"></textarea>
+            <button class="speech-btn" onclick="toggleSpeech('testRefineInput')" title="Spracheingabe" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Modul 3: Testergebnisse dokumentieren -->
+        <div id="testInputResult" style="display:none;">
+          <div class="flbl">Testfall (Name oder Nr.)</div>
+          <div class="speech-wrap">
+            <textarea class="fi" id="testResultRef" placeholder="z.B.: TC-010 – Erstattungsbetrag prüfen" style="min-height:44px;padding-right:48px;"></textarea>
+            <button class="speech-btn" onclick="toggleSpeech('testResultRef')" title="Spracheingabe" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+
+          <div class="flbl" style="margin-top:14px;">Erwartetes Ergebnis (laut Testfall)</div>
+          <div class="fhint" style="margin-bottom:6px;">Kopiere hier rein, was laut Testfall erwartet wurde.</div>
+          <div class="speech-wrap">
+            <textarea class="fi" id="testResultExpected" placeholder="z.B.: Erstattungsbetrag = 50,00€, Status = Zur Auszahlung freigegeben" style="min-height:60px;padding-right:48px;"></textarea>
+            <button class="speech-btn" onclick="toggleSpeech('testResultExpected')" title="Spracheingabe" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+          
+          <div class="flbl" style="margin-top:14px;">Testergebnis</div>
+          <div class="test-status-row">
+            <button class="test-status-chip" id="tsOk" onclick="selTestStatus('ok')" type="button">✅ Bestanden</button>
+            <button class="test-status-chip" id="tsPartial" onclick="selTestStatus('partial')" type="button">⚠️ Teilweise</button>
+            <button class="test-status-chip" id="tsFail" onclick="selTestStatus('fail')" type="button">❌ Fehler</button>
+          </div>
+
+          <!-- Fehlerbeschreibung (nur bei Fehler/Teilweise sichtbar) -->
+          <div class="test-error-details" id="testErrorDetails">
+            <div class="flbl">Was ist tatsächlich passiert?</div>
+            <div class="fhint" style="margin-bottom:6px;">Beschreibe den Fehler so konkret wie möglich: Welcher Wert wurde angezeigt? Welche Meldung kam?</div>
+            <div class="speech-wrap">
+              <textarea class="fi" id="testResultDesc" placeholder="z.B.: Erstattungsbetrag zeigt 45,00€ statt 50,00€. Keine Fehlermeldung, Status trotzdem auf Freigegeben." style="min-height:80px;padding-right:48px;"></textarea>
+              <button class="speech-btn" onclick="toggleSpeech('testResultDesc')" title="Spracheingabe" type="button">
+                <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;padding:10px 14px;background:var(--blue-pale);border-radius:var(--rs);font-size:12px;color:var(--blue-strong);line-height:1.6;">
+            <strong>Tipp:</strong> Ein Screenshot hilft der IT enorm. Hänge ihn später direkt an das JIRA-Ticket oder die Confluence-Seite an und markiere den relevanten Bereich.
+          </div>
+        </div>
+
+        <div class="ferr" id="testIntakeErr">Bitte fülle die erforderlichen Felder aus.</div>
+        <div class="intake-actions">
+          <button class="bprim" onclick="startTestSparring()">Sparring starten</button>
+          <button class="bghost" onclick="backToLanding()">Zurück</button>
+        </div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chatMessagesTest" style="display:none"></div>
+    <div class="chat-input-bar" id="chatInputBarTest" style="display:none">
+      <div class="chat-input-wrap">
+        <textarea class="chat-input" id="chatInputTest" placeholder="Antwort eingeben ... (Enter = senden)"></textarea>
+        <button class="speech-btn" onclick="toggleSpeech('chatInputTest')" title="Spracheingabe" type="button" style="right:8px;bottom:8px;">
+          <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <button class="chat-send" id="btnSendTest" onclick="sendChatTest()">Senden</button>
+    </div>
+    <div class="actions-bar hidden" id="actionsBarTest">
+      <button class="bprim" onclick="finalizeTest()">Dokumentation abschließen</button>
+      <span style="font-size:12px;color:var(--dm);">Klicke auf Abschließen, wenn die Dokumentation vollständig ist.</span>
+    </div>
+  </div>
+</div>
+<div class="mobile-tabs" id="mobileTabsTest" style="display:none;">
+  <button class="mobile-tab active" onclick="mobileTabTest('chat')" id="mtChatTest">Sparring</button>
+  <button class="mobile-tab" onclick="mobileTabTest('doc')" id="mtDocTest">Dokument</button>
 </div>
 </div>
 
@@ -997,6 +1203,176 @@ Falls keine Fragen mehr noetig:
 RUECKFRAGEN:
 Keine weiteren Rueckfragen. Die IST-Beschreibung steht.`;
 
+/* ═══ TEST-ASSISTENT SYSTEM-PROMPTS ═══ */
+
+/* Modul 1: Testfälle erstellen */
+const SYS_TEST_CREATE=`Du bist der Test-Assistent der SBK. Du hilfst dabei, aus Anforderungen oder User Stories vollstaendige Testfaelle abzuleiten.
+
+${STYLE}
+
+Deine Aufgabe:
+Analysiere die Anforderung und erstelle Testfaelle fuer die fachlich relevanten Pruef- und Entscheidungssituationen.
+
+Themen, die du NICHT abfragst:
+- Datenschutz, DSGVO, technische Implementierungsdetails
+
+Wichtige Regeln fuer Testfaelle:
+- Login, Authentifizierung und Berechtigungspruefungen sind KEINE Testfaelle und KEINE Vorbedingungen. Der Tester ist immer angemeldet.
+- KEINE erfundenen Testdaten (keine Versichertennummern, Partner-IDs, Personennamen). Verwende Platzhalter wie [Versichertennr.], [Betrag], [Datum] oder beschreibende Angaben.
+- Erfinde NIEMALS erwartete Ergebnisse, Fehlermeldungen oder Systemverhalten. Wenn du nicht weisst, welche Meldung das System zeigt, schreibe "[Erwartete Systemmeldung]" oder frage nach.
+- Vorbedingungen IMMER als nummerierte Liste: "1. [Bedingung] 2. [Bedingung]".
+- Testschritte IMMER als nummerierte Liste: "1. [Schritt] 2. [Schritt]".
+
+WICHTIG – Unterscheide zwei Arten von Negativtests:
+1. FACHLICHE Negativfaelle = Entscheidungslogik im Prozess fuehrt zu einem anderen Ergebnis.
+   Beispiel: "Versicherter ist 36 Jahre alt → Erstattung wird abgelehnt" oder "Doppelerfassung liegt vor → Fehlermeldung".
+   Diese werden mit "Negativ - " gekennzeichnet und IMMER standardmaessig mit ausgegeben.
+2. EINGANGSPRUEFUNGEN = Einzelne Eingangsvariablen fehlen oder sind ungueltig (z.B. fehlender Betrag, fehlendes Datum, fehlende Versichertennummer).
+   Diese sind allgemeine Vollstaendigkeitspruefungen der gelieferten Daten und NICHT der Kern des fachlichen Tests.
+   Diese werden mit "Eingangspruefung - " gekennzeichnet und separat gruppiert.
+
+Kennzeichne jeden Testfall mit GENAU einem Praefix:
+- "Positiv - " = Fachlicher Positivfall (Standardpfad, alles korrekt)
+- "Grenzwert - " = Grenzwertpruefung (z.B. exakt an der Altersgrenze)
+- "Negativ - " = Fachlicher Negativfall (Entscheidungslogik fuehrt zur Ablehnung/Fehler)
+- "Eingangspruefung - " = Fehlende/ungueltige Eingangsvariable
+
+Ablauf:
+1. VERSTEHEN: Analysiere die Anforderung. Fasse zusammen, was getestet werden muss.
+
+2. BEWERTEN: Pruefe anhand dieser vier Kriterien:
+   - Testabdeckung (Werden alle Anforderungen/Akzeptanzkriterien durch Testfaelle abgedeckt?)
+   - Konstellationen (Positiv-, Negativ- und Grenzfaelle vorhanden?)
+   - Reproduzierbarkeit (Kann ein anderer Tester die Schritte nachvollziehen?)
+   - Erwartetes Ergebnis (Konkret pruefbar – Wert, Zustand, Meldung?)
+   Gib fuer jedes Kriterium eine Bewertung: JA, TEILWEISE oder NEIN.
+
+3. HINTERFRAGEN: Stelle 0-3 Rueckfragen, wenn wichtige Informationen fehlen.
+
+4. TESTFAELLE ERSTELLEN: Generiere eine Testfall-Tabelle. Sortiere die Testfaelle in dieser Reihenfolge: Positiv, Grenzwert, Negativ, Eingangspruefung.
+
+Ausgabeformat:
+
+ZUSAMMENFASSUNG:
+[Was getestet werden soll, 2-3 Saetze]
+
+BEWERTUNG:
+Testabdeckung: [JA/TEILWEISE/NEIN]
+Konstellationen: [JA/TEILWEISE/NEIN]
+Reproduzierbarkeit: [JA/TEILWEISE/NEIN]
+Erwartetes Ergebnis: [JA/TEILWEISE/NEIN]
+
+TESTFAELLE:
+Nr.|Beschreibung|Vorbedingungen|Testschritte|Erwartetes Ergebnis
+1|Positiv - [Kurzname]|1. [Bedingung] 2. [Bedingung]|1. [Schritt] 2. [Schritt]|[Konkretes Ergebnis]
+2|Grenzwert - [Kurzname]|1. [Bedingung]|1. [Schritt]|[Konkretes Ergebnis]
+3|Negativ - [Kurzname]|1. [Bedingung]|1. [Schritt]|[Fehlermeldung oder Ablehnungsgrund]
+4|Eingangspruefung - [Kurzname]|1. [Bedingung]|1. [Schritt]|[Validierungsmeldung]
+
+ANALYSE:
+[Was gut abgedeckt ist, was fehlt. 1-2 Saetze.]
+
+RUECKFRAGEN:
+1. [Frage]
+...nur wenn noetig (0-3). Jede Frage in einer Zeile.
+
+Falls keine Fragen:
+RUECKFRAGEN:
+Keine weiteren Rueckfragen. Die Testfaelle sind vollstaendig.`;
+
+/* Modul 2: Testfälle verfeinern */
+const SYS_TEST_REFINE=`Du bist der Test-Assistent der SBK. Du hilfst dabei, bestehende Testfaelle zu verbessern und praeziser zu formulieren.
+
+${STYLE}
+
+Deine Aufgabe:
+Analysiere die eingefuegten Testfaelle und identifiziere Schwachstellen.
+
+Wichtige Regeln:
+- KEINE erfundenen Testdaten. Verwende Platzhalter wie [Versichertennr.], [Betrag], [Datum].
+- Erfinde NIEMALS erwartete Ergebnisse, Fehlermeldungen oder Systemverhalten. Wenn du nicht weisst, welche Meldung das System zeigt, schreibe "[Fehlermeldung des Systems]" oder frage nach.
+- Vorbedingungen und Testschritte IMMER als nummerierte Liste.
+- Kennzeichne Testfaelle mit Praefix: "Positiv - ", "Grenzwert - ", "Negativ - " oder "Eingangspruefung - ".
+
+WICHTIG – Ablauf in zwei Phasen:
+PHASE 1 (Wenn Informationen fehlen):
+Gib NUR die Analyse und Rueckfragen aus. KEINE Tabelle, KEIN Vorschlag.
+Erst wenn alle Fragen beantwortet sind, kommt die Tabelle.
+
+PHASE 2 (Wenn genuegend Informationen vorhanden):
+Gib Analyse, Vorher, Nachher-Tabelle und Begruendung aus.
+
+Ausgabeformat Phase 1 (Fragen offen):
+
+ANALYSE:
+[Welche Schwachstellen hast du erkannt? 2-4 Saetze.]
+
+VORHER:
+[Original-Testfall kurz zitieren]
+
+RUECKFRAGEN:
+1. [Frage zu fehlenden Details]
+...nur 1-3 Fragen.
+
+Ausgabeformat Phase 2 (alles bekannt):
+
+ANALYSE:
+[Zusammenfassung der Verbesserungen. 2-3 Saetze.]
+
+VORHER:
+[Original-Testfall kurz zitieren]
+
+NACHHER (VORSCHLAG):
+Nr.|Beschreibung|Vorbedingungen|Testschritte|Erwartetes Ergebnis
+1|Positiv - [Kurzname]|1. [Bedingung]|1. [Schritt]|[Konkretes Ergebnis – nur wenn bekannt, sonst Platzhalter]
+2|Negativ - [Kurzname]|1. [Bedingung]|1. [Schritt]|[Nur wenn bekannt, sonst "[Erwartetes Systemverhalten]"]
+
+BEGRUENDUNG:
+[Warum ist die neue Version besser? 1-2 Saetze.]
+
+RUECKFRAGEN:
+Keine weiteren Rueckfragen. Die Testfaelle sind jetzt praezise.`;
+
+/* Modul 3: Testergebnisse dokumentieren */
+const SYS_TEST_RESULT=`Du bist der Test-Assistent der SBK. Du hilfst dabei, Testergebnisse so zu dokumentieren, dass die IT sie direkt bearbeiten kann.
+
+${STYLE}
+
+Der Nutzer liefert dir:
+- Den Testfall (Name/Nr.)
+- Das erwartete Ergebnis (laut Testfall)
+- Den Status (Bestanden/Teilweise/Fehler)
+- Bei Fehler: Was tatsaechlich passiert ist
+
+Deine Aufgabe:
+Pruefe, ob die Fehlerbeschreibung praezise genug fuer die IT ist. Konkret heisst das:
+- Ist klar, WELCHER Wert angezeigt wurde? (nicht nur "war falsch")
+- Ist klar, WAS erwartet wurde? (konkreter Wert, nicht "sollte richtig sein")
+- Ist die Abweichung nachvollziehbar?
+
+Regeln:
+- Erfinde KEINE Werte, Meldungen oder Systemverhalten. Nutze nur was der Tester angegeben hat.
+- Frage NICHT nach Schritten, Anzeige-Ort, Screenshot-Details oder Reproduzierbarkeit.
+- Maximal 1-2 kurze Rueckfragen, NUR wenn die Fehlerbeschreibung wirklich zu vage ist.
+- Erwaehne am Ende: "Tipp: Haenge einen Screenshot an das Ticket an – das hilft der IT bei der Fehleranalyse."
+
+WICHTIG – Adaptive Logik:
+- Bei "Bestanden": Sofort Tabelle, keine Rueckfragen.
+- Bei "Fehler"/"Teilweise" mit konkreten Angaben: Sofort Tabelle, keine Rueckfragen.
+- Bei "Fehler"/"Teilweise" mit vagen Angaben: Tabelle mit Platzhaltern + max. 1-2 Rueckfragen.
+
+Ausgabeformat (IMMER diese Struktur):
+
+ZUSAMMENFASSUNG:
+[Was wurde getestet, Ergebnis in 1-2 Saetzen]
+
+TESTERGEBNIS:
+Testfall|Status|Ist-Ergebnis|Soll-Ergebnis|Abweichung|Empfohlene Massnahme
+[Name/Nr]|[Status]|[Was angezeigt wurde]|[Was erwartet war]|[Differenz]|[Vorschlag fuer IT]
+
+RUECKFRAGEN:
+Keine weiteren Rueckfragen. Das Testergebnis ist vollstaendig dokumentiert.`;
+
 /* ═══ STATE ═══ */
 let apiToken='',selectedMode='',reqType='',msgs=[],isRunning=false,currentPhase=0,sparringCount=0;
 let docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};
@@ -1009,6 +1385,14 @@ let istMsgs=[],istState={titel:'',text:'',tabelle:'',kz:''};
 let istSparringCount=0;
 /* NEU: IST-Untermodus ('simple' oder 'detailed') */
 let istSubMode='';
+
+/* Test-Assistent State */
+let testMsgs=[],testState={modul:'',testfaelle:'',ergebnis:''};
+let testModule=''; /* 'create', 'refine', 'result' */
+let testStatus=''; /* 'ok', 'partial', 'fail' */
+let testScreenshot=null;
+let testSparringCount=0;
+const tfRawStore=new Map(); /* Speichert Pipe-Tabellen-Rohdaten per ID */
 
 /* ═══ SPEECH RECOGNITION (Spracheingabe) ═══ */
 let speechRecognition=null, speechTarget=null;
@@ -1165,7 +1549,7 @@ function pipeTableToClipboardHtml(raw){
     const bg = idx % 2 === 0 ? '#ffffff' : '#f7fafc';
     h += '<tr>';
     cells.forEach(c=>{
-      h += '<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:'+bg+';vertical-align:top;">'+escH(c)+'</td>';
+      h += '<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:'+bg+';vertical-align:top;">'+escH(c).replace(/&lt;br\s*\/?&gt;/gi,'<br>')+'</td>';
     });
     h += '</tr>';
   });
@@ -1370,8 +1754,11 @@ function backToLanding(){showView('v-landing');g('phasePill').classList.add('hid
 function selectMode(mode){
   if(!apiToken){showToast('Bitte zuerst das KIA Token eingeben.','warn');g('tokIn').focus();return;}
   selectedMode=mode;
+  /* Button-Text an Modus anpassen */
+  g('btnNew').textContent = mode==='test' ? 'Neuer Test' : 'Neue Anforderung';
   if(mode==='general'){showView('v-general');g('btnNew').classList.add('on');updatePhase(0);}
   else if(mode==='ist'){showView('v-ist');g('btnNew').classList.add('on');updatePhase(0);}
+  else if(mode==='test'){showView('v-test');g('btnNew').classList.add('on');updatePhase(0);}
   else{showView('v-aktion');g('btnNew').classList.add('on');}
 }
 
@@ -1490,7 +1877,7 @@ function renderIstTable(raw){
   let data=lines.slice(1);
   data=data.filter(l=>!l.match(/^[\s|:-]+$/));
   /* Hilfsfunktion: HTML-Escape + Markdown-Fett/Kursiv in Tabellenzellen */
-  const cellHtml=t=>{let s=escH(t);s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');return s;};
+  const cellHtml=t=>{let s=escH(t);s=s.replace(/&lt;br\s*\/?&gt;/gi,'<br>');s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');return s;};
   let h='<div class="tf-table-wrap"><table class="ist-proc-table"><thead><tr>';
   headers.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
   h+='</tr></thead><tbody>';
@@ -2054,19 +2441,50 @@ const TF_HEADERS=['Testfall Nr.','Testfall ID','Beschreibung','Vorbedingung','Ak
 
 function renderTfTable(raw){
   if(!raw)return'<p style="color:var(--dm)">Keine Testfaelle.</p>';
-  const rows=parseTfRows(raw);
-  if(rows.length===0)return'<div class="rendered">'+renderMd(raw)+'</div>';
-  /* Hilfsfunktion: HTML-Escape + Markdown-Fett/Kursiv in Tabellenzellen */
-  const cellMd=t=>{let s=escH(t);s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');return s;};
-  let h='<div class="tf-table-wrap"><table class="tf-table"><thead><tr>';
-  TF_HEADERS.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
+  const lines=raw.split('\n').filter(l=>l.includes('|'));
+  if(lines.length<2)return'<div class="rendered">'+renderMd(raw)+'</div>';
+  
+  /* Dynamische Header aus erster Zeile extrahieren */
+  let headers=[], dataLines=lines;
+  if(lines[0].match(/Nr|ID|Beschreibung|Testfall|Vorbedingung/i)){
+    headers=lines[0].split('|').map(c=>c.trim()).filter(c=>c);
+    dataLines=lines.slice(1);
+  } else {
+    headers=TF_HEADERS; /* Fallback fuer Allgemein-Modus */
+  }
+  /* Separator-Zeilen (---|---|---) entfernen */
+  dataLines=dataLines.filter(l=>!l.match(/^[\s|:-]+$/));
+  if(dataLines.length===0)return'<div class="rendered">'+renderMd(raw)+'</div>';
+  
+  const colCount=headers.length;
+  /* Hilfsfunktion: HTML-Escape + Markdown-Fett/Kursiv + <br> + nummerierte Listen */
+  const cellMd=t=>{
+    let s=escH(t);
+    s=s.replace(/&lt;br\s*\/?&gt;/gi,'<br>');
+    s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+    s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');
+    /* Nummerierte Schritte als Liste rendern: "1. xxx 2. xxx" */
+    if(s.match(/\d+\.\s+\S/)){
+      s=s.replace(/(\d+)\.\s+/g,'<br><strong>$1.</strong> ').replace(/^<br>/,'');
+    }
+    return s;
+  };
+  
+  /* Spaltenbreiten je nach Anzahl */
+  let colgroup='';
+  if(colCount===5){
+    colgroup='<colgroup><col style="width:5%"><col style="width:22%"><col style="width:25%"><col style="width:20%"><col style="width:28%"></colgroup>';
+  }
+  
+  let h='<div class="tf-table-wrap"><table class="tf-table">'+colgroup+'<thead><tr>';
+  headers.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
   h+='</tr></thead><tbody>';
-  rows.forEach(row=>{
+  dataLines.forEach(line=>{
+    const cells=line.split('|').map(c=>c.trim()).filter(c=>c);
     h+='<tr>';
-    for(let i=0;i<7;i++){
-      let v=row[i]||'';
-      if(i===6){const pc=v.match(/hoch/i)?'prio-high':v.match(/mittel/i)?'prio-medium':'prio-low';h+=`<td class="${pc}">${cellMd(v)}</td>`;}
-      else h+=`<td>${cellMd(v)}</td>`;
+    for(let i=0;i<colCount;i++){
+      let v=cells[i]||'';
+      h+=`<td>${cellMd(v)}</td>`;
     }
     h+='</tr>';
   });
@@ -2188,7 +2606,8 @@ function copyAllSections(){
 
 /* ═══ RESET ═══ */
 function confirmNewReq(){
-  if(!confirm('Neue Anforderung starten? Aktuelle Eingaben gehen verloren.'))return;
+  const confirmMsg = selectedMode==='test' ? 'Neuen Test starten? Aktuelle Eingaben gehen verloren.' : 'Neue Anforderung starten? Aktuelle Eingaben gehen verloren.';
+  if(!confirm(confirmMsg))return;
   msgs=[];docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};tfRawData='';sparringCount=0;reqType='';isRunning=false;
   istMsgs=[];istState={titel:'',text:'',tabelle:'',kz:''};istSparringCount=0;
   /* General Reset */
@@ -2212,6 +2631,20 @@ function confirmNewReq(){
   g('istExSimple').style.display='none';
   g('istExDetailed').style.display='none';
 
+  /* Test-Assistent Reset */
+  testMsgs=[];testState={modul:'',testfaelle:'',ergebnis:''};testModule='';testStatus='';testScreenshot=null;testSparringCount=0;tfRawStore.clear();
+  g('intakeAreaTest').style.display='';g('chatMessagesTest').style.display='none';g('chatMessagesTest').innerHTML='';
+  g('chatInputBarTest').style.display='none';g('actionsBarTest').classList.add('hidden');
+  g('testCardCreate').classList.remove('sel');g('testCardRefine').classList.remove('sel');g('testCardResult').classList.remove('sel');
+  g('testInputArea').style.display='none';g('testInputCreate').style.display='none';g('testInputRefine').style.display='none';g('testInputResult').style.display='none';
+  g('testCreateInput').value='';g('testRefineInput').value='';g('testResultRef').value='';g('testResultDesc').value='';
+  if(g('testResultExpected'))g('testResultExpected').value='';
+  g('tsOk').className='test-status-chip';g('tsPartial').className='test-status-chip';g('tsFail').className='test-status-chip';
+  g('testErrorDetails').classList.remove('visible');
+  ['modul','testfaelle','ergebnis'].forEach(f=>updateTestDoc(f,'',null));
+  g('ds-test-ergebnis').style.display='none';
+  g('btnCopyTest').disabled=true;g('btnFinalizeTest').disabled=true;
+
   backToLanding();
 }
 
@@ -2223,6 +2656,690 @@ function mobileTab(t){
 function mobileTabIst(t){
   if(t==='doc'){g('docPanelIst').classList.add('mobile-show');g('chatPanelIst').classList.add('mobile-hide');g('mtDocIst').classList.add('active');g('mtChatIst').classList.remove('active');}
   else{g('docPanelIst').classList.remove('mobile-show');g('chatPanelIst').classList.remove('mobile-hide');g('mtChatIst').classList.add('active');g('mtDocIst').classList.remove('active');}
+}
+
+/* ═══ TEST-ASSISTENT FUNKTIONEN ═══ */
+
+/* Modul-Auswahl */
+function selTestModule(mod){
+  testModule=mod;
+  g('testCardCreate').classList.toggle('sel', mod==='create');
+  g('testCardRefine').classList.toggle('sel', mod==='refine');
+  g('testCardResult').classList.toggle('sel', mod==='result');
+  
+  /* Eingabebereich einblenden */
+  g('testInputArea').style.display='';
+  g('testInputCreate').style.display = mod==='create' ? '' : 'none';
+  g('testInputRefine').style.display = mod==='refine' ? '' : 'none';
+  g('testInputResult').style.display = mod==='result' ? '' : 'none';
+  
+  /* Praxisbeispiel anpassen */
+  const exBody=g('testExampleBody'), exLabel=g('testExampleLabel');
+  if(mod==='create'){
+    exLabel.textContent='Praxisbeispiel: Testfälle erstellen';
+    exBody.innerHTML=getTestExampleCreate();
+  } else if(mod==='refine'){
+    exLabel.textContent='Praxisbeispiel: Testfälle verfeinern';
+    exBody.innerHTML=getTestExampleRefine();
+  } else {
+    exLabel.textContent='Praxisbeispiel: Testergebnisse dokumentieren';
+    exBody.innerHTML=getTestExampleResult();
+  }
+  
+  /* Doc-Panel Modul anzeigen */
+  updateTestDoc('modul', mod==='create'?'Testfälle erstellen':mod==='refine'?'Testfälle verfeinern':'Testergebnisse dokumentieren', 'draft');
+  
+  g('testInputArea').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+/* Testergebnis-Status */
+function selTestStatus(status){
+  testStatus=status;
+  g('tsOk').className='test-status-chip'+(status==='ok'?' sel-ok':'');
+  g('tsPartial').className='test-status-chip'+(status==='partial'?' sel-partial':'');
+  g('tsFail').className='test-status-chip'+(status==='fail'?' sel-fail':'');
+  
+  /* Fehlerdetails ein-/ausblenden */
+  const showDetails = status==='fail' || status==='partial';
+  g('testErrorDetails').classList.toggle('visible', showDetails);
+}
+
+/* Praxisbeispiele */
+function getTestExampleCreate(){
+  return `<p style="font-weight:700;margin-bottom:6px;">Beispiel-Output: Hautkrebsvorsorge-Erstattung</p>
+<p style="font-size:12px;color:var(--mu);margin-bottom:10px;">So sieht das Ergebnis aus, wenn du die Anforderung eingibst:</p>
+
+<div style="font-size:12.5px;margin-bottom:10px;"><strong>Zusammenfassung:</strong> Testfälle für Hautkrebsvorsorge-Erstattung bei Versicherten unter 35 Jahren mit Vollständigkeitsprüfung und Doppelerfassungs-Check.</div>
+
+<div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:10px;">
+  <span style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--green-light);color:var(--green);border:1px solid var(--green)20;">Positiv</span>
+  <span style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--yellow-light);color:var(--orange);border:1px solid var(--orange)20;">Grenzwert</span>
+  <span style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:600;background:var(--red-light);color:var(--red);border:1px solid var(--red)20;">Negativ</span>
+</div>
+
+<div style="overflow-x:auto;"><table class="tf-table" style="font-size:11.5px;">
+<colgroup><col style="width:5%"><col style="width:22%"><col style="width:25%"><col style="width:20%"><col style="width:28%"></colgroup>
+<thead><tr><th>Nr.</th><th>Beschreibung</th><th>Vorbedingungen</th><th>Testschritte</th><th>Erwartetes Ergebnis</th></tr></thead>
+<tbody>
+<tr><td><strong>1</strong></td><td>Positiv – Erstattung erfolgreich</td><td><strong>1.</strong> Versicherter unter 35<br><strong>2.</strong> Rechnung vollständig<br><strong>3.</strong> Keine Doppelerfassung</td><td><strong>1.</strong> Rechnung eingeben<br><strong>2.</strong> Erstattung auslösen</td><td>[Erwartete Systemmeldung]</td></tr>
+<tr style="background:var(--sf2)"><td><strong>2</strong></td><td>Grenzwert – Alter genau 34</td><td><strong>1.</strong> Versicherter = 34 Jahre<br><strong>2.</strong> Rechnung vollständig</td><td><strong>1.</strong> Rechnung eingeben<br><strong>2.</strong> Erstattung auslösen</td><td>Erstattung erfolgreich</td></tr>
+<tr><td><strong>3</strong></td><td>Negativ – Alter zu hoch</td><td><strong>1.</strong> Versicherter = 35 Jahre</td><td><strong>1.</strong> Erstattung auslösen</td><td>[Erwartete Fehlermeldung]</td></tr>
+</tbody></table></div>`;
+}
+
+function getTestExampleRefine(){
+  return `<p style="font-weight:700;margin-bottom:6px;">Beispiel-Output: Testfall verfeinern</p>
+<p style="font-size:12px;color:var(--mu);margin-bottom:10px;">So sieht das Ergebnis aus, wenn du einen vagen Testfall eingibst:</p>
+
+<div style="margin-bottom:12px;font-size:12.5px;">
+  <strong>Analyse:</strong> Der Testfall enthält keine Vorbedingungen, keine konkreten Testschritte und kein prüfbares Ergebnis.
+</div>
+
+<div style="background:var(--red-light);padding:10px;border-radius:var(--rs);margin-bottom:10px;font-size:12px;">
+  <strong>Vorher:</strong> "TC-010 | Erstattung prüfen | Funktioniert"
+</div>
+
+<div style="margin-bottom:8px;font-size:12.5px;"><strong>Testfälle (Vorschlag):</strong></div>
+<div style="overflow-x:auto;"><table class="tf-table" style="font-size:11.5px;">
+<colgroup><col style="width:5%"><col style="width:22%"><col style="width:25%"><col style="width:20%"><col style="width:28%"></colgroup>
+<thead><tr><th>Nr.</th><th>Beschreibung</th><th>Vorbedingungen</th><th>Testschritte</th><th>Erwartetes Ergebnis</th></tr></thead>
+<tbody>
+<tr><td><strong>1</strong></td><td>Positiv – Erstattungsbetrag korrekt</td><td><strong>1.</strong> Rechnung: [Betrag]<br><strong>2.</strong> Keine Zuzahlung<br><strong>3.</strong> Leistung im Katalog</td><td><strong>1.</strong> Rechnung erfassen<br><strong>2.</strong> Prüfung abwarten<br><strong>3.</strong> Betrag prüfen</td><td>Erstattungsbetrag = [Betrag], Status = [Erwarteter Status]</td></tr>
+</tbody></table></div>
+
+<div style="margin-top:10px;font-size:12.5px;">
+  <strong>Begründung:</strong> Die neue Version definiert exakt, welche Daten nötig sind und welches Ergebnis prüfbar ist.
+</div>`;
+}
+
+function getTestExampleResult(){
+  return `<p style="font-weight:700;margin-bottom:6px;">Beispiel-Output: Testergebnis dokumentieren</p>
+<p style="font-size:12px;color:var(--mu);margin-bottom:10px;">So sieht das Ergebnis aus, wenn du einen Fehler dokumentierst:</p>
+
+<div style="margin-bottom:10px;font-size:12.5px;">
+  <strong>Deine Eingabe:</strong> Testfall TC-010, erwartet 50€, tatsächlich 45€ angezeigt.
+</div>
+
+<div style="margin-bottom:10px;font-size:12.5px;">
+  <strong>Zusammenfassung:</strong> Beim Test "TC-010 – Erstattungsbetrag prüfen" wurde ein Betrag von 45,00€ angezeigt statt der erwarteten 50,00€. Differenz: 5,00€.
+</div>
+
+<div style="overflow-x:auto;"><table class="tf-table" style="font-size:11.5px;">
+<thead><tr><th>Testfall</th><th>Status</th><th>Ist-Ergebnis</th><th>Soll-Ergebnis</th><th>Abweichung</th><th>Empfohlene Maßnahme</th></tr></thead>
+<tbody>
+<tr><td><strong>TC-010</strong></td><td style="color:var(--red);font-weight:600;">Fehler</td><td>Erstattungsbetrag: <strong>45,00€</strong></td><td>Erstattungsbetrag: <strong>50,00€</strong></td><td>5,00€ zu wenig</td><td>Berechnungslogik prüfen</td></tr>
+</tbody></table></div>
+
+<div style="margin-top:10px;padding:8px 12px;background:var(--blue-pale);border-radius:var(--rs);font-size:11.5px;color:var(--blue-strong);">
+  💡 Tipp: Hänge einen Screenshot an das Ticket an – das hilft der IT bei der Fehleranalyse.
+</div>`;
+}
+
+/* Living Doc aktualisieren */
+function updateTestDoc(field,content,status){
+  testState[field]=content;
+  const el=g('dc-test-'+field),st=g('dss-test-'+field);if(!el)return;
+  const empty=!content||content==='[Noch nicht erfasst]';
+  if(!empty){
+    el.className='doc-sec-content';
+    if(field==='testfaelle') el.innerHTML=renderTfTable(content);
+    else if(field==='ergebnis') el.innerHTML=renderTestErgebnis(content);
+    else el.innerHTML=renderMd(content);
+    if(st){st.className='doc-sec-status '+(status||'draft');st.textContent=status==='done'?'Steht':'Entwurf';}
+  }else{
+    el.className='doc-sec-content empty';
+    const ph={modul:'Noch nicht gewählt',testfaelle:'Werden im Sparring erarbeitet',ergebnis:'Werden nach Testdurchführung erfasst'};
+    el.textContent=ph[field]||'';
+    if(st){st.className='doc-sec-status empty';st.textContent='Offen';}
+  }
+  checkTestReady();
+}
+
+function checkTestReady(){
+  const hasContent = testState.testfaelle || testState.ergebnis;
+  g('btnCopyTest').disabled = !hasContent;
+  g('btnFinalizeTest').disabled = !hasContent;
+  if(hasContent && testSparringCount>=1) g('actionsBarTest').classList.remove('hidden');
+}
+
+function renderTestErgebnis(raw){
+  if(!raw) return '<p style="color:var(--dm)">Keine Testergebnisse.</p>';
+  /* Falls Pipe-Tabelle, als Tabelle rendern */
+  if(raw.includes('|') && raw.split('\n').filter(l=>l.includes('|')).length>=2){
+    return renderIstTable(raw);
+  }
+  return '<div class="rendered">'+renderMd(raw)+'</div>';
+}
+
+/* Sparring starten */
+async function startTestSparring(){
+  if(!testModule){showToast('Bitte zuerst ein Modul wählen.','warn');return;}
+  
+  let prompt='', userDisplay='';
+  
+  if(testModule==='create'){
+    const input=val('testCreateInput');
+    if(!input){g('testIntakeErr').classList.add('on');return;}
+    userDisplay=input;
+    prompt=`Der Nutzer moechte Testfaelle aus folgender Anforderung erstellen:\n\n${input}\n\nAnalysiere die Anforderung und erstelle vollstaendige Testfaelle (Positiv-, Negativ-, Grenzfaelle). Stelle ALLE Rueckfragen in einer Runde.`;
+  } else if(testModule==='refine'){
+    const input=val('testRefineInput');
+    if(!input){g('testIntakeErr').classList.add('on');return;}
+    userDisplay=input;
+    prompt=`Der Nutzer moechte folgende bestehende Testfaelle verbessern:\n\n${input}\n\nAnalysiere die Schwachstellen und schlage praezisere Formulierungen vor. Stelle ALLE Rueckfragen in einer Runde.`;
+  } else if(testModule==='result'){
+    const ref=val('testResultRef');
+    const expected=val('testResultExpected');
+    if(!ref || !testStatus){g('testIntakeErr').classList.add('on');return;}
+    const desc=val('testResultDesc');
+    const statusLabel=testStatus==='ok'?'Bestanden':testStatus==='partial'?'Teilweise':'Fehler';
+    userDisplay=`Testfall: ${ref}\nErwartet: ${expected||'–'}\nStatus: ${statusLabel}${desc?'\nTatsächliches Ergebnis: '+desc:''}`;
+    
+    if(testStatus==='ok'){
+      prompt=`Der Nutzer hat folgenden Test durchgefuehrt:\n\nTestfall: ${ref}\nErwartetes Ergebnis: ${expected||'Nicht angegeben'}\nStatus: Bestanden\n\nErstelle die Testergebnis-Tabelle mit Status "Bestanden". Keine Rueckfragen noetig.`;
+    } else {
+      prompt=`Der Nutzer hat folgenden Test durchgefuehrt:\n\nTestfall: ${ref}\nErwartetes Ergebnis (laut Testfall): ${expected||'Nicht angegeben'}\nStatus: ${statusLabel}\nTatsaechliches Ergebnis (was passiert ist): ${desc||'Nicht angegeben'}\n\nErstelle die Testergebnis-Tabelle. Pruefe ob die Fehlerbeschreibung praezise genug fuer die IT ist. Wenn wichtige Details fehlen (z.B. konkreter Wert, Feld, Meldung), stelle maximal 1-2 kurze Rueckfragen.`;
+    }
+    g('ds-test-ergebnis').style.display='';
+  }
+  
+  g('testIntakeErr').classList.remove('on');
+  g('intakeAreaTest').style.display='none';
+  g('chatMessagesTest').style.display='flex';
+  g('chatInputBarTest').style.display='flex';
+  updatePhase(1);
+  
+  addMsgTest('user',userDisplay);
+  testMsgs=[{role:'user',content:prompt}];
+  testSparringCount++;
+  await callAndRenderTest();
+}
+
+/* Chat-Funktionen */
+function addMsgTest(role,content,html){
+  const c=g('chatMessagesTest'),d=document.createElement('div');d.className='msg '+role;
+  if(role==='kia')d.innerHTML=`<div class="msg-avatar kia">K</div><div class="msg-bubble kia">${html||renderMd(content)}</div>`;
+  else d.innerHTML=`<div class="msg-bubble user">${escH(content).replace(/\n/g,'<br>')}</div>`;
+  c.appendChild(d);c.scrollTop=c.scrollHeight;
+}
+
+function renderTestMsg(p, rawText){
+  let h='';
+  
+  /* Eigene Sektions-Extraktion aus rawText (parseKIA erkennt Test-Format nicht zuverlässig) */
+  const sectionRe = /(?:^|\n)\s*(?:#{1,4}\s*)?(?:\*{2})?(ZUSAMMENFASSUNG|BEWERTUNG|TESTFAE?LLE|ANALYSE|BEGRUENDUNG|VORHER|NACHHER[^\n]*|TESTERGEBNIS|RUE?CKFRAGEN)(?:\*{2})?\s*:?\s*\n/gi;
+  const sections={};
+  let smatch;
+  const positions=[];
+  while((smatch=sectionRe.exec(rawText))!==null){
+    positions.push({key:smatch[1].replace(/\s*\(.*$/,'').toUpperCase(), start:smatch.index+smatch[0].length});
+  }
+  for(let i=0;i<positions.length;i++){
+    const nextStart = i+1 < positions.length ? rawText.lastIndexOf('\n', positions[i+1].start) : rawText.length;
+    const body = rawText.substring(positions[i].start, nextStart).trim();
+    let key = positions[i].key.replace(/Ü/g,'UE').replace(/NACHHER.*/i,'NACHHER');
+    sections[key]=body;
+  }
+  
+  /* Hilfsfunktion: Pipe-Tabellen-Zeilen aus Text entfernen (werden separat als Tabelle gerendert) */
+  const stripPipes=t=>t.split('\n').filter(l=>!l.match(/^[\s|:-]+$/) && !(l.includes('|') && l.split('|').length>=3)).join('\n').trim();
+  
+  /* Zusammenfassung (nicht im Result-Modus – dort nur Tabelle) */
+  if(sections['ZUSAMMENFASSUNG'] && testModule!=='result') h+=`<h4>Zusammenfassung</h4>${renderMd(stripPipes(sections['ZUSAMMENFASSUNG']))}`;
+  
+  /* Bewertung als farbige Chips */
+  const bewSrc = sections['BEWERTUNG'];
+  if(bewSrc){
+    const bewLines = bewSrc.split('\n').filter(l=>l.trim());
+    if(bewLines.length>0){
+      h+=`<h4>Bewertung</h4><div style="display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px;">`;
+      bewLines.forEach(l=>{
+        const bm=l.match(/^[-*\u2022]?\s*\**([^:*]+)\**\s*:\s*(JA|TEILWEISE|NEIN)/i);
+        if(bm){
+          const val=bm[2].toUpperCase();
+          const color=val==='JA'?'var(--green)':val==='NEIN'?'var(--red)':'var(--orange)';
+          const bg=val==='JA'?'var(--green-light)':val==='NEIN'?'var(--red-light)':'var(--yellow-light)';
+          h+=`<span style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:6px;font-size:12.5px;font-weight:600;background:${bg};color:${color};border:1px solid ${color}20;">${escH(bm[1].trim())}: ${val}</span>`;
+        }
+      });
+      h+=`</div>`;
+    }
+  }
+  
+  /* Analyse */
+  const analyseText = sections['ANALYSE'] || p.analyse;
+  if(analyseText) h+=`<h4>Analyse</h4>${renderMd(stripPipes(analyseText))}`;
+  
+  /* Begründung (Modul refine) */
+  if(sections['BEGRUENDUNG']) h+=`<h4>Begründung</h4>${renderMd(stripPipes(sections['BEGRUENDUNG']))}`;
+  
+  /* Nachher-Tabelle (Modul refine) – ohne VORHER, direkt die Tabelle */
+  if(sections['NACHHER']){
+    const nachher=sections['NACHHER'];
+    if(nachher.includes('|')){
+      const nId='tfn-'+Date.now();
+      /* Filter-Chips + Copy für Nachher-Tabelle */
+      const nLines=nachher.split('\n').filter(l=>l.includes('|'));
+      const nHasPos=nLines.some(l=>/positiv\s*-/i.test(l));
+      const nHasGrenz=nLines.some(l=>/grenzwert\s*-/i.test(l));
+      const nHasNeg=nLines.some(l=>/negativ\s*-/i.test(l));
+      const nHasEP=nLines.some(l=>/eingangspruefung\s*-/i.test(l)||/eingangsprüfung\s*-/i.test(l));
+      const hasAnyFilter=nHasPos||nHasGrenz||nHasNeg||nHasEP;
+      h+=`<h4>Testfälle (Vorschlag)</h4>`;
+      h+=`<div class="tf-toolbar">`;
+      if(hasAnyFilter){
+        h+=`<div class="tf-filter-chips">`;
+        if(nHasPos) h+=`<button class="tf-filter-chip on-pos" data-cat="positiv" onclick="filterTfCat('${nId}',this)" type="button">Positiv</button>`;
+        if(nHasGrenz) h+=`<button class="tf-filter-chip on-grenz" data-cat="grenzwert" onclick="filterTfCat('${nId}',this)" type="button">Grenzwert</button>`;
+        if(nHasNeg) h+=`<button class="tf-filter-chip on-neg" data-cat="negativ" onclick="filterTfCat('${nId}',this)" type="button">Negativ</button>`;
+        if(nHasEP) h+=`<button class="tf-filter-chip" data-cat="eingangspruefung" onclick="filterTfCat('${nId}',this)" type="button">Eingangsprüfung</button>`;
+        h+=`</div><div class="tf-toolbar-sep"></div>`;
+      }
+      h+=`<button class="tf-toolbar-btn" onclick="copyTfFromChat('${nId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Tabelle kopieren</button>`;
+      h+=`</div>`;
+      h+=`<div id="${nId}">${renderTfTable(nachher)}</div>`;
+      tfRawStore.set(nId, nachher);
+      updateTestDoc('testfaelle', nachher, 'draft');
+    } else {
+      h+=`<h4>Testfälle (Vorschlag)</h4>${renderMd(nachher)}`;
+    }
+  }
+  
+  /* Testfälle als Tabelle */
+  let tfData = sections['TESTFAELLE'] || sections['TESTFALLE'] || p.tf;
+  if(tfData && tfData.includes('|')){
+    const tfId='tft-'+Date.now();
+    /* Prüfe welche Kategorien vorhanden */
+    const tfLines = tfData.split('\n').filter(l=>l.includes('|'));
+    const hasPos = tfLines.some(l=>/positiv\s*-/i.test(l));
+    const hasGrenz = tfLines.some(l=>/grenzwert\s*-/i.test(l));
+    const hasNeg = tfLines.some(l=>/negativ\s*-/i.test(l));
+    const hasEP = tfLines.some(l=>/eingangspruefung\s*-/i.test(l) || /eingangsprüfung\s*-/i.test(l));
+    
+    h+=`<h4>Testfälle</h4>`;
+    h+=`<div class="tf-toolbar">`;
+    /* Filter-Chips: Positiv, Grenzwert, Negativ = default AN; Eingangsprüfung = default AUS */
+    h+=`<div class="tf-filter-chips">`;
+    if(hasPos) h+=`<button class="tf-filter-chip on-pos" data-cat="positiv" onclick="filterTfCat('${tfId}',this)" type="button">Positiv</button>`;
+    if(hasGrenz) h+=`<button class="tf-filter-chip on-grenz" data-cat="grenzwert" onclick="filterTfCat('${tfId}',this)" type="button">Grenzwert</button>`;
+    if(hasNeg) h+=`<button class="tf-filter-chip on-neg" data-cat="negativ" onclick="filterTfCat('${tfId}',this)" type="button">Negativ</button>`;
+    if(hasEP) h+=`<button class="tf-filter-chip" data-cat="eingangspruefung" onclick="filterTfCat('${tfId}',this)" type="button">Eingangsprüfung</button>`;
+    h+=`</div>`;
+    h+=`<div class="tf-toolbar-sep"></div>`;
+    h+=`<button class="tf-toolbar-btn" onclick="copyTfFromChat('${tfId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Tabelle kopieren</button>`;
+    h+=`</div>`;
+    h+=`<div id="${tfId}">${renderTfTable(tfData)}</div>`;
+    tfRawStore.set(tfId, tfData);
+    /* Eingangsprüfung-Zeilen initial ausblenden */
+    if(hasEP){
+      setTimeout(()=>{
+        const container=g(tfId);if(!container)return;
+        container.querySelectorAll('tbody tr').forEach(row=>{
+          const cells=row.querySelectorAll('td');
+          const desc=cells.length>=2?cells[1].textContent.toLowerCase():'';
+          if(desc.startsWith('eingangspruefung') || desc.startsWith('eingangsprüfung')) row.style.display='none';
+        });
+        /* Living Doc ohne Eingangsprüfung aktualisieren */
+        const filtered=tfData.split('\n').filter(l=>{
+          if(!l.includes('|'))return true;
+          if(/Nr\.|Beschreibung/i.test(l))return true;
+          if(/^[\s|:-]+$/.test(l))return true;
+          return !/eingangspruefung|eingangsprüfung/i.test(l);
+        }).join('\n');
+        updateTestDoc('testfaelle', filtered, 'draft');
+      },50);
+    } else {
+      updateTestDoc('testfaelle', tfData, 'draft');
+    }
+  }
+  
+  /* Testergebnis (Modul result) – Dual-View: Tabelle + Text */
+  const ergData = sections['TESTERGEBNIS'];
+  if(ergData){
+    const eId='tfe-'+Date.now();
+    /* Pipe-Tabelle parsen */
+    const ergLines=ergData.split('\n').filter(l=>l.includes('|'));
+    const hasPipes=ergLines.length>=2;
+    
+    if(hasPipes){
+      /* Header + Daten extrahieren */
+      let ergHeaders=[], ergDataLines=ergLines;
+      if(ergLines[0].match(/Testfall|Status|Ergebnis|Abweichung/i)){
+        ergHeaders=ergLines[0].split('|').map(c=>c.trim()).filter(c=>c);
+        ergDataLines=ergLines.slice(1).filter(l=>!l.match(/^[\s|:-]+$/));
+      }
+      
+      /* Text-Ansicht bauen */
+      let textHtml='';
+      ergDataLines.forEach(line=>{
+        const cells=line.split('|').map(c=>c.trim()).filter(c=>c);
+        textHtml+='<div class="tf-text-row">';
+        cells.forEach((c,i)=>{
+          const label=ergHeaders[i]||'Feld '+(i+1);
+          const cellRendered=c.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');
+          textHtml+=`<div class="tf-text-label">${escH(label)}</div><div class="tf-text-val">${cellRendered}</div>`;
+        });
+        textHtml+='</div>';
+      });
+      
+      h+=`<h4>Testergebnis</h4>`;
+      h+=`<div class="tf-toolbar">`;
+      h+=`<div class="tf-view-tabs"><button class="tf-view-tab active" onclick="toggleErgView('${eId}','table',this)" type="button">Tabelle</button><button class="tf-view-tab" onclick="toggleErgView('${eId}','text',this)" type="button">Text</button></div>`;
+      h+=`<div class="tf-toolbar-sep"></div>`;
+      h+=`<button class="tf-toolbar-btn" onclick="copyTfFromChat('${eId}-table',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Kopieren</button>`;
+      h+=`</div>`;
+      h+=`<div id="${eId}-table">${renderIstTable(ergData)}</div>`;
+      h+=`<div id="${eId}-text" style="display:none;"><div class="tf-text-view">${textHtml}</div></div>`;
+      updateTestDoc('ergebnis', ergData, 'draft');
+    } else {
+      /* Kein Pipe-Format – als Text rendern */
+      h+=`<h4>Testergebnis</h4>${renderMd(stripPipes(ergData))}`;
+      updateTestDoc('ergebnis', ergData, 'draft');
+    }
+  }
+  
+  /* Rückfragen – aus parseKIA (bewährt) oder eigenes Parsing */
+  let questions = p.questions && p.questions.length>0 ? p.questions : [];
+  if(questions.length===0 && sections['RUECKFRAGEN']){
+    const rqRaw = sections['RUECKFRAGEN'];
+    if(!rqRaw.match(/keine\s*(weiteren)?\s*(rueckfragen|fragen|r.ckfragen)/i)){
+      rqRaw.split('\n').forEach(l=>{
+        const qm=l.trim().replace(/\*\*/g,'').match(/^\d+[.)]\s*(.+)/);
+        if(qm) questions.push(qm[1].trim());
+        else if(questions.length>0 && l.trim().match(/^[-–\u2013\u2022]\s/) ) questions[questions.length-1]+='\n'+l.trim();
+      });
+    }
+  }
+  /* Fallback: Wenn kein RUECKFRAGEN-Abschnitt, aber Text enthält nummerierte Fragen */
+  if(questions.length===0 && !sections['RUECKFRAGEN'] && rawText){
+    const allLines=rawText.split('\n');
+    let inQBlock=false;
+    for(const line of allLines){
+      const cl=line.trim().replace(/\*\*/g,'');
+      const qm=cl.match(/^\d+[.)]\s+(.+\?)\s*$/);
+      if(qm){inQBlock=true;questions.push(qm[1].trim());}
+      else if(inQBlock && cl.match(/^[-–\u2013\u2022]\s/) && questions.length>0){
+        questions[questions.length-1]+='\n'+cl;
+      } else if(inQBlock && cl==='' && questions.length>0){/* Leerzeile in Frage-Block */}
+      else if(inQBlock && !cl.match(/^\d/) && cl.length<5){inQBlock=false;}
+    }
+    /* Nur verwenden wenn mind. 2 Fragen gefunden (sonst false positive) */
+    if(questions.length<2) questions=[];
+  }
+  
+  /* Im Result-Modus: Rückfragen nur wenn wirklich kritisch (und keine Tabelle da) */
+  if(testModule==='result' && ergData) questions=[];
+  
+  if(questions.length>0){
+    const bid='rqt-'+Date.now();
+    h+=`<h4>Rückfragen</h4><div class="rq-block" id="${bid}">`;
+    questions.forEach((q,i)=>{const qid=bid+'-'+i;
+      h+=`<div class="rq-item"><div class="rq-q"><span class="rq-q-num">Frage ${i+1}</span>${renderMd(q)}</div><div class="rq-answer-row"><textarea class="rq-answer" id="${qid}" placeholder="Deine Antwort ..." rows="1" oninput="autoResize(this)"></textarea><button class="rq-skip" id="${qid}-skip" onclick="toggleSkip('${qid}')" type="button">Entfällt</button></div></div>`;
+    });
+    h+=`<div class="rq-submit-row"><button class="rq-submit" onclick="submitTestAnswers('${bid}',${questions.length})">Antworten übernehmen</button><span class="rq-submit-hint">Schickt alle Antworten an KIA</span></div></div>`;
+  }
+  
+  /* Abschluss-Hinweis */
+  const noMoreQuestions = questions.length===0;
+  const hasContent = testState.testfaelle || testState.ergebnis;
+  if(noMoreQuestions && hasContent){
+    h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">Die Dokumentation ist vollständig. Du kannst sie jetzt abschließen oder weiter verfeinern.</div>`;
+  }
+  
+  if(!h && rawText) h=renderMd(rawText);
+  if(h) h+=`<div style="margin-top:10px;font-size:11.5px;color:var(--dm);">Du kannst auch jederzeit im Freitextfeld unten antworten.</div>`;
+  return h;
+}
+
+async function callAndRenderTest(){
+  if(isRunning)return;isRunning=true;addLoading('chatMessagesTest');g('btnSendTest').disabled=true;
+  try{
+    const sysPrompt = testModule==='create' ? SYS_TEST_CREATE : testModule==='refine' ? SYS_TEST_REFINE : SYS_TEST_RESULT;
+    const r=await callKIA(testMsgs,sysPrompt);testMsgs.push({role:'assistant',content:r});removeLoading();
+    const p=parseKIA(r);
+    const html=renderTestMsg(p,r);
+    addMsgTest('kia','',html||renderMd(r));
+    if(testSparringCount>=1)updatePhase(2);
+  }catch(e){removeLoading();showToast('Fehler: '+e.message,'err');}
+  finally{isRunning=false;g('btnSendTest').disabled=false;}
+}
+
+async function submitTestAnswers(bid,cnt){
+  let parts=[],any=false;
+  for(let i=0;i<cnt;i++){const inp=g(bid+'-'+i),v=inp?inp.value.trim():'';if(v&&v!=='[Entfällt]')any=true;
+    const qT=inp?.closest('.rq-item')?.querySelector('.rq-q')?.textContent?.replace(/^Frage \d+\s*/,'').trim()||'';
+    parts.push(`Frage ${i+1}: ${qT}\nAntwort: ${v||'[Keine Antwort]'}`);if(inp){inp.disabled=true;inp.classList.add('done');}}
+  if(!any){showToast('Bitte mindestens eine Frage beantworten.','warn');return;}
+  const t=parts.join('\n\n');addMsgTest('user',t);testMsgs.push({role:'user',content:t});testSparringCount++;await callAndRenderTest();
+}
+
+g('chatInputTest').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatTest();}});
+g('chatInputTest').addEventListener('input',function(){autoResize(this);});
+async function sendChatTest(){const t=g('chatInputTest').value.trim();if(!t||isRunning)return;g('chatInputTest').value='';g('chatInputTest').style.height='auto';addMsgTest('user',t);testMsgs.push({role:'user',content:t});testSparringCount++;await callAndRenderTest();}
+
+/* Mobile Tabs */
+function mobileTabTest(t){
+  if(t==='doc'){g('docPanelTest').classList.add('mobile-show');g('chatPanelTest').classList.add('mobile-hide');g('mtDocTest').classList.add('active');g('mtChatTest').classList.remove('active');}
+  else{g('docPanelTest').classList.remove('mobile-show');g('chatPanelTest').classList.remove('mobile-hide');g('mtChatTest').classList.add('active');g('mtDocTest').classList.remove('active');}
+}
+
+/* Finalisieren */
+function finalizeTest(){
+  const c=g('finalSections');c.innerHTML='';
+  g('finalTitle').textContent='Test-Dokumentation';
+  g('btnBackSparring').onclick=()=>showView('v-test');
+  
+  let num=0;
+  
+  /* Modul-Karte */
+  if(testState.modul){
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-deep)">${num}</div><div class="sec-card-title">Modul</div></div><div class="sec-card-body"><div class="rendered" style="font-size:16px;font-weight:600;">${escH(testState.modul)}</div></div>`;
+    c.appendChild(card);
+  }
+  
+  /* Testfälle-Karte */
+  if(testState.testfaelle && testState.testfaelle!=='[Noch nicht erfasst]'){
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">${num}</div><div class="sec-card-title">Testfälle</div><button class="sec-card-copy" onclick="copyTestSec('testfaelle',this)" type="button">Kopieren</button></div><div class="sec-card-body">${renderTfTable(testState.testfaelle)}</div>`;
+    c.appendChild(card);
+  }
+  
+  /* Testergebnis-Karte */
+  if(testState.ergebnis && testState.ergebnis!=='[Noch nicht erfasst]'){
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--orange)">${num}</div><div class="sec-card-title">Testergebnisse</div><button class="sec-card-copy" onclick="copyTestSec('ergebnis',this)" type="button">Kopieren</button></div><div class="sec-card-body">${renderTestErgebnis(testState.ergebnis)}</div>`;
+    c.appendChild(card);
+  }
+  
+  showView('v-final');
+}
+
+/* Kopieren */
+function copyTestSec(key, btn){
+  let plain='', html='';
+  if(key==='testfaelle'){
+    plain=pipeTableToPlaintext(testState.testfaelle);
+    html=pipeTableToClipboardHtml(testState.testfaelle);
+  } else if(key==='ergebnis'){
+    plain=pipeTableToPlaintext(testState.ergebnis);
+    html=pipeTableToClipboardHtml(testState.ergebnis);
+  }
+  copyRich(plain,html).then(()=>{
+    btn.classList.add('copied');btn.textContent='Kopiert';
+    setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Kopieren';},2000);
+  });
+}
+
+/* Testfall-Kategorie-Filter (Positiv/Grenzwert/Negativ) */
+function filterTfCat(tfId, btn){
+  const cat=btn.getAttribute('data-cat');
+  const cssMap={positiv:'on-pos',grenzwert:'on-grenz',negativ:'on-neg',eingangspruefung:'on-ep'};
+  const cls=cssMap[cat]||'';
+  /* Toggle */
+  const isNowOn=!btn.classList.contains(cls);
+  if(isNowOn) btn.classList.add(cls); else btn.classList.remove(cls);
+  
+  /* Alle aktiven Kategorien sammeln */
+  const toolbar=btn.closest('.tf-toolbar');
+  const activeCats=new Set();
+  toolbar.querySelectorAll('.tf-filter-chip').forEach(chip=>{
+    const c=chip.getAttribute('data-cat');
+    const cm=cssMap[c]||'';
+    if(chip.classList.contains(cm)) activeCats.add(c);
+  });
+  
+  /* Hilfsfunktion: Kategorie aus Beschreibung erkennen */
+  function getCat(desc){
+    const d=desc.toLowerCase();
+    if(d.startsWith('eingangspruefung') || d.startsWith('eingangsprüfung')) return 'eingangspruefung';
+    if(d.startsWith('negativ')) return 'negativ';
+    if(d.startsWith('grenzwert')) return 'grenzwert';
+    return 'positiv';
+  }
+  
+  /* Zeilen filtern */
+  const container=g(tfId);if(!container)return;
+  container.querySelectorAll('tbody tr').forEach(row=>{
+    const cells=row.querySelectorAll('td');
+    const desc=cells.length>=2?cells[1].textContent:'';
+    row.style.display=activeCats.has(getCat(desc))?'':'none';
+  });
+  
+  /* Living Doc aktualisieren (nur sichtbare Kategorien) */
+  const rawData=tfRawStore.get(tfId);
+  if(!rawData)return;
+  const filtered=rawData.split('\n').filter(l=>{
+    if(!l.includes('|'))return true;
+    if(/Nr\.|Beschreibung/i.test(l))return true;
+    if(/^[\s|:-]+$/.test(l))return true;
+    const parts=l.split('|');
+    const desc=parts.length>=2?parts[1].trim():'';
+    return activeCats.has(getCat(desc));
+  }).join('\n');
+  updateTestDoc('testfaelle', filtered, 'draft');
+}
+
+/* Testfall-Tabelle aus Chat kopieren */
+/* Testergebnis Tabelle/Text Toggle */
+function toggleErgView(eId, view, btn){
+  const tableEl=g(eId+'-table'), textEl=g(eId+'-text');
+  if(!tableEl||!textEl)return;
+  tableEl.style.display = view==='table' ? '' : 'none';
+  textEl.style.display = view==='text' ? '' : 'none';
+  /* Tab-Styling aktualisieren */
+  const tabs=btn.closest('.tf-view-tabs');
+  tabs.querySelectorAll('.tf-view-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  /* Copy-Button Ziel aktualisieren */
+  const toolbar=btn.closest('.tf-toolbar');
+  const copyBtn=toolbar.querySelector('.tf-toolbar-btn');
+  if(copyBtn){
+    if(view==='text'){
+      copyBtn.setAttribute('onclick',`copyErgText('${eId}-text',this)`);
+    } else {
+      copyBtn.setAttribute('onclick',`copyTfFromChat('${eId}-table',this)`);
+    }
+  }
+}
+
+/* Text-Ansicht kopieren */
+function copyErgText(elId, btn){
+  const el=g(elId);if(!el)return;
+  const textView=el.querySelector('.tf-text-view');if(!textView)return;
+  /* Plain-Text */
+  const rows=textView.querySelectorAll('.tf-text-row');
+  let plain='';
+  rows.forEach(row=>{
+    const labels=row.querySelectorAll('.tf-text-label');
+    const vals=row.querySelectorAll('.tf-text-val');
+    for(let i=0;i<labels.length;i++){
+      plain+=(labels[i]?.textContent||'')+': '+(vals[i]?.textContent||'')+'\n';
+    }
+    plain+='\n';
+  });
+  /* HTML */
+  let html=textView.innerHTML;
+  copyRich(plain.trim(), html).then(()=>{
+    btn.classList.add('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Kopiert';
+    setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Kopieren';},2000);
+  });
+}
+
+function copyTfFromChat(tfId, btn){
+  const container=g(tfId);if(!container)return;
+  const table=container.querySelector('table');
+  if(!table){showToast('Keine Tabelle gefunden.','warn');return;}
+  
+  /* Hilfsfunktionen für Zell-Inhalte */
+  const cellToPlain=td=>td.innerHTML.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').trim();
+  const cellToHtml=td=>{
+    let h=td.innerHTML;
+    /* Inline-Styles für Confluence bereinigen, <br> erhalten */
+    h=h.replace(/<strong>/g,'<b>').replace(/<\/strong>/g,'</b>');
+    return h.trim();
+  };
+  
+  /* Header aus DOM */
+  const ths=table.querySelectorAll('thead th');
+  const headers=[];ths.forEach(th=>headers.push(th.textContent.trim()));
+  
+  /* Nur sichtbare Zeilen aus DOM */
+  const plainRows=[], htmlRows=[];
+  table.querySelectorAll('tbody tr').forEach(row=>{
+    if(row.style.display==='none')return;
+    const pCells=[], hCells=[];
+    row.querySelectorAll('td').forEach(td=>{
+      pCells.push(cellToPlain(td));
+      hCells.push(cellToHtml(td));
+    });
+    plainRows.push(pCells);
+    htmlRows.push(hCells);
+  });
+  
+  if(plainRows.length===0){showToast('Keine sichtbaren Zeilen zum Kopieren.','warn');return;}
+  
+  /* Plain-Text (Tab-getrennt, Zeilenumbrüche in Zellen als Newline) */
+  let plain=headers.join('\t')+'\n';
+  plainRows.forEach(r=>{plain+=r.join('\t')+'\n';});
+  
+  /* HTML für Confluence (mit <br> für Zeilenumbrüche in Zellen) */
+  let html='<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;">';
+  html+='<thead><tr>';
+  headers.forEach(h=>{html+='<th style="background-color:#002B52;color:#ffffff;padding:8px 12px;text-align:left;font-weight:bold;border:1px solid #cbd5e0;">'+escH(h)+'</th>';});
+  html+='</tr></thead><tbody>';
+  htmlRows.forEach((r,idx)=>{
+    const bg=idx%2===0?'#ffffff':'#f7fafc';
+    html+='<tr>';
+    r.forEach(c=>{html+='<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:'+bg+';vertical-align:top;">'+c+'</td>';});
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+  
+  copyRich(plain,html).then(()=>{
+    btn.classList.add('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Kopiert';
+    setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Kopieren';},2000);
+  });
+}
+
+function copyTestAll(){
+  let plainParts=[], htmlParts=[];
+  if(testState.modul){
+    plainParts.push('MODUL: '+testState.modul);
+    htmlParts.push('<h2>'+escH(testState.modul)+'</h2>');
+  }
+  if(testState.testfaelle && testState.testfaelle!=='[Noch nicht erfasst]'){
+    plainParts.push('TESTFÄLLE:\n'+pipeTableToPlaintext(testState.testfaelle));
+    htmlParts.push('<h3>Testfälle</h3>'+pipeTableToClipboardHtml(testState.testfaelle));
+  }
+  if(testState.ergebnis && testState.ergebnis!=='[Noch nicht erfasst]'){
+    plainParts.push('TESTERGEBNISSE:\n'+pipeTableToPlaintext(testState.ergebnis));
+    htmlParts.push('<h3>Testergebnisse</h3>'+pipeTableToClipboardHtml(testState.ergebnis));
+  }
+  copyRich(plainParts.join('\n\n'), htmlParts.join('')).then(()=>showToast('Test-Dokumentation kopiert','ok'));
 }
 
 /* ═══ API ═══ */
