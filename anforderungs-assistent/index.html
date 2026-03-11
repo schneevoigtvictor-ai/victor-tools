@@ -781,8 +781,8 @@ textarea.fi{min-height:80px;}
         </div>
         <div class="test-module-card" id="testCardResult" onclick="selTestModule('result')" role="button" tabindex="0">
           <div class="tm-icon">📋</div>
-          <h4>Testergebnisse dokumentieren</h4>
-          <p>Durchgeführten Test strukturiert erfassen</p>
+          <h4>Testergebnis dokumentieren</h4>
+          <p>Testfehler strukturiert und IT-tauglich erfassen</p>
         </div>
       </div>
 
@@ -844,28 +844,18 @@ Testfall 1: Erstattung prüfen - sollte funktionieren" style="min-height:140px;p
               <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
             </button>
           </div>
-          
-          <div class="flbl" style="margin-top:14px;">Testergebnis</div>
-          <div class="test-status-row">
-            <button class="test-status-chip" id="tsOk" onclick="selTestStatus('ok')" type="button">✅ Bestanden</button>
-            <button class="test-status-chip" id="tsPartial" onclick="selTestStatus('partial')" type="button">⚠️ Teilweise</button>
-            <button class="test-status-chip" id="tsFail" onclick="selTestStatus('fail')" type="button">❌ Fehler</button>
-          </div>
 
-          <!-- Fehlerbeschreibung (nur bei Fehler/Teilweise sichtbar) -->
-          <div class="test-error-details" id="testErrorDetails">
-            <div class="flbl">Was ist tatsächlich passiert?</div>
-            <div class="fhint" style="margin-bottom:6px;">Beschreibe den Fehler so konkret wie möglich: Welcher Wert wurde angezeigt? Welche Meldung kam?</div>
-            <div class="speech-wrap">
-              <textarea class="fi" id="testResultDesc" placeholder="z.B.: Erstattungsbetrag zeigt 45,00€ statt 50,00€. Keine Fehlermeldung, Status trotzdem auf Freigegeben." style="min-height:80px;padding-right:48px;"></textarea>
-              <button class="speech-btn" onclick="toggleSpeech('testResultDesc')" title="Spracheingabe" type="button">
-                <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-              </button>
-            </div>
+          <div class="flbl" style="margin-top:14px;">Was ist tatsächlich passiert? (Fehler)</div>
+          <div class="fhint" style="margin-bottom:6px;">Beschreibe den Fehler so konkret wie möglich: Welcher Wert wurde angezeigt? Welche Meldung kam?</div>
+          <div class="speech-wrap">
+            <textarea class="fi" id="testResultDesc" placeholder="z.B.: Erstattungsbetrag zeigt 45,00€ statt 50,00€. Keine Fehlermeldung, Status trotzdem auf Freigegeben." style="min-height:80px;padding-right:48px;"></textarea>
+            <button class="speech-btn" onclick="toggleSpeech('testResultDesc')" title="Spracheingabe" type="button">
+              <svg viewBox="0 0 24 24"><path d="M12 1a4 4 0 0 0-4 4v6a4 4 0 0 0 8 0V5a4 4 0 0 0-4-4z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1M12 18.5V23M8 23h8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
           </div>
 
           <div style="margin-top:14px;padding:10px 14px;background:var(--blue-pale);border-radius:var(--rs);font-size:12px;color:var(--blue-strong);line-height:1.6;">
-            <strong>Tipp:</strong> Ein Screenshot hilft der IT enorm. Hänge ihn später direkt an das JIRA-Ticket oder die Confluence-Seite an und markiere den relevanten Bereich.
+            <strong>Tipp:</strong> Ein Screenshot hilft der IT enorm. Hänge ihn später direkt an das JIRA-Ticket an und markiere den relevanten Bereich.
           </div>
         </div>
 
@@ -1334,44 +1324,37 @@ RUECKFRAGEN:
 Keine weiteren Rueckfragen. Die Testfaelle sind jetzt praezise.`;
 
 /* Modul 3: Testergebnisse dokumentieren */
-const SYS_TEST_RESULT=`Du bist der Test-Assistent der SBK. Du hilfst dabei, Testergebnisse so zu dokumentieren, dass die IT sie direkt bearbeiten kann.
+const SYS_TEST_RESULT=`Du bist der Test-Assistent der SBK. Du hilfst dabei, Testergebnisse bei Fehlern so zu dokumentieren, dass die IT sie direkt bearbeiten kann.
 
 ${STYLE}
 
 Der Nutzer liefert dir:
 - Den Testfall (Name/Nr.)
 - Das erwartete Ergebnis (laut Testfall)
-- Den Status (Bestanden/Teilweise/Fehler)
-- Bei Fehler: Was tatsaechlich passiert ist
+- Was tatsaechlich passiert ist (der Fehler)
 
 Deine Aufgabe:
-Pruefe, ob die Fehlerbeschreibung praezise genug fuer die IT ist. Konkret heisst das:
-- Ist klar, WELCHER Wert angezeigt wurde? (nicht nur "war falsch")
-- Ist klar, WAS erwartet wurde? (konkreter Wert, nicht "sollte richtig sein")
-- Ist die Abweichung nachvollziehbar?
+Pruefe, ob die Fehlerbeschreibung praezise genug fuer die IT ist und formuliere die Dokumentation in einem klaren, strukturierten Format.
 
 Regeln:
 - Erfinde KEINE Werte, Meldungen oder Systemverhalten. Nutze nur was der Tester angegeben hat.
 - Frage NICHT nach Schritten, Anzeige-Ort, Screenshot-Details oder Reproduzierbarkeit.
 - Maximal 1-2 kurze Rueckfragen, NUR wenn die Fehlerbeschreibung wirklich zu vage ist.
-- Erwaehne am Ende: "Tipp: Haenge einen Screenshot an das Ticket an – das hilft der IT bei der Fehleranalyse."
 
-WICHTIG – Adaptive Logik:
-- Bei "Bestanden": Sofort Tabelle, keine Rueckfragen.
-- Bei "Fehler"/"Teilweise" mit konkreten Angaben: Sofort Tabelle, keine Rueckfragen.
-- Bei "Fehler"/"Teilweise" mit vagen Angaben: Tabelle mit Platzhaltern + max. 1-2 Rueckfragen.
-
-Ausgabeformat (IMMER diese Struktur):
-
-ZUSAMMENFASSUNG:
-[Was wurde getestet, Ergebnis in 1-2 Saetzen]
+Ausgabeformat (IMMER genau diese 4 Punkte als Text):
 
 TESTERGEBNIS:
-Testfall|Status|Ist-Ergebnis|Soll-Ergebnis|Abweichung|Empfohlene Massnahme
-[Name/Nr]|[Status]|[Was angezeigt wurde]|[Was erwartet war]|[Differenz]|[Vorschlag fuer IT]
+1. **Ist-Ergebnis:** [Was tatsaechlich passiert ist – konkreter Wert, Meldung, Verhalten]
+2. **Soll-Ergebnis:** [Was laut Testfall erwartet war – konkreter Wert, Meldung, Verhalten]
+3. **Abweichung:** [Die konkrete Differenz zwischen Ist und Soll]
+4. **Empfohlene Massnahme:** [Was die IT pruefen/korrigieren sollte]
 
 RUECKFRAGEN:
-Keine weiteren Rueckfragen. Das Testergebnis ist vollstaendig dokumentiert.`;
+Keine weiteren Rueckfragen. Das Testergebnis ist vollstaendig dokumentiert.
+
+Wenn Angaben zu vage sind:
+RUECKFRAGEN:
+1. [Kurze, konkrete Frage – max. 1-2 Fragen]`;
 
 /* ═══ STATE ═══ */
 let apiToken='',selectedMode='',reqType='',msgs=[],isRunning=false,currentPhase=0,sparringCount=0;
@@ -2639,8 +2622,6 @@ function confirmNewReq(){
   g('testInputArea').style.display='none';g('testInputCreate').style.display='none';g('testInputRefine').style.display='none';g('testInputResult').style.display='none';
   g('testCreateInput').value='';g('testRefineInput').value='';g('testResultRef').value='';g('testResultDesc').value='';
   if(g('testResultExpected'))g('testResultExpected').value='';
-  g('tsOk').className='test-status-chip';g('tsPartial').className='test-status-chip';g('tsFail').className='test-status-chip';
-  g('testErrorDetails').classList.remove('visible');
   ['modul','testfaelle','ergebnis'].forEach(f=>updateTestDoc(f,'',null));
   g('ds-test-ergebnis').style.display='none';
   g('btnCopyTest').disabled=true;g('btnFinalizeTest').disabled=true;
@@ -2682,7 +2663,7 @@ function selTestModule(mod){
     exLabel.textContent='Praxisbeispiel: Testfälle verfeinern';
     exBody.innerHTML=getTestExampleRefine();
   } else {
-    exLabel.textContent='Praxisbeispiel: Testergebnisse dokumentieren';
+    exLabel.textContent='Praxisbeispiel: Testergebnis dokumentieren';
     exBody.innerHTML=getTestExampleResult();
   }
   
@@ -2690,18 +2671,6 @@ function selTestModule(mod){
   updateTestDoc('modul', mod==='create'?'Testfälle erstellen':mod==='refine'?'Testfälle verfeinern':'Testergebnisse dokumentieren', 'draft');
   
   g('testInputArea').scrollIntoView({behavior:'smooth', block:'start'});
-}
-
-/* Testergebnis-Status */
-function selTestStatus(status){
-  testStatus=status;
-  g('tsOk').className='test-status-chip'+(status==='ok'?' sel-ok':'');
-  g('tsPartial').className='test-status-chip'+(status==='partial'?' sel-partial':'');
-  g('tsFail').className='test-status-chip'+(status==='fail'?' sel-fail':'');
-  
-  /* Fehlerdetails ein-/ausblenden */
-  const showDetails = status==='fail' || status==='partial';
-  g('testErrorDetails').classList.toggle('visible', showDetails);
 }
 
 /* Praxisbeispiele */
@@ -2756,19 +2725,31 @@ function getTestExampleResult(){
   return `<p style="font-weight:700;margin-bottom:6px;">Beispiel-Output: Testergebnis dokumentieren</p>
 <p style="font-size:12px;color:var(--mu);margin-bottom:10px;">So sieht das Ergebnis aus, wenn du einen Fehler dokumentierst:</p>
 
-<div style="margin-bottom:10px;font-size:12.5px;">
-  <strong>Deine Eingabe:</strong> Testfall TC-010, erwartet 50€, tatsächlich 45€ angezeigt.
+<div style="margin-bottom:12px;font-size:12.5px;padding:10px 14px;background:var(--sf2);border-radius:var(--rs);border:1px solid var(--bd);">
+  <strong>Deine Eingabe:</strong><br>
+  Testfall: TC-010 – Erstattungsbetrag prüfen<br>
+  Erwartet: 50,00€<br>
+  Fehler: 45,00€ angezeigt statt 50,00€
 </div>
 
-<div style="margin-bottom:10px;font-size:12.5px;">
-  <strong>Zusammenfassung:</strong> Beim Test "TC-010 – Erstattungsbetrag prüfen" wurde ein Betrag von 45,00€ angezeigt statt der erwarteten 50,00€. Differenz: 5,00€.
+<div class="tf-text-view" style="border:1px solid var(--bd);border-radius:var(--rs);padding:14px;">
+  <div class="tf-text-row">
+    <div class="tf-text-label">1. Ist-Ergebnis</div>
+    <div class="tf-text-val">Erstattungsbetrag zeigt <strong>45,00€</strong>. Kein Hinweis auf Abzug oder Zuzahlung im System.</div>
+  </div>
+  <div class="tf-text-row">
+    <div class="tf-text-label">2. Soll-Ergebnis</div>
+    <div class="tf-text-val">Erstattungsbetrag = <strong>50,00€</strong> (Rechnungsbetrag ohne Abzug, da keine Zuzahlung hinterlegt).</div>
+  </div>
+  <div class="tf-text-row">
+    <div class="tf-text-label">3. Abweichung</div>
+    <div class="tf-text-val"><strong>5,00€ zu wenig</strong> überwiesen. Ursache unklar – möglicherweise fehlerhafte Berechnungslogik.</div>
+  </div>
+  <div class="tf-text-row">
+    <div class="tf-text-label">4. Empfohlene Maßnahme</div>
+    <div class="tf-text-val">Berechnungslogik der Erstattungsfunktion prüfen. Sicherstellen, dass bei fehlender Zuzahlung der volle Rechnungsbetrag erstattet wird.</div>
+  </div>
 </div>
-
-<div style="overflow-x:auto;"><table class="tf-table" style="font-size:11.5px;">
-<thead><tr><th>Testfall</th><th>Status</th><th>Ist-Ergebnis</th><th>Soll-Ergebnis</th><th>Abweichung</th><th>Empfohlene Maßnahme</th></tr></thead>
-<tbody>
-<tr><td><strong>TC-010</strong></td><td style="color:var(--red);font-weight:600;">Fehler</td><td>Erstattungsbetrag: <strong>45,00€</strong></td><td>Erstattungsbetrag: <strong>50,00€</strong></td><td>5,00€ zu wenig</td><td>Berechnungslogik prüfen</td></tr>
-</tbody></table></div>
 
 <div style="margin-top:10px;padding:8px 12px;background:var(--blue-pale);border-radius:var(--rs);font-size:11.5px;color:var(--blue-strong);">
   💡 Tipp: Hänge einen Screenshot an das Ticket an – das hilft der IT bei der Fehleranalyse.
@@ -2830,16 +2811,10 @@ async function startTestSparring(){
   } else if(testModule==='result'){
     const ref=val('testResultRef');
     const expected=val('testResultExpected');
-    if(!ref || !testStatus){g('testIntakeErr').classList.add('on');return;}
     const desc=val('testResultDesc');
-    const statusLabel=testStatus==='ok'?'Bestanden':testStatus==='partial'?'Teilweise':'Fehler';
-    userDisplay=`Testfall: ${ref}\nErwartet: ${expected||'–'}\nStatus: ${statusLabel}${desc?'\nTatsächliches Ergebnis: '+desc:''}`;
-    
-    if(testStatus==='ok'){
-      prompt=`Der Nutzer hat folgenden Test durchgefuehrt:\n\nTestfall: ${ref}\nErwartetes Ergebnis: ${expected||'Nicht angegeben'}\nStatus: Bestanden\n\nErstelle die Testergebnis-Tabelle mit Status "Bestanden". Keine Rueckfragen noetig.`;
-    } else {
-      prompt=`Der Nutzer hat folgenden Test durchgefuehrt:\n\nTestfall: ${ref}\nErwartetes Ergebnis (laut Testfall): ${expected||'Nicht angegeben'}\nStatus: ${statusLabel}\nTatsaechliches Ergebnis (was passiert ist): ${desc||'Nicht angegeben'}\n\nErstelle die Testergebnis-Tabelle. Pruefe ob die Fehlerbeschreibung praezise genug fuer die IT ist. Wenn wichtige Details fehlen (z.B. konkreter Wert, Feld, Meldung), stelle maximal 1-2 kurze Rueckfragen.`;
-    }
+    if(!ref || !desc){g('testIntakeErr').classList.add('on');return;}
+    userDisplay=`Testfall: ${ref}\nErwartet: ${expected||'–'}\nFehler: ${desc}`;
+    prompt=`Der Nutzer hat folgenden Test durchgefuehrt und einen Fehler festgestellt:\n\nTestfall: ${ref}\nErwartetes Ergebnis (laut Testfall): ${expected||'Nicht angegeben'}\nTatsaechliches Ergebnis (Fehler): ${desc}\n\nDokumentiere das Testergebnis mit den 4 Punkten: Ist-Ergebnis, Soll-Ergebnis, Abweichung, Empfohlene Massnahme. Pruefe ob die Fehlerbeschreibung praezise genug fuer die IT ist. Wenn ja, keine Rueckfragen. Wenn zu vage, maximal 1-2 kurze Rueckfragen.`;
     g('ds-test-ergebnis').style.display='';
   }
   
@@ -2866,8 +2841,10 @@ function addMsgTest(role,content,html){
 function renderTestMsg(p, rawText){
   let h='';
   
-  /* Eigene Sektions-Extraktion aus rawText (parseKIA erkennt Test-Format nicht zuverlässig) */
-  const sectionRe = /(?:^|\n)\s*(?:#{1,4}\s*)?(?:\*{2})?(ZUSAMMENFASSUNG|BEWERTUNG|TESTFAE?LLE|ANALYSE|BEGRUENDUNG|VORHER|NACHHER[^\n]*|TESTERGEBNIS|RUE?CKFRAGEN)(?:\*{2})?\s*:?\s*\n/gi;
+  /* Eigene Sektions-Extraktion aus rawText */
+  /* Regex matcht sowohl ASCII (RUECKFRAGEN) als auch Unicode (RÜCKFRAGEN) Varianten */
+  /* Schlüssel-Fix: [\s:*]* am Ende erlaubt **HEADER:** und **HEADER**: und HEADER: etc. */
+  const sectionRe = /(?:^|\n)\s*(?:#{1,4}\s*)?(?:\*{2})?(ZUSAMMENFASSUNG|BEWERTUNG|TESTF[AÄ]LLE|TESTFAELLE|ANALYSE|BEGR[UÜ]NDUNG|BEGRUENDUNG|VORHER|NACHHER[^\n]*|TESTERGEBNIS|R[UÜ]CKFRAGEN|RUECKFRAGEN|BEREITS\s+VORHANDEN)[\s:*]*\n/gi;
   const sections={};
   let smatch;
   const positions=[];
@@ -2877,9 +2854,11 @@ function renderTestMsg(p, rawText){
   for(let i=0;i<positions.length;i++){
     const nextStart = i+1 < positions.length ? rawText.lastIndexOf('\n', positions[i+1].start) : rawText.length;
     const body = rawText.substring(positions[i].start, nextStart).trim();
-    let key = positions[i].key.replace(/Ü/g,'UE').replace(/NACHHER.*/i,'NACHHER');
+    /* Normalisiere Key für einheitlichen Zugriff */
+    let key = positions[i].key.replace(/Ü/g,'UE').replace(/Ä/g,'AE').replace(/Ö/g,'OE').replace(/NACHHER.*/i,'NACHHER');
     sections[key]=body;
   }
+  console.log('renderTestMsg sections:', Object.keys(sections), 'testModule:', testModule);
   
   /* Hilfsfunktion: Pipe-Tabellen-Zeilen aus Text entfernen (werden separat als Tabelle gerendert) */
   const stripPipes=t=>t.split('\n').filter(l=>!l.match(/^[\s|:-]+$/) && !(l.includes('|') && l.split('|').length>=3)).join('\n').trim();
@@ -2887,8 +2866,8 @@ function renderTestMsg(p, rawText){
   /* Zusammenfassung (nicht im Result-Modus – dort nur Tabelle) */
   if(sections['ZUSAMMENFASSUNG'] && testModule!=='result') h+=`<h4>Zusammenfassung</h4>${renderMd(stripPipes(sections['ZUSAMMENFASSUNG']))}`;
   
-  /* Bewertung als farbige Chips */
-  const bewSrc = sections['BEWERTUNG'];
+  /* Bewertung als farbige Chips (nicht im Result-Modus) */
+  const bewSrc = testModule!=='result' ? sections['BEWERTUNG'] : null;
   if(bewSrc){
     const bewLines = bewSrc.split('\n').filter(l=>l.trim());
     if(bewLines.length>0){
@@ -2906,8 +2885,8 @@ function renderTestMsg(p, rawText){
     }
   }
   
-  /* Analyse */
-  const analyseText = sections['ANALYSE'] || p.analyse;
+  /* Analyse (nicht im Result-Modus) */
+  const analyseText = testModule!=='result' ? (sections['ANALYSE'] || p.analyse) : null;
   if(analyseText) h+=`<h4>Analyse</h4>${renderMd(stripPipes(analyseText))}`;
   
   /* Begründung (Modul refine) */
@@ -2994,46 +2973,86 @@ function renderTestMsg(p, rawText){
   }
   
   /* Testergebnis (Modul result) – Dual-View: Tabelle + Text */
-  const ergData = sections['TESTERGEBNIS'];
+  let ergData = sections['TESTERGEBNIS'];
+  
+  /* Fallback: Wenn Sektions-Parsing TESTERGEBNIS nicht findet, Pipe-Tabelle direkt aus rawText extrahieren */
+  if(!ergData && testModule==='result' && rawText){
+    const allPipeLines=rawText.split('\n').filter(l=>l.includes('|') && l.split('|').length>=3);
+    if(allPipeLines.length>=2){
+      ergData=allPipeLines.join('\n');
+    }
+  }
+  
   if(ergData){
     const eId='tfe-'+Date.now();
-    /* Pipe-Tabelle parsen */
-    const ergLines=ergData.split('\n').filter(l=>l.includes('|'));
-    const hasPipes=ergLines.length>=2;
     
-    if(hasPipes){
-      /* Header + Daten extrahieren */
-      let ergHeaders=[], ergDataLines=ergLines;
-      if(ergLines[0].match(/Testfall|Status|Ergebnis|Abweichung/i)){
-        ergHeaders=ergLines[0].split('|').map(c=>c.trim()).filter(c=>c);
-        ergDataLines=ergLines.slice(1).filter(l=>!l.match(/^[\s|:-]+$/));
-      }
-      
-      /* Text-Ansicht bauen */
-      let textHtml='';
-      ergDataLines.forEach(line=>{
-        const cells=line.split('|').map(c=>c.trim()).filter(c=>c);
-        textHtml+='<div class="tf-text-row">';
-        cells.forEach((c,i)=>{
-          const label=ergHeaders[i]||'Feld '+(i+1);
-          const cellRendered=c.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>').replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');
-          textHtml+=`<div class="tf-text-label">${escH(label)}</div><div class="tf-text-val">${cellRendered}</div>`;
+    /* Testergebnis-Felder extrahieren (aus nummeriertem Text ODER Pipe-Tabelle) */
+    const ergFields={ist:'',soll:'',abweichung:'',massnahme:''};
+    
+    /* Erst RUECKFRAGEN und alles danach abschneiden */
+    const ergClean=ergData.replace(/\n?\s*R[UÜ]E?CKFRAGEN[\s\S]*$/i,'').trim();
+    
+    /* Versuch 1: Nummeriertes Format "1. **Ist-Ergebnis:** ..." */
+    const istM=ergClean.match(/\*?\*?\s*Ist[- ]?Ergebnis\s*\*?\*?\s*:?\s*(.+?)(?=\n\s*\d+\.\s*\*?\*?\s*(?:Soll|Abweichung|Empfohlene)|$)/is);
+    const sollM=ergClean.match(/\*?\*?\s*Soll[- ]?Ergebnis\s*\*?\*?\s*:?\s*(.+?)(?=\n\s*\d+\.\s*\*?\*?\s*(?:Abweichung|Empfohlene)|$)/is);
+    const abwM=ergClean.match(/\*?\*?\s*Abweichung\s*\*?\*?\s*:?\s*(.+?)(?=\n\s*\d+\.\s*\*?\*?\s*Empfohlene|$)/is);
+    const massM=ergClean.match(/\*?\*?\s*Empfohlene\s*Ma(?:ss|ß)nahme\s*\*?\*?\s*:?\s*(.+?)$/is);
+    if(istM) ergFields.ist=istM[1].trim();
+    if(sollM) ergFields.soll=sollM[1].trim();
+    if(abwM) ergFields.abweichung=abwM[1].trim();
+    if(massM) ergFields.massnahme=massM[1].trim();
+    
+    /* Versuch 2: Pipe-Tabelle (Fallback) */
+    if(!ergFields.ist && !ergFields.soll){
+      const pipeLines=ergClean.split('\n').filter(l=>l.includes('|') && l.split('|').length>=3 && !l.match(/^[\s|:-]+$/));
+      if(pipeLines.length>=1){
+        const headerLine=pipeLines[0];
+        const dataLine=pipeLines.find(l=>!l.match(/Testfall|Status|Ergebnis|Abweichung/i)) || pipeLines[pipeLines.length-1];
+        const headers=headerLine.split('|').map(c=>c.trim().toLowerCase()).filter(c=>c);
+        const cells=dataLine.split('|').map(c=>c.trim()).filter(c=>c);
+        headers.forEach((hdr,i)=>{
+          if(hdr.includes('ist')) ergFields.ist=cells[i]||'';
+          else if(hdr.includes('soll')) ergFields.soll=cells[i]||'';
+          else if(hdr.includes('abweichung')) ergFields.abweichung=cells[i]||'';
+          else if(hdr.includes('ma')) ergFields.massnahme=cells[i]||'';
         });
-        textHtml+='</div>';
-      });
-      
+      }
+    }
+    
+    /* Sternchen und Markdown bereinigen + Bold rendern */
+    const cleanVal=t=>{
+      let s=t.replace(/^\*{1,2}\s*/,'').replace(/\s*\*{1,2}$/,''); /* Führende/schließende ** entfernen */
+      s=escH(s);
+      s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+      s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');
+      return s;
+    };
+    
+    /* Strukturierten Text rendern */
+    const fields=[
+      {label:'Ist-Ergebnis',value:ergFields.ist},
+      {label:'Soll-Ergebnis',value:ergFields.soll},
+      {label:'Abweichung',value:ergFields.abweichung},
+      {label:'Empfohlene Maßnahme',value:ergFields.massnahme}
+    ].filter(f=>f.value);
+    
+    if(fields.length>0){
       h+=`<h4>Testergebnis</h4>`;
-      h+=`<div class="tf-toolbar">`;
-      h+=`<div class="tf-view-tabs"><button class="tf-view-tab active" onclick="toggleErgView('${eId}','table',this)" type="button">Tabelle</button><button class="tf-view-tab" onclick="toggleErgView('${eId}','text',this)" type="button">Text</button></div>`;
-      h+=`<div class="tf-toolbar-sep"></div>`;
-      h+=`<button class="tf-toolbar-btn" onclick="copyTfFromChat('${eId}-table',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Kopieren</button>`;
+      h+=`<div class="tf-toolbar"><button class="tf-toolbar-btn" onclick="copyErgText('${eId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Kopieren</button></div>`;
+      h+=`<div id="${eId}" class="tf-text-view">`;
+      fields.forEach((f,i)=>{
+        h+=`<div class="tf-text-row"><div class="tf-text-label">${i+1}. ${escH(f.label)}</div><div class="tf-text-val">${cleanVal(f.value)}</div></div>`;
+      });
       h+=`</div>`;
-      h+=`<div id="${eId}-table">${renderIstTable(ergData)}</div>`;
-      h+=`<div id="${eId}-text" style="display:none;"><div class="tf-text-view">${textHtml}</div></div>`;
-      updateTestDoc('ergebnis', ergData, 'draft');
+      /* Für Living Doc als Plaintext speichern */
+      const stripStars=t=>t.replace(/^\*{1,2}\s*/,'').replace(/\s*\*{1,2}$/,'').replace(/\*\*/g,'');
+      const ergPlain=fields.map((f,i)=>`${i+1}. ${f.label}: ${stripStars(f.value)}`).join('\n');
+      updateTestDoc('ergebnis', ergPlain, 'draft');
     } else {
-      /* Kein Pipe-Format – als Text rendern */
-      h+=`<h4>Testergebnis</h4>${renderMd(stripPipes(ergData))}`;
+      /* Fallback: Gesamten Text rendern */
+      h+=`<h4>Testergebnis</h4>`;
+      h+=`<div class="tf-toolbar"><button class="tf-toolbar-btn" onclick="copyErgText('${eId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Kopieren</button></div>`;
+      h+=`<div id="${eId}" class="tf-text-view"><div class="tf-text-row"><div class="tf-text-val">${renderMd(ergData)}</div></div></div>`;
       updateTestDoc('ergebnis', ergData, 'draft');
     }
   }
@@ -3067,8 +3086,8 @@ function renderTestMsg(p, rawText){
     if(questions.length<2) questions=[];
   }
   
-  /* Im Result-Modus: Rückfragen nur wenn wirklich kritisch (und keine Tabelle da) */
-  if(testModule==='result' && ergData) questions=[];
+  /* Im Result-Modus: Keine Rückfragen anzeigen */
+  if(testModule==='result') questions=[];
   
   if(questions.length>0){
     const bid='rqt-'+Date.now();
@@ -3083,10 +3102,34 @@ function renderTestMsg(p, rawText){
   const noMoreQuestions = questions.length===0;
   const hasContent = testState.testfaelle || testState.ergebnis;
   if(noMoreQuestions && hasContent){
-    h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">Die Dokumentation ist vollständig. Du kannst sie jetzt abschließen oder weiter verfeinern.</div>`;
+    if(testModule==='result'){
+      h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">Testergebnis dokumentiert. Du kannst es jetzt kopieren oder abschließen.</div>`;
+      h+=`<div style="margin-top:8px;padding:10px 14px;background:var(--blue-pale);border-radius:var(--rs);font-size:12px;color:var(--blue-strong);line-height:1.6;">💡 <strong>Tipp:</strong> Hänge einen Screenshot an das JIRA-Ticket an – das hilft der IT bei der Fehleranalyse.</div>`;
+    } else {
+      h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">Die Dokumentation ist vollständig. Du kannst sie jetzt abschließen oder weiter verfeinern.</div>`;
+    }
   }
   
-  if(!h && rawText) h=renderMd(rawText);
+  if(!h && rawText){
+    /* Im Result-Modus: Versuche Pipe-Tabelle aus dem gesamten Text zu extrahieren */
+    if(testModule==='result'){
+      const fallbackPipes=rawText.split('\n').filter(l=>l.includes('|') && l.split('|').length>=3 && !l.match(/^[\s|:-]+$/));
+      if(fallbackPipes.length>=2){
+        const fbId='tfe-fb-'+Date.now();
+        const fbData=fallbackPipes.join('\n');
+        h+=`<h4>Testergebnis</h4>`;
+        h+=`<div class="tf-toolbar"><button class="tf-toolbar-btn" onclick="copyTfFromChat('${fbId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Kopieren</button></div>`;
+        h+=`<div id="${fbId}">${renderIstTable(fbData)}</div>`;
+        updateTestDoc('ergebnis', fbData, 'draft');
+      } else {
+        /* Kein Pipe-Format: Nur den reinen Text ohne Header rendern */
+        const cleanText=rawText.replace(/\*\*(ZUSAMMENFASSUNG|TESTERGEBNIS|R[UÜ]CKFRAGEN|RUECKFRAGEN)[:\s*]*\**/gi,'').replace(/^(ZUSAMMENFASSUNG|TESTERGEBNIS|R[UÜ]CKFRAGEN|RUECKFRAGEN)[:\s]*/gim,'').trim();
+        h=renderMd(cleanText);
+      }
+    } else {
+      h=renderMd(rawText);
+    }
+  }
   if(h) h+=`<div style="margin-top:10px;font-size:11.5px;color:var(--dm);">Du kannst auch jederzeit im Freitextfeld unten antworten.</div>`;
   return h;
 }
@@ -3249,20 +3292,24 @@ function toggleErgView(eId, view, btn){
 /* Text-Ansicht kopieren */
 function copyErgText(elId, btn){
   const el=g(elId);if(!el)return;
-  const textView=el.querySelector('.tf-text-view');if(!textView)return;
-  /* Plain-Text */
+  /* Element kann direkt .tf-text-view sein oder es enthalten */
+  const textView=el.classList.contains('tf-text-view') ? el : el.querySelector('.tf-text-view');
+  if(!textView){showToast('Kein Testergebnis gefunden.','warn');return;}
+  
   const rows=textView.querySelectorAll('.tf-text-row');
-  let plain='';
+  let plain='', html='';
+  
   rows.forEach(row=>{
     const labels=row.querySelectorAll('.tf-text-label');
     const vals=row.querySelectorAll('.tf-text-val');
     for(let i=0;i<labels.length;i++){
-      plain+=(labels[i]?.textContent||'')+': '+(vals[i]?.textContent||'')+'\n';
+      const lbl=labels[i]?.textContent?.trim()||'';
+      const val=vals[i]?.textContent?.trim()||'';
+      plain+=lbl+'\n'+val+'\n\n';
+      html+=`<p><b>${escH(lbl)}</b><br>${vals[i]?.innerHTML||escH(val)}</p>`;
     }
-    plain+='\n';
   });
-  /* HTML */
-  let html=textView.innerHTML;
+  
   copyRich(plain.trim(), html).then(()=>{
     btn.classList.add('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Kopiert';
     setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Kopieren';},2000);
