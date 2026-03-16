@@ -226,6 +226,22 @@ textarea.fi{min-height:80px;}
 .rendered{font-size:14px;line-height:1.75;color:var(--tx);}
 .rendered strong,.rendered b{font-weight:700;color:var(--tx);}
 .rendered ul,.rendered ol{padding-left:22px;margin:8px 0;}
+.md-ol{list-style:none;padding-left:0;margin:12px 0;counter-reset:md-step;}
+.md-ol li{counter-increment:md-step;padding:10px 14px 10px 42px;position:relative;background:var(--sf);border:1px solid var(--bd2);border-radius:var(--rs);margin-bottom:6px;line-height:1.6;font-size:14px;}
+.md-ol li::before{content:counter(md-step)".";position:absolute;left:14px;top:10px;font-weight:700;color:var(--blue-strong);font-size:14px;}
+.md-ol li strong{color:var(--blue-deep);}
+/* Verschachtelte Sub-Liste (Ja/Nein-Logik) innerhalb nummerierter Schritte */
+.md-sub{list-style:none;padding-left:8px;margin:8px 0 2px 0;}
+.md-sub li{padding:4px 10px 4px 20px;position:relative;font-size:13.5px;line-height:1.55;color:var(--tx);background:none;border:none;border-radius:0;border-left:2px solid var(--bd);margin-bottom:2px;counter-increment:none;}
+.md-sub li::before{content:"\2013";position:absolute;left:4px;top:4px;font-weight:600;color:var(--mu);font-size:13.5px;}
+.md-sub li strong{color:var(--blue-deep);}
+.ak-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+.ak-table th{background:var(--orange);color:#fff;padding:8px 12px;text-align:left;font-size:12px;font-weight:700;}
+.ak-table td{padding:10px 12px;border-bottom:1px solid var(--bd2);vertical-align:top;line-height:1.55;color:var(--tx2);}
+.ak-table tr:nth-child(even){background:var(--sf2);}
+.ak-table tr:hover{background:var(--yellow-light);}
+.ak-table .ak-nr{font-weight:700;color:var(--orange);text-align:center;}
+.ak-table .ak-krit{font-weight:600;color:var(--blue-deep);}
 .rendered li{margin-bottom:6px;line-height:1.65;}
 .rendered li ul,.rendered li ol{margin-top:4px;margin-bottom:4px;}
 .rendered p{margin-bottom:8px;}
@@ -245,6 +261,12 @@ textarea.fi{min-height:80px;}
 .ist-section-body li{margin-bottom:5px;line-height:1.6;}
 .ist-section-body p{margin-bottom:8px;}
 .ist-section-body p:last-child{margin-bottom:0;}
+/* Nummerierte Listen innerhalb der Sektionsblöcke kompakter darstellen */
+.ist-section-body .md-ol{margin:6px 0;}
+.ist-section-body .md-ol li{background:none;border:none;border-radius:0;padding:5px 14px 5px 36px;margin-bottom:2px;border-bottom:1px solid var(--bd2);}
+.ist-section-body .md-ol li:last-child{border-bottom:none;}
+.ist-section-body .md-ol li::before{top:5px;}
+.ist-section-body .md-sub li{border-bottom:none;padding-left:20px;}
 /* Farbige Varianten fuer verschiedene Sektionen */
 .ist-section.s-trigger{border-left-color:var(--green);}
 .ist-section.s-trigger:hover{border-left-color:#0e7c32;}
@@ -320,6 +342,10 @@ textarea.fi{min-height:80px;}
 .ist-proc-table td{padding:8px 12px;border-bottom:1px solid var(--bd2);vertical-align:top;color:var(--tx2);line-height:1.55;}
 .ist-proc-table tr:nth-child(even){background:var(--sf2);}
 .ist-proc-table tr:hover{background:var(--blue-pale);}
+.ist-logic-list{list-style:none;margin:0;padding:0;}
+.ist-logic-list li{padding:3px 0 3px 16px;position:relative;line-height:1.5;}
+.ist-logic-list li::before{content:"•";position:absolute;left:0;color:var(--blue-strong);font-weight:700;}
+.ist-logic-list li strong{color:var(--blue-deep);}
 
 /* ═══ NEU: IST-Modus Auswahlkarten ═══ */
 .ist-mode-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;}
@@ -978,10 +1004,49 @@ Ausgabeformat fuer jede Antwort:
 TITEL: [Vorschlag fuer praegnanten Anforderungstitel, einzeilig]
 
 IST:
-[Aktuelle IST Beschreibung. **Fettdruck** fuer wichtige Begriffe. Aufzaehlungen mit - wenn sinnvoll. 2-8 Saetze.]
+
+**Prozessausloeser:**
+[Was loest den aktuellen Prozess aus? 1-2 Saetze.]
+
+**Bearbeitungsschritte:**
+[Kurze Zusammenfassung des Ablaufs in 2-3 Saetzen. KEINE Einzelschritte auflisten – die Details stehen in der IST-TABELLE. Beschreibe den Gesamtablauf ueberblicksartig: Wer macht was, welche Systeme sind beteiligt, welche Pruefungen finden statt. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter.]
+
+**Output:**
+[Was ist das Ergebnis des aktuellen Prozesses? 1-2 Saetze.]
+
+[Optional – nur wenn relevant:]
+**Ablehnungen / Sonderfaelle:**
+[Ablehnungen oder Sonderfaelle im aktuellen Prozess.]
+
+IST-TABELLE:
+Nr.|Bearbeitungsschritt|Erlaeuterung
+1|[Schritt]|[Details inkl. Ja/Nein-Logik wo zutreffend]
+2|[Schritt]|[Details]
+...
 
 SOLL:
-[Aktuelle SOLL Beschreibung. **Fettdruck** fuer wichtige Begriffe. Aufzaehlungen mit - wenn sinnvoll. 2-8 Saetze.]
+
+**Zielbild:**
+[Was soll erreicht werden? Was ist das uebergeordnete Ziel der Aenderung? 1-3 Saetze.]
+
+**Prozessausloeser:**
+[Was loest den neuen/geaenderten Prozess aus? Falls unveraendert, schreibe "Unveraendert gegenueber IST." 1-2 Saetze.]
+
+**Bearbeitungsschritte:**
+[Kurze Zusammenfassung der neuen/geaenderten Schritte in 2-3 Saetzen. KEINE Einzelschritte auflisten – die Details stehen in der SOLL-TABELLE. Beschreibe ueberblicksartig was sich aendert. **Fettdruck** fuer wichtige Begriffe.]
+
+**Output:**
+[Was ist das Ergebnis des neuen Prozesses? 1-2 Saetze.]
+
+[Optional – nur wenn relevant:]
+**Ablehnungen / Sonderfaelle:**
+[Ablehnungen oder Sonderfaelle im neuen Prozess.]
+
+SOLL-TABELLE:
+Nr.|Bearbeitungsschritt|Erlaeuterung
+1|[Schritt]|[Details inkl. Ja/Nein-Logik wo zutreffend]
+2|[Schritt]|[Details]
+...
 
 KENNZAHLEN:
 [IMMER ausfuellen. Falls bekannt: Fallzahlen pro Monat/Jahr, Bearbeitungszeit pro Vorgang, Fristen, betroffene Nutzer/Rollen. Falls (noch) nicht bekannt: Schreibe was fehlt und warum, z.B. "Fallzahlen: Noch nicht erfragt." oder "Bearbeitungszeit: Keine zuverlaessigen Zahlen verfuegbar."]
@@ -1015,29 +1080,61 @@ ${STYLE}
 
 Basierend auf der Anforderung (TITEL, IST, SOLL, KENNZAHLEN):
 
-1. Erstelle 4-8 Akzeptanzkriterien. Jedes Kriterium beginnt mit: "Die Anforderung ist erfuellt, wenn ..."
-Nutze **Fettdruck** fuer die Kernaussage jedes Kriteriums.
+1. Erstelle 4-8 Akzeptanzkriterien als Pipe-getrennte Tabelle mit exakt diesen Spalten:
+Nr.|Kriterium|Bedingung (Wenn...)|Erwartetes Ergebnis (Dann...)
 
-2. Erstelle 4-8 Testfaelle als Pipe-getrennte Tabelle mit exakt diesen Spalten:
-Nr.|ID|Beschreibung|Vorbedingung|Aktion|Erwartetes Ergebnis|Prioritaet
+Regeln fuer Akzeptanzkriterien:
+- "Kriterium" ist ein kurzer, praegnanter Titel (max. 5-8 Woerter), z.B. "Automatische Pruefung aller Schritte"
+- "Bedingung" beschreibt die Wenn-Klausel: Was muss gelten? Konkret und pruefbar.
+- "Erwartetes Ergebnis" beschreibt die Dann-Klausel: Was passiert? Konkretes Systemverhalten oder Ergebnis.
+- Jedes Kriterium muss eigenstaendig pruefbar sein – keine "und ausserdem"-Verkettungen.
+- Verwende konkrete Werte aus der Anforderung (Fristen, Betraege, Systemnamen).
 
-Die erste Zeile ist die Kopfzeile. Danach folgen die Datenzeilen.
 Beispiel:
-Nr.|ID|Beschreibung|Vorbedingung|Aktion|Erwartetes Ergebnis|Prioritaet
-1|TF-001|Automatische Statusaenderung|Vorgang ist angelegt|Nutzer setzt Status auf Aktiv|System aendert Feld automatisch|Hoch
-2|TF-002|Fehlerfall ohne Berechtigung|Nutzer hat keine Rolle|Nutzer klickt Speichern|Fehlermeldung wird angezeigt|Mittel
+Nr.|Kriterium|Bedingung (Wenn...)|Erwartetes Ergebnis (Dann...)
+1|Automatisierte Pruefkette|Alle 9 Pruefschritte werden automatisiert durchlaufen|Ergebnis (Zusage/Ablehnung) wird ohne manuellen Eingriff in Helic hinterlegt
+2|Ablehnung bei negativer Pruefung|Ein Pruefschritt ergibt "Nein"|Vorgang wird abgelehnt markiert und an KB weitergeleitet
+
+2. Erstelle 5-10 Testfaelle als Pipe-getrennte Tabelle mit exakt diesen 5 Spalten:
+Nr.|Beschreibung|Vorbedingungen|Testschritte|Erwartetes Ergebnis
+
+Regeln fuer Testfaelle:
+- Beschreibung: KURZ (max. 6-8 Woerter), IMMER mit einem Kategorie-Praefix.
+- Vorbedingungen: IMMER als nummerierte Liste ("1. [Bedingung] 2. [Bedingung]"). Nutze **Fettdruck** fuer Schluesselwerte.
+- Testschritte: IMMER als nummerierte Liste ("1. [Schritt] 2. [Schritt]").
+- Erwartetes Ergebnis: Konkretes Systemverhalten. Nutze **[Erwartete Systemmeldung]** als Platzhalter wenn unklar.
+- KEINE erfundenen Testdaten. Verwende Platzhalter wie [Versichertennr.], [Betrag], [Datum].
+- KEINE Login-/Authentifizierungs-Testfaelle. Der Tester ist immer angemeldet.
+- Erfinde NIEMALS Fehlermeldungen oder Systemmeldungen.
+
+Kennzeichne jeden Testfall mit GENAU einem Praefix in der Beschreibung:
+- "Positiv - " = Fachlicher Positivfall (Standardpfad, alles korrekt)
+- "Grenzwert - " = Grenzwertpruefung (z.B. exakt an der Altersgrenze)
+- "Negativ - " = Fachlicher Negativfall (Entscheidungslogik fuehrt zur Ablehnung)
+- "Eingangspruefung - " = Fehlende/ungueltige Eingangsvariable
+
+Sortiere die Testfaelle in dieser Reihenfolge: Positiv, Grenzwert, Negativ, Eingangspruefung.
+
+Beispiel:
+Nr.|Beschreibung|Vorbedingungen|Testschritte|Erwartetes Ergebnis
+1|Positiv - Erstattung erfolgreich|1. Versicherter ist **unter 35 Jahre** 2. Vollstaendige Eingabe (Versichertennr. und Betrag) 3. Keine Doppelerfassung|1. Datensatz anlegen 2. Erstattungsprozess starten|Erstattung wird freigegeben. System meldet **[Erwartete Systemmeldung]**
+2|Grenzwert - Alter direkt unter Grenze|1. Versicherter ist **34 Jahre und 364 Tage** alt 2. Vollstaendige Eingabe|1. Datensatz anlegen 2. Erstattung anfordern|Erstattung wird freigegeben
+3|Negativ - Alter nicht zulaessig|1. Versicherter ist **35 Jahre oder aelter** 2. Vollstaendige Eingabe|1. Datensatz anlegen 2. Erstattungsanfrage ausfuehren|Erstattung wird abgelehnt. System meldet **[Erwartete Systemmeldung]**
+4|Eingangspruefung - Betrag fehlt|1. Versicherter ist unter 35 Jahre 2. Betrag-Feld ist **leer**|1. Datensatz anlegen 2. Speichern|Validierungsfehler: Betrag ist Pflichtfeld
 
 Halte alles konkret und pruefbar. Keine generischen Aussagen.
 
 Ausgabeformat:
 
 AKZEPTANZKRITERIEN:
-1. Die Anforderung ist erfuellt, wenn **[Kernaussage]** ...
-2. ...
+Nr.|Kriterium|Bedingung (Wenn...)|Erwartetes Ergebnis (Dann...)
+1|...|...|...
+2|...|...|...
 
 TESTFAELLE:
-Nr.|ID|Beschreibung|Vorbedingung|Aktion|Erwartetes Ergebnis|Prioritaet
-1|TF-001|...|...|...|...|...
+Nr.|Beschreibung|Vorbedingungen|Testschritte|Erwartetes Ergebnis
+1|Positiv - ...|1. ... 2. ...|1. ... 2. ...|...
+2|Grenzwert - ...|1. ...|1. ...|...
 ...`;
 
 /* System-Prompt fuer IST-Modus */
@@ -1091,7 +1188,19 @@ Ausgabeformat fuer jede Antwort:
 TITEL: [Kurzbezeichnung des Prozesses]
 
 IST-TEXT:
-[Fliesstext-Beschreibung des Prozesses. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter. 5-15 Saetze. Strukturiert und verstaendlich. Jeder Pruefschritt muss klar beschreiben was bei Ja und was bei Nein passiert.]
+
+**Prozessausloeser:**
+[Was loest den Prozess aus? Wer/was startet ihn? 1-3 Saetze.]
+
+**Bearbeitungsschritte:**
+[Kurze Zusammenfassung des Ablaufs in 2-4 Saetzen. KEINE Einzelschritte auflisten – die Details stehen in der IST-TABELLE. Beschreibe den Gesamtablauf ueberblicksartig: Wer bearbeitet, welche Systeme sind beteiligt, welche Arten von Pruefungen finden statt. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter.]
+
+**Output:**
+[Was ist das Ergebnis des Prozesses? Welches Dokument, welche Aktion, welcher Status entsteht? 1-3 Saetze.]
+
+[Optional – nur wenn relevant:]
+**Ablehnungen / Sonderfaelle:**
+[Wann wird ein Vorgang abgelehnt? Welche Sonderfaelle gibt es? Nur ausfuellen wenn im Prozess tatsaechlich Ablehnungen oder Sonderfaelle existieren.]
 
 IST-TABELLE:
 Nr.|Bearbeitungsschritt|Erlaeuterung
@@ -1165,7 +1274,19 @@ Ausgabeformat fuer jede Antwort:
 TITEL: [Kurzbezeichnung des Prozesses]
 
 IST-TEXT:
-[Fliesstext-Beschreibung des Prozesses. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter. 3-10 Saetze. Klar und linear: Schritt fuer Schritt von Ausloeser bis Ergebnis.]
+
+**Prozessausloeser:**
+[Was loest den Prozess aus? Wer/was startet ihn? 1-2 Saetze.]
+
+**Bearbeitungsschritte:**
+[Kurze Zusammenfassung des Ablaufs in 1-3 Saetzen. KEINE Einzelschritte auflisten – die Details stehen in der IST-TABELLE. Beschreibe ueberblicksartig wer was tut und welche Systeme beteiligt sind. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter.]
+
+**Output:**
+[Was ist das Ergebnis des Prozesses? 1-2 Saetze.]
+
+[Optional – nur wenn relevant:]
+**Ablehnungen / Sonderfaelle:**
+[Nur ausfuellen wenn im Prozess tatsaechlich einfache Ablehnungen existieren.]
 
 IST-TABELLE:
 Nr.|Bearbeitungsschritt|Erlaeuterung
@@ -1358,7 +1479,7 @@ RUECKFRAGEN:
 
 /* ═══ STATE ═══ */
 let apiToken='',selectedMode='',reqType='',msgs=[],isRunning=false,currentPhase=0,sparringCount=0;
-let docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};
+let docState={titel:'',ist:'',istTab:'',soll:'',sollTab:'',kz:'',ak:'',tf:'',open:''};
 /* BUGFIX: Separate Variable fuer tatsaechliche TF-Daten (wird nicht durch Display-Text ueberschrieben) */
 let tfRawData='';
 const PHASES=[{label:'Einstieg'},{label:'Verstehen'},{label:'Schaerfen'},{label:'Strukturieren'},{label:'Absichern'}];
@@ -1450,14 +1571,41 @@ function renderMd(text){
   h=h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
   /* Kursiv: *Text* (einzelne Sterne, z.B. *Ja*, *Nein*) */
   h=h.replace(/\*([^*\s][^*\n]*?)\*/g,'<em>$1</em>');
-  const lines=h.split('\n');let out='',inList=false;
+  const lines=h.split('\n');let out='',inUl=false,inOl=false,inSubUl=false;
   for(const line of lines){
-    const m=line.match(/^(\s*)[-*\u2022]\s+(.+)/);
-    if(m){if(!inList){out+='<ul>';inList=true;}out+='<li>'+m[2]+'</li>';}
-    else{if(inList){out+='</ul>';inList=false;}if(line.trim())out+='<p>'+line+'</p>';}
+    /* Bullet/Dash-Zeilen: -, –, *, • am Anfang */
+    const ul=line.match(/^(\s*)[-\u2013\u2014*\u2022]\s+(.+)/);
+    const ol=line.match(/^(\s*)\d+\.\s+(.+)/);
+    if(ul){
+      if(inOl){
+        /* Verschachtelte Sub-Liste innerhalb eines OL-Items (z.B. Ja/Nein-Logik) */
+        if(!inSubUl){
+          /* Letztes </li> entfernen, Sub-UL innerhalb des LI oeffnen */
+          out=out.replace(/<\/li>$/,'');
+          out+='<ul class="md-sub">';
+          inSubUl=true;
+        }
+        out+='<li>'+ul[2]+'</li>';
+      } else {
+        if(!inUl){out+='<ul>';inUl=true;}
+        out+='<li>'+ul[2]+'</li>';
+      }
+    } else if(ol){
+      if(inSubUl){out+='</ul></li>';inSubUl=false;}
+      if(inUl){out+='</ul>';inUl=false;}
+      if(!inOl){out+='<ol class="md-ol">';inOl=true;}
+      out+='<li>'+ol[2]+'</li>';
+    } else {
+      if(inSubUl){out+='</ul></li>';inSubUl=false;}
+      if(inUl){out+='</ul>';inUl=false;}
+      if(inOl){out+='</ol>';inOl=false;}
+      if(line.trim())out+='<p>'+line+'</p>';
+    }
   }
-  if(inList)out+='</ul>';
-  if(!out.includes('<p>')&&!out.includes('<ul>'))out=h.replace(/\n/g,'<br>');
+  if(inSubUl)out+='</ul></li>';
+  if(inUl)out+='</ul>';
+  if(inOl)out+='</ol>';
+  if(!out.includes('<p>')&&!out.includes('<ul>')&&!out.includes('<ol>'))out=h.replace(/\n/g,'<br>');
   return out;
 }
 
@@ -1497,14 +1645,34 @@ function mdToClipboardHtml(text){
   /* Kursiv: *Text* (einzelne Sterne, z.B. *Ja*, *Nein*) */
   h = h.replace(/\*([^*\s][^*\n]*?)\*/g, '<em>$1</em>');
   const lines = h.split('\n');
-  let out = '', inList = false;
+  let out = '', inUl = false, inOl = false, inSubUl = false;
   for(const line of lines){
-    const m = line.match(/^(\s*)[-*\u2022]\s+(.+)/);
-    if(m){ if(!inList){out+='<ul>';inList=true;} out+='<li>'+m[2]+'</li>'; }
-    else { if(inList){out+='</ul>';inList=false;} if(line.trim()) out+='<p>'+line+'</p>'; }
+    const ul = line.match(/^(\s*)[-\u2013\u2014*\u2022]\s+(.+)/);
+    const ol = line.match(/^(\s*)\d+\.\s+(.+)/);
+    if(ul){
+      if(inOl){
+        if(!inSubUl){ out=out.replace(/<\/li>$/,''); out+='<ul>'; inSubUl=true; }
+        out+='<li>'+ul[2]+'</li>';
+      } else {
+        if(!inUl){out+='<ul>';inUl=true;}
+        out+='<li>'+ul[2]+'</li>';
+      }
+    } else if(ol){
+      if(inSubUl){out+='</ul></li>';inSubUl=false;}
+      if(inUl){out+='</ul>';inUl=false;}
+      if(!inOl){out+='<ol>';inOl=true;}
+      out+='<li>'+ol[2]+'</li>';
+    } else {
+      if(inSubUl){out+='</ul></li>';inSubUl=false;}
+      if(inUl){out+='</ul>';inUl=false;}
+      if(inOl){out+='</ol>';inOl=false;}
+      if(line.trim()) out+='<p>'+line+'</p>';
+    }
   }
-  if(inList) out+='</ul>';
-  if(!out.includes('<p>') && !out.includes('<ul>')) out = '<p>'+h.replace(/\n/g,'<br>')+'</p>';
+  if(inSubUl)out+='</ul></li>';
+  if(inUl) out+='</ul>';
+  if(inOl) out+='</ol>';
+  if(!out.includes('<p>') && !out.includes('<ul>') && !out.includes('<ol>')) out = '<p>'+h.replace(/\n/g,'<br>')+'</p>';
   return out;
 }
 
@@ -1575,7 +1743,8 @@ function renderIstTextStructured(text){
 
   if(blocks.length>=2) return renderBlocks(blocks);
 
-  if(text.length>200){
+  /* v2.3: Niedrigerer Schwellwert – auch kürzere Texte strukturieren */
+  if(text.length>80){
     const paragraphs=text.split(/\n\s*\n/).filter(p=>p.trim());
     if(paragraphs.length>=2){
       const autoBlocks=paragraphs.map((para,idx)=>({label:guessBlockLabel(para,idx), content:para.trim()}));
@@ -1589,14 +1758,14 @@ function renderIstTextStructured(text){
 function splitIstIntoBlocks(text){
   const lines=text.split('\n');
   const blocks=[];
-  let curLabel='', curLines=[];
+  let curLabel='', curLines=[], inNumberedList=false;
 
   function flush(){
     if(curLines.length>0||curLabel){
       const content=curLines.join('\n').trim();
       if(content) blocks.push({label:curLabel, content:content});
     }
-    curLabel='';curLines=[];
+    curLabel='';curLines=[];inNumberedList=false;
   }
 
   for(let i=0;i<lines.length;i++){
@@ -1608,8 +1777,16 @@ function splitIstIntoBlocks(text){
       const nextIsBoldHeader=next.match(/^\*\*(.+?)\*\*\s*[:.]?\s*/);
       const nextIsCapsHeader=next.match(/^([A-ZÄÖÜ][a-zäöüß]*(?:[-\s][A-Za-zäöüß]+){0,3})\s*:\s*/);
       const nextIsStarLine=next.match(/^\*\s+[^*]/);
+      const nextIsNumbered=next.match(/^\d+\.\s+/);
       const curLen=curLines.join(' ').length;
+      /* v2.3: Auch bei Uebergang zu nummerierter Liste flushen */
       if(nextIsBoldHeader||nextIsCapsHeader||(curLen>100 && (nextIsStarLine || next.length>20))){
+        flush();
+      } else if(inNumberedList && !nextIsNumbered && next.length>20){
+        /* Ende der nummerierten Liste → neuer Block */
+        flush();
+      } else if(!inNumberedList && nextIsNumbered && curLen>40){
+        /* Prosa geht in nummerierte Liste ueber → flushen */
         flush();
       } else if(curLines.length>0){
         curLines.push('');
@@ -1631,6 +1808,17 @@ function splitIstIntoBlocks(text){
         continue;
       }
     }
+
+    /* v2.3: Erkennung Beginn nummerierte Liste (z.B. "1. **Versicherungsverhältnis**") */
+    const isNumberedLine=trimmed.match(/^\d+\.\s+/);
+    if(isNumberedLine && !inNumberedList && curLines.join(' ').length>40){
+      flush();
+      curLabel='Pruefschritte';
+      inNumberedList=true;
+      curLines=[trimmed];
+      continue;
+    }
+    if(isNumberedLine) inNumberedList=true;
 
     if(trimmed.match(/^\*\s+[^*]/) && curLines.join(' ').length>80 && !curLabel.match(/spezial|sonder|hinweis/i)){
       flush();
@@ -1661,6 +1849,7 @@ function splitIstIntoBlocks(text){
 function guessBlockLabel(text, index){
   const t=text.toLowerCase();
   if(index===0 && t.match(/prozess\s*start|einreichung|eingang|ausloes|formular|portal|der prozess startet/)) return 'Prozessausloeser';
+  if(index===0 && t.match(/ziel|kuenftig|zuk[uü]nftig|soll.*zustand|geplant|automatisier/)) return 'Zielbild';
   if(t.match(/gesamt.*bearbeitung|durchschnitt|im schnitt|dauer|pro jahr.*eingereicht|fallvolumen/)) return 'Bearbeitungszeiten';
   if(t.match(/ergibt.*pr[uü]e?fung.*nein|weitergeleit.*ablehnung|kb.*ablehnung|ablehn.*telefon|kundenberater.*gespr[aä]ch/)) return 'Ablehnungsprozess';
   if(t.match(/alter.*weitergeleitet.*kundenberater|kundenberater.*ablehnungsgespr/)) return 'Ablehnungsprozess';
@@ -1669,6 +1858,9 @@ function guessBlockLabel(text, index){
   if(t.match(/brief|serienbrief|erstattungsbrief|automatisiert.*brief|versendet.*kunde/)) return 'Benachrichtigung';
   if(t.match(/spezial|vip|koe.*13|einmalzahl|sonderfall/)) return 'Spezialfaelle';
   if(t.match(/kennzahl|kpi|minuten.*fall|bearbeitungszeit/)) return 'Kennzahlen';
+  if(t.match(/automatisier|ohne.*manuell|vollautomatisch|maschinell/)) return 'Automatisierung';
+  if(t.match(/schnittstelle|api|integration|anbindung|daten.*austausch/)) return 'Schnittstellen';
+  if(t.match(/vorteil|nutzen|einspar|effizienz|beschleunig/)) return 'Erwarteter Nutzen';
   return '';
 }
 
@@ -1681,6 +1873,9 @@ function categorizeBlock(label, content){
   if(l.match(/erfassung|system|21c|helic|buchung|dokumentation/)) return 'steps';
   if(l.match(/pruef|prüf|validier|kontroll|check/)) return 'steps';
   if(l.match(/kennzahl|kpi|metrik|volumen|bearbeitungszeit/)) return 'special';
+  /* v2.3: SOLL-spezifische Labels */
+  if(l.match(/zielbild|automatisier|schnittstelle|integration/)) return 'trigger';
+  if(l.match(/nutzen|vorteil|einspar|effizienz/)) return 'output';
   if(c.match(/prozessausloes|eingang.*formular|einreichung.*ueber|der prozess startet/)) return 'trigger';
   if(c.match(/brief|serienbrief|benachricht|erstattungsbrief|automatisiert.*brief/)) return 'output';
   if(c.match(/vip|koe.*13|einmalzahl|spezial|sonderfall|weitergeleit/)) return 'special';
@@ -1698,13 +1893,15 @@ function getSectionIcon(cat){
   }
 }
 
-function renderIstOutputCard(textContent, tableContent){
+function renderIstOutputCard(textContent, tableContent, tableId){
   const hasText=textContent&&textContent!=='[Noch nicht erfasst]';
   const hasTable=tableContent&&tableContent!=='[Noch nicht erfasst]';
   if(!hasText&&!hasTable) return '';
 
+  const tId=tableId||('ist-tab-inline-'+Date.now());
+
   if(hasText&&!hasTable) return renderIstTextStructured(textContent);
-  if(!hasText&&hasTable) return renderIstTable(tableContent);
+  if(!hasText&&hasTable) return `<div id="${tId}">${renderIstTable(tableContent)}</div>`;
 
   const tabId='ist-tab-'+Date.now();
   let html=`<div class="ist-output-tabs">
@@ -1712,7 +1909,7 @@ function renderIstOutputCard(textContent, tableContent){
     <button class="ist-output-tab" onclick="switchIstTab('${tabId}','table',this)">Prozesstabelle</button>
   </div>`;
   html+=`<div id="${tabId}-text" class="ist-output-pane active">${renderIstTextStructured(textContent)}</div>`;
-  html+=`<div id="${tabId}-table" class="ist-output-pane">${renderIstTable(tableContent)}</div>`;
+  html+=`<div id="${tabId}-table" class="ist-output-pane"><div id="${tId}">${renderIstTable(tableContent)}</div></div>`;
   return html;
 }
 
@@ -1804,18 +2001,54 @@ function toggleIstExample(mode){
 /* ═══ LIVING DOC (Allgemein) ═══ */
 function updateDoc(field,content,status){
   docState[field]=content;
-  const el=g('dc-'+field),st=g('dss-'+field);if(!el)return;
+  const el=g('dc-'+field),st=g('dss-'+field);
+  /* istTab/sollTab haben keine eigenen DOM-Sections mehr – nur Daten speichern + Parent re-rendern */
+  if(field==='istTab'||field==='sollTab'){
+    const parentField = field==='istTab' ? 'ist' : 'soll';
+    if(docState[parentField]) renderDocSection(parentField);
+    return;
+  }
+  if(!el)return;
   const empty=!content||content==='[Noch nicht erfasst]'||content==='Noch nicht erfasst.';
   if(!empty){
-    el.className='doc-sec-content';el.innerHTML=renderMd(content);
+    el.className='doc-sec-content';
+    el.style.padding='';
+    /* v2.3: AK als Tabelle, IST/SOLL mit Tabs (Fliesstext+Prozesstabelle) */
+    if(field==='ak') el.innerHTML=renderAkAsTable(content);
+    else if(field==='ist'||field==='soll'){
+      renderDocSection(field);
+      /* padding entfernen wenn Tabs gerendert werden */
+    }
+    else el.innerHTML=renderMd(content);
     if(st){st.className='doc-sec-status '+(status||'draft');st.textContent=status==='done'?'Steht':'Entwurf';}
   }else{
     el.className='doc-sec-content empty';
+    el.style.padding='';
     const ph={titel:'Wird im Sparring erarbeitet',ist:'Aktueller Zustand noch nicht erfasst',soll:'Gewuenschter Zustand noch nicht erfasst',kz:'Fallzahlen und Aufwaende noch offen',ak:'Werden nach IST/SOLL generiert',tf:'Werden nach IST/SOLL generiert'};
     el.textContent=ph[field]||'';
     if(st){st.className='doc-sec-status empty';st.textContent='Offen';}
   }
   checkReady();
+}
+
+/* Hilfsfunktion: IST/SOLL Section mit Tabs rendern wenn Tabelle vorhanden */
+function renderDocSection(field){
+  const el=g('dc-'+field);if(!el)return;
+  const text=docState[field];
+  const tabField = field==='ist' ? 'istTab' : 'sollTab';
+  const tabData=docState[tabField];
+  el.className='doc-sec-content';
+  if(tabData){
+    /* Tabs: Fliesstext + Prozesstabelle (wie IST-Modus) */
+    el.style.padding='0';
+    el.innerHTML=renderIstOutputCard(text, tabData);
+  } else if(text && text.length>80){
+    el.style.padding='';
+    el.innerHTML=renderIstTextStructured(text);
+  } else {
+    el.style.padding='';
+    el.innerHTML=renderMd(text||'');
+  }
 }
 
 function checkReady(){
@@ -1860,7 +2093,32 @@ function renderIstTable(raw){
   let data=lines.slice(1);
   data=data.filter(l=>!l.match(/^[\s|:-]+$/));
   /* Hilfsfunktion: HTML-Escape + Markdown-Fett/Kursiv in Tabellenzellen */
-  const cellHtml=t=>{let s=escH(t);s=s.replace(/&lt;br\s*\/?&gt;/gi,'<br>');s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');return s;};
+  /* v2.3: Ja/Nein-Logik als Bulletpoints mit Fettdruck */
+  const cellHtml=t=>{
+    let s=escH(t);
+    s=s.replace(/&lt;br\s*\/?&gt;/gi,'<br>');
+    s=s.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+    s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');
+    /* Ja/Nein-Logik erkennen und als Bulletpoints darstellen */
+    if(s.match(/\b(Ja|Nein)\b/i) && s.match(/[→\u2192;]/)){
+      /* Semikolon-getrennte Teile (z.B. "Ja → weiter zu 3; Nein → Ablehnung") */
+      const parts=s.split(/;\s*/);
+      if(parts.length>=2){
+        s='<ul class="ist-logic-list">';
+        parts.forEach(p=>{
+          /* Ja/Nein am Anfang fett machen */
+          let item=p.trim();
+          item=item.replace(/^(Ja|Nein)\b/i, '<strong>$1</strong>');
+          if(item) s+='<li>'+item+'</li>';
+        });
+        s+='</ul>';
+      } else {
+        /* Einzelne Zeile: trotzdem Ja/Nein fett machen */
+        s=s.replace(/\b(Ja|Nein)\b/gi, '<strong>$1</strong>');
+      }
+    }
+    return s;
+  };
   let h='<div class="tf-table-wrap"><table class="ist-proc-table"><thead><tr>';
   headers.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
   h+='</tr></thead><tbody>';
@@ -1901,6 +2159,7 @@ function parseBewertung(raw){
 function parseKIA(text){
   const lines=text.split('\n');
   let titel='',ist='',soll='',kz='',analyse='',open='',ak='',tf='',bewertungRaw='';
+  let istTab='',sollTab='';
   let questions=[],mode=null;
 
   function norm(s){
@@ -1911,7 +2170,9 @@ function parseKIA(text){
 
   const H_TITEL   = [/^TITEL\s*:/i];
   const H_IST     = [/^IST[\s-]*(?:BESCHREIBUNG|ZUSTAND|SITUATION)?\s*:/i, /^IST\s*:/i];
+  const H_IST_TAB = [/^IST[\s-]*TABELLE\s*:/i];
   const H_SOLL    = [/^SOLL[\s-]*(?:BESCHREIBUNG|ZUSTAND)?\s*:/i, /^SOLL\s*:/i];
+  const H_SOLL_TAB= [/^SOLL[\s-]*TABELLE\s*:/i];
   const H_KZ      = [/^KENNZAHLEN\s*:/i];
   const H_BEWERTUNG = [/^BEWERTUNG\s*:/i];
   const H_ANALYSE = [/^ANALYSE\s*:/i];
@@ -1930,6 +2191,9 @@ function parseKIA(text){
       titel = cl.replace(/^TITEL\s*:\s*/i,'').trim();
       mode = null; continue;
     }
+    /* IST-TABELLE und SOLL-TABELLE VOR IST/SOLL prüfen (sonst false match) */
+    if(isHeader(nCl, H_IST_TAB)){ mode = 'istTab'; continue; }
+    if(isHeader(nCl, H_SOLL_TAB)){ mode = 'sollTab'; continue; }
     if(isHeader(nCl, H_IST)){
       const v = cl.replace(/^IST[\s\-A-Za-z]*:\s*/i,'').trim();
       if(v) ist = v;
@@ -1960,8 +2224,26 @@ function parseKIA(text){
     if(isHeader(nCl, H_AK)){ mode = 'ak'; continue; }
     if(isHeader(nCl, H_TF)){ mode = 'tf'; continue; }
 
-    if(mode==='ist') ist += (ist?'\n':'') + raw;
-    else if(mode==='soll') soll += (soll?'\n':'') + raw;
+    if(mode==='ist'){
+      /* Pipe-Zeilen im IST-Text automatisch in istTab umleiten */
+      const pipeCount=(raw.match(/\|/g)||[]).length;
+      if(pipeCount>=2 && !raw.match(/^[\s|:-]+$/)){
+        istTab += (istTab?'\n':'') + raw;
+      } else {
+        ist += (ist?'\n':'') + raw;
+      }
+    }
+    else if(mode==='soll'){
+      /* Pipe-Zeilen im SOLL-Text automatisch in sollTab umleiten */
+      const pipeCount=(raw.match(/\|/g)||[]).length;
+      if(pipeCount>=2 && !raw.match(/^[\s|:-]+$/)){
+        sollTab += (sollTab?'\n':'') + raw;
+      } else {
+        soll += (soll?'\n':'') + raw;
+      }
+    }
+    else if(mode==='istTab') istTab += (istTab?'\n':'') + raw;
+    else if(mode==='sollTab') sollTab += (sollTab?'\n':'') + raw;
     else if(mode==='kz') kz += (kz?'\n':'') + raw;
     else if(mode==='bewertung') bewertungRaw += (bewertungRaw?'\n':'') + raw;
     else if(mode==='analyse') analyse += (analyse?'\n':'') + raw;
@@ -1978,12 +2260,12 @@ function parseKIA(text){
     else if(mode==='tf') tf += (tf?'\n':'') + raw;
   }
 
-  console.log('parseKIA:', {titel:!!titel,ist:!!ist,soll:!!soll,kz:!!kz,analyse:!!analyse,q:questions.length});
+  console.log('parseKIA:', {titel:!!titel,ist:!!ist,istTab:!!istTab,soll:!!soll,sollTab:!!sollTab,kz:!!kz,analyse:!!analyse,q:questions.length});
 
   /* Bewertung parsen: Zeilen wie "IST-Prozess beschrieben: JA" */
   const bewertung = parseBewertung(bewertungRaw);
 
-  return{titel,ist,soll,kz,analyse,questions,open,ak,tf,bewertung};
+  return{titel,ist,istTab,soll,sollTab,kz,analyse,questions,open,ak,tf,bewertung};
 }
 
 /* IST-Modus Parser */
@@ -2167,7 +2449,9 @@ async function callAndRender(){
     const p=parseKIA(r);
     if(p.titel)updateDoc('titel',p.titel,'draft');
     if(p.ist)updateDoc('ist',p.ist,p.ist!=='[Noch nicht erfasst]'?'draft':null);
+    if(p.istTab)updateDoc('istTab',p.istTab,'draft');
     if(p.soll)updateDoc('soll',p.soll,p.soll!=='[Noch nicht erfasst]'?'draft':null);
+    if(p.sollTab)updateDoc('sollTab',p.sollTab,'draft');
     if(p.kz)updateDoc('kz',p.kz,p.kz!=='Noch nicht erfasst.'?'draft':null);
     if(p.kz&&p.kz!=='Noch nicht erfasst.')g('ds-kz').style.display='';
     const html=renderKIAMsg(p, r);
@@ -2240,12 +2524,17 @@ async function submitIstAnswers(bid,cnt){
     const qT=inp?.closest('.rq-item')?.querySelector('.rq-q')?.textContent?.replace(/^Frage \d+\s*/,'').trim()||'';
     parts.push(`Frage ${i+1}: ${qT}\nAntwort: ${v||'[Keine Antwort]'}`);if(inp){inp.disabled=true;inp.classList.add('done');}}
   if(!any){showToast('Bitte mindestens eine Frage beantworten.','warn');return;}
-  const t=parts.join('\n\n');addMsgIst('user',t);istMsgs.push({role:'user',content:t});istSparringCount++;await callAndRenderIst();
+  const t=parts.join('\n\n');addMsgIst('user',t);
+  const updateHint='\n\n[SYSTEM-HINWEIS: Verarbeite die Antworten und gib bitte die aktualisierten Sektionen (IST-TEXT, IST-TABELLE, KENNZAHLEN) komplett mit aus.]';
+  istMsgs.push({role:'user',content:t+updateHint});istSparringCount++;await callAndRenderIst();
 }
 
 g('chatInputIst').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChatIst();}});
 g('chatInputIst').addEventListener('input',function(){autoResize(this);});
-async function sendChatIst(){const t=g('chatInputIst').value.trim();if(!t||isRunning)return;g('chatInputIst').value='';g('chatInputIst').style.height='auto';addMsgIst('user',t);istMsgs.push({role:'user',content:t});istSparringCount++;await callAndRenderIst();}
+async function sendChatIst(){const t=g('chatInputIst').value.trim();if(!t||isRunning)return;g('chatInputIst').value='';g('chatInputIst').style.height='auto';addMsgIst('user',t);
+  /* v2.3: KIA bekommt Hinweis, strukturierte Sektionen mit Korrekturen erneut auszugeben */
+  const updateHint=istSparringCount>=1?'\n\n[SYSTEM-HINWEIS: Wenn diese Eingabe Korrekturen oder Ergaenzungen enthaelt, gib bitte die aktualisierten Sektionen (IST-TEXT, IST-TABELLE, KENNZAHLEN) komplett mit aus, damit das Living Document aktualisiert werden kann.]':'';
+  istMsgs.push({role:'user',content:t+updateHint});istSparringCount++;await callAndRenderIst();}
 
 /* ═══ IST Finalisieren ═══ */
 function finalizeIst(){
@@ -2273,23 +2562,24 @@ function finalizeIst(){
     c.appendChild(card);
   }
 
-  /* Kombinierte IST-Karte (Text + Tabelle mit Tabs) – NEU: Mehrere Kopier-Buttons */
+  /* Kombinierte IST-Karte (Text + Tabelle mit Tabs) – v2.3: DOM-basiertes Copy */
   const hasText=istState.text && istState.text!=='[Noch nicht erfasst]';
   const hasTable=istState.tabelle && istState.tabelle!=='[Noch nicht erfasst]';
   if(hasText||hasTable){
     num++;
+    const istTableId='ist-final-tab-'+Date.now();
     const card=document.createElement('div');card.className='sec-card';
-    const body=renderIstOutputCard(istState.text, istState.tabelle);
-    /* Kopier-Buttons: "Alles" (Text+Tabelle), und optional separater "Tabelle" */
+    const body=renderIstOutputCard(istState.text, istState.tabelle, istTableId);
+    /* Kopier-Buttons: "Alles" (Text+Tabelle), und optional separater Tabelle-Button */
     let copyBtns = '<div class="sec-card-copy-group">';
     if(hasText && hasTable){
-      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text+tabelle\',this)" type="button">Alles kopieren</button>';
+      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text+tabelle\',this,\''+istTableId+'\')" type="button">Alles kopieren</button>';
       copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text\',this)" type="button">Nur Text</button>';
-      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'tabelle\',this)" type="button">Nur Tabelle</button>';
+      copyBtns += '<button class="sec-card-copy" onclick="copyTfFromChat(\''+istTableId+'\',this)" type="button">Nur Tabelle</button>';
     } else if(hasText){
       copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text\',this)" type="button">Kopieren</button>';
     } else {
-      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'tabelle\',this)" type="button">Kopieren</button>';
+      copyBtns += '<button class="sec-card-copy" onclick="copyTfFromChat(\''+istTableId+'\',this)" type="button">Kopieren</button>';
     }
     copyBtns += '</div>';
     card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">${num}</div><div class="sec-card-title">IST-Beschreibung</div>${copyBtns}</div><div class="sec-card-body" style="padding:0;">${body}</div>`;
@@ -2309,27 +2599,48 @@ function finalizeIst(){
 
 /**
  * IST-Modus: Einzelne Sektion kopieren (Rich-Copy fuer Confluence).
- * Unterstuetzt jetzt auch 'text+tabelle' als kombinierten Key.
+ * v2.3: DOM-basiertes Tabellen-Kopieren (wie copyTfFromChat) fuer <br>-Erhalt.
+ * Optional tableId fuer "text+tabelle"-Modus.
  */
-function copyIstSec(key, btn){
+function copyIstSec(key, btn, tableId){
   let plain = '', html = '';
 
+  /* Hilfsfunktion: Tabelle aus DOM lesen (wie copyTfFromChat) */
+  function tableFromDom(containerId){
+    const container=containerId?g(containerId):null;
+    const table=container?container.querySelector('table'):null;
+    if(!table) return {plain:pipeTableToPlaintext(istState.tabelle||''), html:pipeTableToClipboardHtml(istState.tabelle||'')};
+    const cellToPlain=td=>td.innerHTML.replace(/<br\s*\/?>/gi,'\n').replace(/<[^>]+>/g,'').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').trim();
+    const cellToHtml=td=>{let h=td.innerHTML;h=h.replace(/<strong>/g,'<b>').replace(/<\/strong>/g,'</b>');return h.trim();};
+    const ths=table.querySelectorAll('thead th');
+    const headers=[];ths.forEach(th=>headers.push(th.textContent.trim()));
+    const pRows=[], hRows=[];
+    table.querySelectorAll('tbody tr').forEach(row=>{
+      if(row.style.display==='none')return;
+      const pC=[], hC=[];
+      row.querySelectorAll('td').forEach(td=>{pC.push(cellToPlain(td));hC.push(cellToHtml(td));});
+      pRows.push(pC);hRows.push(hC);
+    });
+    let p=headers.join('\t')+'\n'; pRows.forEach(r=>{p+=r.join('\t')+'\n';});
+    let h='<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;">';
+    h+='<thead><tr>';headers.forEach(hd=>{h+='<th style="background-color:#002B52;color:#ffffff;padding:8px 12px;text-align:left;font-weight:bold;border:1px solid #cbd5e0;">'+escH(hd)+'</th>';});
+    h+='</tr></thead><tbody>';
+    hRows.forEach((r,idx)=>{const bg=idx%2===0?'#ffffff':'#f7fafc';h+='<tr>';r.forEach(c=>{h+='<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:'+bg+';vertical-align:top;">'+c+'</td>';});h+='</tr>';});
+    h+='</tbody></table>';
+    return {plain:p, html:h};
+  }
+
   if(key === 'text+tabelle'){
-    /* Text und Tabelle zusammen kopieren */
     if(istState.text && istState.text !== '[Noch nicht erfasst]'){
       plain += stripMd(istState.text);
       html += '<h3>IST-Beschreibung</h3>' + mdToClipboardHtml(istState.text);
     }
     if(istState.tabelle && istState.tabelle !== '[Noch nicht erfasst]'){
-      plain += '\n\n' + pipeTableToPlaintext(istState.tabelle);
-      html += '<h3>Prozesstabelle</h3>' + pipeTableToClipboardHtml(istState.tabelle);
+      const t=tableFromDom(tableId);
+      plain += '\n\n' + t.plain;
+      html += '<h3>Prozesstabelle</h3>' + t.html;
     }
-  } else if(key === 'tabelle'){
-    /* Nur Tabelle kopieren – als echte HTML-Tabelle */
-    plain = pipeTableToPlaintext(istState.tabelle || '');
-    html = pipeTableToClipboardHtml(istState.tabelle || '');
   } else if(key === 'text'){
-    /* Nur Fliesstext kopieren – mit Formatierung */
     plain = stripMd(istState.text || '');
     html = mdToClipboardHtml(istState.text || '');
   } else {
@@ -2342,7 +2653,6 @@ function copyIstSec(key, btn){
     btn.classList.add('copied'); btn.textContent = 'Kopiert';
     setTimeout(()=>{ btn.classList.remove('copied'); btn.textContent = btn.dataset.origLabel || 'Kopieren'; }, 2000);
   });
-  /* Original-Label merken fuer Reset */
   if(!btn.dataset.origLabel) btn.dataset.origLabel = btn.textContent;
 }
 
@@ -2386,22 +2696,49 @@ async function submitAnswers(bid,cnt){
     const qT=inp?.closest('.rq-item')?.querySelector('.rq-q')?.textContent?.replace(/^Frage \d+\s*/,'').trim()||'';
     parts.push(`Frage ${i+1}: ${qT}\nAntwort: ${v||'[Keine Antwort]'}`);if(inp){inp.disabled=true;inp.classList.add('done');}}
   if(!any){showToast('Bitte mindestens eine Frage beantworten.','warn');return;}
-  const t=parts.join('\n\n');addMsg('user',t);msgs.push({role:'user',content:t});sparringCount++;await callAndRender();
+  const t=parts.join('\n\n');addMsg('user',t);
+  const updateHint='\n\n[SYSTEM-HINWEIS: Verarbeite die Antworten und gib bitte die aktualisierten Sektionen (TITEL, IST, SOLL, KENNZAHLEN) komplett mit aus.]';
+  msgs.push({role:'user',content:t+updateHint});sparringCount++;await callAndRender();
 }
 
 g('chatInput').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendChat();}});
 g('chatInput').addEventListener('input',function(){autoResize(this);});
-async function sendChat(){const t=val('chatInput');if(!t||isRunning)return;g('chatInput').value='';g('chatInput').style.height='auto';addMsg('user',t);msgs.push({role:'user',content:t});sparringCount++;await callAndRender();}
+async function sendChat(){const t=val('chatInput');if(!t||isRunning)return;g('chatInput').value='';g('chatInput').style.height='auto';addMsg('user',t);
+  /* v2.3: KIA bekommt Hinweis, strukturierte Sektionen mit Korrekturen erneut auszugeben */
+  const updateHint=sparringCount>=1?'\n\n[SYSTEM-HINWEIS: Wenn diese Eingabe Korrekturen oder Ergaenzungen enthaelt, gib bitte die aktualisierten Sektionen (TITEL, IST, SOLL, KENNZAHLEN) komplett mit aus, damit das Living Document aktualisiert werden kann.]':'';
+  msgs.push({role:'user',content:t+updateHint});sparringCount++;await callAndRender();}
 
 /* ═══ GENERATE AK + TF ═══ */
 async function generateAkTf(){
   if(isRunning)return;
   if(!docState.soll||docState.soll==='[Noch nicht erfasst]'){showToast('Bitte zuerst SOLL erarbeiten.','warn');return;}
   isRunning=true;updatePhase(4);addLoading('chatMessages');
-  const prompt=`Basierend auf folgender Anforderung:\n\nTITEL: ${docState.titel}\n\nIST: ${stripMd(docState.ist)}\n\nSOLL: ${stripMd(docState.soll)}\n\nKENNZAHLEN: ${stripMd(docState.kz)||'Nicht angegeben'}\n\nGeneriere passende Akzeptanzkriterien und Testfaelle.`;
-  try{
-    const r=await callKIA([{role:'user',content:prompt}],SYS_AKTF);removeLoading();
+
+  /* Prompt mit vollstaendigen Daten inkl. Prozesstabellen */
+  let promptParts=[`Basierend auf folgender Anforderung:\n\nTITEL: ${docState.titel}`];
+  promptParts.push(`\nIST:\n${docState.ist}`);
+  if(docState.istTab) promptParts.push(`\nIST-TABELLE:\n${docState.istTab}`);
+  promptParts.push(`\nSOLL:\n${docState.soll}`);
+  if(docState.sollTab) promptParts.push(`\nSOLL-TABELLE:\n${docState.sollTab}`);
+  promptParts.push(`\nKENNZAHLEN: ${docState.kz||'Nicht angegeben'}`);
+  promptParts.push(`\nGeneriere passende Akzeptanzkriterien und Testfaelle. Antworte NUR mit den Tabellen im vorgegebenen Format – keine Einleitung, keine Erklaerung.`);
+  const prompt=promptParts.join('');
+
+  /* Hilfsfunktion: Einzelner Versuch */
+  async function attempt(){
+    const r=await callKIA([{role:'user',content:prompt}],SYS_AKTF);
     const p=parseKIA(r);
+    return {r,p};
+  }
+
+  try{
+    let {r,p}=await attempt();
+    /* Auto-Retry: Wenn AK oder TF leer, einmal wiederholen */
+    if((!p.ak || !p.ak.includes('|')) && (!p.tf || !p.tf.includes('|'))){
+      console.warn('AK/TF leer, Auto-Retry...');
+      ({r,p}=await attempt());
+    }
+    removeLoading();
     if(p.ak){docState.ak=p.ak;updateDoc('ak',p.ak,'draft');g('ds-ak').style.display='';}
     if(p.tf){
       tfRawData=p.tf;
@@ -2410,17 +2747,162 @@ async function generateAkTf(){
       if(tfSt){tfSt.className='doc-sec-status draft';tfSt.textContent='Entwurf';}
       g('ds-tf').style.display='';
     }
-    let html='<h4>Akzeptanzkriterien</h4><div class="rendered">'+renderMd(p.ak||'')+'</div>';
-    html+='<h4>Testfaelle</h4>'+renderTfTable(p.tf||'');
+    /* AK als strukturierte Tabelle */
+    let html='<h4>Akzeptanzkriterien</h4>'+renderAkAsTable(p.ak||'');
+    /* TF mit Filter-Chips + DOM-Copy-Button (wie Test-Assistent) */
+    html+=renderTfWithToolbar(p.tf||'', 'gen');
     html+=`<div style="margin-top:12px;padding:10px 14px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);font-size:12.5px;color:var(--mu);">Du kannst Anpassungen direkt im Chat vorschlagen.</div>`;
     addMsg('kia','',html);msgs.push({role:'assistant',content:r});
-    showToast('Akzeptanzkriterien und Testfaelle generiert','ok');
+    if(p.ak||p.tf) showToast('Akzeptanzkriterien und Testfaelle generiert','ok');
+    else showToast('KIA hat keine Tabellen geliefert. Bitte nochmal versuchen.','warn');
   }catch(e){removeLoading();showToast('Fehler: '+e.message,'err');}
   finally{isRunning=false;}
 }
 
+/**
+ * Erzeugt TF-Tabelle mit Filter-Chips und DOM-Copy-Button.
+ * Wiederverwendbar fuer Allgemein-Modus (generateAkTf, startFinalize) und ueberall wo TF-Tabellen angezeigt werden.
+ */
+function renderTfWithToolbar(raw, prefix){
+  if(!raw||!raw.includes('|'))return '<h4>Testfaelle</h4><div class="rendered">'+renderMd(raw||'')+'</div>';
+  const tfId=(prefix||'tf')+'-'+Date.now();
+  const tfLines=raw.split('\n').filter(l=>l.includes('|'));
+  const hasPos=tfLines.some(l=>/positiv\s*[-–:]/i.test(l));
+  const hasGrenz=tfLines.some(l=>/grenzwert\s*[-–:]/i.test(l));
+  const hasNeg=tfLines.some(l=>/negativ\s*[-–:]/i.test(l));
+  const hasEP=tfLines.some(l=>/eingangspruefung\s*[-–:]/i.test(l)||/eingangsprüfung\s*[-–:]/i.test(l));
+  const hasAnyFilter=hasPos||hasGrenz||hasNeg||hasEP;
+
+  let h='<h4>Testfaelle</h4>';
+  h+=`<div class="tf-toolbar">`;
+  if(hasAnyFilter){
+    h+=`<div class="tf-filter-chips">`;
+    if(hasPos) h+=`<button class="tf-filter-chip on-pos" data-cat="positiv" onclick="filterTfCat('${tfId}',this)" type="button">Positiv</button>`;
+    if(hasGrenz) h+=`<button class="tf-filter-chip on-grenz" data-cat="grenzwert" onclick="filterTfCat('${tfId}',this)" type="button">Grenzwert</button>`;
+    if(hasNeg) h+=`<button class="tf-filter-chip on-neg" data-cat="negativ" onclick="filterTfCat('${tfId}',this)" type="button">Negativ</button>`;
+    if(hasEP) h+=`<button class="tf-filter-chip" data-cat="eingangspruefung" onclick="filterTfCat('${tfId}',this)" type="button">Eingangsprüfung</button>`;
+    h+=`</div><div class="tf-toolbar-sep"></div>`;
+  }
+  h+=`<button class="tf-toolbar-btn" onclick="copyTfFromChat('${tfId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Tabelle kopieren</button>`;
+  h+=`</div>`;
+  h+=`<div id="${tfId}">${renderTfTable(raw)}</div>`;
+  tfRawStore.set(tfId, raw);
+  /* Eingangsprüfung-Zeilen initial ausblenden */
+  if(hasEP){
+    setTimeout(()=>{
+      const container=g(tfId);if(!container)return;
+      container.querySelectorAll('tbody tr').forEach(row=>{
+        const cells=row.querySelectorAll('td');
+        const desc=cells.length>=2?cells[1].textContent.toLowerCase():'';
+        if(desc.startsWith('eingangspruefung')||desc.startsWith('eingangsprüfung'))row.style.display='none';
+      });
+    },50);
+  }
+  return h;
+}
+
+/* ═══ AKZEPTANZKRITERIEN ALS TABELLE ═══ */
+
+/**
+ * v2.3: Wandelt Akzeptanzkriterien in eine strukturierte Tabelle.
+ * Primaer: Pipe-Tabelle (Nr|Kriterium|Bedingung|Ergebnis) direkt aus KIA.
+ * Fallback: Nummerierte Items parsen und in Tabelle umwandeln.
+ */
+function renderAkAsTable(text){
+  if(!text)return'';
+
+  const akId='ak-'+Date.now();
+  const cellE=t=>escH(stripMd(t));
+
+  /* === Primaer: Pipe-Tabelle erkennen === */
+  const pipeLines=text.split('\n').filter(l=>l.includes('|') && l.split('|').length>=3);
+  if(pipeLines.length>=2){
+    /* Header-Zeile und Daten extrahieren */
+    let headers=[], dataLines=pipeLines;
+    if(pipeLines[0].match(/Nr|Kriterium|Bedingung|Ergebnis/i)){
+      headers=pipeLines[0].split('|').map(c=>c.trim()).filter(c=>c);
+      dataLines=pipeLines.slice(1);
+    } else {
+      headers=['Nr.','Kriterium','Bedingung','Erwartetes Ergebnis'];
+    }
+    dataLines=dataLines.filter(l=>!l.match(/^[\s|:-]+$/));
+    if(dataLines.length>0){
+      const colCount=headers.length;
+      /* Spaltenbreiten */
+      let colgroup='<colgroup>';
+      if(colCount===4) colgroup+='<col style="width:5%"><col style="width:22%"><col style="width:43%"><col style="width:30%">';
+      else headers.forEach(()=>{colgroup+='<col style="width:'+Math.floor(100/colCount)+'%">';});
+      colgroup+='</colgroup>';
+
+      let h=`<div id="${akId}" class="tf-table-wrap"><table class="ak-table">${colgroup}<thead><tr>`;
+      headers.forEach(hd=>{h+=`<th>${cellE(hd)}</th>`;});
+      h+='</tr></thead><tbody>';
+      dataLines.forEach(line=>{
+        const cells=line.split('|').map(c=>c.trim()).filter(c=>c);
+        h+='<tr>';
+        for(let i=0;i<colCount;i++){
+          const v=cells[i]||'';
+          const cls=i===0?'ak-nr':i===1?'ak-krit':'';
+          h+=`<td${cls?' class="'+cls+'"':''}>${cellE(v)}</td>`;
+        }
+        h+='</tr>';
+      });
+      h+='</tbody></table></div>';
+      h+=`<div style="display:flex;justify-content:flex-end;margin-top:6px;"><button class="tf-toolbar-btn" onclick="copyTfFromChat('${akId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Tabelle kopieren</button></div>`;
+      return h;
+    }
+  }
+
+  /* === Fallback: Nummerierte Items parsen === */
+  const items=[];
+  const lines=text.split('\n');
+  let cur='';
+  for(const line of lines){
+    const m=line.match(/^\s*(\d+)\.\s+(.*)/);
+    if(m){
+      if(cur.trim()) items.push(cur.trim());
+      cur=m[2];
+    } else if(cur && line.trim()){
+      cur+=' '+line.trim();
+    }
+  }
+  if(cur.trim()) items.push(cur.trim());
+  if(items.length===0) return '<div class="rendered">'+renderMd(text)+'</div>';
+
+  let h=`<div id="${akId}" class="tf-table-wrap"><table class="ak-table">`;
+  h+='<colgroup><col style="width:5%"><col style="width:22%"><col style="width:43%"><col style="width:30%"></colgroup>';
+  h+='<thead><tr><th>Nr.</th><th>Kriterium</th><th>Bedingung</th><th>Erwartetes Ergebnis</th></tr></thead><tbody>';
+
+  items.forEach((item,idx)=>{
+    let kriterium='', bedingung='', ergebnis='';
+    /* "Die Anforderung ist erfuellt, wenn" entfernen */
+    let cleaned=item.replace(/^Die Anforderung ist erf[uü]llt,?\s*wenn\s*/i,'').trim();
+    /* Bold als Kriterium-Titel extrahieren */
+    const boldMatch=cleaned.match(/\*\*(.+?)\*\*/);
+    if(boldMatch){
+      kriterium=boldMatch[1];
+      /* Rest aufteilen: vor Bold + nach Bold */
+      const afterBold=cleaned.substring(cleaned.indexOf('**'+boldMatch[1]+'**')+boldMatch[0].length+4).replace(/^\s*[,;]\s*/,'').trim();
+      const beforeBold=cleaned.substring(0,cleaned.indexOf('**')).trim();
+      bedingung=(beforeBold?(beforeBold+' '):'') + afterBold.replace(/\.\s*$/,'');
+      if(!bedingung) bedingung=kriterium;
+      ergebnis='Anforderung erfuellt';
+    } else {
+      /* Kein Bold – kurzen Titel ableiten */
+      kriterium=cleaned.length>50 ? cleaned.substring(0,47)+'...' : cleaned;
+      bedingung=cleaned.replace(/\.\s*$/,'');
+      ergebnis='Anforderung erfuellt';
+    }
+    h+=`<tr><td class="ak-nr">${idx+1}</td><td class="ak-krit">${cellE(kriterium)}</td><td>${cellE(bedingung)}</td><td>${cellE(ergebnis)}</td></tr>`;
+  });
+
+  h+='</tbody></table></div>';
+  h+=`<div style="display:flex;justify-content:flex-end;margin-top:6px;"><button class="tf-toolbar-btn" onclick="copyTfFromChat('${akId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Tabelle kopieren</button></div>`;
+  return h;
+}
+
 /* ═══ TESTFALL TABLE ═══ */
-const TF_HEADERS=['Testfall Nr.','Testfall ID','Beschreibung','Vorbedingung','Aktion','Erwartetes Ergebnis','Prioritaet'];
+const TF_HEADERS=['Nr.','Beschreibung','Vorbedingungen','Testschritte','Erwartetes Ergebnis'];
 
 function renderTfTable(raw){
   if(!raw)return'<p style="color:var(--dm)">Keine Testfaelle.</p>';
@@ -2497,30 +2979,96 @@ function startFinalize(){
   g('btnBackSparring').onclick=()=>showView('v-general');
 
   const c=g('finalSections');c.innerHTML='';
-  const secs=[
+  /* Einfache Sektionen (Titel, KZ, AK, TF) */
+  const simpleSecs=[
     {key:'titel',label:'Titel',color:'var(--blue-deep)',type:'title'},
-    {key:'ist',label:'IST Beschreibung',color:'var(--blue-strong)',type:'md'},
-    {key:'soll',label:'SOLL Beschreibung',color:'var(--green)',type:'md'},
     {key:'kz',label:'Kennzahlen',color:'var(--lila)',type:'md'},
-    {key:'ak',label:'Akzeptanzkriterien',color:'var(--orange)',type:'md'},
+    {key:'ak',label:'Akzeptanzkriterien',color:'var(--orange)',type:'aktable'},
     {key:'tf',label:'Testfaelle',color:'var(--blue-deep)',type:'table'}
   ];
   let num=0;
-  secs.forEach(sec=>{
-    const v = sec.key==='tf' ? tfRawData : docState[sec.key];
-    if(!v||v==='[Noch nicht erfasst]'||v==='Noch nicht erfasst.')return;
+
+  /* Titel */
+  const titelV=docState.titel;
+  if(titelV&&titelV!=='[Noch nicht erfasst]'){
     num++;
     const card=document.createElement('div');card.className='sec-card';
-    let body='';
-    if(sec.type==='title')body=`<div class="rendered" style="font-size:20px;font-weight:700;font-family:'Fraunces',serif;">${escH(stripMd(v))}</div>`;
-    else if(sec.type==='md'){
-      if((sec.key==='ist'||sec.key==='soll') && v.length>200) body=renderIstTextStructured(v);
-      else body=`<div class="rendered">${renderMd(v)}</div>`;
-    }
-    else if(sec.type==='table')body=renderTfTable(v);
-    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:${sec.color}">${num}</div><div class="sec-card-title">${sec.label}</div><button class="sec-card-copy" onclick="copySec('${sec.key}',this)" type="button">Kopieren</button></div><div class="sec-card-body">${body}</div>`;
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-deep)">${num}</div><div class="sec-card-title">Titel</div><button class="sec-card-copy" onclick="copySec('titel',this)" type="button">Kopieren</button></div><div class="sec-card-body"><div class="rendered" style="font-size:20px;font-weight:700;font-family:'Fraunces',serif;">${escH(stripMd(titelV))}</div></div>`;
     c.appendChild(card);
-  });
+  }
+
+  /* IST Beschreibung – mit Tabs wenn Tabelle vorhanden (analog IST-Modus) */
+  const istOk=docState.ist&&docState.ist!=='[Noch nicht erfasst]';
+  const istTabOk=docState.istTab&&docState.istTab!=='[Noch nicht erfasst]';
+  if(istOk||istTabOk){
+    num++;
+    const istTableId='gen-ist-fin-'+Date.now();
+    const card=document.createElement('div');card.className='sec-card';
+    const body=renderIstOutputCard(docState.ist, docState.istTab, istTableId);
+    let copyBtns='<div class="sec-card-copy-group">';
+    if(istOk&&istTabOk){
+      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'ist+istTab\',this,\''+istTableId+'\')" type="button">Alles kopieren</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'ist\',this)" type="button">Nur Text</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+istTableId+'\',this)" type="button">Nur Tabelle</button>';
+    } else if(istOk){
+      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'ist\',this)" type="button">Kopieren</button>';
+    } else {
+      copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+istTableId+'\',this)" type="button">Kopieren</button>';
+    }
+    copyBtns+='</div>';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">${num}</div><div class="sec-card-title">IST Beschreibung</div>${copyBtns}</div><div class="sec-card-body" style="padding:0;">${body}</div>`;
+    c.appendChild(card);
+  }
+
+  /* SOLL Beschreibung – mit Tabs wenn Tabelle vorhanden */
+  const sollOk=docState.soll&&docState.soll!=='[Noch nicht erfasst]';
+  const sollTabOk=docState.sollTab&&docState.sollTab!=='[Noch nicht erfasst]';
+  if(sollOk||sollTabOk){
+    num++;
+    const sollTableId='gen-soll-fin-'+Date.now();
+    const card=document.createElement('div');card.className='sec-card';
+    const body=renderIstOutputCard(docState.soll, docState.sollTab, sollTableId);
+    let copyBtns='<div class="sec-card-copy-group">';
+    if(sollOk&&sollTabOk){
+      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'soll+sollTab\',this,\''+sollTableId+'\')" type="button">Alles kopieren</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'soll\',this)" type="button">Nur Text</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+sollTableId+'\',this)" type="button">Nur Tabelle</button>';
+    } else if(sollOk){
+      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'soll\',this)" type="button">Kopieren</button>';
+    } else {
+      copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+sollTableId+'\',this)" type="button">Kopieren</button>';
+    }
+    copyBtns+='</div>';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--green)">${num}</div><div class="sec-card-title">SOLL Beschreibung</div>${copyBtns}</div><div class="sec-card-body" style="padding:0;">${body}</div>`;
+    c.appendChild(card);
+  }
+
+  /* Kennzahlen */
+  if(docState.kz&&docState.kz!=='Noch nicht erfasst.'&&docState.kz!=='[Noch nicht erfasst]'){
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--lila)">${num}</div><div class="sec-card-title">Kennzahlen</div><button class="sec-card-copy" onclick="copySec('kz',this)" type="button">Kopieren</button></div><div class="sec-card-body"><div class="rendered">${renderMd(docState.kz)}</div></div>`;
+    c.appendChild(card);
+  }
+
+  /* Akzeptanzkriterien */
+  if(docState.ak){
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    const body=renderAkAsTable(docState.ak);
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--orange)">${num}</div><div class="sec-card-title">Akzeptanzkriterien</div></div><div class="sec-card-body">${body}</div>`;
+    c.appendChild(card);
+  }
+
+  /* Testfaelle */
+  if(tfRawData){
+    num++;
+    const card=document.createElement('div');card.className='sec-card';
+    const body=renderTfWithToolbar(tfRawData, 'fin');
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-deep)">${num}</div><div class="sec-card-title">Testfaelle</div></div><div class="sec-card-body">${body}</div>`;
+    c.appendChild(card);
+  }
+
   showView('v-final');
 }
 
@@ -2529,22 +3077,45 @@ function startFinalize(){
 /**
  * Einzelne Sektion kopieren – mit HTML fuer Confluence.
  */
-function copySec(key, btn){
-  const labels = {titel:'', ist:'IST BESCHREIBUNG', soll:'SOLL BESCHREIBUNG', kz:'KENNZAHLEN', ak:'AKZEPTANZKRITERIEN', tf:'TESTFAELLE'};
-  const prefix = labels[key] ? labels[key]+':\n' : '';
-  const htmlPrefix = labels[key] ? '<h3>'+labels[key]+'</h3>' : '';
+function copySec(key, btn, tableId){
+  const labels = {titel:'', ist:'IST BESCHREIBUNG', istTab:'IST PROZESSTABELLE', soll:'SOLL BESCHREIBUNG', sollTab:'SOLL PROZESSTABELLE', kz:'KENNZAHLEN', ak:'AKZEPTANZKRITERIEN', tf:'TESTFAELLE'};
 
   let plain = '', html = '';
 
-  if(key === 'tf'){
-    /* Testfaelle als HTML-Tabelle */
+  /* Kombiniertes Kopieren: Text + Tabelle */
+  if(key === 'ist+istTab' || key === 'soll+sollTab'){
+    const textKey = key.split('+')[0];
+    const tabKey = key.split('+')[1];
+    const textLabel = labels[textKey];
+    const tabLabel = labels[tabKey];
+    const textV = docState[textKey] || '';
+    const tabV = docState[tabKey] || '';
+    if(textV){
+      plain += textLabel + ':\n' + stripMd(textV);
+      html += '<h3>' + textLabel + '</h3>' + mdToClipboardHtml(textV);
+    }
+    if(tabV){
+      plain += (plain ? '\n\n' : '') + tabLabel + ':\n' + tabV;
+      html += '<h3>' + tabLabel + '</h3>' + pipeTableToClipboardHtml(tabV);
+    }
+  } else if(key === 'tf'){
+    const prefix = labels[key]+':\n';
+    const htmlPrefix = '<h3>'+labels[key]+'</h3>';
     plain = prefix + tfToPlaintext(tfRawData);
     html = htmlPrefix + pipeTableToClipboardHtml(tfRawData);
+  } else if(key === 'istTab' || key === 'sollTab'){
+    const prefix = labels[key]+':\n';
+    const htmlPrefix = '<h3>'+labels[key]+'</h3>';
+    const v = docState[key] || '';
+    plain = prefix + v;
+    html = htmlPrefix + pipeTableToClipboardHtml(v);
   } else if(key === 'titel'){
     const v = stripMd(docState[key] || '');
     plain = v;
     html = '<h2>' + escH(v) + '</h2>';
   } else {
+    const prefix = labels[key] ? labels[key]+':\n' : '';
+    const htmlPrefix = labels[key] ? '<h3>'+labels[key]+'</h3>' : '';
     const v = docState[key] || '';
     plain = prefix + stripMd(v);
     html = htmlPrefix + mdToClipboardHtml(v);
@@ -2561,8 +3132,8 @@ function copySec(key, btn){
  * Erzeugt ein formatiertes HTML-Dokument mit Ueberschriften, Listen und Tabellen.
  */
 function copyAllSections(){
-  const order = ['titel','ist','soll','kz','ak','tf'];
-  const labels = {titel:'TITEL', ist:'IST BESCHREIBUNG', soll:'SOLL BESCHREIBUNG', kz:'KENNZAHLEN', ak:'AKZEPTANZKRITERIEN', tf:'TESTFAELLE'};
+  const order = ['titel','ist','istTab','soll','sollTab','kz','ak','tf'];
+  const labels = {titel:'TITEL', ist:'IST BESCHREIBUNG', istTab:'IST PROZESSTABELLE', soll:'SOLL BESCHREIBUNG', sollTab:'SOLL PROZESSTABELLE', kz:'KENNZAHLEN', ak:'AKZEPTANZKRITERIEN', tf:'TESTFAELLE'};
   let plainParts = [], htmlParts = [];
 
   order.forEach(k=>{
@@ -2574,6 +3145,10 @@ function copyAllSections(){
       htmlParts.push('<h2>' + escH(stripMd(v)) + '</h2>');
     } else if(k === 'tf'){
       plainParts.push(labels[k] + ':\n' + tfToPlaintext(v));
+      htmlParts.push('<h3>' + labels[k] + '</h3>' + pipeTableToClipboardHtml(v));
+    } else if(k === 'istTab' || k === 'sollTab'){
+      /* Prozesstabellen als Pipe-Tabelle kopieren */
+      plainParts.push(labels[k] + ':\n' + v);
       htmlParts.push('<h3>' + labels[k] + '</h3>' + pipeTableToClipboardHtml(v));
     } else {
       plainParts.push(labels[k] + ':\n' + stripMd(v));
@@ -2591,14 +3166,14 @@ function copyAllSections(){
 function confirmNewReq(){
   const confirmMsg = selectedMode==='test' ? 'Neuen Test starten? Aktuelle Eingaben gehen verloren.' : 'Neue Anforderung starten? Aktuelle Eingaben gehen verloren.';
   if(!confirm(confirmMsg))return;
-  msgs=[];docState={titel:'',ist:'',soll:'',kz:'',ak:'',tf:'',open:''};tfRawData='';sparringCount=0;reqType='';isRunning=false;
+  msgs=[];docState={titel:'',ist:'',istTab:'',soll:'',sollTab:'',kz:'',ak:'',tf:'',open:''};tfRawData='';sparringCount=0;reqType='';isRunning=false;
   istMsgs=[];istState={titel:'',text:'',tabelle:'',kz:''};istSparringCount=0;
   /* General Reset */
   g('intakeArea').style.display='';g('chatMessages').style.display='none';g('chatMessages').innerHTML='';
   g('chatInputBar').style.display='none';g('actionsBar').classList.add('hidden');
   g('intakeIst').value='';g('intakeSoll').value='';g('intakeMisc').value='';
   document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('sel'));
-  ['titel','ist','soll','kz','ak','tf'].forEach(f=>updateDoc(f,'',null));
+  ['titel','ist','istTab','soll','sollTab','kz','ak','tf'].forEach(f=>updateDoc(f,'',null));
   ['ds-kz','ds-ak','ds-tf'].forEach(id=>{g(id).style.display='none';});
   g('btnCopyReq').disabled=true;g('btnFinalize').disabled=true;
   /* IST Reset */
