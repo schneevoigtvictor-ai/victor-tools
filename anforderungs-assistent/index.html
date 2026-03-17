@@ -458,7 +458,7 @@ textarea.fi{min-height:80px;}
   <h3>Drei Modi, ein Ziel: Klarheit</h3>
   <ol class="step-list">
     <li><strong>IST-Beschreibung erarbeiten:</strong> Dokumentiere den aktuellen Prozess strukturiert. Der Assistent fragt nach Prozessausloesern, Bearbeitungsschritten, beteiligten Systemen, Pruefschritten und Sonderfaellen – bis ein vollstaendiges Bild steht. Ideal, wenn du einen bestehenden Ablauf fuer andere nachvollziehbar machen willst.</li>
-    <li><strong>Allgemeine Anforderung:</strong> Erarbeite eine fachliche Anforderung oder einen Change Request. Der Assistent trennt IST und SOLL, hinterfragt Luecken und generiert am Ende Akzeptanzkriterien und Testfaelle.</li>
+    <li><strong>ANFO-Ticket:</strong> Hier kannst du Anforderungen iterativ erarbeiten, IST und SOLL schaerfen, Akzeptanzkriterien und Testfaelle generieren.</li>
     <li><strong>Test-Assistent:</strong> Erstelle Testfaelle aus Anforderungen, verfeinere bestehende Testfaelle oder dokumentiere Testergebnisse strukturiert. Der Assistent sorgt dafuer, dass Vorbedingungen, Testschritte und erwartete Ergebnisse konkret und nachvollziehbar sind – damit die IT sie direkt verwenden kann.</li>
   </ol>
 
@@ -492,10 +492,10 @@ textarea.fi{min-height:80px;}
       <p>Den aktuellen Prozess dokumentieren – von einfachen Ablaeufen bis zu Prozessen mit Pruefschritten und Entscheidungslogik. Nach dem Klick waehlst du die passende Variante.</p>
       <div class="mode-arrow">&#8594;</div>
     </div>
-    <!-- Allgemeine Anforderung: Jetzt ZWEITE Karte, MIT Badge -->
+    <!-- ANFO-Ticket: Jetzt ZWEITE Karte, MIT Badge -->
     <div class="mode-primary" onclick="selectMode('general')" role="button" tabindex="0">
-      <h3>Allgemeine Anforderung</h3>
-      <p>Fachliche Anforderung oder Change Request iterativ erarbeiten. IST und SOLL schaerfen, Akzeptanzkriterien und Testfaelle generieren.</p>
+      <h3>ANFO-Ticket</h3>
+      <p>Hier kannst du Anforderungen iterativ erarbeiten, IST und SOLL schaerfen, Akzeptanzkriterien und Testfaelle generieren.</p>
       <div class="mode-arrow">&#8594;</div>
     </div>
     <!-- Test-Assistent: NEUE dritte Karte -->
@@ -546,12 +546,72 @@ textarea.fi{min-height:80px;}
     <div id="intakeArea" class="intake">
       <div class="intake-title">Beschreibe deine Anforderung</div>
       <div class="intake-desc">Gib ein, was du bereits weisst. Du kannst Freitext nutzen, Stichpunkte schreiben oder bestehende JIRA-Texte reinkopieren. Felder, die du noch nicht fuellen kannst, lasse einfach leer.</div>
-      <div class="flbl">Art der Anforderung <span style="font-weight:400;color:var(--dm)">(optional)</span></div>
-      <div class="intake-type-row">
-        <button class="type-chip" data-type="fachlich" onclick="selType(this)" type="button">Fachliche Anforderung</button>
-        <button class="type-chip" data-type="change" onclick="selType(this)" type="button">Change Request</button>
-        <button class="type-chip" data-type="technisch" onclick="selType(this)" type="button">Technische Anforderung</button>
-      </div>
+
+      <!-- Aufklappbares Praxisbeispiel -->
+      <details style="margin-bottom:16px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sf);">
+        <summary style="padding:12px 16px;cursor:pointer;font-size:13.5px;font-weight:600;color:var(--blue-strong);list-style:none;display:flex;align-items:center;gap:8px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          <span>Praxisbeispiel: Hautkrebsvorsorge-Erstattung</span>
+        </summary>
+        <div style="padding:0 16px 16px;font-size:12.5px;">
+          <p style="margin:0 0 10px;color:var(--dm);">Dieses Beispiel zeigt, wie ein fertiges ANFO-Ticket aussieht &ndash; mit IST, SOLL, Kennzahlen, Akzeptanzkriterien und Testfaellen.</p>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+
+            <!-- IST -->
+            <div style="border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;">
+              <div style="padding:8px 12px;background:var(--blue-strong);color:#fff;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;">IST-Beschreibung</div>
+              <div style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+                <div><strong style="color:var(--green);">Prozessausloeser:</strong> Kunde reicht Hautkrebsvorsorge-Rechnung ueber MeineSBK ein.</div>
+                <div><strong style="color:var(--blue-strong);">Bearbeitungsschritte:</strong> Sachbearbeitung legt Fall in Helic an, prueft Versicherung, Doppeleinreichung, Leistungstyp, Alter (&ge;35), Bundesland, Verjaehrung, Jahresanspruch und berechnet Erstattungsbetrag. Erfassung in 21c_ng und ZVK.</div>
+                <div><strong style="color:var(--blue-strong);">Output:</strong> Erstattung (bis 25&nbsp;EUR voll, darueber max. 25&nbsp;EUR) + Erstattungsbrief.</div>
+                <div><strong style="color:var(--orange);">Ablehnungen:</strong> Weiterleitung an KB (Ablehnungsgespraech), VIP-Kunden an GST.</div>
+              </div>
+            </div>
+
+            <!-- SOLL -->
+            <div style="border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;">
+              <div style="padding:8px 12px;background:var(--green);color:#fff;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;">SOLL-Beschreibung</div>
+              <div style="padding:10px 12px;display:flex;flex-direction:column;gap:6px;">
+                <div><strong style="color:var(--lila);">Zielbild:</strong> Kompletter Pruef- und Berechnungsablauf automatisiert. Nur Ablehnungen bleiben manuell (KB/GST).</div>
+                <div><strong style="color:var(--blue-strong);">Bearbeitungsschritte:</strong> Automatisiertes Regelwerk fuer alle Pruefschritte + Betragsermittlung. Positiv &rarr; automatischer Erstattungsbrief. Negativ &rarr; Ablehnungs-Workflow an KB/GST.</div>
+                <div><strong style="color:var(--blue-strong);">Output:</strong> Automatisierte Erstattung bei positivem Ergebnis; Ablehnungs-Trigger bei negativem Ergebnis.</div>
+              </div>
+            </div>
+
+            <!-- Kennzahlen -->
+            <div style="border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;">
+              <div style="padding:8px 12px;background:var(--lila);color:#fff;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;">Kennzahlen</div>
+              <div style="padding:10px 12px;">
+                Fallzahlen: offen &middot; Bearbeitungszeit: offen &middot; Rollen: Sachbearbeitung, KB, GST (VIP)
+              </div>
+            </div>
+
+            <!-- AK -->
+            <div style="border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;">
+              <div style="padding:8px 12px;background:var(--orange);color:#fff;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;">Akzeptanzkriterien (Auszug)</div>
+              <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <tr style="background:var(--sf2);"><th style="padding:6px 8px;text-align:left;border-bottom:1px solid var(--bd);">Nr.</th><th style="padding:6px 8px;text-align:left;border-bottom:1px solid var(--bd);">Kriterium</th><th style="padding:6px 8px;text-align:left;border-bottom:1px solid var(--bd);">Wenn&hellip;</th><th style="padding:6px 8px;text-align:left;border-bottom:1px solid var(--bd);">Dann&hellip;</th></tr>
+                <tr><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">1</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">Fall automatisch anlegen</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">Rechnung ueber MeineSBK hochgeladen</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">System legt Fall in Helic an</td></tr>
+                <tr><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">2</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">Erstattungsbetrag berechnen</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">Betrag &le;25&nbsp;EUR</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">Voller Betrag erstattet; bei &gt;25&nbsp;EUR exakt 25&nbsp;EUR</td></tr>
+                <tr><td style="padding:6px 8px;">3</td><td style="padding:6px 8px;">Ablehnungs-Workflow</td><td style="padding:6px 8px;">Pruefung negativ</td><td style="padding:6px 8px;">Fall an KB/GST weitergeleitet</td></tr>
+              </table>
+            </div>
+
+            <!-- TF -->
+            <div style="border:1px solid var(--bd);border-radius:var(--rs);overflow:hidden;">
+              <div style="padding:8px 12px;background:var(--dm);color:#fff;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.06em;">Testfaelle (Auszug)</div>
+              <table style="width:100%;border-collapse:collapse;font-size:12px;">
+                <tr style="background:var(--sf2);"><th style="padding:6px 8px;text-align:left;border-bottom:1px solid var(--bd);">Nr.</th><th style="padding:6px 8px;text-align:left;border-bottom:1px solid var(--bd);">Beschreibung</th><th style="padding:6px 8px;text-align:left;border-bottom:1px solid var(--bd);">Erwartetes Ergebnis</th></tr>
+                <tr><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);"><span style="color:var(--green);font-weight:700;">&#9679;</span> 1</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">Positiv &ndash; Erstattung bis 25&nbsp;EUR</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">20&nbsp;EUR erstattet, Serienbrief S5208 versendet</td></tr>
+                <tr><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);"><span style="color:var(--orange);font-weight:700;">&#9679;</span> 2</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">Grenzwert &ndash; Betrag exakt 25&nbsp;EUR</td><td style="padding:6px 8px;border-bottom:1px solid var(--bd2);">25&nbsp;EUR erstattet, Serienbrief S5208 versendet</td></tr>
+                <tr><td style="padding:6px 8px;"><span style="color:var(--red);font-weight:700;">&#9679;</span> 3</td><td style="padding:6px 8px;">Negativ &ndash; Versicherungsstatus negativ</td><td style="padding:6px 8px;">Ablehnungs-Trigger, Fall an KB</td></tr>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      </details>
+
       <div class="intake-fields">
         <div class="intake-field-group">
           <div class="flbl">IST-Zustand <span style="font-weight:400;color:var(--dm)">(Wie ist es aktuell?)</span></div>
@@ -920,7 +980,7 @@ Testfall 1: Erstattung prüfen - sollte funktionieren" style="min-height:140px;p
   <div class="final-top">
     <div><div class="landing-tag">Anforderungs-Assistent</div><div class="landing-title" style="margin-bottom:0;font-size:26px;" id="finalTitle">Fertige Anforderung</div></div>
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="bprim" onclick="copyAllSections()">Alles kopieren</button>
+      <button class="bprim" id="btnCopyAll" onclick="copyAllSections()">Alles kopieren</button>
       <button class="bsec" id="btnBackSparring" onclick="showView('v-general')">Zurueck zum Sparring</button>
       <button class="bsec" onclick="confirmNewReq()">Neue Anforderung</button>
     </div>
@@ -1685,6 +1745,18 @@ function pipeTableToClipboardHtml(raw){
   const lines = raw.split('\n').filter(l=>l.includes('|'));
   if(lines.length < 1) return '<p>'+escH(raw)+'</p>';
 
+  /* Hilfsfunktion: Zellinhalt in Confluence-taugliches HTML wandeln */
+  function cellHtml(c){
+    let s = escH(c);
+    /* Nummerierte Listen (1. xxx 2. xxx) in Zeilenumbrueche aufloesen */
+    s = s.replace(/(\d+)\.\s+/g, '<br>$1. ').replace(/^<br>/, '');
+    /* **Fettdruck** → <strong> */
+    s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    /* Explizite <br> Tags */
+    s = s.replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+    return s;
+  }
+
   /* Erste Zeile = Header */
   const headers = lines[0].split('|').map(c=>c.trim()).filter(c=>c);
   let data = lines.slice(1).filter(l=>!l.match(/^[\s|:-]+$/));
@@ -1700,7 +1772,7 @@ function pipeTableToClipboardHtml(raw){
     const bg = idx % 2 === 0 ? '#ffffff' : '#f7fafc';
     h += '<tr>';
     cells.forEach(c=>{
-      h += '<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:'+bg+';vertical-align:top;">'+escH(c).replace(/&lt;br\s*\/?&gt;/gi,'<br>')+'</td>';
+      h += '<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:'+bg+';vertical-align:top;">'+cellHtml(c)+'</td>';
     });
     h += '</tr>';
   });
@@ -1893,17 +1965,18 @@ function getSectionIcon(cat){
   }
 }
 
-function renderIstOutputCard(textContent, tableContent, tableId){
+function renderIstOutputCard(textContent, tableContent, tableId, tabPrefix){
   const hasText=textContent&&textContent!=='[Noch nicht erfasst]';
   const hasTable=tableContent&&tableContent!=='[Noch nicht erfasst]';
   if(!hasText&&!hasTable) return '';
 
-  const tId=tableId||('ist-tab-inline-'+Date.now());
+  const tId=tableId||((tabPrefix||'ist-tab-inline')+'-tbl-'+(tabPrefix?'0':Date.now()));
 
   if(hasText&&!hasTable) return renderIstTextStructured(textContent);
   if(!hasText&&hasTable) return `<div id="${tId}">${renderIstTable(tableContent)}</div>`;
 
-  const tabId='ist-tab-'+Date.now();
+  /* Stabile Tab-ID: tabPrefix wenn vorhanden, sonst Date.now() als Fallback */
+  const tabId=tabPrefix||('ist-tab-'+Date.now());
   let html=`<div class="ist-output-tabs">
     <button class="ist-output-tab active" onclick="switchIstTab('${tabId}','text',this)">Fliesstext</button>
     <button class="ist-output-tab" onclick="switchIstTab('${tabId}','table',this)">Prozesstabelle</button>
@@ -1936,7 +2009,7 @@ function selectMode(mode){
   selectedMode=mode;
   /* Button-Text an Modus anpassen */
   g('btnNew').textContent = mode==='test' ? 'Neuer Test' : 'Neue Anforderung';
-  if(mode==='general'){showView('v-general');g('btnNew').classList.add('on');updatePhase(0);}
+  if(mode==='general'){reqType='fachlich';showView('v-general');g('btnNew').classList.add('on');updatePhase(0);}
   else if(mode==='ist'){showView('v-ist');g('btnNew').classList.add('on');updatePhase(0);}
   else if(mode==='test'){showView('v-test');g('btnNew').classList.add('on');updatePhase(0);}
   else{showView('v-aktion');g('btnNew').classList.add('on');}
@@ -2041,7 +2114,7 @@ function renderDocSection(field){
   if(tabData){
     /* Tabs: Fliesstext + Prozesstabelle (wie IST-Modus) */
     el.style.padding='0';
-    el.innerHTML=renderIstOutputCard(text, tabData);
+    el.innerHTML=renderIstOutputCard(text, tabData, null, 'doc-'+field);
   } else if(text && text.length>80){
     el.style.padding='';
     el.innerHTML=renderIstTextStructured(text);
@@ -2168,18 +2241,19 @@ function parseKIA(text){
             .replace(/[\u2011\u2013\u2014]/g,'-');
   }
 
-  const H_TITEL   = [/^TITEL\s*:/i];
-  const H_IST     = [/^IST[\s-]*(?:BESCHREIBUNG|ZUSTAND|SITUATION)?\s*:/i, /^IST\s*:/i];
-  const H_IST_TAB = [/^IST[\s-]*TABELLE\s*:/i];
-  const H_SOLL    = [/^SOLL[\s-]*(?:BESCHREIBUNG|ZUSTAND)?\s*:/i, /^SOLL\s*:/i];
-  const H_SOLL_TAB= [/^SOLL[\s-]*TABELLE\s*:/i];
-  const H_KZ      = [/^KENNZAHLEN\s*:/i];
-  const H_BEWERTUNG = [/^BEWERTUNG\s*:/i];
-  const H_ANALYSE = [/^ANALYSE\s*:/i];
-  const H_RUECK   = [/^RUE?CKFRAGEN[\s(]/i, /^RUE?CKFRAGEN\s*:/i, /^FRAGEN\s*:/i];
-  const H_OPEN    = [/^OFFENE\s*PUNKTE\s*:/i];
-  const H_AK      = [/^AKZEPTANZKRITERIEN\s*:/i];
-  const H_TF      = [/^TESTFAE?LLE\s*:/i];
+  /* Header-Patterns: Doppelpunkt-Pflicht fuer kurze Formen, optional bei eindeutigen langen Formen + Zeilenende */
+  const H_TITEL   = [/^TITEL\s*:/i, /^TITEL\s*$/i];
+  const H_IST     = [/^IST[\s-]*(?:BESCHREIBUNG|ZUSTAND|SITUATION|PROZESS)\s*:?\s*$/i, /^IST\s*:/i, /^AKTUELLER\s*(?:ZUSTAND|PROZESS)\s*:?\s*$/i];
+  const H_IST_TAB = [/^IST[\s-]*TABELLE\s*:?\s*$/i, /^IST[\s-]*PROZESSTABELLE\s*:?\s*$/i];
+  const H_SOLL    = [/^SOLL[\s-]*(?:BESCHREIBUNG|ZUSTAND|PROZESS)\s*:?\s*$/i, /^SOLL\s*:/i, /^ZIEL[\s-]*(?:ZUSTAND|BILD)\s*:?\s*$/i];
+  const H_SOLL_TAB= [/^SOLL[\s-]*TABELLE\s*:?\s*$/i, /^SOLL[\s-]*PROZESSTABELLE\s*:?\s*$/i];
+  const H_KZ      = [/^KENNZAHLEN\s*:/i, /^KENNZAHLEN\s*$/i, /^KENNZAHLEN\s+UND\s/i];
+  const H_BEWERTUNG = [/^BEWERTUNG\s*:/i, /^BEWERTUNG\s*$/i, /^BEWERTUNG\s+DER\s/i];
+  const H_ANALYSE = [/^ANALYSE\s*:/i, /^ANALYSE\s*$/i, /^ZUSAMMENFASSUNG\s*:?\s*$/i, /^ANALYSE\s+UND\s/i];
+  const H_RUECK   = [/^RUE?CKFRAGEN[\s(:]/i, /^RUE?CKFRAGEN\s*$/i, /^FRAGEN\s*:/i, /^OFFENE\s*FRAGEN\s*:?\s*$/i];
+  const H_OPEN    = [/^OFFENE\s*PUNKTE\s*:?\s*$/i];
+  const H_AK      = [/^AKZEPTANZKRITERIEN\s*:?\s*$/i];
+  const H_TF      = [/^TESTFAE?LLE\s*:?\s*$/i];
 
   for(const line of lines){
     const raw = line.trim();
@@ -2421,7 +2495,23 @@ function renderKIAMsg(p, rawText){
 
   if(!h && rawText){
     console.warn('parseKIA produced empty render, using fallback');
-    h = renderMd(rawText);
+    /* Fallback: Text in Abschnitte aufteilen (Doppel-Newline oder Markdown-Header) */
+    const sections = rawText.split(/\n{2,}/);
+    let fallbackHtml = '';
+    for(const sec of sections){
+      const trimmed = sec.trim();
+      if(!trimmed) continue;
+      /* Markdown-Header erkennen und als Ueberschrift rendern */
+      const headerMatch = trimmed.match(/^#{1,4}\s+(.+)/);
+      if(headerMatch){
+        fallbackHtml += `<h4 style="margin-top:14px;">${escH(headerMatch[1].replace(/\*\*/g,''))}</h4>`;
+        const rest = trimmed.replace(/^#{1,4}\s+.+\n?/, '').trim();
+        if(rest) fallbackHtml += `<div style="margin-bottom:10px;">${renderMd(rest)}</div>`;
+      } else {
+        fallbackHtml += `<div style="margin-bottom:10px;">${renderMd(trimmed)}</div>`;
+      }
+    }
+    h = fallbackHtml || renderMd(rawText);
     const fallbackQs = [];
     const rawLines = rawText.split('\n');
     for(const line of rawLines){
@@ -2551,6 +2641,7 @@ function finalizeIst(){
   const c=g('finalSections');c.innerHTML='';
   g('finalTitle').textContent='IST-Beschreibung';
   g('btnBackSparring').onclick=()=>showView('v-ist');
+  g('btnCopyAll').onclick=copyIstAll;
 
   let num=0;
 
@@ -2570,10 +2661,10 @@ function finalizeIst(){
     const istTableId='ist-final-tab-'+Date.now();
     const card=document.createElement('div');card.className='sec-card';
     const body=renderIstOutputCard(istState.text, istState.tabelle, istTableId);
-    /* Kopier-Buttons: "Alles" (Text+Tabelle), und optional separater Tabelle-Button */
+    /* Kopier-Buttons: Text+Tabelle, und optional separater Tabelle-Button */
     let copyBtns = '<div class="sec-card-copy-group">';
     if(hasText && hasTable){
-      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text+tabelle\',this,\''+istTableId+'\')" type="button">Alles kopieren</button>';
+      copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text+tabelle\',this,\''+istTableId+'\')" type="button">Text + Tabelle</button>';
       copyBtns += '<button class="sec-card-copy" onclick="copyIstSec(\'text\',this)" type="button">Nur Text</button>';
       copyBtns += '<button class="sec-card-copy" onclick="copyTfFromChat(\''+istTableId+'\',this)" type="button">Nur Tabelle</button>';
     } else if(hasText){
@@ -2734,9 +2825,15 @@ async function generateAkTf(){
   try{
     let {r,p}=await attempt();
     /* Auto-Retry: Wenn AK oder TF leer, einmal wiederholen */
-    if((!p.ak || !p.ak.includes('|')) && (!p.tf || !p.tf.includes('|'))){
-      console.warn('AK/TF leer, Auto-Retry...');
+    const akMissing = !p.ak || !p.ak.includes('|');
+    const tfMissing = !p.tf || !p.tf.includes('|');
+    if(akMissing || tfMissing){
+      console.warn('AK/TF unvollstaendig (ak:'+!akMissing+' tf:'+!tfMissing+'), Auto-Retry...');
+      const first = {ak:p.ak, tf:p.tf};
       ({r,p}=await attempt());
+      /* Ergebnisse zusammenfuehren: Gutes aus 1. Versuch behalten */
+      if(!p.ak || !p.ak.includes('|')) p.ak = first.ak;
+      if(!p.tf || !p.tf.includes('|')) p.tf = first.tf;
     }
     removeLoading();
     if(p.ak){docState.ak=p.ak;updateDoc('ak',p.ak,'draft');g('ds-ak').style.display='';}
@@ -2747,8 +2844,10 @@ async function generateAkTf(){
       if(tfSt){tfSt.className='doc-sec-status draft';tfSt.textContent='Entwurf';}
       g('ds-tf').style.display='';
     }
-    /* AK als strukturierte Tabelle */
-    let html='<h4>Akzeptanzkriterien</h4>'+renderAkAsTable(p.ak||'');
+    /* AK als strukturierte Tabelle mit Kopier-Button */
+    const akChatId='ak-chat-'+Date.now();
+    let html='<h4>Akzeptanzkriterien</h4>'+renderAkAsTable(p.ak||'', akChatId);
+    if(p.ak && p.ak.includes('|')) html+=`<div style="display:flex;justify-content:flex-end;margin-top:6px;"><button class="tf-toolbar-btn" onclick="copyTfFromChat('${akChatId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Tabelle kopieren</button></div>`;
     /* TF mit Filter-Chips + DOM-Copy-Button (wie Test-Assistent) */
     html+=renderTfWithToolbar(p.tf||'', 'gen');
     html+=`<div style="margin-top:12px;padding:10px 14px;background:var(--sf2);border:1px solid var(--bd);border-radius:var(--rs);font-size:12.5px;color:var(--mu);">Du kannst Anpassungen direkt im Chat vorschlagen.</div>`;
@@ -2767,10 +2866,11 @@ function renderTfWithToolbar(raw, prefix){
   if(!raw||!raw.includes('|'))return '<h4>Testfaelle</h4><div class="rendered">'+renderMd(raw||'')+'</div>';
   const tfId=(prefix||'tf')+'-'+Date.now();
   const tfLines=raw.split('\n').filter(l=>l.includes('|'));
-  const hasPos=tfLines.some(l=>/positiv\s*[-–:]/i.test(l));
-  const hasGrenz=tfLines.some(l=>/grenzwert\s*[-–:]/i.test(l));
-  const hasNeg=tfLines.some(l=>/negativ\s*[-–:]/i.test(l));
-  const hasEP=tfLines.some(l=>/eingangspruefung\s*[-–:]/i.test(l)||/eingangsprüfung\s*[-–:]/i.test(l));
+  /* Kategorie-Erkennung lockerer: Trennzeichen (Dash, Doppelpunkt) optional, auch ohne Separator */
+  const hasPos=tfLines.some(l=>/positiv\s*[-–—:.|]/i.test(l) || /\|positiv/i.test(l));
+  const hasGrenz=tfLines.some(l=>/grenzwert\s*[-–—:.|]/i.test(l) || /\|grenzwert/i.test(l));
+  const hasNeg=tfLines.some(l=>/negativ\s*[-–—:.|]/i.test(l) || /\|negativ/i.test(l));
+  const hasEP=tfLines.some(l=>/eingangsprue?fung\s*[-–—:.|]/i.test(l) || /\|eingangsprue?fung/i.test(l) || /eingangsprüfung/i.test(l));
   const hasAnyFilter=hasPos||hasGrenz||hasNeg||hasEP;
 
   let h='<h4>Testfaelle</h4>';
@@ -2808,10 +2908,10 @@ function renderTfWithToolbar(raw, prefix){
  * Primaer: Pipe-Tabelle (Nr|Kriterium|Bedingung|Ergebnis) direkt aus KIA.
  * Fallback: Nummerierte Items parsen und in Tabelle umwandeln.
  */
-function renderAkAsTable(text){
+function renderAkAsTable(text, externalId){
   if(!text)return'';
 
-  const akId='ak-'+Date.now();
+  const akId=externalId||('ak-'+Date.now());
   const cellE=t=>escH(stripMd(t));
 
   /* === Primaer: Pipe-Tabelle erkennen === */
@@ -2848,7 +2948,6 @@ function renderAkAsTable(text){
         h+='</tr>';
       });
       h+='</tbody></table></div>';
-      h+=`<div style="display:flex;justify-content:flex-end;margin-top:6px;"><button class="tf-toolbar-btn" onclick="copyTfFromChat('${akId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Tabelle kopieren</button></div>`;
       return h;
     }
   }
@@ -2897,7 +2996,6 @@ function renderAkAsTable(text){
   });
 
   h+='</tbody></table></div>';
-  h+=`<div style="display:flex;justify-content:flex-end;margin-top:6px;"><button class="tf-toolbar-btn" onclick="copyTfFromChat('${akId}',this)" type="button"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>Tabelle kopieren</button></div>`;
   return h;
 }
 
@@ -2977,6 +3075,7 @@ function startFinalize(){
   updatePhase(4);
   g('finalTitle').textContent='Fertige Anforderung';
   g('btnBackSparring').onclick=()=>showView('v-general');
+  g('btnCopyAll').onclick=copyAllSections;
 
   const c=g('finalSections');c.innerHTML='';
   /* Einfache Sektionen (Titel, KZ, AK, TF) */
@@ -3007,7 +3106,7 @@ function startFinalize(){
     const body=renderIstOutputCard(docState.ist, docState.istTab, istTableId);
     let copyBtns='<div class="sec-card-copy-group">';
     if(istOk&&istTabOk){
-      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'ist+istTab\',this,\''+istTableId+'\')" type="button">Alles kopieren</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'ist+istTab\',this,\''+istTableId+'\')" type="button">Text + Tabelle</button>';
       copyBtns+='<button class="sec-card-copy" onclick="copySec(\'ist\',this)" type="button">Nur Text</button>';
       copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+istTableId+'\',this)" type="button">Nur Tabelle</button>';
     } else if(istOk){
@@ -3030,7 +3129,7 @@ function startFinalize(){
     const body=renderIstOutputCard(docState.soll, docState.sollTab, sollTableId);
     let copyBtns='<div class="sec-card-copy-group">';
     if(sollOk&&sollTabOk){
-      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'soll+sollTab\',this,\''+sollTableId+'\')" type="button">Alles kopieren</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copySec(\'soll+sollTab\',this,\''+sollTableId+'\')" type="button">Text + Tabelle</button>';
       copyBtns+='<button class="sec-card-copy" onclick="copySec(\'soll\',this)" type="button">Nur Text</button>';
       copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+sollTableId+'\',this)" type="button">Nur Tabelle</button>';
     } else if(sollOk){
@@ -3054,9 +3153,10 @@ function startFinalize(){
   /* Akzeptanzkriterien */
   if(docState.ak){
     num++;
+    const akTableId='ak-fin-'+Date.now();
     const card=document.createElement('div');card.className='sec-card';
-    const body=renderAkAsTable(docState.ak);
-    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--orange)">${num}</div><div class="sec-card-title">Akzeptanzkriterien</div></div><div class="sec-card-body">${body}</div>`;
+    const body=renderAkAsTable(docState.ak, akTableId);
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--orange)">${num}</div><div class="sec-card-title">Akzeptanzkriterien</div><button class="sec-card-copy" onclick="copyTfFromChat('${akTableId}',this)" type="button">Kopieren</button></div><div class="sec-card-body">${body}</div>`;
     c.appendChild(card);
   }
 
@@ -3143,8 +3243,8 @@ function copyAllSections(){
     if(k === 'titel'){
       plainParts.push(labels[k] + ': ' + stripMd(v));
       htmlParts.push('<h2>' + escH(stripMd(v)) + '</h2>');
-    } else if(k === 'tf'){
-      plainParts.push(labels[k] + ':\n' + tfToPlaintext(v));
+    } else if(k === 'tf' || k === 'ak'){
+      plainParts.push(labels[k] + ':\n' + (k==='tf'?tfToPlaintext(v):pipeTableToPlaintext(v)));
       htmlParts.push('<h3>' + labels[k] + '</h3>' + pipeTableToClipboardHtml(v));
     } else if(k === 'istTab' || k === 'sollTab'){
       /* Prozesstabellen als Pipe-Tabelle kopieren */
@@ -3166,13 +3266,12 @@ function copyAllSections(){
 function confirmNewReq(){
   const confirmMsg = selectedMode==='test' ? 'Neuen Test starten? Aktuelle Eingaben gehen verloren.' : 'Neue Anforderung starten? Aktuelle Eingaben gehen verloren.';
   if(!confirm(confirmMsg))return;
-  msgs=[];docState={titel:'',ist:'',istTab:'',soll:'',sollTab:'',kz:'',ak:'',tf:'',open:''};tfRawData='';sparringCount=0;reqType='';isRunning=false;
+  msgs=[];docState={titel:'',ist:'',istTab:'',soll:'',sollTab:'',kz:'',ak:'',tf:'',open:''};tfRawData='';sparringCount=0;reqType='fachlich';isRunning=false;
   istMsgs=[];istState={titel:'',text:'',tabelle:'',kz:''};istSparringCount=0;
   /* General Reset */
   g('intakeArea').style.display='';g('chatMessages').style.display='none';g('chatMessages').innerHTML='';
   g('chatInputBar').style.display='none';g('actionsBar').classList.add('hidden');
   g('intakeIst').value='';g('intakeSoll').value='';g('intakeMisc').value='';
-  document.querySelectorAll('.type-chip').forEach(c=>c.classList.remove('sel'));
   ['titel','ist','istTab','soll','sollTab','kz','ak','tf'].forEach(f=>updateDoc(f,'',null));
   ['ds-kz','ds-ak','ds-tf'].forEach(id=>{g(id).style.display='none';});
   g('btnCopyReq').disabled=true;g('btnFinalize').disabled=true;
