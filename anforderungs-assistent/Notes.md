@@ -10,12 +10,13 @@ Version 2.0 – IST-Modus und Rich-Copy
 Version 2.1 – Vereinfachter IST-Modus (simple/detailed) + IST-Untermodus-Auswahl
 Version 2.2 – **Test-Assistent** (3 Module: Erstellen, Verfeinern, Fehler dokumentieren)
 Version 2.3 – **Einheitliche Prozessdarstellung** (Fließtext mit Unterüberschriften + Prozesstabellen in allen Modi)
+Version 2.4 – **UX-Verbesserungen + Bugfixes** (ANFO-Ticket, Parser-Robustheit, Copy-Überarbeitung)
 
-**Features (v2.3 – aktuell):**
+**Features (v2.4 – aktuell):**
 
 *Allgemein:*
 - Landing-Page mit Token-Eingabe (KIA-Token, lokal gespeichert)
-- Vier Modi: IST-Beschreibung + Allgemeine Anforderung + Test-Assistent + Aktionssteuerung (Platzhalter)
+- Vier Modi: IST-Beschreibung + **ANFO-Ticket** (ehem. Allgemeine Anforderung) + Test-Assistent + Aktionssteuerung (Platzhalter)
 - Split-View: Live-Dokument links, Chat rechts
 - Spracheingabe per Web Speech API (Chrome/Edge)
 - Rich-Copy für Confluence: HTML + Plain-Text (Tabellen, Fettdruck, Listen, Zeilenumbrüche)
@@ -28,26 +29,33 @@ Version 2.3 – **Einheitliche Prozessdarstellung** (Fließtext mit Unterübersc
 - Unterwahl: Vereinfacht (4 Kriterien) vs. Ausführlich (6 Kriterien)
 - Eigener Sparring-Flow mit Fließtext + Prozesstabelle
 - Strukturierter IST-Text-Renderer mit farbigen Sektionsblöcken
-- **v2.3: Fließtext mit Unterüberschriften** (Prozessauslöser, Bearbeitungsschritte, Output, optional Ablehnungen/Sonderfälle)
-- **v2.3: Bearbeitungsschritte im Fließtext nur als Zusammenfassung** – Details stehen in der Prozesstabelle
+- Fließtext mit Unterüberschriften (Prozessauslöser, Bearbeitungsschritte, Output, optional Ablehnungen/Sonderfälle)
+- Bearbeitungsschritte im Fließtext nur als Zusammenfassung – Details stehen in der Prozesstabelle
 - Praxisbeispiele: APK (vereinfacht), Hautkrebsvorsorge (ausführlich)
 - `istSubMode` steuert Routing (`SYS_IST` vs. `SYS_IST_SIMPLE`)
 
-*Allgemeine Anforderung (v2.0 + v2.3):*
+*ANFO-Ticket (ehem. Allgemeine Anforderung, v2.0 + v2.3 + v2.4):*
+- **v2.4: Umbenannt** von "Allgemeine Anforderung" zu "ANFO-Ticket" (Landing-Page + Onboarding-Modal)
+- **v2.4: "Art der Anforderung" entfernt** – `reqType` wird automatisch auf `'fachlich'` gesetzt (in `selectMode()` und `confirmNewReq()`)
+- **v2.4: Praxisbeispiel** – Aufklappbarer `<details>`-Block im Intake-Bereich (Hautkrebsvorsorge: IST, SOLL, Kennzahlen, AK-Auszug, TF-Auszug)
 - Iteratives Sparring mit 5-Kriterien-Bewertung (JA/TEILWEISE/NEIN)
 - Dynamische Rückfragen mit "Entfällt"-Option
 - Automatische Generierung von Akzeptanzkriterien und Testfällen
 - Finalisierungsansicht mit differenzierten Copy-Buttons
-- **v2.3: IST und SOLL jeweils mit Fließtext + eigener Prozesstabelle**
+- IST und SOLL jeweils mit Fließtext + eigener Prozesstabelle
   - Fließtext-Unterüberschriften IST: Prozessauslöser, Bearbeitungsschritte (Zusammenfassung), Output, optional Ablehnungen/Sonderfälle
   - Fließtext-Unterüberschriften SOLL: Zielbild, Prozessauslöser, Bearbeitungsschritte (Zusammenfassung), Output, optional Ablehnungen/Sonderfälle
   - IST-TABELLE und SOLL-TABELLE als eigene Sektionen im KIA-Output
   - Tab-Ansicht (Fliesstext | Prozesstabelle) im Living Document und in der Finalize-Ansicht
-  - Copy-Buttons: "Alles kopieren", "Nur Text", "Nur Tabelle" (analog IST-Modus)
-- **v2.3: AK/TF-Generierung robuster**
-  - Prompt enthält jetzt IST-TABELLE + SOLL-TABELLE für besseren Kontext
-  - Auto-Retry bei leerem Ergebnis (kein Pipe-Tabelle im Return)
-  - Warn-Toast wenn nach Retry immer noch leer
+- **v2.4: Copy-Hierarchie überarbeitet**
+  - Top-Button "Alles kopieren" = wirklich alles (Titel + IST + IST-Tab + SOLL + SOLL-Tab + KZ + AK + TF)
+  - Per-Section-Buttons: "Text + Tabelle" (statt "Alles kopieren"), "Nur Text", "Nur Tabelle"
+  - AK-Karte: Kopier-Button oben rechts im Header (statt unten an der Tabelle)
+  - Top-Button dynamisch verdrahtet via `g('btnCopyAll').onclick` – im IST-Modus `copyIstAll()`, im Anforderungs-Modus `copyAllSections()`
+- **v2.4: AK/TF-Generierung robuster**
+  - Auto-Retry bei AK **oder** TF leer (statt nur wenn beide leer – AND→OR)
+  - Ergebnisse aus beiden Versuchen werden zusammengeführt (Gutes aus 1. Versuch bleibt erhalten)
+  - Filter-Chips-Erkennung lockerer: auch Gedankenstrich (—), Pipe, Punkt als Trennzeichen; `|positiv` mitten in Pipe-Zeile als Fallback
 
 *Test-Assistent (v2.2):*
 - Drei Module: Testfälle erstellen, Testfälle verfeinern, Testergebnis dokumentieren
@@ -92,9 +100,10 @@ Version 2.3 – **Einheitliche Prozessdarstellung** (Fließtext mit Unterübersc
 - Modell: `openai/gpt-oss-120b`
 - Fonts: DM Sans + Fraunces (Google Fonts)
 
-## Geplante Änderungen (v2.4)
+## Geplante Änderungen (v2.5)
 - [ ] **Nachträgliche Eingaben sollen IST-Text/Tabelle/Kennzahlen aktualisieren** – aktuell werden Korrekturen im Chat nicht in die bestehenden Felder zurückgeschrieben (IST + Anforderungs-Modus)
 - [ ] Aktionssteuerung-Wizard implementieren (aktuell nur Platzhalter)
+- [ ] Toter Code aufräumen: `selType()`-Funktion und `.type-chip`-CSS (nach Entfernung der Art-der-Anforderung-Auswahl)
 
 ## Bekannte Probleme / Einschränkungen
 - Läuft nur mit aktivem KIA-Token (SBK-intern)
@@ -104,30 +113,37 @@ Version 2.3 – **Einheitliche Prozessdarstellung** (Fließtext mit Unterübersc
 - `parseBewertung()` ist fragil – nicht ändern ohne guten Grund
 - IST/Anforderungs-Modus: Nachträgliche Eingaben aktualisieren Living Doc nicht (nur Test-Assistent tut das korrekt)
 - AK/TF-Generierung kann trotz Auto-Retry gelegentlich leer zurückkommen (KIA-Modell-abhängig)
+- KIA-Antworten ohne erkannte Header (~20% der Fälle) fallen in den Fallback-Renderer – v2.4 verbessert, aber modellabhängig nicht komplett eliminierbar
 
 ## Wichtige Code-Stellen
 
-*Bestehend (IST + Anforderung):*
-- `SYS_GENERAL` – System-Prompt Allgemein-Modus (5 Bewertungskriterien), v2.3: IST/SOLL mit Unterüberschriften + IST-TABELLE/SOLL-TABELLE
+*Bestehend (IST + ANFO-Ticket):*
+- `SYS_GENERAL` – System-Prompt ANFO-Ticket-Modus (5 Bewertungskriterien), v2.3: IST/SOLL mit Unterüberschriften + IST-TABELLE/SOLL-TABELLE
 - `SYS_IST` – System-Prompt IST-Modus ausführlich (6 Kriterien), v2.3: Fließtext mit Unterüberschriften
 - `SYS_IST_SIMPLE` – System-Prompt IST-Modus vereinfacht (4 Kriterien), v2.3: Fließtext mit Unterüberschriften
 - `SYS_AKTF` – System-Prompt Akzeptanzkriterien/Testfälle
-- `parseKIA()` – Parser Allgemein-Modus (Titel, IST, istTab, SOLL, sollTab, Kennzahlen, Bewertung, Rückfragen). v2.3: erkennt `IST-TABELLE:` und `SOLL-TABELLE:` als eigene Sektionen; Pipe-Zeilen innerhalb IST/SOLL-Text werden automatisch in Tabellen-Felder umgeleitet
+- `parseKIA()` – Parser ANFO-Ticket-Modus. v2.4: Header-Regexes gelockert (Doppelpunkt optional bei Zeilenende, `Zusammenfassung:` als Alias für `Analyse:`, `Offene Fragen:` für Rückfragen, `Aktueller Zustand/Prozess` für IST, `Zielzustand/Zielbild` für SOLL)
 - `parseIST()` – Parser IST-Modus (Fließtext + Tabelle)
 - `parseBewertung()` – Bewertungs-Zeilen-Extraktion (FRAGIL – nicht ändern!)
 - `callKIA()` – API-Aufruf
 - `renderIstTextStructured()` / `splitIstIntoBlocks()` – Farbige IST-Text-Blöcke
-- `renderIstOutputCard()` – Tab-Ansicht (Fliesstext | Prozesstabelle), wird jetzt auch im Allgemein-Modus genutzt
-- `renderDocSection()` – v2.3: Hilfsfunktion für IST/SOLL Living Doc mit Tabs wenn Tabelle vorhanden
-- `renderMd()` – v2.3: Verschachtelte Sub-Listen (`.md-sub`) für Ja/Nein-Logik unter nummerierten Schritten; En-Dash (–) als Listen-Marker erkannt
-- `mdToClipboardHtml()` – v2.3: Gleiche verschachtelte Sub-Listen-Logik für Confluence-Copy
-- `copyRich()` / `pipeTableToClipboardHtml()` – Rich-Copy
-- `copySec()` – v2.3: Versteht kombinierte Keys (`ist+istTab`, `soll+sollTab`) für "Alles kopieren"
-- `copyAllSections()` – v2.3: Enthält IST-/SOLL-Prozesstabellen in der Kopier-Reihenfolge
-- `generateAkTf()` – v2.3: Prompt enthält Prozesstabellen; Auto-Retry bei leerem Ergebnis
+- `renderIstOutputCard(textContent, tableContent, tableId, tabPrefix)` – Tab-Ansicht (Fliesstext | Prozesstabelle). v2.4: 4. Parameter `tabPrefix` für stabile Tab-IDs (verhindert Date.now()-Kollision bei IST/SOLL)
+- `renderDocSection()` – Hilfsfunktion für IST/SOLL Living Doc mit Tabs. v2.4: übergibt `'doc-'+field` als `tabPrefix`
+- `renderMd()` – Verschachtelte Sub-Listen (`.md-sub`) für Ja/Nein-Logik unter nummerierten Schritten; En-Dash (–) als Listen-Marker erkannt
+- `mdToClipboardHtml()` – Gleiche verschachtelte Sub-Listen-Logik für Confluence-Copy
+- `pipeTableToClipboardHtml()` – v2.4: Neue `cellHtml()`-Hilfsfunktion wandelt `**Fettdruck**` → `<strong>`, nummerierte Listen → `<br>`-Umbrüche, statt reinem `escH()`
+- `copyRich()` – Rich-Copy
+- `copySec()` – Versteht kombinierte Keys (`ist+istTab`, `soll+sollTab`) für "Text + Tabelle"
+- `copyAllSections()` – v2.4: AK wird jetzt als Pipe-Tabelle kopiert (wie TF), nicht mehr als Markdown-Text; Reihenfolge: titel, ist, istTab, soll, sollTab, kz, ak, tf
+- `copyIstAll()` – IST-Modus "Alles kopieren" (Titel + Text + Tabelle + KZ)
+- `generateAkTf()` – v2.4: Auto-Retry bei AK **oder** TF leer (OR statt AND); Ergebnisse zusammengeführt
+- `renderTfWithToolbar()` – v2.4: Filter-Chips-Erkennung lockerer (Gedankenstrich, Pipe, Punkt als Trennzeichen)
+- `renderAkAsTable(text, externalId)` – v2.4: Optionale `externalId` für stabile DOM-IDs; Bottom-Button entfernt (Button ist jetzt im Card-Header)
+- `renderKIAMsg()` – v2.4: Verbesserter Fallback-Renderer (Absatz-Trennung, Markdown-Header als `<h4>`, statt rohem renderMd-Dump)
 - `toggleSpeech()` – Spracheingabe
 - `selIstMode()` / `toggleIstExample()` – IST-Untermodus-Auswahl
-- `docState` – v2.3: Enthält `istTab` und `sollTab` als eigene Felder
+- `docState` – Enthält `istTab` und `sollTab` als eigene Felder
+- `reqType` – v2.4: Wird automatisch auf `'fachlich'` gesetzt, `selType()` ist toter Code
 
 *Test-Assistent (v2.2):*
 - `SYS_TEST_CREATE` – Prompt Testfälle erstellen (4 Kategorien, keine Fake-Daten, 2-Phasen)
@@ -146,40 +162,37 @@ Version 2.3 – **Einheitliche Prozessdarstellung** (Fließtext mit Unterübersc
 - `tfRawStore` (Map) – Rohdaten-Speicher für Filter/Copy
 - `getTestExampleCreate/Refine/Result()` – Praxisbeispiele im finalen Output-Format
 
-## Änderungshistorie v2.3
+## Änderungshistorie v2.4
 
-**Einheitliche Prozessdarstellung – Fließtext + Prozesstabellen**
+**UX-Verbesserungen + Bugfixes**
 
-*System-Prompts (4 Änderungen):*
-1. `SYS_IST` – IST-TEXT mit Unterüberschriften: Prozessauslöser, Bearbeitungsschritte (Zusammenfassung), Output, optional Ablehnungen/Sonderfälle
-2. `SYS_IST_SIMPLE` – Gleiches Schema ohne Ja/Nein-Logik
-3. `SYS_GENERAL` IST-Sektion – Unterüberschriften + IST-TABELLE als eigene Sektion
-4. `SYS_GENERAL` SOLL-Sektion – Unterüberschriften (mit Zielbild) + SOLL-TABELLE als eigene Sektion
-5. Alle 4 Prompts: Bearbeitungsschritte im Fließtext nur als Zusammenfassung (2-3 Sätze), KEINE Einzelschritte – Details stehen in der Prozesstabelle
+*Umbenennung + UI-Bereinigung (3 Änderungen):*
+1. "Allgemeine Anforderung" → "ANFO-Ticket" (Landing-Page Karte + Onboarding-Modal)
+2. "Art der Anforderung" (Chips: Fachlich/Change/Technisch) komplett entfernt – `reqType` automatisch `'fachlich'` in `selectMode('general')` und `confirmNewReq()`
+3. Praxisbeispiel im ANFO-Intake: Aufklappbarer `<details>`-Block mit kompaktem Hautkrebsvorsorge-Beispiel (IST, SOLL, KZ, AK-Auszug 3 Zeilen, TF-Auszug 3 Zeilen mit farbigen Kategorie-Dots)
 
-*Parser (1 Änderung):*
-- `parseKIA()` – Neue Header `H_IST_TAB` und `H_SOLL_TAB` erkennen `IST-TABELLE:` und `SOLL-TABELLE:`; werden VOR `H_IST`/`H_SOLL` geprüft (sonst false match); Pipe-Zeilen innerhalb IST/SOLL-Text werden automatisch in `istTab`/`sollTab` umgeleitet; Return enthält `istTab` und `sollTab`
+*Bugfix: Tab-Kollision IST/SOLL (1 Änderung):*
+- `renderIstOutputCard()` hat neuen 4. Parameter `tabPrefix` – erzeugt stabile IDs statt `Date.now()`. `renderDocSection()` übergibt `'doc-ist'` / `'doc-soll'` → keine doppelten DOM-IDs mehr, SOLL-Tab schaltet jetzt korrekt um
 
-*Living Document + Rendering (6 Änderungen):*
-- `docState` – Neue Felder `istTab` und `sollTab`
-- `updateDoc()` – Ruft `renderDocSection()` für IST/SOLL; istTab/sollTab triggern Re-Render des Parent
-- `renderDocSection()` – NEU: Rendert IST/SOLL mit `renderIstOutputCard()` (Tab-Ansicht) wenn Tabelle vorhanden
-- `callAndRender()` – Übergibt `p.istTab` und `p.sollTab` an `updateDoc`
-- `startFinalize()` – IST/SOLL als Tab-Karten mit 3 Copy-Buttons (Alles / Nur Text / Nur Tabelle)
-- `copySec()` – Kombinierte Keys `ist+istTab` und `soll+sollTab` für "Alles kopieren"
-- `copyAllSections()` – Reihenfolge: titel, ist, istTab, soll, sollTab, kz, ak, tf
+*Bugfix: Parser-Robustheit (2 Änderungen):*
+- `parseKIA()` Header-Regexes gelockert: Doppelpunkt optional bei eindeutigen langen Formen + Zeilenende (`$`), neue Aliase (`Zusammenfassung` → Analyse, `Offene Fragen` → Rückfragen, `Aktueller Zustand/Prozess` → IST, `Zielzustand/Zielbild` → SOLL, `IST-Prozesstabelle` → IST-Tab). Kurze Formen (`IST:`, `SOLL:`) behalten Doppelpunkt-Pflicht (Sicherheit gegen false matches)
+- `renderKIAMsg()` Fallback-Renderer verbessert: Text wird an Doppel-Newlines aufgesplittet, Markdown-Header als `<h4>` gerendert, Absätze einzeln formatiert statt roher `renderMd()`-Dump
 
-*Rendering-Verbesserungen (3 Änderungen):*
-- `renderMd()` – Verschachtelte Sub-Listen: Dash/Bullet-Zeilen nach nummeriertem Schritt werden als `<ul class="md-sub">` innerhalb des `<li>` gerendert; En-Dash (–, U+2013) als Listen-Marker erkannt
-- `mdToClipboardHtml()` – Gleiche verschachtelte Sub-Listen-Logik für korrekte Confluence-Copy
-- CSS `.md-sub` – Kompakte Sub-Liste (kleinere Schrift, Border-Left, kein Card-Look)
-- CSS `.ist-section-body .md-ol li` – Nummerierte Schritte innerhalb Sektionsblöcke kompakt ohne Card-Look
+*Bugfix: AK/TF-Generierung (2 Änderungen):*
+- `generateAkTf()` Retry-Bedingung: `&&` → `||` (Retry wenn AK **oder** TF leer). Ergebnisse aus beiden Versuchen zusammengeführt – Gutes aus 1. Versuch bleibt erhalten
+- `renderTfWithToolbar()` Filter-Chips-Erkennung lockerer: Regex erkennt auch Gedankenstrich (—), Pipe (`|`), Punkt als Trennzeichen nach Kategorie-Präfix; `|positiv` mitten in Pipe-Zeile als Fallback
 
-*AK/TF-Generierung (1 Änderung):*
-- `generateAkTf()` – Prompt enthält IST-TABELLE + SOLL-TABELLE; kein `stripMd()` mehr; Auto-Retry bei leerem Ergebnis; Warn-Toast bei Fehlschlag
+*Copy-Überarbeitung (4 Änderungen):*
+- Top-Button "Alles kopieren" (`#btnCopyAll`) dynamisch verdrahtet: `finalizeIst()` → `copyIstAll()`, `startFinalize()` → `copyAllSections()`
+- Per-Section-Buttons umbenannt: "Alles kopieren" → "Text + Tabelle" (IST-Finalize, Anforderung-IST, Anforderung-SOLL)
+- `copyAllSections()`: AK wird jetzt als Pipe-Tabelle kopiert (`pipeTableToClipboardHtml`) statt Markdown (`mdToClipboardHtml`)
+- `renderAkAsTable(text, externalId)`: Bottom-Button entfernt; AK-Karte in `startFinalize()` hat Kopier-Button im Header (konsistent mit allen anderen Sektionen); Chat behält eigenen "Tabelle kopieren"-Button
+
+*Confluence-Formatierung (1 Änderung):*
+- `pipeTableToClipboardHtml()`: Neue `cellHtml()`-Hilfsfunktion ersetzt `escH()` für Zellinhalte. Wandelt `**text**` → `<strong>text</strong>`, nummerierte Listen (`1. xxx 2. xxx`) → `<br>`-Umbrüche. Wirkt auf alle Pipe-Tabellen-Kopien (AK, TF, IST-Tab, SOLL-Tab)
 
 ## Umsetzungshinweise
 
 **Methode:** Ausschließlich per str_replace. Kein komplettes Neuschreiben.
 
-**Kritisch:** `parseBewertung()` nicht ändern. `parseKIA()` und `parseIST()` nur erweitern, nicht umbauen. `renderMd()` Änderungen wirken global – sorgfältig testen.
+**Kritisch:** `parseBewertung()` nicht ändern. `parseKIA()` und `parseIST()` nur erweitern, nicht umbauen. `renderMd()` Änderungen wirken global – sorgfältig testen. `pipeTableToClipboardHtml()` wirkt auf alle Tabellen-Kopien – Änderungen in `cellHtml()` betreffen AK, TF, IST-Tab und SOLL-Tab gleichzeitig.
