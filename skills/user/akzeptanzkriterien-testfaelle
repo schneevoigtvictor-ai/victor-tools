@@ -1,0 +1,543 @@
+---
+name: akzeptanzkriterien-testfaelle
+description: >
+  Stellt bewährte Patterns für die Darstellung und Verarbeitung von Akzeptanzkriterien
+  und Testfällen in SBK-HTML-Tools bereit. Verwende diesen Skill IMMER, wenn ein Tool
+  kategorisierte Tabellen aus KIA-Output darstellen soll – insbesondere mit Filter-Chips,
+  farbcodiertem Rendering, dynamischen Headern und DOM-basiertem Copy. Trigger-Signale:
+  "Testfälle anzeigen", "Akzeptanzkriterien-Tabelle", "Filter-Chips für Tabelle",
+  "Kategorien filtern", "Pipe-Tabelle rendern", "Testfall-Kategorien", "AK/TF generieren",
+  "kategorisierte Tabelle", "Tabelle mit Toolbar", oder wenn ein Tool Pipe-Tabellen aus
+  KIA-Output in interaktive HTML-Tabellen mit Filtermöglichkeit umwandeln soll.
+  Auch verwenden bei Problemen mit Tabellen-Rendering, Filter-Logik oder wenn
+  bestehende Tabellen um Kategorien/Filter erweitert werden sollen.
+---
+
+# Akzeptanzkriterien & Testfälle Skill
+
+Dieses Skill dokumentiert das bewährte Pattern für kategorisierte Tabellenausgabe in SBK-Tools. Kernproblem, das es löst: KIA liefert Pipe-Tabellen mit kategorie-getaggten Zeilen (z.B. "Positiv - Standardfall"). Das Tool muss diese Tabellen rendern, farblich kodieren, filterbar machen und Confluence-kompatibel kopieren.
+
+**Voraussetzungen:** `kia-integration`-Skill (API-Anbindung), `confluence-copy`-Skill (Copy-Funktionen: `copyRich`, `copyTableFromDom`, `pipeTableToClipboardHtml`).
+
+
+## Architektur-Überblick
+
+```
+KIA-Output (Pipe-Tabelle)
+       │
+       ▼
+┌─────────────────────┐
+│ Kategorie-Erkennung │ → Welche Kategorien existieren in den Daten?
+└─────────┬───────────┘
+          │
+          ▼
+┌─────────────────────┐     ┌──────────────────┐
+│ Toolbar rendern     │────▶│ Filter-Chips     │ (nur vorhandene Kategorien)
+│                     │────▶│ Copy-Button      │
+└─────────┬───────────┘     └──────────────────┘
+          │
+          ▼
+┌─────────────────────┐     ┌──────────────────┐
+│ Tabelle rendern     │────▶│ renderTfTable()  │ (dynamische Header, cellMd)
+└─────────┬───────────┘     └──────────────────┘
+          │
+          ▼
+┌─────────────────────┐
+│ tfRawStore.set()    │ → Rohdaten separat speichern
+└─────────────────────┘
+```
+
+
+## Das Kategorie-Prefix-System
+
+### Konvention
+
+Jede Tabellenzeile beginnt in der Beschreibungsspalte mit einem Kategorie-Prefix:
+
+```
+Nr.|Beschreibung|Vorbedingungen|Testschritte|Erwartetes Ergebnis
+1|Positiv - Standardfall|...|...|...
+2|Grenzwert - Altersgrenze exakt|...|...|...
+3|Negativ - Antrag abgelehnt|...|...|...
+4|Eingangsprüfung - Betrag fehlt|...|...|...
+```
+
+**Die vier Standard-Kategorien (aus dem Anforderungs-Assistenten):**
+
+| Kategorie | Prefix | Farbe | Default | Bedeutung |
+|-----------|--------|-------|---------|-----------|
+| Positiv | `Positiv - ` | Grün | AN | Standardpfad, alles korrekt |
+| Grenzwert | `Grenzwert - ` | Orange | AN | An der Grenze (z.B. exakt am Alterslimit) |
+| Negativ | `Negativ - ` | Rot | AN | Fachliche Ablehnung/Fehler |
+| Eingangsprüfung | `Eingangsprüfung - ` | Grau | AUS | Fehlende/ungültige Eingangsdaten |
+
+**Warum Eingangsprüfung default AUS:** Diese Testfälle (fehlender Betrag, ungültiges Datum) sind generische Vollständigkeitsprüfungen und lenken vom fachlichen Kern ab. Power-User können sie einblenden.
+
+### Kategorie-Erkennung im KIA-Output
+
+KIA hält sich nicht immer exakt an die Prefix-Konvention. Die Erkennung muss locker sein:
+
+```javascript
+/* Erkennung: Trennzeichen nach Kategorie-Wort kann Dash, Doppelpunkt, Pipe, Punkt sein */
+const hasPos   = lines.some(l => /positiv\s*[-–—:.|]/i.test(l) || /\|positiv/i.test(l));
+const hasGrenz = lines.some(l => /grenzwert\s*[-–—:.|]/i.test(l) || /\|grenzwert/i.test(l));
+const hasNeg   = lines.some(l => /negativ\s*[-–—:.|]/i.test(l) || /\|negativ/i.test(l));
+const hasEP    = lines.some(l => /eingangsprue?fung\s*[-–—:.|]/i.test(l)
+                              || /\|eingangsprue?fung/i.test(l)
+                              || /eingangsprüfung/i.test(l));
+```
+
+**Drei Erkennungswege pro Kategorie:**
+1. `positiv` gefolgt von Trennzeichen (Dash, En-Dash, Em-Dash, Doppelpunkt, Pipe, Punkt)
+2. `|positiv` direkt nach Pipe (Kategorie in eigener Spalte statt als Prefix)
+3. Für Eingangsprüfung: Zusätzlich echtes `ü` neben `ue`-Umschreibung
+
+**Regel:** Nur Kategorien anzeigen, die tatsächlich in den Daten vorkommen. Keine leeren Chips.
+
+
+## Rohdaten-Speicherung (tfRawStore)
+
+### Das Problem
+
+Wenn `updateDoc()` das Living Document aktualisiert, überschreibt es den Inhalt mit dem gerenderten HTML. Beim nächsten Copy oder Filter ist der Rohtext (Pipe-Tabelle) nicht mehr verfügbar. Das führt zu kaputten Kopien und Filterfehlern.
+
+### Die Lösung: Separater Rohtext-Speicher
+
+```javascript
+const tfRawStore = new Map();
+
+/* Beim Rendern: Rohdaten speichern */
+function renderTableWithToolbar(raw, prefix) {
+  const tableId = (prefix || 'tf') + '-' + Date.now();
+  // ... Toolbar + Tabelle rendern ...
+  tfRawStore.set(tableId, raw);  // ← Rohtext separat speichern
+  return html;
+}
+
+/* Beim Filtern: Rohdaten aus Store lesen */
+function filterCategory(tableId, btn) {
+  // ... DOM-Zeilen ein-/ausblenden ...
+  const rawData = tfRawStore.get(tableId);  // ← Originaltext für Living-Doc-Update
+  // ... gefilterte Version an Living Doc übergeben ...
+}
+```
+
+**Regel:** Jede Tabelle bekommt eine eindeutige `tableId`. Der Rohtext wird unter dieser ID in einer `Map` gespeichert. DOM-Rendering und Rohtext-Speicherung sind entkoppelt.
+
+
+## Tabellen-Rendering (renderTfTable)
+
+### Dynamische Header
+
+KIA liefert manchmal andere Header als erwartet. Der Renderer liest die Header aus der ersten Zeile:
+
+```javascript
+const TF_HEADERS_DEFAULT = ['Nr.', 'Beschreibung', 'Vorbedingungen', 'Testschritte', 'Erwartetes Ergebnis'];
+
+function renderTfTable(raw) {
+  if(!raw) return '<p>Keine Testfälle.</p>';
+  const lines = raw.split('\n').filter(l => l.includes('|'));
+  if(lines.length < 2) return '<div class="rendered">' + renderMd(raw) + '</div>';
+
+  /* Dynamische Header aus erster Zeile extrahieren */
+  let headers = [], dataLines = lines;
+  if(lines[0].match(/Nr|ID|Beschreibung|Testfall|Vorbedingung/i)) {
+    headers = lines[0].split('|').map(c => c.trim()).filter(c => c);
+    dataLines = lines.slice(1);
+  } else {
+    headers = TF_HEADERS_DEFAULT;
+  }
+
+  /* Separator-Zeilen entfernen */
+  dataLines = dataLines.filter(l => !l.match(/^[\s|:-]+$/));
+  if(dataLines.length === 0) return '<div class="rendered">' + renderMd(raw) + '</div>';
+
+  const colCount = headers.length;
+```
+
+**Regel:** Wenn die erste Zeile bekannte Schlüsselwörter enthält (`Nr`, `Beschreibung`, etc.), wird sie als Header interpretiert. Sonst Fallback auf Defaults.
+
+### cellMd: Formatierung in Tabellenzellen
+
+Tabellenzellen aus KIA enthalten Markdown-Formatierung und nummerierte Listen:
+
+```javascript
+/**
+ * HTML-Escape + Markdown-Formatierung für Tabellenzellen.
+ * Unterschied zu renderMd(): Optimiert für Zellinhalt (keine Absätze, keine Listen-Tags).
+ */
+function cellMd(t) {
+  let s = escH(t);
+  /* Explizite <br>-Tags erhalten */
+  s = s.replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+  /* Fettdruck und Kursiv */
+  s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*([^*\s][^*]*?)\*/g, '<em>$1</em>');
+  /* Nummerierte Schritte (1. xxx 2. xxx) als Zeilenumbrüche */
+  if(s.match(/\d+\.\s+\S/)) {
+    s = s.replace(/(\d+)\.\s+/g, '<br><strong>$1.</strong> ').replace(/^<br>/, '');
+  }
+  return s;
+}
+```
+
+**Warum nicht renderMd():** `renderMd()` erzeugt `<p>`, `<ul>`, `<ol>`-Tags, die in Tabellenzellen überdimensioniert sind und das Layout brechen. `cellMd()` nutzt `<br>` statt Block-Elemente.
+
+### Spaltenbreiten mit colgroup
+
+Feste Spaltenbreiten verhindern, dass lange Zellinhalte die Tabelle verzerren:
+
+```javascript
+/* 5-Spalten-Layout (Standard für Testfälle) */
+let colgroup = '';
+if(colCount === 5) {
+  colgroup = '<colgroup>'
+    + '<col style="width:5%">'     // Nr.
+    + '<col style="width:22%">'    // Beschreibung
+    + '<col style="width:25%">'    // Vorbedingungen
+    + '<col style="width:20%">'    // Testschritte
+    + '<col style="width:28%">'    // Erwartetes Ergebnis
+  + '</colgroup>';
+}
+
+/* 4-Spalten-Layout (Standard für Akzeptanzkriterien) */
+if(colCount === 4) {
+  colgroup = '<colgroup>'
+    + '<col style="width:5%">'     // Nr.
+    + '<col style="width:22%">'    // Kriterium
+    + '<col style="width:43%">'    // Bedingung
+    + '<col style="width:30%">'    // Erwartetes Ergebnis
+  + '</colgroup>';
+}
+```
+
+**Regel:** `colgroup` nur setzen wenn die Spaltenanzahl bekannt ist. Bei unbekannter Spaltenanzahl natürliche Breiten verwenden.
+
+
+## Filter-Chip-Implementierung
+
+### Toolbar-Aufbau
+
+```javascript
+function renderTableWithToolbar(raw, prefix) {
+  // ... Kategorie-Erkennung (siehe oben) ...
+  const hasAnyFilter = hasPos || hasGrenz || hasNeg || hasEP;
+
+  let html = '<h4>Testfälle</h4>';
+  html += '<div class="tf-toolbar">';
+
+  if(hasAnyFilter) {
+    html += '<div class="tf-filter-chips">';
+    /* Nur vorhandene Kategorien als Chips anzeigen */
+    if(hasPos)   html += '<button class="tf-filter-chip on-pos" data-cat="positiv" '
+                       + 'onclick="filterCategory(\'' + tableId + '\',this)">Positiv</button>';
+    if(hasGrenz) html += '<button class="tf-filter-chip on-grenz" data-cat="grenzwert" '
+                       + 'onclick="filterCategory(\'' + tableId + '\',this)">Grenzwert</button>';
+    if(hasNeg)   html += '<button class="tf-filter-chip on-neg" data-cat="negativ" '
+                       + 'onclick="filterCategory(\'' + tableId + '\',this)">Negativ</button>';
+    if(hasEP)    html += '<button class="tf-filter-chip" data-cat="eingangspruefung" '
+                       + 'onclick="filterCategory(\'' + tableId + '\',this)">Eingangsprüfung</button>';
+    html += '</div><div class="tf-toolbar-sep"></div>';
+  }
+
+  /* Copy-Button (nutzt copyTableFromDom aus confluence-copy Skill) */
+  html += '<button class="tf-toolbar-btn" onclick="copyTableFromDom(\'' + tableId + '\',this)">'
+        + '/* SVG-Icon */Tabelle kopieren</button>';
+  html += '</div>';
+
+  html += '<div id="' + tableId + '">' + renderTfTable(raw) + '</div>';
+  tfRawStore.set(tableId, raw);
+
+  /* Eingangsprüfung-Zeilen initial ausblenden */
+  if(hasEP) {
+    setTimeout(() => {
+      const container = document.getElementById(tableId);
+      if(!container) return;
+      container.querySelectorAll('tbody tr').forEach(row => {
+        const desc = row.querySelectorAll('td')[1]?.textContent?.toLowerCase() || '';
+        if(desc.startsWith('eingangspruefung') || desc.startsWith('eingangsprüfung'))
+          row.style.display = 'none';
+      });
+    }, 50);
+  }
+
+  return html;
+}
+```
+
+**Drei Regeln:**
+1. **Default-Zustand über CSS-Klasse:** `on-pos`, `on-grenz`, `on-neg` = aktiv. Kein `on-ep` = inaktiv. Der Chip ohne Farbklasse ist grau (Default-CSS).
+2. **setTimeout für initiales Ausblenden:** Die Tabelle muss im DOM sein, bevor Zeilen ausgeblendet werden können. `setTimeout(fn, 50)` stellt sicher, dass das Rendering abgeschlossen ist.
+3. **Copy-Button neben Filter-Chips:** Kopiert immer nur sichtbare Zeilen (DOM-basiert via `copyTableFromDom`).
+
+### Filter-Logik
+
+```javascript
+function filterCategory(tableId, btn) {
+  const cat = btn.getAttribute('data-cat');
+  const cssMap = {
+    positiv: 'on-pos',
+    grenzwert: 'on-grenz',
+    negativ: 'on-neg',
+    eingangspruefung: 'on-ep'
+  };
+  const cls = cssMap[cat] || '';
+
+  /* Toggle: Klasse hinzufügen/entfernen */
+  const isNowOn = !btn.classList.contains(cls);
+  if(isNowOn) btn.classList.add(cls);
+  else btn.classList.remove(cls);
+
+  /* Alle aktiven Kategorien sammeln */
+  const toolbar = btn.closest('.tf-toolbar');
+  const activeCats = new Set();
+  toolbar.querySelectorAll('.tf-filter-chip').forEach(chip => {
+    const c = chip.getAttribute('data-cat');
+    const cm = cssMap[c] || '';
+    if(chip.classList.contains(cm)) activeCats.add(c);
+  });
+
+  /* Kategorie aus Beschreibungs-Spalte erkennen */
+  function getCat(desc) {
+    const d = desc.toLowerCase();
+    if(d.startsWith('eingangspruefung') || d.startsWith('eingangsprüfung')) return 'eingangspruefung';
+    if(d.startsWith('negativ')) return 'negativ';
+    if(d.startsWith('grenzwert')) return 'grenzwert';
+    return 'positiv';  // Default-Kategorie
+  }
+
+  /* DOM-Zeilen ein-/ausblenden */
+  const container = document.getElementById(tableId);
+  if(!container) return;
+  container.querySelectorAll('tbody tr').forEach(row => {
+    const cells = row.querySelectorAll('td');
+    const desc = cells.length >= 2 ? cells[1].textContent : '';
+    row.style.display = activeCats.has(getCat(desc)) ? '' : 'none';
+  });
+}
+```
+
+**getCat()-Logik:** Reihenfolge der Prüfung ist wichtig. `eingangspruefung` VOR `negativ` prüfen, weil sonst "Eingangsprüfung - Negativbeispiel" als `negativ` kategorisiert würde. `positiv` ist die Default-Kategorie für alles ohne erkannten Prefix.
+
+
+## AK-Tabellen-Rendering (renderAkAsTable)
+
+Akzeptanzkriterien kommen in zwei Formaten von KIA:
+
+### Format 1: Pipe-Tabelle (bevorzugt)
+
+```
+Nr.|Kriterium|Bedingung|Erwartetes Ergebnis
+1|Altersgrenze|Versicherter >= 35 Jahre|Erstattung wird bewilligt
+2|Doppelerfassung|Kein Duplikat im System|Neuer Datensatz wird angelegt
+```
+
+→ Direkt als Tabelle gerendert (wie TF, aber mit eigenem Styling und ohne Filter-Chips).
+
+### Format 2: Nummerierte Liste (Fallback)
+
+```
+1. Die Anforderung ist erfüllt, wenn **Altersgrenze** korrekt geprüft wird.
+2. Die Anforderung ist erfüllt, wenn **Doppelerfassung** erkannt wird.
+```
+
+→ Parser extrahiert: Bold = Kriterium-Titel, Rest = Bedingung. Wird in 4-Spalten-Tabelle umgewandelt.
+
+```javascript
+/* Fallback: Nummerierte Items → Tabelle */
+items.forEach((item, idx) => {
+  let kriterium = '', bedingung = '', ergebnis = '';
+  /* "Die Anforderung ist erfüllt, wenn" entfernen */
+  let cleaned = item.replace(/^Die Anforderung ist erf[uü]llt,?\s*wenn\s*/i, '').trim();
+  /* Bold als Kriterium-Titel extrahieren */
+  const boldMatch = cleaned.match(/\*\*(.+?)\*\*/);
+  if(boldMatch) {
+    kriterium = boldMatch[1];
+    bedingung = /* Text nach dem Bold */;
+    ergebnis = 'Anforderung erfüllt';
+  } else {
+    kriterium = cleaned.length > 50 ? cleaned.substring(0, 47) + '...' : cleaned;
+    bedingung = cleaned;
+    ergebnis = 'Anforderung erfüllt';
+  }
+});
+```
+
+**Regel:** Kein Filter-Chip-System für AK (Akzeptanzkriterien haben keine Kategorien). Nur Tabelle + Copy-Button.
+
+
+## CSS-Referenz
+
+### Farbsystem (CSS-Variablen)
+
+Die Tabellen und Filter-Chips nutzen das SBK-Farbsystem:
+
+```css
+:root {
+  --blue-deep: #002B52;    /* Tabellen-Header TF, primäre Akzente */
+  --blue-strong: #2B6CB0;  /* Links, Nr-Spalte TF */
+  --blue-pale: #EBF8FF;    /* Hover TF-Zeilen */
+  --orange: #C05621;        /* AK-Header, AK-Nr, Grenzwert-Chip */
+  --green: #16A34A;         /* Positiv-Chip, Erfolg */
+  --green-light: #F0FFF4;   /* Positiv-Chip Hintergrund */
+  --red: #C53030;            /* Negativ-Chip */
+  --red-light: #FFF5F5;     /* Negativ-Chip Hintergrund */
+  --yellow-light: #FFFFF0;  /* AK-Hover, Grenzwert-Chip Hintergrund */
+  --sf2: #F7FAFC;           /* Zebra-Striping (gerade Zeilen) */
+  --bd: #E2E8F0;            /* Borders, Chip-Default-Border */
+  --bd2: #EDF2F7;           /* Zellen-Trennlinien */
+  --mu: #718096;             /* Muted Text, Default-Chip-Farbe */
+  --dm: #A0AEC0;             /* Eingangsprüfung-Chip-Border */
+  --rs: 8px;                 /* Border-Radius Standard */
+}
+```
+
+### Testfall-Tabelle
+
+```css
+.tf-table-wrap { overflow-x: auto; margin: 4px 0; }
+.tf-table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.55; }
+.tf-table th {
+  background: var(--blue-deep); color: #fff; font-weight: 700;
+  text-align: left; padding: 9px 10px; font-size: 11.5px;
+  letter-spacing: .02em; word-wrap: break-word;
+}
+.tf-table th:first-child { border-radius: var(--rs) 0 0 0; width: 40px; }
+.tf-table th:last-child { border-radius: 0 var(--rs) 0 0; }
+.tf-table td {
+  padding: 9px 10px; border-bottom: 1px solid var(--bd2);
+  vertical-align: top; color: var(--tx2); word-wrap: break-word; overflow-wrap: break-word;
+}
+.tf-table tr:last-child td { border-bottom: none; }
+.tf-table tr:nth-child(even) { background: var(--sf2); }
+.tf-table tr:hover { background: var(--blue-pale); }
+.tf-table td:first-child { font-weight: 700; color: var(--blue-strong); text-align: center; width: 40px; }
+```
+
+### AK-Tabelle (eigene Farbgebung)
+
+```css
+.ak-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.ak-table th {
+  background: var(--orange); color: #fff; padding: 8px 12px;
+  text-align: left; font-size: 12px; font-weight: 700;
+}
+.ak-table td {
+  padding: 10px 12px; border-bottom: 1px solid var(--bd2);
+  vertical-align: top; line-height: 1.55; color: var(--tx2);
+}
+.ak-table tr:nth-child(even) { background: var(--sf2); }
+.ak-table tr:hover { background: var(--yellow-light); }
+.ak-table .ak-nr { font-weight: 700; color: var(--orange); text-align: center; }
+.ak-table .ak-krit { font-weight: 600; color: var(--blue-deep); }
+```
+
+### Toolbar + Filter-Chips
+
+```css
+.tf-toolbar {
+  display: flex; align-items: center; gap: 8px; margin: 8px 0 4px; flex-wrap: wrap;
+}
+.tf-toolbar-sep { width: 1px; height: 20px; background: var(--bd); margin: 0 4px; }
+
+/* Toolbar Copy-Button */
+.tf-toolbar-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border: 1px solid var(--bd); border-radius: var(--rs);
+  background: var(--sf); font-family: inherit; font-size: 12px; font-weight: 500;
+  color: var(--mu); cursor: pointer; transition: all .2s var(--ease);
+}
+.tf-toolbar-btn:hover { border-color: var(--blue-strong); color: var(--blue-strong); }
+.tf-toolbar-btn.copied { border-color: var(--green); background: var(--green-light); color: var(--green); }
+
+/* Filter-Chips */
+.tf-filter-chips { display: flex; gap: 4px; flex-wrap: wrap; }
+.tf-filter-chip {
+  padding: 4px 10px; border: 1.5px solid var(--bd); border-radius: 20px;
+  font-family: inherit; font-size: 11.5px; font-weight: 600;
+  cursor: pointer; transition: all .2s var(--ease);
+  background: var(--sf); color: var(--mu);
+}
+.tf-filter-chip:hover { border-color: var(--blue-strong); }
+
+/* Aktive Chip-Zustände (Farbe = Kategorie) */
+.tf-filter-chip.on-pos   { border-color: var(--green);  background: var(--green-light);  color: var(--green); }
+.tf-filter-chip.on-grenz { border-color: var(--orange); background: var(--yellow-light); color: var(--orange); }
+.tf-filter-chip.on-neg   { border-color: var(--red);    background: var(--red-light);    color: var(--red); }
+.tf-filter-chip.on-ep    { border-color: var(--dm);     background: var(--sf3);          color: var(--mu); }
+```
+
+
+## Prompt-Regeln für AK/TF-Generierung
+
+Im System-Prompt müssen folgende Regeln stehen, damit der Parser zuverlässig arbeitet:
+
+### Für Testfälle
+
+```
+Kennzeichne jeden Testfall mit GENAU einem Präfix:
+- "Positiv - " = Fachlicher Positivfall
+- "Grenzwert - " = Grenzwertprüfung
+- "Negativ - " = Fachlicher Negativfall
+- "Eingangsprüfung - " = Fehlende/ungültige Eingangsvariable
+
+Sortiere die Testfälle: Positiv, Grenzwert, Negativ, Eingangsprüfung.
+
+Ausgabeformat:
+TESTFÄLLE:
+Nr.|Beschreibung|Vorbedingungen|Testschritte|Erwartetes Ergebnis
+1|Positiv - [Kurzname]|1. [Bedingung]|1. [Schritt]|[Ergebnis]
+```
+
+### Für Akzeptanzkriterien
+
+```
+Ausgabeformat:
+AKZEPTANZKRITERIEN:
+Nr.|Kriterium|Bedingung|Erwartetes Ergebnis
+1|[Kriterium]|[Bedingung]|[Ergebnis]
+```
+
+### Verbots-Regeln (im System-Prompt)
+
+```
+- KEINE erfundenen Testdaten → Platzhalter: [Versichertennr.], [Betrag], [Datum]
+- KEINE erfundenen Fehlermeldungen → [Erwartete Systemmeldung]
+- KEINE Login/Auth-Testfälle → Der Tester ist immer angemeldet
+- Vorbedingungen IMMER als nummerierte Liste: "1. [Bedingung] 2. [Bedingung]"
+- Testschritte IMMER als nummerierte Liste: "1. [Schritt] 2. [Schritt]"
+```
+
+
+## Checkliste für neue Tools mit AK/TF
+
+### Rendering
+
+- [ ] `renderTfTable()` liest Header dynamisch aus erster Zeile
+- [ ] `cellMd()` statt `renderMd()` in Tabellenzellen (keine Block-Elemente)
+- [ ] `colgroup` für feste Spaltenbreiten bei bekannter Spaltenanzahl
+- [ ] Separator-Zeilen (`|---|---|---`) werden rausgefiltert
+- [ ] Fallback für nicht-tabellarischen Output (`renderMd()`)
+
+### Filter-Chips
+
+- [ ] Nur vorhandene Kategorien als Chips anzeigen
+- [ ] Default-Zustände definiert (welche AN, welche AUS)
+- [ ] `getCat()` prüft Eingangsprüfung VOR Negativ (Reihenfolge!)
+- [ ] Initiales Ausblenden per `setTimeout` (nach DOM-Rendering)
+- [ ] Toggle-Logik über CSS-Klassen (`on-pos`, `on-grenz`, etc.)
+
+### Rohtext-Speicherung
+
+- [ ] `tfRawStore` (Map) speichert Rohtext pro Tabellen-ID
+- [ ] Filter-Updates lesen aus `tfRawStore`, nicht aus DOM
+- [ ] Copy-Button für gefilterte Tabellen nutzt `copyTableFromDom()` (DOM-basiert)
+- [ ] "Alles kopieren" nutzt `pipeTableToClipboardHtml()` (Rohtext-basiert, ungefiltert)
+
+### System-Prompt
+
+- [ ] Kategorie-Prefixes definiert und erklärt
+- [ ] Sortierreihenfolge vorgegeben
+- [ ] Pipe-Tabellen-Format mit Headern definiert
+- [ ] Keine-erfundenen-Daten-Regeln vorhanden
+- [ ] Nummerierte Listen-Format für Vorbedingungen/Testschritte vorgegeben
