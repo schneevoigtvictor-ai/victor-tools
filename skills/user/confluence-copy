@@ -1,0 +1,469 @@
+---
+name: confluence-copy
+description: >
+  Stellt getestete Copy-Funktionen für Confluence-kompatible Zwischenablage bereit.
+  Verwende diesen Skill IMMER, wenn ein SBK-HTML-Tool Inhalte kopierbar machen soll –
+  insbesondere Tabellen, formatierter Text, Markdown-ähnliche Inhalte oder mehrteilige
+  Dokumente. Trigger-Signale: "Confluence-Copy", "Rich-Copy", "Kopieren für Confluence",
+  "Tabelle kopierbar machen", "HTML in Zwischenablage", "Copy-Button", "Clipboard",
+  "formatiert kopieren", "Pipe-Tabelle kopieren", oder wenn ein Tool Inhalte erzeugt,
+  die in Confluence, JIRA oder andere Rich-Text-Editoren eingefügt werden sollen.
+  Auch verwenden bei Problemen mit Tabellen-Formatierung beim Einfügen oder wenn
+  Copy-Buttons in einem bestehenden Tool ergänzt/repariert werden sollen.
+---
+
+# Confluence-Copy Skill
+
+Dieses Skill stellt sicher, dass jede HTML-App mit Copy-Funktionalität das gleiche, getestete Pattern für Confluence-kompatible Zwischenablage verwendet. Die Funktionen sind über Monate im Anforderungs-Assistenten der SBK iterativ entwickelt und getestet worden.
+
+## Kernprinzip
+
+Confluence (und andere Rich-Text-Editoren wie JIRA, Outlook) übernehmen HTML aus der Zwischenablage – aber nur unter bestimmten Bedingungen. Dieses Skill kapselt alle Edge Cases und liefert zuverlässige Copy-Funktionen für drei Inhaltstypen: **formatierten Text**, **Pipe-Tabellen** und **DOM-basierte Tabellen**.
+
+## Drei Copy-Modi
+
+| Modus | Funktion | Eingabe | Einsatzzweck |
+|-------|----------|---------|--------------|
+| **Text → Clipboard** | `mdToClipboardHtml()` | Markdown-ähnlicher Text | Fließtexte, Beschreibungen, Aufzählungen |
+| **Pipe-Tabelle → Clipboard** | `pipeTableToClipboardHtml()` | Pipe-getrennte Rohtext-Tabelle | KIA-generierte Tabellen (AK, TF, Prozesstabellen) |
+| **DOM-Tabelle → Clipboard** | `copyTableFromDom()` | DOM-Container mit `<table>` | Gerenderte Tabellen mit Filter (nur sichtbare Zeilen kopieren) |
+
+Alle drei Modi erzeugen **sowohl HTML als auch Plain-Text** und schreiben beides in die Zwischenablage. Confluence nutzt das HTML, Excel/Notepad den Plain-Text.
+
+## Pflicht-Dependency: escH()
+
+Alle Copy-Funktionen setzen diese Escape-Funktion voraus:
+
+```javascript
+const escH = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+```
+
+**WICHTIG:** `escH()` muss im globalen Scope stehen. Fehlt sie, brechen alle Copy-Funktionen.
+
+## Kern-Utility: copyRich()
+
+Diese Funktion ist die zentrale Schreibfunktion für die Zwischenablage. Alle anderen Copy-Funktionen rufen am Ende `copyRich()` auf.
+
+```javascript
+/**
+ * Kopiert sowohl text/html als auch text/plain in die Zwischenablage.
+ * Confluence (und andere Rich-Text-Editoren) uebernehmen dann die Formatierung.
+ * Fallback auf reines writeText wenn ClipboardItem nicht unterstuetzt wird.
+ */
+async function copyRich(plain, html) {
+  try {
+    const htmlBlob = new Blob([html], {type: 'text/html'});
+    const textBlob = new Blob([plain], {type: 'text/plain'});
+    await navigator.clipboard.write([
+      new ClipboardItem({'text/html': htmlBlob, 'text/plain': textBlob})
+    ]);
+    return true;
+  } catch(e) {
+    /* Fallback: Nur Plain-Text (z.B. Firefox ohne Permissions) */
+    console.warn('Rich-Copy fehlgeschlagen, Fallback auf Plain-Text:', e);
+    await navigator.clipboard.writeText(plain);
+    return true;
+  }
+}
+```
+
+### Regeln für copyRich()
+
+1. **Immer beide Parameter liefern** – `plain` für Fallback/Excel, `html` für Confluence. Nie nur eins von beiden.
+2. **ClipboardItem ist nicht überall verfügbar** – Firefox unterstützt es eingeschränkt. Der `catch`-Block fängt das ab.
+3. **Rückgabewert ist immer `true`** – auch im Fallback. Der Aufrufer braucht keinen Fehlerfall zu behandeln.
+
+## Modus 1: Text → Clipboard (mdToClipboardHtml)
+
+Wandelt Markdown-ähnlichen Text (wie ihn KIA liefert) in sauberes Confluence-HTML.
+
+```javascript
+/**
+ * Wandelt Markdown-aehnlichen Text in sauberes HTML fuer die Zwischenablage.
+ * Confluence interpretiert <strong>, <em>, <ul>/<li>, <ol>/<li>, <p> korrekt.
+ *
+ * Unterstuetzte Formate:
+ * - **Fettdruck** → <strong>
+ * - *Kursiv* → <em>
+ * - Aufzaehlungen (-, –, —, *, •) → <ul>/<li>
+ * - Nummerierte Listen (1. xxx) → <ol>/<li>
+ * - Verschachtelte Sub-Listen (Bullets unter nummerierten Schritten) → <ul> innerhalb <li>
+ * - Absaetze → <p>
+ */
+function mdToClipboardHtml(text) {
+  if(!text) return '';
+  let h = escH(text);
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/\*([^*\s][^*\n]*?)\*/g, '<em>$1</em>');
+  const lines = h.split('\n');
+  let out = '', inUl = false, inOl = false, inSubUl = false;
+  for(const line of lines) {
+    /* Bullet/Dash-Zeilen: -, –, —, *, • am Anfang */
+    const ul = line.match(/^(\s*)[-\u2013\u2014*\u2022]\s+(.+)/);
+    const ol = line.match(/^(\s*)\d+\.\s+(.+)/);
+    if(ul) {
+      if(inOl) {
+        /* Verschachtelte Sub-Liste innerhalb eines OL-Items */
+        if(!inSubUl) { out = out.replace(/<\/li>$/, ''); out += '<ul>'; inSubUl = true; }
+        out += '<li>' + ul[2] + '</li>';
+      } else {
+        if(!inUl) { out += '<ul>'; inUl = true; }
+        out += '<li>' + ul[2] + '</li>';
+      }
+    } else if(ol) {
+      if(inSubUl) { out += '</ul></li>'; inSubUl = false; }
+      if(inUl) { out += '</ul>'; inUl = false; }
+      if(!inOl) { out += '<ol>'; inOl = true; }
+      out += '<li>' + ol[2] + '</li>';
+    } else {
+      if(inSubUl) { out += '</ul></li>'; inSubUl = false; }
+      if(inUl) { out += '</ul>'; inUl = false; }
+      if(inOl) { out += '</ol>'; inOl = false; }
+      if(line.trim()) out += '<p>' + line + '</p>';
+    }
+  }
+  if(inSubUl) out += '</ul></li>';
+  if(inUl) out += '</ul>';
+  if(inOl) out += '</ol>';
+  if(!out.includes('<p>') && !out.includes('<ul>') && !out.includes('<ol>'))
+    out = '<p>' + h.replace(/\n/g, '<br>') + '</p>';
+  return out;
+}
+```
+
+### Dazugehörige Hilfsfunktion: stripMd()
+
+Für den Plain-Text-Part der Zwischenablage – entfernt Markdown-Formatierung:
+
+```javascript
+function stripMd(t) {
+  return (t || '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*([^*\n]+?)\*/g, '$1');
+}
+```
+
+### Regeln für mdToClipboardHtml()
+
+1. **En-Dash (–, U+2013) und Em-Dash (—, U+2014) sind Bullet-Marker** – KIA verwendet diese häufig statt Minuszeichen. Die Regex muss sie erkennen.
+2. **Sub-Listen nur unter OL-Items** – Verschachtelte `<ul>` innerhalb `<li>` entsteht nur bei Bullets unter nummerierten Schritten (z.B. Ja/Nein-Logik nach einem Prüfschritt).
+3. **Leere Zeilen werden ignoriert** – `if(line.trim())` verhindert leere `<p>`-Tags.
+4. **Fallback am Ende** – Wenn der Text keine erkannten Strukturen enthält, wird er als `<p>` mit `<br>` gerendert.
+
+## Modus 2: Pipe-Tabelle → Clipboard (pipeTableToClipboardHtml)
+
+Wandelt KIA-generierte Pipe-Tabellen in Confluence-kompatible HTML-Tabellen.
+
+```javascript
+/**
+ * Wandelt eine Pipe-getrennte Tabelle in eine HTML-Tabelle fuer die Zwischenablage.
+ * Confluence erkennt <table> mit border-Attribut zuverlaessig als Tabelle.
+ *
+ * cellHtml() verarbeitet Zellinhalte:
+ * - **Fettdruck** → <strong>
+ * - Nummerierte Listen (1. xxx 2. xxx) → <br>-Umbrueche
+ * - Explizite <br>-Tags werden erhalten
+ */
+function pipeTableToClipboardHtml(raw) {
+  if(!raw) return '';
+  const lines = raw.split('\n').filter(l => l.includes('|'));
+  if(lines.length < 1) return '<p>' + escH(raw) + '</p>';
+
+  /* Hilfsfunktion: Zellinhalt in Confluence-taugliches HTML wandeln */
+  function cellHtml(c) {
+    let s = escH(c);
+    /* Nummerierte Listen (1. xxx 2. xxx) in Zeilenumbrueche aufloesen */
+    s = s.replace(/(\d+)\.\s+/g, '<br>$1. ').replace(/^<br>/, '');
+    /* **Fettdruck** → <strong> */
+    s = s.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    /* Explizite <br> Tags */
+    s = s.replace(/&lt;br\s*\/?&gt;/gi, '<br>');
+    return s;
+  }
+
+  /* Erste Zeile = Header */
+  const headers = lines[0].split('|').map(c => c.trim()).filter(c => c);
+  let data = lines.slice(1).filter(l => !l.match(/^[\s|:-]+$/));
+
+  let h = '<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;">';
+  h += '<thead><tr>';
+  headers.forEach(hd => {
+    h += '<th style="background-color:#002B52;color:#ffffff;padding:8px 12px;text-align:left;font-weight:bold;border:1px solid #cbd5e0;">'
+       + escH(hd) + '</th>';
+  });
+  h += '</tr></thead><tbody>';
+  data.forEach((row, idx) => {
+    const cells = row.split('|').map(c => c.trim()).filter(c => c);
+    const bg = idx % 2 === 0 ? '#ffffff' : '#f7fafc';
+    h += '<tr>';
+    cells.forEach(c => {
+      h += '<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:' + bg + ';vertical-align:top;">'
+         + cellHtml(c) + '</td>';
+    });
+    h += '</tr>';
+  });
+  h += '</tbody></table>';
+  return h;
+}
+```
+
+### Dazugehörige Hilfsfunktion: pipeTableToPlaintext()
+
+Für den Plain-Text-Part – Tab-getrennt, direkt in Excel einfügbar:
+
+```javascript
+/**
+ * Wandelt eine Pipe-getrennte Tabelle in Tab-getrennten Plain-Text.
+ * Kann in Excel oder Confluence als Tabelle eingefuegt werden.
+ */
+function pipeTableToPlaintext(raw) {
+  if(!raw) return '';
+  const lines = raw.split('\n').filter(l => l.includes('|'));
+  if(lines.length < 1) return stripMd(raw);
+  return lines
+    .filter(l => !l.match(/^[\s|:-]+$/))
+    .map(l => l.split('|').map(c => c.trim()).filter(c => c).join('\t'))
+    .join('\n');
+}
+```
+
+### Regeln für pipeTableToClipboardHtml()
+
+1. **`border="1"` ist Pflicht** – Ohne dieses Attribut erkennt Confluence die Tabelle nicht als Tabelle. Das ist der häufigste Fehler.
+2. **Separator-Zeilen filtern** – Zeilen wie `|---|---|` (nur Pipes, Dashes, Doppelpunkte, Whitespace) müssen rausgefiltert werden: `.filter(l => !l.match(/^[\s|:-]+$/))`.
+3. **cellHtml() statt escH() für Zellen** – Reines `escH()` zerstört Fettdruck und Listen in Zellen. `cellHtml()` verarbeitet diese Formate.
+4. **Inline-Styles statt Klassen** – Confluence ignoriert CSS-Klassen. Alle Styles müssen `inline` sein.
+5. **Zebra-Striping** – Abwechselnde Hintergrundfarben (`#ffffff` / `#f7fafc`) verbessern die Lesbarkeit in Confluence.
+6. **Header-Styling** – Dunkler Hintergrund (`#002B52`), weiße Schrift, bold. Konsistent mit SBK-Design.
+7. **cellHtml() wirkt global** – Änderungen an `cellHtml()` betreffen alle Tabellen-Kopien (AK, TF, IST-Tab, SOLL-Tab). Immer alle Tabellentypen testen nach Änderungen.
+
+## Modus 3: DOM-Tabelle → Clipboard (copyTableFromDom)
+
+Kopiert eine bereits gerenderte HTML-Tabelle aus dem DOM. Essenziell wenn die Tabelle **gefiltert** ist (z.B. Filter-Chips: nur sichtbare Zeilen kopieren).
+
+```javascript
+/**
+ * Kopiert eine gerenderte Tabelle aus dem DOM in die Zwischenablage.
+ * WICHTIG: Nur sichtbare Zeilen werden kopiert (display !== 'none').
+ * Nutzt innerHTML statt textContent, damit <br>-Umbrueche in Zellen erhalten bleiben.
+ *
+ * @param {string} containerId - ID des DOM-Containers, der die <table> enthaelt
+ * @param {HTMLElement} btn - Der Copy-Button (fuer visuelles Feedback)
+ */
+function copyTableFromDom(containerId, btn) {
+  const container = document.getElementById(containerId);
+  if(!container) return;
+  const table = container.querySelector('table');
+  if(!table) { showToast('Keine Tabelle gefunden.', 'warn'); return; }
+
+  /* Hilfsfunktionen fuer Zell-Inhalte */
+  const cellToPlain = td => td.innerHTML
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .trim();
+  const cellToHtml = td => {
+    let h = td.innerHTML;
+    h = h.replace(/<strong>/g, '<b>').replace(/<\/strong>/g, '</b>');
+    return h.trim();
+  };
+
+  /* Header aus DOM */
+  const ths = table.querySelectorAll('thead th');
+  const headers = [];
+  ths.forEach(th => headers.push(th.textContent.trim()));
+
+  /* Nur sichtbare Zeilen aus DOM */
+  const plainRows = [], htmlRows = [];
+  table.querySelectorAll('tbody tr').forEach(row => {
+    if(row.style.display === 'none') return;  /* Gefilterte Zeilen uebersprungen */
+    const pCells = [], hCells = [];
+    row.querySelectorAll('td').forEach(td => {
+      pCells.push(cellToPlain(td));
+      hCells.push(cellToHtml(td));
+    });
+    plainRows.push(pCells);
+    htmlRows.push(hCells);
+  });
+
+  if(plainRows.length === 0) { showToast('Keine sichtbaren Zeilen zum Kopieren.', 'warn'); return; }
+
+  /* Plain-Text (Tab-getrennt) */
+  let plain = headers.join('\t') + '\n';
+  plainRows.forEach(r => { plain += r.join('\t') + '\n'; });
+
+  /* HTML fuer Confluence */
+  let html = '<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;">';
+  html += '<thead><tr>';
+  headers.forEach(hd => {
+    html += '<th style="background-color:#002B52;color:#ffffff;padding:8px 12px;text-align:left;font-weight:bold;border:1px solid #cbd5e0;">'
+          + escH(hd) + '</th>';
+  });
+  html += '</tr></thead><tbody>';
+  htmlRows.forEach((r, idx) => {
+    const bg = idx % 2 === 0 ? '#ffffff' : '#f7fafc';
+    html += '<tr>';
+    r.forEach(c => {
+      html += '<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:' + bg + ';vertical-align:top;">'
+            + c + '</td>';
+    });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+
+  copyRich(plain, html).then(() => {
+    if(btn) setCopyFeedback(btn);
+  });
+}
+```
+
+### Regeln für copyTableFromDom()
+
+1. **innerHTML, NICHT textContent** – `cellToHtml` liest `innerHTML`, um `<br>`-Tags zu erhalten. `textContent` würde Zeilenumbrüche in Zellen verlieren. Das ist die **wichtigste Regel** und der häufigste Fehler.
+2. **`display === 'none'` prüfen** – Gefilterte Zeilen (z.B. über Filter-Chips) dürfen nicht mitkopiert werden.
+3. **`<strong>` → `<b>` Mapping** – Confluence verarbeitet `<b>` zuverlässiger als `<strong>` in Tabellenzellen.
+4. **cellToPlain muss HTML-Entities rückwandeln** – `&amp;` → `&`, `&lt;` → `<`, `&gt;` → `>`, weil `innerHTML` escaped enthält.
+
+## Copy-Button UX-Pattern
+
+Visuelles Feedback nach erfolgreichem Kopieren – Häkchen statt Kopier-Icon für 2 Sekunden:
+
+```javascript
+/**
+ * Setzt visuelles Feedback auf einem Copy-Button:
+ * Wechselt zu Haekchen-Icon + "Kopiert" fuer 2 Sekunden.
+ */
+function setCopyFeedback(btn) {
+  const origContent = btn.innerHTML;
+  btn.classList.add('copied');
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Kopiert';
+  setTimeout(() => {
+    btn.classList.remove('copied');
+    btn.innerHTML = origContent;
+  }, 2000);
+}
+```
+
+### Dazugehöriges CSS
+
+```css
+/* Copy-Button Basis-Styling */
+.copy-btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 12px; border: 1px solid #CBD5E0; border-radius: 6px;
+  background: #fff; font-size: 12px; font-weight: 600; color: #4A5568;
+  cursor: pointer; transition: all .15s;
+}
+.copy-btn:hover { border-color: #A0AEC0; background: #F7FAFC; }
+.copy-btn.copied { border-color: #38A169; color: #38A169; background: #F0FFF4; }
+
+/* Copy-Icon SVG (Standard: Clipboard-Rechteck) */
+.copy-btn svg { flex-shrink: 0; }
+```
+
+### Standard-Button HTML
+
+```html
+<button class="copy-btn" onclick="copyTableFromDom('mein-container', this)" type="button">
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <rect x="9" y="9" width="13" height="13" rx="2"/>
+    <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/>
+  </svg>Kopieren
+</button>
+```
+
+## Mehrteiliges Kopieren: copyAllSections-Pattern
+
+Wenn ein Tool mehrere Sektionen hat (z.B. Titel + IST + SOLL + Kennzahlen + Testfälle), verwendet man dieses Pattern für den "Alles kopieren"-Button:
+
+```javascript
+/**
+ * Kopiert alle Sektionen als ein formatiertes Dokument.
+ * Jede Sektion bekommt eine HTML-Ueberschrift.
+ *
+ * sections: Array von { key, label, type, data }
+ * - type 'title': Wird als <h2> gerendert
+ * - type 'md': Wird als Markdown-Text gerendert (mdToClipboardHtml)
+ * - type 'table': Wird als Pipe-Tabelle gerendert (pipeTableToClipboardHtml)
+ */
+function copyAllSections(sections) {
+  let plainParts = [], htmlParts = [];
+
+  sections.forEach(sec => {
+    if(!sec.data || sec.data === '[Noch nicht erfasst]') return;
+
+    if(sec.type === 'title') {
+      plainParts.push(sec.label + ': ' + stripMd(sec.data));
+      htmlParts.push('<h2>' + escH(stripMd(sec.data)) + '</h2>');
+    } else if(sec.type === 'table') {
+      plainParts.push(sec.label + ':\n' + pipeTableToPlaintext(sec.data));
+      htmlParts.push('<h3>' + sec.label + '</h3>' + pipeTableToClipboardHtml(sec.data));
+    } else {
+      /* type === 'md' oder Default */
+      plainParts.push(sec.label + ':\n' + stripMd(sec.data));
+      htmlParts.push('<h3>' + sec.label + '</h3>' + mdToClipboardHtml(sec.data));
+    }
+  });
+
+  return copyRich(plainParts.join('\n\n'), htmlParts.join(''));
+}
+```
+
+### Anwendungsbeispiel
+
+```javascript
+copyAllSections([
+  { key: 'titel', label: 'TITEL',              type: 'title', data: state.titel },
+  { key: 'ist',   label: 'IST BESCHREIBUNG',   type: 'md',    data: state.ist },
+  { key: 'isttab',label: 'IST PROZESSTABELLE',  type: 'table', data: state.istTab },
+  { key: 'soll',  label: 'SOLL BESCHREIBUNG',  type: 'md',    data: state.soll },
+  { key: 'kz',    label: 'KENNZAHLEN',         type: 'md',    data: state.kz },
+  { key: 'tf',    label: 'TESTFAELLE',         type: 'table', data: state.tfRaw },
+]).then(() => showToast('Dokument kopiert', 'ok'));
+```
+
+## Copy-Button-Hierarchie (UX-Empfehlung)
+
+Bewährte Hierarchie aus dem Anforderungs-Assistenten:
+
+| Ebene | Button | Kopiert |
+|-------|--------|---------|
+| **Top** | "Alles kopieren" | Alle Sektionen als ein Dokument |
+| **Per Sektion (mit Tabelle)** | "Text + Tabelle" | Fließtext + zugehörige Prozesstabelle |
+| **Per Sektion (mit Tabelle)** | "Nur Text" | Nur den Fließtext |
+| **Per Sektion (mit Tabelle)** | "Nur Tabelle" | Nur die Tabelle (aus DOM wenn gefiltert) |
+| **Per Sektion (ohne Tabelle)** | "Kopieren" | Den Sektionsinhalt |
+
+**Regel:** "Nur Tabelle" sollte immer `copyTableFromDom()` verwenden (DOM-basiert), damit Filter-Chips respektiert werden. "Text + Tabelle" und "Alles kopieren" können direkt aus dem State kopieren (Rohtext + `pipeTableToClipboardHtml`), weil sie ungefiltert sein sollen.
+
+## Wichtige Regeln und Fallstricke
+
+### Confluence-spezifisch
+
+1. **`<table border="1">` ist Pflicht** – Ohne `border`-Attribut rendert Confluence die Tabelle als unsichtbares Raster oder ignorieret sie komplett.
+2. **Inline-Styles statt CSS-Klassen** – Confluence entfernt alle `class`-Attribute beim Einfügen. Nur `style`-Attribute überleben.
+3. **`<strong>` funktioniert in Fließtext, `<b>` in Tabellenzellen** – Confluence behandelt diese Tags unterschiedlich je nach Kontext.
+4. **`<br>` in Tabellenzellen wird erhalten** – Wichtig für mehrzeilige Zellinhalte. Deshalb `innerHTML` statt `textContent` beim Kopieren.
+
+### Clipboard-API-spezifisch
+
+5. **`ClipboardItem` existiert nicht in allen Browsern** – Firefox unterstützt es nur eingeschränkt. Immer mit try/catch und `writeText`-Fallback arbeiten.
+6. **HTTPS oder localhost erforderlich** – Die Clipboard API funktioniert nur in sicheren Kontexten.
+
+### Datenfluss-spezifisch
+
+7. **Rohtext aufbewahren** – Immer den KIA-Roh-Output speichern (z.B. in einer State-Variable oder Map), nicht nur die gerenderte HTML-Version. Gerenderte Tabellen enthalten Filter-Zustände und DOM-Artefakte, die beim Kopieren stören.
+8. **Filter betreffen nur DOM-Copy** – `copyTableFromDom()` respektiert `display:none`. `pipeTableToClipboardHtml()` arbeitet auf Rohtext und kennt keine Filter. Diesen Unterschied bewusst nutzen.
+
+## Checkliste vor Fertigstellung
+
+Bevor ein Tool mit Copy-Funktionalität an den Nutzer übergeben wird:
+
+- [ ] `escH()` ist im globalen Scope definiert
+- [ ] `copyRich()` ist vorhanden und wird von allen Copy-Funktionen genutzt
+- [ ] Tabellen-HTML enthält `border="1"` und Inline-Styles
+- [ ] Alle Styles sind inline (keine CSS-Klassen in kopierten Tabellen)
+- [ ] Copy-Buttons zeigen visuelles Feedback (Häkchen → zurück nach 2s)
+- [ ] Plain-Text-Fallback liefert Tab-getrennte Tabellen (Excel-kompatibel)
+- [ ] DOM-basierter Copy prüft `display === 'none'` für gefilterte Zeilen
+- [ ] DOM-basierter Copy liest `innerHTML`, nicht `textContent`
+- [ ] Mehrteiliger Copy ("Alles kopieren") liefert Überschriften + Sektionen
+- [ ] Nach Einfügen in Confluence testen: Fettdruck, Tabellen, Listen, Zeilenumbrüche in Zellen
