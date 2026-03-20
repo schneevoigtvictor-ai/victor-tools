@@ -1,0 +1,449 @@
+---
+name: kia-sparring-patterns
+description: >
+  Dokumentiert bewährte Interaktionsmuster und LLM-Output-Engineering-Prinzipien
+  für KIA-basierte Sparring-Tools der SBK. Verwende diesen Skill IMMER, wenn ein
+  neues HTML-Tool gebaut wird, das iterativ mit KIA arbeitet – also wenn der Nutzer
+  mehrere Runden mit KIA interagiert und das Tool den Output strukturiert verarbeiten
+  muss. Trigger-Signale: "Sparring-Tool", "iterativer KIA-Dialog", "KIA-Output parsen",
+  "Living Document", "Rückfragen-Logik", "Split-View mit Chat", "strukturierter
+  KIA-Output", "Bewertungskriterien", "Filter-Chips", "Finalize-View", oder wenn
+  der Nutzer ein Tool beschreibt, in dem KIA-Antworten in Sektionen zerlegt und
+  als lebendes Dokument dargestellt werden sollen. Auch verwenden, wenn ein
+  bestehendes Sparring-Tool erweitert oder debuggt wird.
+---
+
+# KIA-Sparring-Patterns Skill
+
+Dieses Skill dokumentiert die Interaktionsmuster und technischen Prinzipien, die im Anforderungs-Assistenten der SBK über Monate iterativ entwickelt wurden. Es ist kein Code-Skill, sondern eine **Architektur- und Designreferenz** für jedes Tool, das iterativ mit KIA arbeitet.
+
+**Voraussetzung:** Dieses Skill setzt den `kia-integration`-Skill voraus (API-Anbindung) und wird typischerweise zusammen mit dem `confluence-copy`-Skill verwendet (Copy-Funktionalität).
+
+
+## Teil 1: Der Sparring-Loop (Interaktionsarchitektur)
+
+### Grundprinzip
+
+Ein Sparring-Tool führt den Nutzer durch einen iterativen Dialog mit KIA, bei dem eine strukturierte Ausgabe schrittweise geschärft wird. Der Nutzer liefert Rohinformationen, KIA analysiert und stellt Rückfragen, der Nutzer antwortet, KIA aktualisiert – bis das Ergebnis steht.
+
+### Die fünf Phasen
+
+```
+PHASE 1: Intake        → Nutzer gibt Rohinformationen in strukturierte Felder ein
+PHASE 2: Erstanalyse   → KIA analysiert, bewertet, stellt Rückfragen
+PHASE 3: Sparring      → Iterative Rückfragen/Antworten (1-4 Runden, nicht fix)
+PHASE 4: Generierung   → KIA erzeugt finale Artefakte (Tabellen, Kriterien)
+PHASE 5: Finalisierung → Nutzer prüft, kopiert, überträgt nach JIRA/Confluence
+```
+
+**Wichtig:** Die Rundenzahl ist NICHT fest. Der System-Prompt definiert Bewertungskriterien (z.B. 5 Kriterien mit JA/TEILWEISE/NEIN). KIA entscheidet anhand der Bewertung, ob noch Rückfragen nötig sind. Wenn nach der ersten Antwort alle Kriterien auf JA stehen, ist das Sparring fertig.
+
+### Intake-Pattern
+
+Der Intake besteht aus **getrennten Textfeldern** statt einem einzigen Freitext:
+
+```
+Felder (Beispiel Anforderungs-Modus):
+┌─────────────────────────────────────────┐
+│ IST-Zustand (Was passiert heute?)       │ ← textarea
+├─────────────────────────────────────────┤
+│ SOLL-Zustand (Was soll sich ändern?)    │ ← textarea
+├─────────────────────────────────────────┤
+│ Sonstiges (Kennzahlen, Kontext)         │ ← textarea (optional)
+└─────────────────────────────────────────┘
+```
+
+**Warum getrennte Felder:** KIA liefert bessere Erstanalysen, wenn IST und SOLL bereits getrennt ankommen. Ein einziges Freitextfeld führt dazu, dass KIA in der Erstanalyse mehr Zeit mit dem Sortieren verbringt und weniger mit dem Schärfen.
+
+**Praxisbeispiel im Intake:** Ein aufklappbarer `<details>`-Block zeigt dem Nutzer ein kompaktes Beispiel im **Zielformat** (nicht im Eingabeformat). Das hilft dem Nutzer zu verstehen, wohin die Reise geht, ohne ihm eine Vorlage zum Abtippen zu geben.
+
+### Split-View-Layout
+
+```
+┌────────────────────┬────────────────────┐
+│   LIVING DOCUMENT  │       CHAT         │
+│                    │                    │
+│ Titel: [...]       │ [KIA-Analyse]      │
+│ IST: [...]         │ [Rückfragen]       │
+│ SOLL: [...]        │   → Antwortfelder  │
+│ Kennzahlen: [...]  │                    │
+│ AK: [generiert]    │ [Nutzer-Antwort]   │
+│ TF: [generiert]    │                    │
+│                    │ [KIA-Update]       │
+│                    │   → Rückfragen     │
+└────────────────────┴────────────────────┘
+```
+
+**Living Document (links):** Zeigt den aktuellen Stand aller Sektionen. Wird nach JEDER KIA-Antwort aktualisiert, nicht erst am Ende. Sektionen haben Status-Badges (Offen / Entwurf / Steht).
+
+**Chat (rechts):** Der iterative Dialog. KIA-Nachrichten werden nicht als Rohtext gerendert, sondern durch einen Parser in strukturierte Blöcke zerlegt (Analyse, Rückfragen mit Antwortfeldern, Status-Hinweise).
+
+**Mobile:** Tabs statt Split-View (`Dokument | Chat`). Tab-Wechsel per JavaScript, nicht per separater Seite.
+
+
+## Teil 2: LLM-Output-Engineering
+
+### Das Header-basierte Sektions-Parsing
+
+KIA-Antworten werden über **klar definierte Header** im System-Prompt strukturiert und dann zeilenweise geparst. Das ist das zentrale Pattern für jedes Sparring-Tool.
+
+#### Prinzip
+
+```
+System-Prompt definiert:          Parser erkennt:
+─────────────────────────         ─────────────────
+TITEL: [...]                  →   mode = 'titel'
+IST: [...]                    →   mode = 'ist'
+SOLL: [...]                   →   mode = 'soll'
+BEWERTUNG: [...]              →   mode = 'bewertung'
+RÜCKFRAGEN: [...]             →   mode = 'q'
+```
+
+Der Parser ist ein Zeilenscanner: Jede Zeile wird gegen Header-Patterns geprüft. Wenn ein Header erkannt wird, wechselt der `mode`. Alle folgenden Zeilen werden der aktiven Sektion zugeordnet, bis ein neuer Header kommt.
+
+#### Die norm()-Funktion (Unicode-Normalisierung)
+
+**KRITISCH:** KIA-Output enthält Unicode-Varianten, die naive String-Vergleiche brechen. Die `norm()`-Funktion muss VOR dem Header-Matching angewendet werden.
+
+```javascript
+function norm(s) {
+  return s
+    .replace(/\u00fc/gi, 'ue').replace(/\u00e4/gi, 'ae').replace(/\u00f6/gi, 'oe')
+    .replace(/\u00dc/gi, 'UE').replace(/\u00c4/gi, 'AE').replace(/\u00d6/gi, 'OE')
+    .replace(/[\u2011\u2013\u2014]/g, '-');  // Non-Breaking Hyphen + En-Dash + Em-Dash → normaler Hyphen
+}
+```
+
+**Was norm() löst:**
+- `ü` → `ue`, `ä` → `ae`, `ö` → `oe` (KIA mischt echte Umlaute und Umschreibungen)
+- `‑` (U+2011 Non-Breaking Hyphen) → `-` (KIA verwendet das statt normalem Hyphen in zusammengesetzten Wörtern wie "IST‑Beschreibung")
+- `–` (U+2013 En-Dash) → `-` (Tritt in "IST–TABELLE" auf)
+- `—` (U+2014 Em-Dash) → `-`
+
+**Ohne `norm()` passiert:** Header wie `IST‑BESCHREIBUNG:` werden nicht erkannt, der gesamte Inhalt landet in der falschen Sektion oder im Fallback. Das ist ein stiller Fehler – kein Error, keine Warnung, aber falsche Daten im Living Document.
+
+#### Header-Regexes: Kurz vs. Lang
+
+```javascript
+/* Kurze Formen: Doppelpunkt PFLICHT (verhindert false matches) */
+const H_IST  = [/^IST\s*:/i, /^IST[\s-]*BESCHREIBUNG\s*:?\s*$/i];
+const H_SOLL = [/^SOLL\s*:/i, /^SOLL[\s-]*BESCHREIBUNG\s*:?\s*$/i];
+
+/* Lange Formen: Doppelpunkt OPTIONAL (bei Zeilenende eindeutig genug) */
+const H_ANALYSE = [/^ANALYSE\s*:/i, /^ANALYSE\s*$/i, /^ZUSAMMENFASSUNG\s*:?\s*$/i];
+```
+
+**Regel:** Kurze Header wie `IST` oder `SOLL` brauchen den Doppelpunkt als Pflicht, weil sie sonst in normalem Fließtext matchen könnten ("Der IST-Zustand..."). Lange Header wie `IST-BESCHREIBUNG` oder `ZUSAMMENFASSUNG` sind eindeutig genug, dass der Doppelpunkt optional sein kann.
+
+**Aliase definieren:** KIA verwendet nicht immer exakt die Formulierung aus dem System-Prompt. Bewährte Aliase:
+- `Zusammenfassung` → Analyse
+- `Offene Fragen` → Rückfragen
+- `Aktueller Zustand/Prozess` → IST
+- `Zielzustand/Zielbild` → SOLL
+
+#### Pipe-Zeilen-Umleitung
+
+Wenn KIA eine Tabelle innerhalb einer Text-Sektion ausgibt (z.B. eine Prozesstabelle mitten im IST-Text), müssen Pipe-Zeilen automatisch in die Tabellen-Sektion umgeleitet werden:
+
+```javascript
+if(mode === 'ist') {
+  const pipeCount = (raw.match(/\|/g) || []).length;
+  if(pipeCount >= 2 && !raw.match(/^[\s|:-]+$/)) {
+    istTab += (istTab ? '\n' : '') + raw;  // → Tabellen-Sektion
+  } else {
+    ist += (ist ? '\n' : '') + raw;         // → Text-Sektion
+  }
+}
+```
+
+**Warum:** KIA hält sich nicht immer an die Header-Reihenfolge. Manchmal kommt die Prozesstabelle direkt nach dem IST-Text, ohne eigenen `IST-TABELLE:`-Header. Die Pipe-Erkennung (≥2 Pipes in einer Zeile, keine Separator-Zeile) fängt das ab.
+
+### Fallback-Rendering
+
+In ~20% der Fälle liefert KIA Output, der keinen erkannten Header enthält. Der Fallback-Renderer muss trotzdem etwas Brauchbares anzeigen:
+
+```javascript
+if(!renderedHtml && rawText) {
+  /* Text an Doppel-Newlines aufteilen */
+  const sections = rawText.split(/\n{2,}/);
+  let html = '';
+  for(const sec of sections) {
+    const trimmed = sec.trim();
+    if(!trimmed) continue;
+    /* Markdown-Header erkennen und als Überschrift rendern */
+    const headerMatch = trimmed.match(/^#{1,4}\s+(.+)/);
+    if(headerMatch) {
+      html += '<h4>' + escH(headerMatch[1]) + '</h4>';
+      const rest = trimmed.replace(/^#{1,4}\s+.+\n?/, '').trim();
+      if(rest) html += '<div>' + renderMd(rest) + '</div>';
+    } else {
+      html += '<div>' + renderMd(trimmed) + '</div>';
+    }
+  }
+  renderedHtml = html;
+}
+```
+
+**Zusätzlich:** Der Fallback-Renderer versucht, nummerierte Fragen im Freitext als Rückfragen zu erkennen (Regex: `/^\d+[.)]\s*(.{15,})/` + enthält `?`). Diese werden als interaktive Antwortfelder gerendert, auch wenn der Parser sie nicht als `RÜCKFRAGEN:`-Sektion erkannt hat.
+
+### Auto-Retry mit Merge-Strategie
+
+Wenn KIA aufgefordert wird, mehrere Artefakte gleichzeitig zu generieren (z.B. Akzeptanzkriterien UND Testfälle), liefert es manchmal nur eines davon. Das Auto-Retry-Pattern:
+
+```javascript
+let {result, parsed} = await attempt();
+
+/* Prüfe ob Artefakte fehlen */
+const akMissing = !parsed.ak || !parsed.ak.includes('|');
+const tfMissing = !parsed.tf || !parsed.tf.includes('|');
+
+/* Retry wenn MINDESTENS EINS fehlt (OR, nicht AND!) */
+if(akMissing || tfMissing) {
+  const firstResult = { ak: parsed.ak, tf: parsed.tf };
+  ({result, parsed} = await attempt());
+
+  /* MERGE: Gutes aus erstem Versuch behalten */
+  if(!parsed.ak || !parsed.ak.includes('|')) parsed.ak = firstResult.ak;
+  if(!parsed.tf || !parsed.tf.includes('|')) parsed.tf = firstResult.tf;
+}
+```
+
+**Drei Regeln:**
+1. **OR statt AND** – Retry wenn mindestens ein Artefakt fehlt, nicht nur wenn beide fehlen.
+2. **Merge statt Replace** – Der zweite Versuch ersetzt nur die fehlenden Teile. Gutes aus dem ersten Versuch bleibt erhalten.
+3. **Pipe-Check als Qualitätsprüfung** – `includes('|')` prüft ob die Tabelle tatsächlich Pipe-Zeilen enthält. Leerer String oder Fließtext-Antwort ("Hier sind die Akzeptanzkriterien...") wird als fehlend gewertet.
+
+### Der [SYSTEM-HINWEIS]-Pattern
+
+Wenn der Nutzer nach der Erstanalyse Korrekturen oder Ergänzungen liefert, muss KIA die strukturierten Sektionen erneut komplett ausgeben – sonst kann das Living Document nicht aktualisiert werden. Dafür wird ein unsichtbarer Hinweis an die Nutzernachricht angehängt:
+
+```javascript
+/* Bei Rückfragen-Antworten (submitAnswers): IMMER anhängen */
+const updateHint = '\n\n[SYSTEM-HINWEIS: Verarbeite die Antworten und gib bitte die '
+  + 'aktualisierten Sektionen (TITEL, IST, SOLL, KENNZAHLEN) komplett mit aus.]';
+msgs.push({role: 'user', content: userText + updateHint});
+
+/* Bei Freitext-Chat (sendChat): NUR ab Runde 2 */
+const updateHint = sparringCount >= 1
+  ? '\n\n[SYSTEM-HINWEIS: Wenn diese Eingabe Korrekturen oder Ergänzungen enthält, '
+    + 'gib bitte die aktualisierten Sektionen komplett mit aus.]'
+  : '';
+```
+
+**Warum zwei Varianten:**
+- Bei `submitAnswers` (Rückfragen beantwortet): Der Hinweis ist immer da, weil Antworten IMMER Sektionen beeinflussen.
+- Bei `sendChat` (Freitext): Nur ab Runde 2, weil in Runde 1 noch keine Sektionen existieren.
+
+**Wichtig:** Der Hinweis steht in eckigen Klammern und beginnt mit `[SYSTEM-HINWEIS:` – KIA erkennt das zuverlässig als Meta-Anweisung und gibt es nicht als Text aus.
+
+
+## Teil 3: Prompt-Engineering-Prinzipien
+
+### Keine erfundenen Inhalte
+
+**Strenge Regel:** System-Prompts dürfen KIA NICHT dazu verleiten, Daten zu erfinden. Konkret:
+
+- Keine erfundenen Versichertennummern, Partner-IDs, Personennamen → Platzhalter: `[Versichertennr.]`, `[Betrag]`, `[Datum]`
+- Keine erfundenen Fehlermeldungen oder Systemverhalten → `[Erwartete Systemmeldung]` oder Rückfrage
+- Keine erfundenen Testdaten in Praxisbeispielen
+- Keine Login/Auth-Testfälle (der Tester ist immer angemeldet)
+
+**Warum:** Erfundene Daten in KIA-Output werden von Nutzern als real interpretiert und landen in JIRA-Tickets. Platzhalter machen explizit, was noch geklärt werden muss.
+
+### Bewertungskriterien als Steuerungsmechanismus
+
+Jeder Modus hat **explizite Bewertungskriterien** im System-Prompt:
+
+```
+BEWERTUNG:
+IST-Prozess beschrieben: [JA/TEILWEISE/NEIN]
+SOLL-Zustand klar: [JA/TEILWEISE/NEIN]
+Systeme und Rollen genannt: [JA/TEILWEISE/NEIN]
+...
+```
+
+**Funktion:** Die Kriterien steuern das Sparring-Verhalten dynamisch:
+- Fast alle JA → 0-1 Rückfragen, schnell abschließen
+- Meiste TEILWEISE → 2-3 gezielte Rückfragen
+- Viele NEIN → Bis zu 5 Rückfragen
+
+Die Bewertung wird nach JEDER Runde neu ausgegeben, sodass der Nutzer den Fortschritt sieht.
+
+### Ausschluss-Themen explizit benennen
+
+```
+Themen, die du NICHT abfragst:
+- Datenschutz, DSGVO, Datenschutzerklaerungen, Einwilligungen
+```
+
+**Warum:** Ohne expliziten Ausschluss fragt KIA in >50% der Fälle nach DSGVO-Konformität – das ist für fachliche Anforderungen irrelevant und nervt die Nutzer.
+
+### Bearbeitungsschritte: Zusammenfassung im Text, Details in der Tabelle
+
+```
+**Bearbeitungsschritte:**
+[Kurze Zusammenfassung in 2-3 Sätzen. KEINE Einzelschritte auflisten – 
+die Details stehen in der PROZESSTABELLE.]
+```
+
+**Warum:** Ohne diese Anweisung dupliziert KIA die Schritte – einmal als nummerierte Liste im Fließtext, einmal in der Tabelle. Das verdoppelt den Inhalt und verwirrt den Nutzer.
+
+### Rückfragen-Format
+
+```
+RÜCKFRAGEN:
+1. [Erste Rückfrage]
+2. [Zweite Rückfrage]
+...Jede Frage in genau einer nummerierten Zeile (keine Unterpunkte).
+
+Falls keine Rückfragen:
+RÜCKFRAGEN:
+Keine weiteren Rückfragen. [Abschluss-Hinweis]
+```
+
+**Warum "keine Unterpunkte":** Das erleichtert das Parsing. Sub-Bullets unter Rückfragen brechen die Regex `/^\d+[.)]\s*(.+)/`.
+
+**Warum expliziter Abschlussfall:** Ohne den "Keine weiteren Rückfragen"-Text erkennt der Parser nicht, dass das Sparring abgeschlossen ist.
+
+
+## Teil 4: UI-Patterns (Referenz)
+
+### Rückfragen-Antwort-Blöcke
+
+KIA-Rückfragen werden nicht als Fließtext angezeigt, sondern als interaktive Blöcke:
+
+```
+┌─────────────────────────────────────────┐
+│ Frage 1                                 │
+│ [Frage-Text aus KIA]                    │
+│ ┌─────────────────────────┐ ┌─────────┐ │
+│ │ Deine Antwort ...       │ │Entfällt │ │
+│ └─────────────────────────┘ └─────────┘ │
+├─────────────────────────────────────────┤
+│ Frage 2                                 │
+│ [Frage-Text aus KIA]                    │
+│ ┌─────────────────────────┐ ┌─────────┐ │
+│ │ Deine Antwort ...       │ │Entfällt │ │
+│ └─────────────────────────┘ └─────────┘ │
+├─────────────────────────────────────────┤
+│        [Antworten übernehmen]           │
+│        Schickt alle Antworten an KIA    │
+└─────────────────────────────────────────┘
+```
+
+**"Entfällt"-Button:** Setzt den Wert auf `[Entfällt]` und disablet das Textfeld. KIA erkennt `[Entfällt]` und überspringt die Frage. Wichtig: Nutzer können Fragen überspringen, ohne sich etwas ausdenken zu müssen.
+
+**Sammel-Submit:** Alle Antworten werden auf einmal gesendet, nicht einzeln. KIA bekommt den vollen Kontext.
+
+### Filter-Chip-Pattern
+
+Für kategorische Daten (z.B. Testfall-Kategorien: Positiv/Grenzwert/Negativ/Eingangsprüfung):
+
+```
+[● Positiv ✓] [● Grenzwert ✓] [● Negativ ✓] [○ Eingangsprüfung]
+```
+
+**Regeln:**
+- Jede Kategorie hat eine eigene Farbe (z.B. Grün/Orange/Rot/Grau)
+- Default-Zustand pro Chip festlegen (manche AN, manche AUS)
+- Filter arbeitet auf DOM: `row.style.display = 'none'` für ausgeblendete Zeilen
+- Copy-Button respektiert Filter: Nur sichtbare Zeilen werden kopiert (via `copyTableFromDom`)
+- Chip-Status wird als CSS-Klasse getoggelt, nicht als data-Attribut
+
+### Finalize-View mit Section Cards
+
+Die finale Ansicht zeigt alle Sektionen als nummerierte Karten:
+
+```
+┌──────────────────────────────────────────────┐
+│  [← Zurück]            [Alles kopieren]      │
+├──────────────────────────────────────────────┤
+│  ❶ Titel          [Kopieren]                 │
+│  ┌──────────────────────────────────────┐    │
+│  │ Hautkrebsvorsorge-Prozess            │    │
+│  └──────────────────────────────────────┘    │
+├──────────────────────────────────────────────┤
+│  ❷ IST-Beschreibung  [Text+Tab] [Text] [Tab]│
+│  ┌──────────────────────────────────────┐    │
+│  │ [Fließtext | Prozesstabelle]  ← Tabs │    │
+│  └──────────────────────────────────────┘    │
+├──────────────────────────────────────────────┤
+│  ❸ SOLL-Beschreibung [Text+Tab] [Text] [Tab]│
+│  ...                                         │
+└──────────────────────────────────────────────┘
+```
+
+**Copy-Hierarchie (bewährt):**
+
+| Ebene | Button | Verhalten |
+|-------|--------|-----------|
+| Top | "Alles kopieren" | Alle Sektionen als ein Dokument (Rohtext-basiert, kein Filter) |
+| Sektion mit Tabelle | "Text + Tabelle" | Fließtext + Tabelle aus State (Rohtext-basiert) |
+| Sektion mit Tabelle | "Nur Text" | Nur Fließtext |
+| Sektion mit Tabelle | "Nur Tabelle" | Aus DOM (respektiert Filter-Chips) |
+| Sektion ohne Tabelle | "Kopieren" | Sektionsinhalt |
+
+**Wichtig:** "Nur Tabelle" muss DOM-basiert kopieren (`copyTableFromDom`), damit Filter-Chips respektiert werden. "Alles kopieren" und "Text + Tabelle" kopieren aus dem State (Rohtext), weil das Gesamtdokument ungefiltert sein soll.
+
+### Tab-Ansicht (Fließtext | Prozesstabelle)
+
+Wenn eine Sektion sowohl Text als auch Tabelle hat:
+
+```
+[Fließtext] [Prozesstabelle]    ← Tab-Buttons
+┌──────────────────────────┐
+│ [Aktiver Tab-Inhalt]     │
+└──────────────────────────┘
+```
+
+**Tab-ID-Regel:** Tab-IDs müssen einen stabilen Prefix haben (z.B. `doc-ist`, `doc-soll`, `fin-ist`), NICHT `Date.now()`. Wenn zwei Sektionen (IST und SOLL) im selben Render-Zyklus erzeugt werden, kollidieren `Date.now()`-IDs und der zweite Tab funktioniert nicht.
+
+
+## Teil 5: Checkliste für neue Sparring-Tools
+
+### System-Prompt
+
+- [ ] Klare Rollendefition ("Du bist der [Rollen-Name] der SBK.")
+- [ ] `${STYLE}` oder angepasste Stilanweisung eingebunden
+- [ ] Bewertungskriterien definiert (3-6 Kriterien mit JA/TEILWEISE/NEIN)
+- [ ] Dynamische Rückfragen-Anzahl basierend auf Bewertung
+- [ ] Ausschluss-Themen explizit benannt
+- [ ] Keine erfundenen Daten – Platzhalter-Anweisungen vorhanden
+- [ ] Ausgabeformat mit Header-Sektionen definiert (TITEL:, ANALYSE:, RÜCKFRAGEN: etc.)
+- [ ] Rückfragen als nummerierte Einzelzeilen (keine Unterpunkte)
+- [ ] Abschlussfall definiert ("Keine weiteren Rückfragen.")
+
+### Parser
+
+- [ ] `norm()` wird vor Header-Matching angewendet (Umlaute + Unicode-Dashes)
+- [ ] Kurze Header-Formen haben Doppelpunkt-Pflicht
+- [ ] Lange Header-Formen erlauben optionalen Doppelpunkt
+- [ ] Aliase für häufige KIA-Varianten definiert
+- [ ] Pipe-Zeilen werden automatisch in Tabellen-Sektionen umgeleitet
+- [ ] Fallback-Renderer für den Fall, dass kein Header erkannt wird
+- [ ] Fallback erkennt nummerierte Fragen als interaktive Rückfragen
+
+### Sparring-Loop
+
+- [ ] Intake mit getrennten Feldern (nicht ein Freitextfeld)
+- [ ] Praxisbeispiel als aufklappbarer `<details>`-Block im Zielformat
+- [ ] Split-View mit Living Document links und Chat rechts
+- [ ] Living Document wird nach JEDER KIA-Antwort aktualisiert
+- [ ] `[SYSTEM-HINWEIS]` bei Antworten auf Rückfragen (immer) und bei Freitext (ab Runde 2)
+- [ ] Rückfragen als interaktive Blöcke mit Antwortfeld + "Entfällt"-Button
+- [ ] Sammel-Submit für alle Antworten gleichzeitig
+- [ ] Phase-Indikator in der Topbar
+
+### Generierung
+
+- [ ] Auto-Retry wenn Artefakte fehlen (OR-Logik, nicht AND)
+- [ ] Merge-Strategie: Gutes aus erstem Versuch behalten
+- [ ] Pipe-Check (`includes('|')`) als Qualitätskriterium für Tabellen
+
+### Finalize-View
+
+- [ ] Section Cards mit Nummern und farblichen Akzenten
+- [ ] Copy-Hierarchie: Top-Button + Per-Section-Buttons
+- [ ] Tab-Ansicht für Sektionen mit Text + Tabelle
+- [ ] Tab-IDs mit stabilen Prefixen (nicht `Date.now()`)
+- [ ] "Nur Tabelle" = DOM-basiert, "Alles kopieren" = State-basiert
