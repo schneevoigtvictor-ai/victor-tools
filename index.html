@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Victor Tools</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      /* Warm Claude-like palette */
+      --bg:           #f5efe6;
+      --bg-card:      #fdf8f2;
+      --bg-topbar:    #fdf8f2;
+      --border:       #e8ddd0;
+      --border-card:  #ecdfd0;
+
+      --text:         #1c1611;
+      --text-muted:   #7a6a58;
+      --text-light:   #a8967e;
+
+      --blue:         #c17d3a;   /* warm amber-brown as primary accent */
+      --blue-light:   #f5ece0;
+
+      /* tool accent colours – warm toned */
+      --c1:      #b85c38;   /* terracotta  – Anforderungs Assistent */
+      --c1-bg:   #fdf0eb;
+      --c2:      #3a7d6e;   /* sage green  – API Katalog */
+      --c2-bg:   #eaf4f1;
+      --c3:      #8b6914;   /* gold        – KI Usecase */
+      --c3-bg:   #fdf6e3;
+      --c4:      #5a4e8c;   /* muted violet – KI News */
+      --c4-bg:   #f0eef8;
+
+      --radius-lg: 16px;
+      --radius-sm: 10px;
+      --shadow:    0 1px 2px rgba(80,50,20,.06), 0 4px 18px rgba(80,50,20,.08);
+      --shadow-hover: 0 6px 24px rgba(80,50,20,.14), 0 1px 3px rgba(80,50,20,.08);
+      --font: 'DM Sans', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── TOPBAR ──────────────────────────────────── */
+    .topbar {
+      background: var(--bg-topbar);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .topbar-inner {
+      max-width: 1040px;
+      margin: 0 auto;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* SVG logo mark */
+    .nav-logo {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+    }
+    .nav-logo svg { width: 34px; height: 34px; }
+
+    .nav-wordmark {
+      font-size: .95rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--text);
+    }
+    .nav-wordmark em { font-style: normal; color: var(--c1); }
+
+    .nav-sep { flex: 1; }
+
+    .nav-contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font);
+      font-size: .82rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: transparent;
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 7px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+    .nav-contact-btn:hover {
+      background: var(--c1-bg);
+      color: var(--c1);
+      border-color: var(--c1);
+    }
+    .nav-contact-btn svg { width: 14px; height: 14px; fill: currentColor; }
+
+    /* ── MAIN ────────────────────────────────────── */
+    main {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 60px 32px 100px;
+    }
+
+    /* ── HERO ────────────────────────────────────── */
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      margin-bottom: 64px;
+    }
+
+    .hero-text { flex: 1; }
+
+    .hero-text h1 {
+      font-size: 2.6rem;
+      font-weight: 700;
+      letter-spacing: -.05em;
+      line-height: 1.12;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .hero-text h1 span { color: var(--c1); }
+
+    .hero-text p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      max-width: 400px;
+    }
+
+    /* ── BIG LOGO ────────────────────────────────── */
+    .hero-logo {
+      flex-shrink: 0;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-logo svg { width: 160px; height: 160px; }
+
+    @media (max-width: 640px) {
+      .hero { flex-direction: column; gap: 24px; }
+      .hero-logo { width: 100px; height: 100px; }
+      .hero-logo svg { width: 100px; height: 100px; }
+      .hero-text h1 { font-size: 2rem; }
+    }
+
+    /* ── LABEL ───────────────────────────────────── */
+    .label {
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 20px;
+    }
+
+    /* ── GRID ────────────────────────────────────── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    @media (max-width: 780px) { .grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
+
+    /* ── CARD ────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      transition: box-shadow .2s ease, transform .2s ease;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-3px);
+    }
+
+    .card-band { height: 5px; width: 100%; flex-shrink: 0; }
+
+    .card-body {
+      padding: 24px 22px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex: 1;
+    }
+
+    .card-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      display: grid;
+      place-items: center;
+    }
+    .card-icon svg { width: 20px; height: 20px; }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .card-desc {
+      font-size: .86rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+      flex: 1;
+    }
+
+    .card-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: .81rem;
+      font-weight: 600;
+      margin-top: 6px;
+      transition: gap .18s ease;
+    }
+    .card:hover .card-cta { gap: 9px; }
+    .card-cta svg { width: 13px; height: 13px; fill: currentColor; }
+
+    /* per-card colours */
+    .c1 .card-band { background: var(--c1); }
+    .c1 .card-icon { background: var(--c1-bg); }
+    .c1 .card-icon svg { fill: var(--c1); }
+    .c1 .card-cta  { color: var(--c1); }
+
+    .c2 .card-band { background: var(--c2); }
+    .c2 .card-icon { background: var(--c2-bg); }
+    .c2 .card-icon svg { fill: var(--c2); }
+    .c2 .card-cta  { color: var(--c2); }
+
+    .c3 .card-band { background: var(--c3); }
+    .c3 .card-icon { background: var(--c3-bg); }
+    .c3 .card-icon svg { fill: var(--c3); }
+    .c3 .card-cta  { color: var(--c3); }
+
+    .c4 .card-band { background: var(--c4); }
+    .c4 .card-icon { background: var(--c4-bg); }
+    .c4 .card-icon svg { fill: var(--c4); }
+    .c4 .card-cta  { color: var(--c4); }
+
+    .badge-new {
+      display: inline-block;
+      font-size: .63rem;
+      font-weight: 700;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      background: var(--c4);
+      color: #fff;
+      padding: 2px 7px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 6px;
+      position: relative;
+      top: -1px;
+    }
+
+    /* ── CONTACT SECTION ─────────────────────────── */
+    .contact-section {
+      margin-top: 64px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-lg);
+      padding: 32px 36px;
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .contact-icon-wrap {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: var(--c1-bg);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+    }
+    .contact-icon-wrap svg { width: 24px; height: 24px; fill: var(--c1); }
+
+    .contact-text { flex: 1; }
+    .contact-text h3 {
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: 4px;
+    }
+    .contact-text p {
+      font-size: .87rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .contact-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-family: var(--font);
+      font-size: .87rem;
+      font-weight: 600;
+      color: #fff;
+      background: var(--c1);
+      border: none;
+      border-radius: 10px;
+      padding: 11px 22px;
+      cursor: pointer;
+      text-decoration: none;
+      flex-shrink: 0;
+      transition: opacity .15s, transform .15s;
+    }
+    .contact-btn:hover { opacity: .88; transform: translateY(-1px); }
+    .contact-btn svg { width: 15px; height: 15px; fill: currentColor; }
+
+    @media (max-width: 600px) {
+      .contact-section { flex-direction: column; align-items: flex-start; }
+    }
+
+    /* ── FOOTER ──────────────────────────────────── */
+    footer {
+      text-align: center;
+      font-size: .76rem;
+      color: var(--text-light);
+      padding: 28px 0;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <!-- small nav logo -->
+      <div class="nav-logo">
+        <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="34" height="34" rx="8" fill="#b85c38"/>
+          <!-- wrench shape -->
+          <path d="M22.5 8.5c-2.2-.8-4.7-.2-6.4 1.5-1.4 1.4-2 3.3-1.7 5.1l-6 6c-.8.8-.8 2 0 2.8l1.7 1.7c.8.8 2 .8 2.8 0l6-6c1.8.3 3.7-.3 5.1-1.7 1.7-1.7 2.3-4.2 1.5-6.4l-3 3-2-2 3-3z" fill="white"/>
+        </svg>
+      </div>
+      <span class="nav-wordmark"><em>Victor</em> Tools</span>
+      <div class="nav-sep"></div>
+      <a class="nav-contact-btn" href="mailto:victor.schneevoigt@sbk.org?subject=Frage%20zu%20Victor%20Tools">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+        Frage stellen
+      </a>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Browser-Tools für<br>den <span>Arbeitsalltag.</span></h1>
+        <p>Kein Login, keine Installation –<br>einfach öffnen und loslegen.</p>
+      </div>
+
+      <!-- Hero Logo -->
+      <div class="hero-logo">
+        <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- outer circle background -->
+          <circle cx="80" cy="80" r="78" fill="#fdf0eb" stroke="#e8c8b0" stroke-width="2"/>
+
+          <!-- gear ring -->
+          <circle cx="80" cy="80" r="52" fill="none" stroke="#e0c0a0" stroke-width="3" stroke-dasharray="8 5"/>
+
+          <!-- inner circle -->
+          <circle cx="80" cy="80" r="38" fill="#b85c38" opacity=".12"/>
+          <circle cx="80" cy="80" r="38" fill="none" stroke="#b85c38" stroke-width="2" opacity=".3"/>
+
+          <!-- wrench icon centred -->
+          <g transform="translate(80,80)">
+            <path d="M14-18c-5.5-2-11.5-.5-15.5 3.5-3.4 3.4-4.8 8-4 12.4L-20 13c-1.9 1.9-1.9 5 0 6.9l4.1 4.1c1.9 1.9 5 1.9 6.9 0l14.6-14.6c4.4.8 9-.6 12.4-4 4-4 5.5-10 3.5-15.5l-7.3 7.3-4.9-4.9 7.3-7.3z" fill="#b85c38"/>
+          </g>
+
+          <!-- "VT" monogram subtle -->
+          <text x="80" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#b85c38" opacity=".55" letter-spacing="3">VICTOR TOOLS</text>
+
+          <!-- small dots decoration -->
+          <circle cx="80" cy="18" r="3" fill="#b85c38" opacity=".4"/>
+          <circle cx="80" cy="142" r="3" fill="#b85c38" opacity=".4"/>
+          <circle cx="18" cy="80" r="3" fill="#b85c38" opacity=".4"/>
+          <circle cx="142" cy="80" r="3" fill="#b85c38" opacity=".4"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- TOOLS -->
+    <p class="label">Verfügbare Tools</p>
+    <div class="grid">
+
+      <a class="card c1" href="anforderungs-assistent/">
+        <div class="card-band"></div>
+        <div class="card-body">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
+          </div>
+          <div class="card-title">Anforderungs Assistent</div>
+          <div class="card-desc">Iterativer Sparringspartner zum Erarbeiten von JIRA-Anforderungen</div>
+          <span class="card-cta">
+            Öffnen
+            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card c2" href="api-katalog-manager/">
+        <div class="card-band"></div>
+        <div class="card-body">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 14H7v-2h4v2zm0-4H7v-2h4v2zm0-4H7V7h4v2zm6 8h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V7h4v2z"/></svg>
+          </div>
+          <div class="card-title">API Katalog Manager</div>
+          <div class="card-desc">Excel-Kataloge durchsuchen und Quartalsvergleiche als PowerPoint exportieren</div>
+          <span class="card-cta">
+            Öffnen
+            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card c3" href="ki-usecase-einordnung/">
+        <div class="card-band"></div>
+        <div class="card-body">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+          </div>
+          <div class="card-title">KI Usecase Einordnung</div>
+          <div class="card-desc">Quiz-Tool zum Einordnen von KI-Use-Cases in 6 Kategorien</div>
+          <span class="card-cta">
+            Öffnen
+            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card c4" href="KI-News-Template/">
+        <div class="card-band"></div>
+        <div class="card-body">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M22 3l-1.67 1.67L18.67 3 17 4.67 15.33 3l-1.66 1.67L12 3l-1.67 1.67L8.67 3 7 4.67 5.33 3 3.67 4.67 2 3v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V3zm-2 16H4V5.08l.33.29L6.33 4 8 5.67 9.67 4l1.66 1.67L13 4l1.67 1.67L16.33 4 18 5.67l1.67-1.34.33.29V19zM5 15h14v2H5zm0-4h8v2H5zm0-4h8v2H5zm10 0h4v6h-4z"/></svg>
+          </div>
+          <div class="card-title">
+            KI News Template
+            <span class="badge-new">Neu</span>
+          </div>
+          <div class="card-desc">Template zum strukturierten Aufbereiten und Teilen von KI-News im Team</div>
+          <span class="card-cta">
+            Öffnen
+            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </span>
+        </div>
+      </a>
+
+    </div>
+
+    <!-- CONTACT SECTION -->
+    <div class="contact-section">
+      <div class="contact-icon-wrap">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+      </div>
+      <div class="contact-text">
+        <h3>Fragen oder Ideen?</h3>
+        <p>Feedback, Wünsche für neue Tools oder Bugs direkt melden – Victor antwortet schnell.</p>
+      </div>
+      <a class="contact-btn" href="mailto:victor.schneevoigt@sbk.org?subject=Frage%20zu%20Victor%20Tools">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        E-Mail schreiben
+      </a>
+    </div>
+
+  </main>
+
+  <footer>
+    Victor Tools · SBK Siemens Betriebskrankenkasse · Kein Login, keine Installation
+  </footer>
+
+</body>
+</html>
