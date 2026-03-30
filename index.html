@@ -1,288 +1,563 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Victor Tools – KI gestützte Werkzeuge für das Team</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #F6F4F0;
-            --bg-card: #FFFFFF;
-            --text-primary: #1A1A1A;
-            --text-secondary: #5A5A5A;
-            --text-muted: #8A8A8A;
-            --accent: #2B5A4B;
-            --accent-light: #E8F0EC;
-            --accent-hover: #1E4035;
-            --border: #E5E2DD;
-            --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
-            --shadow-hover: 0 2px 8px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06);
-            --radius: 14px;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KI News Template · BAI</title>
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --blue-dark:#002B52; --blue-mid:#1a4a7a; --blue-light:#2B6CB0;
+  --blue-bg:#EBF4FF; --blue-border:#BEE3F8;
+  --green:#16A34A; --orange:#C05621; --red:#C53030;
+  --gray-50:#F7FAFC; --gray-100:#EDF2F7; --gray-200:#E2E8F0;
+  --gray-400:#A0AEC0; --gray-600:#718096; --gray-800:#2D3748; --text:#1A202C;
+}
 
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
+body { font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif; background:var(--gray-50); color:var(--text); font-size:15px; line-height:1.65; min-height:100vh; }
 
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            opacity: 0.3;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-        }
+.header { background:var(--blue-dark); color:#fff; padding:20px 32px; display:flex; align-items:center; gap:14px; border-bottom:3px solid var(--blue-mid); }
+.header-icon { width:40px; height:40px; background:rgba(255,255,255,.12); border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+.header h1 { font-size:18px; font-weight:700; letter-spacing:-.3px; }
+.header p  { font-size:13px; color:rgba(255,255,255,.6); margin-top:1px; }
 
-        .container {
-            max-width: 860px;
-            margin: 0 auto;
-            padding: 0 24px;
-            position: relative;
-            z-index: 1;
-        }
+.container { max-width:860px; margin:0 auto; padding:28px 20px 80px; }
 
-        header {
-            padding: 60px 0 20px;
-            text-align: left;
-        }
+.card { background:#fff; border:1px solid var(--gray-200); border-radius:14px; padding:24px; box-shadow:0 1px 4px rgba(0,0,0,.05); margin-bottom:20px; }
+.card-title { font-size:13px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--blue-light); margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+.step-badge { background:var(--blue-dark); color:#fff; width:22px; height:22px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; }
 
-        .logo-mark {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
+.token-row { display:flex; gap:8px; }
+.token-row input { flex:1; padding:10px 14px; border:1.5px solid var(--gray-200); border-radius:8px; font-family:inherit; font-size:14px; outline:none; transition:border-color .2s,box-shadow .2s; }
+.token-row input:focus { border-color:var(--blue-light); box-shadow:0 0 0 3px rgba(43,108,176,.1); }
+.tok-hint { font-size:12px; color:var(--gray-400); margin-top:6px; }
+.tok-status { font-size:12px; margin-top:6px; display:none; }
+.tok-status.ok { color:var(--green); display:block; }
+.tok-status.err { color:var(--red); display:block; }
 
-        .logo-icon {
-            width: 36px;
-            height: 36px;
-            background: var(--accent);
-            border-radius: 9px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-family: 'Fraunces', serif;
-            font-weight: 700;
-            font-size: 18px;
-        }
+.row-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media(max-width:560px){ .row-2 { grid-template-columns:1fr; } }
 
-        .logo-text {
-            font-family: 'DM Sans', sans-serif;
-            font-weight: 600;
-            font-size: 15px;
-            letter-spacing: 0.03em;
-            color: var(--text-secondary);
-        }
+.field { margin-bottom:18px; }
+label { display:block; font-size:13px; font-weight:600; color:var(--gray-800); margin-bottom:6px; }
+label span.req { color:var(--red); margin-left:2px; }
+label .hint { font-weight:400; color:var(--gray-400); font-size:12px; margin-left:6px; }
+input[type=text], textarea, select { width:100%; padding:10px 14px; border:1.5px solid var(--gray-200); border-radius:8px; font-family:inherit; font-size:14px; color:var(--text); outline:none; transition:border-color .2s,box-shadow .2s; background:#fff; }
+input[type=text]:focus, textarea:focus, select:focus { border-color:var(--blue-light); box-shadow:0 0 0 3px rgba(43,108,176,.1); }
+textarea { resize:vertical; min-height:76px; }
 
-        header h1 {
-            font-family: 'Fraunces', serif;
-            font-size: clamp(32px, 5vw, 44px);
-            font-weight: 600;
-            line-height: 1.15;
-            color: var(--text-primary);
-            margin-bottom: 14px;
-            letter-spacing: -0.01em;
-        }
+.btn { display:inline-flex; align-items:center; gap:7px; padding:10px 20px; border:none; border-radius:8px; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; white-space:nowrap; }
+.btn-primary { background:var(--blue-light); color:#fff; }
+.btn-primary:hover { background:var(--blue-mid); }
+.btn-primary:disabled { opacity:.4; cursor:not-allowed; }
+.btn-secondary { background:var(--gray-100); color:var(--gray-800); border:1px solid var(--gray-200); }
+.btn-secondary:hover { background:var(--gray-200); }
+.btn-ghost { background:transparent; color:var(--gray-600); border:1px solid var(--gray-200); }
+.btn-ghost:hover { background:var(--gray-100); }
+.btn-sm { padding:7px 14px; font-size:13px; }
+.btn-row { display:flex; gap:10px; flex-wrap:wrap; margin-top:4px; }
 
-        header p {
-            font-size: 17px;
-            color: var(--text-secondary);
-            max-width: 540px;
-            line-height: 1.65;
-        }
+.copy-btn { display:inline-flex; align-items:center; gap:6px; padding:10px 20px; border:none; border-radius:8px; font-family:inherit; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s; background:var(--green); color:#fff; }
+.copy-btn:hover { background:#15803d; }
+.copy-btn.copied { background:#15803d; }
 
-        .divider {
-            height: 1px;
-            background: var(--border);
-            margin: 36px 0 40px;
-        }
+.spin { width:16px; height:16px; flex-shrink:0; border:2.5px solid var(--gray-200); border-top-color:var(--blue-light); border-radius:50%; animation:spin .7s linear infinite; display:inline-block; }
+@keyframes spin { to { transform:rotate(360deg); } }
 
-        .section-label {
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            margin-bottom: 20px;
-        }
+/* ── News Liste ── */
+.news-list { display:flex; flex-direction:column; gap:12px; }
+.news-item { border:1.5px solid var(--gray-200); border-radius:12px; overflow:hidden; transition:border-color .2s,box-shadow .2s; }
+.news-item.active { border-color:var(--blue-light); box-shadow:0 0 0 3px rgba(43,108,176,.08); }
+.news-item-header { display:flex; align-items:center; gap:12px; padding:14px 18px; cursor:pointer; background:#fff; user-select:none; }
+.news-item-header:hover { background:var(--gray-50); }
+.news-num { width:26px; height:26px; border-radius:50%; background:var(--blue-dark); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+.news-title-preview { flex:1; font-size:14px; font-weight:600; }
+.news-title-preview.empty { color:var(--gray-400); font-weight:400; font-style:italic; }
+.news-status-badge { font-size:11px; font-weight:700; padding:3px 9px; border-radius:20px; flex-shrink:0; }
+.badge-draft { background:var(--gray-100); color:var(--gray-600); }
+.badge-done  { background:#F0FFF4; color:var(--green); }
+.news-chevron { color:var(--gray-400); font-size:12px; flex-shrink:0; transition:transform .2s; }
+.news-item.active .news-chevron { transform:rotate(180deg); }
 
-        .tools-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 48px;
-        }
+.news-body { display:none; padding:20px; background:#fff; border-top:1px solid var(--gray-200); }
+.news-item.active .news-body { display:block; }
 
-        .tool-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 28px 26px;
-            text-decoration: none;
-            color: inherit;
-            transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            box-shadow: var(--shadow);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-        }
+.kia-box { background:var(--blue-bg); border:1px solid var(--blue-border); border-radius:10px; padding:18px 20px; margin-top:12px; font-size:14px; line-height:1.7; min-height:50px; }
+.kia-box.loading-state { display:flex; align-items:center; gap:10px; color:var(--gray-600); }
 
-        .tool-card:hover {
-            box-shadow: var(--shadow-hover);
-            transform: translateY(-2px);
-            border-color: var(--accent);
-        }
+.kia-transfer-bar { display:none; background:#F0FFF4; border:1px solid #9AE6B4; border-radius:8px; padding:12px 16px; margin-top:10px; font-size:13px; color:#276749; align-items:center; gap:12px; }
+.kia-transfer-bar.on { display:flex; }
+.btn-transfer { display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border:none; border-radius:7px; font-family:inherit; font-size:13px; font-weight:600; cursor:pointer; transition:all .2s; background:var(--green); color:#fff; flex-shrink:0; }
+.btn-transfer:hover { background:#15803d; }
+.btn-transfer:disabled { opacity:.4; cursor:not-allowed; }
 
-        .tool-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            margin-bottom: 16px;
-            flex-shrink: 0;
-        }
+.add-news-btn { display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:14px; border:2px dashed var(--gray-200); border-radius:12px; background:transparent; font-family:inherit; font-size:14px; font-weight:600; color:var(--gray-600); cursor:pointer; transition:all .2s; margin-top:8px; }
+.add-news-btn:hover { border-color:var(--blue-light); color:var(--blue-light); background:var(--blue-bg); }
 
-        .tool-card:nth-child(1) .tool-icon { background: #E3F2FD; }
-        .tool-card:nth-child(2) .tool-icon { background: #EDE8F4; }
-        .tool-card:nth-child(3) .tool-icon { background: #E8F0EC; }
+/* ── Bundle Vorschau ── */
+.bundle-section { display:none; }
+.bundle-section.on { display:block; }
+.bundle-entry { border:1px solid var(--gray-200); border-radius:10px; padding:16px 18px; margin-bottom:12px; background:var(--gray-50); }
+.bundle-entry:last-child { margin-bottom:0; }
+.bundle-entry-title { font-size:14px; font-weight:700; color:var(--blue-dark); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.bundle-row { display:grid; grid-template-columns:150px 1fr; gap:8px 14px; padding:6px 0; border-bottom:1px solid var(--gray-200); font-size:13px; align-items:start; }
+.bundle-row:last-child { border-bottom:none; }
+.bundle-label { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; color:var(--gray-400); padding-top:2px; }
 
-        .tool-card h3 {
-            font-family: 'DM Sans', sans-serif;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--text-primary);
-        }
+.tag { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; background:var(--blue-bg); color:var(--blue-light); }
+.tag.green  { background:#F0FFF4; color:var(--green); }
+.tag.orange { background:#FFFAF0; color:var(--orange); }
 
-        .tool-card p {
-            font-size: 14px;
-            color: var(--text-secondary);
-            line-height: 1.55;
-            flex-grow: 1;
-        }
+.toast { position:fixed; bottom:20px; right:20px; background:var(--blue-dark); color:#fff; border-radius:8px; padding:11px 18px; font-size:13px; font-weight:500; box-shadow:0 10px 25px rgba(0,0,0,.15); transform:translateY(44px); opacity:0; transition:all .3s cubic-bezier(.34,1.56,.64,1); z-index:600; }
+.toast.on { transform:translateY(0); opacity:1; }
+.toast.ok { background:var(--green); }
+.toast.warn { background:var(--orange); }
+.toast.err { background:var(--red); }
 
-        .tool-card .arrow {
-            margin-top: 16px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            opacity: 0;
-            transform: translateX(-6px);
-            transition: all 0.25s ease;
-        }
-
-        .tool-card:hover .arrow {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        /* 3rd card full width */
-        .tools-grid .tool-card:nth-child(3) {
-            grid-column: 1 / -1;
-        }
-
-        footer {
-            padding: 32px 0 48px;
-            border-top: 1px solid var(--border);
-        }
-
-        footer p {
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        footer a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-        }
-
-        @media (max-width: 600px) {
-            header { padding: 40px 0 16px; }
-            .tools-grid { grid-template-columns: 1fr; }
-            .tools-grid .tool-card:nth-child(3) { grid-column: auto; }
-            .tool-card .arrow { opacity: 1; transform: translateX(0); }
-        }
-
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        header { animation: fadeUp 0.5s ease both; }
-        .divider { animation: fadeUp 0.5s ease 0.1s both; }
-        .section-label { animation: fadeUp 0.5s ease 0.15s both; }
-        .tool-card:nth-child(1) { animation: fadeUp 0.45s ease 0.2s both; }
-        .tool-card:nth-child(2) { animation: fadeUp 0.45s ease 0.27s both; }
-        .tool-card:nth-child(3) { animation: fadeUp 0.45s ease 0.34s both; }
-    </style>
+.section-label { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.6px; color:var(--gray-400); margin:18px 0 10px; }
+</style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <div class="logo-mark">
-            <div class="logo-icon">V</div>
-            <span class="logo-text">Victor Tools</span>
-        </div>
-        <h1>KI Werkzeuge für unser Team</h1>
-        <p>Kleine, praktische Browser Tools für den Arbeitsalltag. Kein Login, keine Installation – einfach öffnen und loslegen.</p>
-    </header>
-
-    <div class="divider"></div>
-
-    <div class="section-label">Verfügbare Tools</div>
-
-    <div class="tools-grid">
-
-        <a href="api-katalog-manager/index.html" class="tool-card">
-            <div class="tool-icon">🔌</div>
-            <h3>API Katalog Manager</h3>
-            <p>APIs übersichtlich erfassen, dokumentieren und im Team als durchsuchbaren Katalog bereitstellen.</p>
-            <span class="arrow">Öffnen →</span>
-        </a>
-
-        <a href="ki-usecase-einordnung/index.html" class="tool-card">
-            <div class="tool-icon">🧭</div>
-            <h3>KI Usecase Einordnung</h3>
-            <p>Ordne reale Use Cases richtig ein — Automatisierung, KI oder doch nichts davon?</p>
-            <span class="arrow">Öffnen →</span>
-        </a>
-
-        <a href="anforderungs-assistent/index.html" class="tool-card">
-            <div class="tool-icon">📋</div>
-            <h3>Anforderungs Assistent - funktioniert auf der lokalen Umgebung</h3>
-            <p>Der Assistent begleitet dich als Sparringspartner beim Erstellen klarer, JIRA-faehiger Anforderungen. Schritt fuer Schritt, von der ersten Idee bis zu Akzeptanzkriterien und Testfaellen.</p>
-            <span class="arrow">Öffnen →</span>
-        </a>
-
-    </div>
-
-    <footer>
-        <p>Erstellt von Victor mit Claude · Bei Fragen oder Ideen → <a href="mailto:victor.schneevoigt@sbk.org">Nachricht schreiben</a></p>
-    </footer>
+<div class="header">
+  <div class="header-icon">📰</div>
+  <div>
+    <h1>KI News Template · BAI</h1>
+    <p>Wochenbericht aus AI Nauten / Everlast AI – für das Team JF</p>
+  </div>
 </div>
 
+<div class="container">
+
+  <!-- TOKEN -->
+  <div class="card">
+    <div class="card-title"><span class="step-badge">⚙</span> KIA Token (für Reflektions Check &amp; Feldbefüllung)</div>
+    <div class="token-row">
+      <input type="password" id="tokIn" placeholder="Token aus KIA → Einstellungen → Konto" autocomplete="off" onkeydown="if(event.key==='Enter')saveToken()">
+      <button class="btn btn-secondary" onclick="saveToken()">Verbinden</button>
+    </div>
+    <div class="tok-hint">Optional – nur für KIA gestützte Funktionen nötig.</div>
+    <div class="tok-status" id="tokStatus"></div>
+  </div>
+
+  <!-- META -->
+  <div class="card">
+    <div class="card-title"><span class="step-badge">1</span> Wer berichtet diese Woche?</div>
+    <div class="row-2">
+      <div class="field">
+        <label for="person">Name <span class="req">*</span></label>
+        <input type="text" id="person" placeholder="z.B. Victor S.">
+      </div>
+      <div class="field">
+        <label for="datum">Datum / KW</label>
+        <input type="text" id="datum" placeholder="z.B. KW 14 · April 2025">
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWS LISTE -->
+  <div class="card">
+    <div class="card-title"><span class="step-badge">2</span> KI News dieser Woche</div>
+    <div class="news-list" id="newsList"></div>
+    <button class="add-news-btn" onclick="addNews()">＋ Weitere News hinzufügen</button>
+  </div>
+
+  <!-- GEBÜNDELTE VORSCHAU & COPY -->
+  <div class="card bundle-section" id="bundleSection">
+    <div class="card-title"><span class="step-badge">3</span> Gebündelte Vorschau</div>
+    <div id="bundlePreview"></div>
+    <div class="btn-row" style="margin-top:18px;">
+      <button class="copy-btn" id="bundleCopyBtn" onclick="copyAllToConfluence(this)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        Alle News für Confluence kopieren
+      </button>
+      <button class="btn btn-secondary" onclick="refreshBundle()">↻ Vorschau aktualisieren</button>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══ KIA Config ══ */
+const KIA_BASE  = 'https://kia.apps.test.sbk.de';
+const KIA_MODEL = 'openai/gpt-oss-120b';
+let apiToken = '';
+
+try {
+  const saved = localStorage.getItem('kia-token');
+  if (saved) { apiToken = saved; document.getElementById('tokIn').value = saved; setTokenStatus('Verbunden ✓', true); }
+} catch(e) {}
+
+function saveToken() {
+  const v = document.getElementById('tokIn').value.trim();
+  if (!v) { setTokenStatus('Bitte Token eingeben.', false); return; }
+  apiToken = v;
+  try { localStorage.setItem('kia-token', v); } catch(e) {}
+  setTokenStatus('Verbunden ✓', true);
+  showToast('KIA verbunden', 'ok');
+}
+function setTokenStatus(msg, ok) {
+  const el = document.getElementById('tokStatus');
+  el.textContent = msg; el.className = 'tok-status ' + (ok ? 'ok' : 'err');
+}
+
+/* ══ State ══ */
+let newsList = [];
+let nextId   = 1;
+
+const QUELLEN = ['AI Nauten (Newsletter)', 'Everlast AI (Wochenvideo)', 'Heise / t3n', 'Sonstige'];
+const REIFE   = [
+  { val:'',                       label:'— optional —' },
+  { val:'🔴 Jetzt relevant',      label:'🔴 Jetzt relevant – konkreter Handlungsbedarf' },
+  { val:'🟡 Beobachten',          label:'🟡 Beobachten – mittelfristig interessant' },
+  { val:'🟢 Orientierungswissen', label:'🟢 Orientierungswissen – gut zu wissen' },
+];
+
+/* ══ News hinzufügen / entfernen ══ */
+function addNews() {
+  const id = nextId++;
+  newsList.push({ id, quelle:'', thema:'', relevanz:'', implikation:'', reife:'', kiaRawText:'' });
+  renderNewsList();
+  setTimeout(() => setActive(id), 30);
+}
+
+function removeNews(id) {
+  if (newsList.length <= 1) { showToast('Mindestens eine News muss erfasst bleiben.', 'warn'); return; }
+  newsList = newsList.filter(n => n.id !== id);
+  renderNewsList();
+  updateBundleVisibility();
+}
+
+/* ══ Accordion ══ */
+function setActive(id) {
+  document.querySelectorAll('.news-item').forEach(el => el.classList.toggle('active', Number(el.dataset.id) === id));
+  const el = document.querySelector(`.news-item[data-id="${id}"]`);
+  if (el) el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function toggleNews(id) {
+  const el = document.querySelector(`.news-item[data-id="${id}"]`);
+  if (!el) return;
+  const wasActive = el.classList.contains('active');
+  document.querySelectorAll('.news-item').forEach(e => e.classList.remove('active'));
+  if (!wasActive) el.classList.add('active');
+}
+
+/* ══ Render ══ */
+function renderNewsList() {
+  const container = document.getElementById('newsList');
+  container.innerHTML = '';
+
+  newsList.forEach((news, idx) => {
+    const isDone   = !!(news.thema && news.relevanz && news.implikation);
+    const preview  = news.thema || 'Noch kein Thema eingetragen';
+    const item     = document.createElement('div');
+    item.className = 'news-item';
+    item.dataset.id = news.id;
+
+    item.innerHTML = `
+      <div class="news-item-header" onclick="toggleNews(${news.id})">
+        <div class="news-num">${idx + 1}</div>
+        <div class="news-title-preview ${news.thema ? '' : 'empty'}">${esc(preview)}</div>
+        <span class="news-status-badge ${isDone ? 'badge-done' : 'badge-draft'}">${isDone ? '✓ Fertig' : 'Entwurf'}</span>
+        <span class="news-chevron">▼</span>
+      </div>
+      <div class="news-body">
+        <div class="field">
+          <label>Quelle <span class="req">*</span></label>
+          <select onchange="updateField(${news.id},'quelle',this.value)">
+            ${!news.quelle ? '<option value="" selected disabled>— Quelle wählen —</option>' : ''}
+            ${QUELLEN.map(q => `<option value="${q}"${news.quelle===q?' selected':''}>${q}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field">
+          <label>Thema <span class="req">*</span></label>
+          <input type="text" value="${esc(news.thema)}" placeholder="z.B. GPT-5 multimodale Fähigkeiten im Überblick"
+            oninput="updateField(${news.id},'thema',this.value)">
+        </div>
+        <div class="field">
+          <label>Warum relevant für SBK / BAI? <span class="req">*</span>
+            <span class="hint">Eigene Einschätzung – nicht nur zusammenfassen</span>
+          </label>
+          <textarea id="rel-${news.id}" placeholder="Konkret auf GKV Kontext, BAI Arbeit oder Prozesse beziehen …"
+            oninput="updateField(${news.id},'relevanz',this.value)">${esc(news.relevanz)}</textarea>
+        </div>
+        <div class="field">
+          <label>Eine konkrete Implikation <span class="req">*</span>
+            <span class="hint">Was sollte das Team im Blick behalten oder tun?</span>
+          </label>
+          <textarea id="imp-${news.id}" placeholder="z.B. Prüfen ob Use Case X davon betroffen ist …"
+            oninput="updateField(${news.id},'implikation',this.value)">${esc(news.implikation)}</textarea>
+        </div>
+        <div class="field">
+          <label>Relevanz Einschätzung</label>
+          <select onchange="updateField(${news.id},'reife',this.value)">
+            ${REIFE.map(r => `<option value="${r.val}"${news.reife===r.val?' selected':''}>${r.label}</option>`).join('')}
+          </select>
+        </div>
+
+        <div class="section-label">KIA Unterstützung</div>
+        <div class="btn-row">
+          <button class="btn btn-secondary btn-sm" onclick="startSparring(${news.id})">✨ Reflektions Check</button>
+          <button class="btn btn-ghost btn-sm" onclick="removeNews(${news.id})">🗑 Entfernen</button>
+        </div>
+
+        <div id="kiaBox-${news.id}" style="display:none;" class="kia-box"></div>
+
+        <div class="kia-transfer-bar" id="transferBar-${news.id}">
+          <div style="flex:1"><strong>Felder automatisch befüllen?</strong> KIA formuliert Relevanz und Implikation professionell auf Basis des Feedbacks.</div>
+          <button class="btn-transfer" id="transferBtn-${news.id}" onclick="transferToFields(${news.id})">
+            <span id="transferLabel-${news.id}">✦ Felder befüllen</span>
+          </button>
+        </div>
+      </div>
+    `;
+    container.appendChild(item);
+  });
+}
+
+function updateField(id, field, value) {
+  const news = newsList.find(n => n.id === id);
+  if (!news) return;
+  news[field] = value;
+
+  // Header live aktualisieren
+  const item = document.querySelector(`.news-item[data-id="${id}"]`);
+  if (item) {
+    const preview = item.querySelector('.news-title-preview');
+    if (preview) { preview.textContent = news.thema || 'Noch kein Thema eingetragen'; preview.className = 'news-title-preview' + (news.thema ? '' : ' empty'); }
+    const badge = item.querySelector('.news-status-badge');
+    const isDone = !!(news.thema && news.relevanz && news.implikation);
+    if (badge) { badge.textContent = isDone ? '✓ Fertig' : 'Entwurf'; badge.className = 'news-status-badge ' + (isDone ? 'badge-done' : 'badge-draft'); }
+  }
+  updateBundleVisibility();
+}
+
+function updateBundleVisibility() {
+  const anyDone = newsList.some(n => n.thema && n.relevanz && n.implikation);
+  document.getElementById('bundleSection').classList.toggle('on', anyDone);
+  if (anyDone) refreshBundle();
+}
+
+/* ══ KIA Sparring pro News ══ */
+async function startSparring(id) {
+  const news = newsList.find(n => n.id === id);
+  if (!news) return;
+  if (!news.thema || !news.relevanz || !news.implikation) { showToast('Bitte Thema, Relevanz und Implikation ausfüllen.', 'warn'); return; }
+  if (!apiToken) { showToast('Bitte KIA Token eingeben.', 'warn'); return; }
+
+  const box = document.getElementById(`kiaBox-${id}`);
+  const bar = document.getElementById(`transferBar-${id}`);
+  box.style.display = '';
+  bar.classList.remove('on');
+  box.className = 'kia-box loading-state';
+  box.innerHTML = '<div class="spin"></div> KIA prüft …';
+
+  const sys = `Du bist ein knapper, konstruktiver Sparringspartner für ein Business Analyst Team einer gesetzlichen Krankenkasse (SBK). Du prüfst in 3–5 Sätzen, ob die SBK-Relevanz und die Implikation eines KI-Newsberichts präzise und wirklich handlungsrelevant formuliert sind. Gib konkretes, direkt verwertbares Feedback. Du-Form, keine Emojis, klar und kollegial. Wenn alles gut ist, sag das kurz und nenne trotzdem eine Möglichkeit zur Schärfung.`;
+  const usr = `Thema: ${news.thema}\nQuelle: ${news.quelle}\nSBK-Relevanz: ${news.relevanz}\nKonkrete Implikation: ${news.implikation}\n\nBitte prüfe: Ist die Relevanzeinschätzung wirklich spezifisch für SBK/GKV? Ist die Implikation wirklich konkret und handlungsrelevant?`;
+
+  try {
+    const text = await kiaCall(sys, usr);
+    news.kiaRawText = text;
+    box.className   = 'kia-box';
+    box.innerHTML   = renderMarkdown(text);
+    bar.classList.add('on');
+  } catch(e) {
+    box.className = 'kia-box';
+    box.innerHTML = `<span style="color:var(--red)">Fehler: ${esc(e.message)}</span>`;
+    showToast('KIA Fehler: ' + e.message, 'err');
+  }
+}
+
+/* ══ KIA Felder befüllen pro News ══ */
+async function transferToFields(id) {
+  const news = newsList.find(n => n.id === id);
+  if (!news || !news.kiaRawText) return;
+  if (!apiToken) { showToast('KIA Token fehlt.', 'warn'); return; }
+
+  const btn   = document.getElementById(`transferBtn-${id}`);
+  const label = document.getElementById(`transferLabel-${id}`);
+  btn.disabled = true;
+  label.innerHTML = '<span class="spin" style="width:13px;height:13px;border-width:2px;"></span> Wird formuliert …';
+
+  const sys = `Du bist ein erfahrener Business Analyst bei einer gesetzlichen Krankenkasse (SBK). Du formulierst für ein internes Team zwei Textfelder für einen KI-News-Bericht:
+1. "Relevanz für SBK/BAI": Warum ist dieses KI-Thema konkret relevant für SBK oder das BAI-Team? Bezug auf GKV-Kontext, Digitalisierung, Prozesse oder regulatorische Anforderungen herstellen. 2–3 präzise Sätze, kein Allgemeinplatz.
+2. "Konkrete Implikation": Was sollte das BAI-Team konkret tun oder im Blick behalten? Eine klare, handlungsorientierte Aussage. 1–2 Sätze.
+
+Antworte NUR als JSON ohne Markdown-Backticks und ohne Präambel:
+{"relevanz":"...","implikation":"..."}`;
+  const usr = `Thema: ${news.thema}\nQuelle: ${news.quelle}\nBisherige Relevanz: ${news.relevanz||'(leer)'}\nBisherige Implikation: ${news.implikation||'(leer)'}\nKIA-Feedback: ${news.kiaRawText}\n\nFormuliere beide Felder professionell, präzise und direkt nutzbar.`;
+
+  try {
+    const raw   = await kiaCall(sys, usr);
+    const clean = raw.replace(/```json|```/g,'').trim();
+    let parsed;
+    try { parsed = JSON.parse(clean); } catch(e) { throw new Error('JSON Parse Fehler: ' + raw.substring(0,120)); }
+
+    if (parsed.relevanz)    { news.relevanz    = parsed.relevanz;    const el = document.getElementById(`rel-${id}`); if(el) el.value = parsed.relevanz; }
+    if (parsed.implikation) { news.implikation = parsed.implikation; const el = document.getElementById(`imp-${id}`); if(el) el.value = parsed.implikation; }
+
+    document.getElementById(`transferBar-${id}`).classList.remove('on');
+    showToast('Felder befüllt – bitte prüfen ✓', 'ok');
+
+    [`rel-${id}`,`imp-${id}`].forEach(elId => {
+      const el = document.getElementById(elId);
+      if (!el) return;
+      el.style.transition = 'background .3s'; el.style.background = '#F0FFF4';
+      setTimeout(() => { el.style.background = ''; }, 1800);
+    });
+
+    updateField(id, 'relevanz',    news.relevanz);
+    updateField(id, 'implikation', news.implikation);
+
+  } catch(e) {
+    showToast('Fehler: ' + e.message, 'err');
+  } finally {
+    btn.disabled = false;
+    label.innerHTML = '✦ Felder befüllen';
+  }
+}
+
+/* ══ Bundle Vorschau ══ */
+function refreshBundle() {
+  const container = document.getElementById('bundlePreview');
+  const done      = newsList.filter(n => n.thema && n.relevanz && n.implikation);
+  if (!done.length) { container.innerHTML = '<p style="color:var(--gray-400);font-size:13px;">Noch keine vollständigen News.</p>'; return; }
+
+  container.innerHTML = done.map((news, idx) => {
+    const reifeTag = news.reife
+      ? `<span class="tag ${news.reife.startsWith('🔴')?'':news.reife.startsWith('🟡')?'orange':'green'}">${esc(news.reife)}</span>`
+      : '';
+    return `
+      <div class="bundle-entry">
+        <div class="bundle-entry-title"><span class="news-num">${idx+1}</span>${esc(news.thema)}</div>
+        <div class="bundle-row"><div class="bundle-label">Quelle</div><div><span class="tag">${esc(news.quelle||'—')}</span></div></div>
+        <div class="bundle-row"><div class="bundle-label">Relevanz SBK</div><div>${esc(news.relevanz)}</div></div>
+        <div class="bundle-row"><div class="bundle-label">Implikation</div><div>${esc(news.implikation)}</div></div>
+        ${news.reife ? `<div class="bundle-row"><div class="bundle-label">Einschätzung</div><div>${reifeTag}</div></div>` : ''}
+      </div>`;
+  }).join('');
+}
+
+/* ══ Confluence Copy – gebündelt ══ */
+function copyAllToConfluence(btn) {
+  const person = document.getElementById('person').value.trim();
+  const datum  = document.getElementById('datum').value.trim();
+  const done   = newsList.filter(n => n.thema && n.relevanz && n.implikation);
+  if (!done.length) { showToast('Keine vollständigen News zum Kopieren.', 'warn'); return; }
+
+  const hs  = 'style="background-color:#002B52;color:#ffffff;padding:8px 12px;text-align:left;font-weight:bold;border:1px solid #cbd5e0;"';
+  const cs  = 'style="padding:8px 12px;border:1px solid #e2e8f0;vertical-align:top;"';
+  const cs2 = 'style="padding:8px 12px;border:1px solid #e2e8f0;vertical-align:top;background:#f7fafc;"';
+
+  let html  = `<h2>KI News Wochenbericht · ${escH(person)}${datum?' · '+escH(datum):''}</h2>`;
+  let plain = `KI NEWS WOCHENBERICHT · ${person}${datum?' · '+datum:''}\n${'═'.repeat(55)}\n\n`;
+
+  done.forEach((news, idx) => {
+    html  += `<h3>${idx+1}. ${escH(news.thema)}</h3>`;
+    html  += `<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;margin-bottom:20px;">`;
+    html  += `<thead><tr><th ${hs}>Feld</th><th ${hs}>Inhalt</th></tr></thead><tbody>`;
+
+    const rows = [
+      ['Quelle',               `<b>${escH(news.quelle)}</b>`],
+      ['Relevanz für SBK/BAI', mdToClipboardHtml(news.relevanz)],
+      ['Konkrete Implikation', mdToClipboardHtml(news.implikation)],
+    ];
+    if (news.reife) rows.push(['Einschätzung', escH(news.reife)]);
+
+    rows.forEach(([label, content], i) => {
+      html += `<tr><td ${i%2===0?cs:cs2}><b>${escH(label)}</b></td><td ${i%2===0?cs:cs2}>${content}</td></tr>`;
+    });
+
+    html  += `</tbody></table>`;
+    plain += `${idx+1}. ${stripMd(news.thema)}\n   Quelle:      ${news.quelle}\n   Relevanz:    ${stripMd(news.relevanz)}\n   Implikation: ${stripMd(news.implikation)}\n${news.reife?'   Einschätzung: '+news.reife+'\n':''}\n`;
+  });
+
+  copyRich(plain, html).then(() => {
+    setCopyFeedback(btn);
+    showToast(`${done.length} News für Confluence kopiert ✓`, 'ok');
+  });
+}
+
+/* ══ KIA API ══ */
+async function kiaCall(system, user) {
+  const res = await fetch(KIA_BASE + '/api/chat/completions', {
+    method:'POST',
+    headers:{ 'Authorization':'Bearer '+apiToken, 'Content-Type':'application/json' },
+    body: JSON.stringify({ model:KIA_MODEL, messages:[{ role:'system', content:system },{ role:'user', content:user }], stream:false })
+  });
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  const data = await res.json();
+  const text = data.choices?.[0]?.message?.content;
+  if (!text) throw new Error('Leere Antwort von KIA.');
+  return text;
+}
+
+/* ══ Confluence Copy Utilities ══ */
+const escH = t => String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function stripMd(t) { return (t||'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*([^*\n]+?)\*/g,'$1'); }
+
+function mdToClipboardHtml(text) {
+  if (!text) return '';
+  let h = escH(text);
+  h = h.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  h = h.replace(/\*([^*\s][^*\n]*?)\*/g,'<em>$1</em>');
+  const lines = h.split('\n');
+  let out='', inUl=false, inOl=false, inSub=false;
+  for (const line of lines) {
+    const ul = line.match(/^(\s*)[-\u2013\u2014*\u2022]\s+(.+)/);
+    const ol = line.match(/^(\s*)\d+\.\s+(.+)/);
+    if (ul) {
+      if (inOl) { if(!inSub){out=out.replace(/<\/li>$/,'');out+='<ul>';inSub=true;} out+='<li>'+ul[2]+'</li>'; }
+      else { if(!inUl){out+='<ul>';inUl=true;} out+='<li>'+ul[2]+'</li>'; }
+    } else if (ol) {
+      if(inSub){out+='</ul></li>';inSub=false;} if(inUl){out+='</ul>';inUl=false;} if(!inOl){out+='<ol>';inOl=true;} out+='<li>'+ol[2]+'</li>';
+    } else {
+      if(inSub){out+='</ul></li>';inSub=false;} if(inUl){out+='</ul>';inUl=false;} if(inOl){out+='</ol>';inOl=false;}
+      if(line.trim()) out+='<p>'+line+'</p>';
+    }
+  }
+  if(inSub)out+='</ul></li>'; if(inUl)out+='</ul>'; if(inOl)out+='</ol>';
+  if(!out.includes('<p>')&&!out.includes('<ul>')&&!out.includes('<ol>')) out='<p>'+h.replace(/\n/g,'<br>')+'</p>';
+  return out;
+}
+
+async function copyRich(plain, html) {
+  try {
+    await navigator.clipboard.write([new ClipboardItem({'text/html':new Blob([html],{type:'text/html'}),'text/plain':new Blob([plain],{type:'text/plain'})})]);
+  } catch(e) { await navigator.clipboard.writeText(plain); }
+  return true;
+}
+
+function setCopyFeedback(btn) {
+  const orig = btn.innerHTML;
+  btn.classList.add('copied');
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Kopiert ✓';
+  setTimeout(() => { btn.classList.remove('copied'); btn.innerHTML = orig; }, 2000);
+}
+
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderMarkdown(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g,'<em>$1</em>')
+    .replace(/^[-•]\s+(.+)$/gm,'• $1')
+    .replace(/\n{2,}/g,'<br><br>')
+    .replace(/\n/g,'<br>');
+}
+
+function showToast(msg, type) {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = 'toast on'+(type?' '+type:'');
+  clearTimeout(el._t); el._t = setTimeout(() => el.classList.remove('on'), 3500);
+}
+
+/* ══ Init ══ */
+addNews();
+</script>
 </body>
 </html>
