@@ -133,6 +133,11 @@ textarea.fi{min-height:80px;}
 .doc-sec-status.empty{background:var(--sf3);color:var(--dm);}
 .doc-sec-status.draft{background:var(--yellow-light);border:1px solid var(--yellow-border);color:var(--orange);}
 .doc-sec-status.done{background:var(--green-light);border:1px solid var(--green-border);color:var(--green);}
+/* Fliesstext-Nachholbutton im Living Doc (v2.5.3) */
+.btn-regen-text{display:none;align-items:center;gap:4px;font-size:10.5px;font-weight:600;color:var(--orange);background:var(--yellow-light);border:1px solid var(--yellow-border);border-radius:6px;padding:2px 8px;cursor:pointer;transition:all .2s var(--ease);white-space:nowrap;}
+.btn-regen-text:hover{background:#FEFCBF;border-color:var(--yellow);}
+.btn-regen-text.visible{display:flex;}
+.btn-regen-text.loading{opacity:.6;pointer-events:none;}
 .doc-sec-content{font-size:13px;color:var(--tx2);line-height:1.65;min-height:24px;}
 .doc-sec-content.empty{color:var(--dm);font-style:italic;font-size:12.5px;}
 .doc-sec-content ul,.doc-sec-content ol{padding-left:18px;margin:4px 0;}
@@ -437,7 +442,8 @@ textarea.fi{min-height:80px;}
 .badge-haupt{display:inline-flex;align-items:center;gap:4px;background:var(--blue-deep);color:#fff;font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:6px;white-space:nowrap;}
 
 /* Editierbare Zuständigkeitstabelle */
-.zustaendig-tabelle{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;}
+.zustaendig-tabelle{width:100%;border-collapse:collapse;font-size:13px;}
+.zustaendig-wrap{overflow-x:auto;margin-bottom:12px;}
 .zustaendig-tabelle th{background:var(--sf3);color:var(--tx2);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;text-align:left;border-bottom:2px solid var(--bd);}
 .zustaendig-tabelle td{padding:7px 10px;border-bottom:1px solid var(--bd2);vertical-align:top;color:var(--tx2);}
 .zustaendig-tabelle tr:hover{background:var(--sf2);}
@@ -577,8 +583,8 @@ textarea.fi{min-height:80px;}
     <div class="doc-header"><div class="doc-header-title">Anforderung (Entwurf)</div><div class="doc-header-sub">Wird laufend aktualisiert</div></div>
     <div class="doc-body" id="docBody">
       <div class="doc-section" id="ds-titel"><div class="doc-sec-head"><div class="doc-sec-label">Titel</div><div class="doc-sec-status empty" id="dss-titel">Offen</div></div><div class="doc-sec-content empty" id="dc-titel">Wird im Sparring erarbeitet</div></div>
-      <div class="doc-section" id="ds-ist"><div class="doc-sec-head"><div class="doc-sec-label">IST Beschreibung</div><div class="doc-sec-status empty" id="dss-ist">Offen</div></div><div class="doc-sec-content empty" id="dc-ist">Aktueller Zustand noch nicht erfasst</div></div>
-      <div class="doc-section" id="ds-soll"><div class="doc-sec-head"><div class="doc-sec-label">SOLL Beschreibung</div><div class="doc-sec-status empty" id="dss-soll">Offen</div></div><div class="doc-sec-content empty" id="dc-soll">Gewuenschter Zustand noch nicht erfasst</div></div>
+      <div class="doc-section" id="ds-ist"><div class="doc-sec-head"><div class="doc-sec-label">IST Beschreibung</div><div style="display:flex;align-items:center;gap:6px;"><button class="btn-regen-text" id="btn-regen-ist" onclick="regenFliesstext('ist')" type="button" title="Fliesstext fehlt – hier neu generieren">↻ Fliesstext</button><div class="doc-sec-status empty" id="dss-ist">Offen</div></div></div><div class="doc-sec-content empty" id="dc-ist">Aktueller Zustand noch nicht erfasst</div></div>
+      <div class="doc-section" id="ds-soll"><div class="doc-sec-head"><div class="doc-sec-label">SOLL Beschreibung</div><div style="display:flex;align-items:center;gap:6px;"><button class="btn-regen-text" id="btn-regen-soll" onclick="regenFliesstext('soll')" type="button" title="Fliesstext fehlt – hier neu generieren">↻ Fliesstext</button><div class="doc-sec-status empty" id="dss-soll">Offen</div></div></div><div class="doc-sec-content empty" id="dc-soll">Gewuenschter Zustand noch nicht erfasst</div></div>
       <div class="doc-section" id="ds-kz" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Kennzahlen</div><div class="doc-sec-status empty" id="dss-kz">Offen</div></div><div class="doc-sec-content empty" id="dc-kz">Fallzahlen und Aufwaende noch offen</div></div>
       <div class="doc-section" id="ds-ak" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Akzeptanzkriterien</div><div class="doc-sec-status empty" id="dss-ak">Offen</div></div><div class="doc-sec-content empty" id="dc-ak">Werden nach IST/SOLL generiert</div></div>
       <div class="doc-section" id="ds-tf" style="display:none"><div class="doc-sec-head"><div class="doc-sec-label">Testfaelle</div><div class="doc-sec-status empty" id="dss-tf">Offen</div></div><div class="doc-sec-content empty" id="dc-tf">Werden nach IST/SOLL generiert</div></div>
@@ -1695,14 +1701,12 @@ Regeln:
 - AK und TF neu formulieren, nur die fuer diesen Bereich relevanten.
 - Keine Fake-Daten, keine erfundenen Systemnamen.
 - Abhaengigkeiten konkret auf die Schnittstellen zu den anderen Bereichen in der Zustaendigkeitstabelle beziehen.
-- IST-TABELLE und SOLL-TABELLE als Pipe-Tabellen mit den Spalten: Schritt | Beschreibung | System | Rolle
+- IST-TABELLE und SOLL-TABELLE als Pipe-Tabellen mit den Spalten: Schritt | Beschreibung | Erlaeuterung
 - AK als Pipe-Tabelle: Nr. | Akzeptanzkriterium | Erwartetes Ergebnis
 - TF als Pipe-Tabelle mit Kategorie-Prefix: Nr. | Beschreibung | Vorbedingungen | Testschritte | Erwartetes Ergebnis
   Kategorien: Positiv, Grenzwert, Negativ, Eingangspruefung (Sortierung in dieser Reihenfolge)
 - Kennzahlen nur die fuer diesen Bereich relevanten. Wenn keine teamspezifischen existieren: "Keine teamspezifischen Kennzahlen – siehe Gesamt-ANFO"
 - WICHTIG: Verwende NIEMALS das Pipe-Zeichen innerhalb von Zellinhalten. Schreibe "21c_ng" statt "21c|ng". Das Pipe-Zeichen darf NUR als Spaltentrenner in Tabellen verwendet werden.
-
-PFLICHT FLIESSTEXT: Unter IST und SOLL MUSS jeweils ein Fliesstext-Abschnitt stehen (mindestens 2-3 zusammenhaengende Saetze in ganzen Saetzen). Der Fliesstext fasst den Prozessanteil dieses Bereichs ueberblicksartig zusammen. Er darf NIEMALS leer sein oder weggelassen werden. Erst nach dem Fliesstext folgt die Tabelle als eigene IST-TABELLE / SOLL-TABELLE Sektion.
 
 Fliesstext-Unterueberschriften IST: Prozessausloeser, Bearbeitungsschritte, Output, ggf. Ablehnungen/Sonderfaelle
 Fliesstext-Unterueberschriften SOLL: Zielbild, Prozessausloeser, Bearbeitungsschritte, Output, ggf. Ablehnungen/Sonderfaelle
@@ -1715,15 +1719,15 @@ IST:
 [Fliesstext mit Unterueberschriften – nur der fuer diesen Bereich relevante Ausschnitt]
 
 IST-TABELLE:
-| Schritt | Beschreibung | System | Rolle |
-| 1 | ... | ... | ... |
+| Schritt | Beschreibung | Erlaeuterung |
+| 1 | ... | ... |
 
 SOLL:
 [Fliesstext mit Unterueberschriften – nur die Schritte, die dieser Bereich umsetzen muss]
 
 SOLL-TABELLE:
-| Schritt | Beschreibung | System | Rolle |
-| 1 | ... | ... | ... |
+| Schritt | Beschreibung | Erlaeuterung |
+| 1 | ... | ... |
 
 KENNZAHLEN:
 [Teamrelevante Kennzahlen oder "Keine teamspezifischen Kennzahlen – siehe Gesamt-ANFO"]
@@ -2292,6 +2296,12 @@ function updateDoc(field,content,status){
   if(field==='istTab'||field==='sollTab'){
     const parentField = field==='istTab' ? 'ist' : 'soll';
     if(docState[parentField]) renderDocSection(parentField);
+    /* Regen-Button: zeigen wenn Tab gefuellt aber Fliesstext leer */
+    const regenBtn=g('btn-regen-'+parentField);
+    if(regenBtn){
+      const textEmpty=!docState[parentField]||docState[parentField]==='[Noch nicht erfasst]';
+      regenBtn.classList.toggle('visible', !!(content && textEmpty));
+    }
     return;
   }
   if(!el)return;
@@ -2307,6 +2317,8 @@ function updateDoc(field,content,status){
     }
     else el.innerHTML=renderMd(content);
     if(st){st.className='doc-sec-status '+(status||'draft');st.textContent=status==='done'?'Steht':'Entwurf';}
+    /* Regen-Button ausblenden wenn Text jetzt vorhanden */
+    if(field==='ist'||field==='soll'){const rb=g('btn-regen-'+field);if(rb)rb.classList.remove('visible');}
   }else{
     el.className='doc-sec-content empty';
     el.style.padding='';
@@ -2315,6 +2327,60 @@ function updateDoc(field,content,status){
     if(st){st.className='doc-sec-status empty';st.textContent='Offen';}
   }
   checkReady();
+}
+
+/* ═══ FLIESSTEXT NACHGENERIEREN (v2.5.3) ═══
+ * Wird aufgerufen wenn IST- oder SOLL-Fliesstext fehlt aber Tabelle schon steht.
+ * Gezielter KIA-Call der nur den Fliesstext-Anteil anfordert. */
+async function regenFliesstext(field){
+  if(isRunning){showToast('Bitte warte bis der aktuelle Vorgang abgeschlossen ist.','warn');return;}
+  const btn=g('btn-regen-'+field);
+  if(btn){btn.classList.add('loading');btn.textContent='...';}
+
+  const tabField = field==='ist' ? 'istTab' : 'sollTab';
+  const tabData = docState[tabField];
+  if(!tabData){showToast('Keine Tabellendaten vorhanden.','warn');if(btn){btn.classList.remove('loading');btn.textContent='↻ Fliesstext';}return;}
+
+  /* Kontext: alles was schon bekannt ist */
+  let ctx='';
+  if(docState.titel) ctx+='TITEL: '+docState.titel+'\n\n';
+  if(field==='ist'){
+    ctx+='IST-TABELLE (bereits vorhanden):\n'+tabData+'\n\n';
+    if(docState.soll&&docState.soll!=='[Noch nicht erfasst]') ctx+='SOLL (zur Orientierung):\n'+docState.soll+'\n\n';
+  } else {
+    if(docState.ist&&docState.ist!=='[Noch nicht erfasst]') ctx+='IST (zur Orientierung):\n'+docState.ist+'\n\n';
+    ctx+='SOLL-TABELLE (bereits vorhanden):\n'+tabData+'\n\n';
+  }
+  if(docState.kz&&docState.kz!=='Noch nicht erfasst.') ctx+='KENNZAHLEN: '+docState.kz+'\n\n';
+
+  const label = field==='ist' ? 'IST' : 'SOLL';
+  const unterueberschriften = field==='ist'
+    ? 'Prozessausloeser, Bearbeitungsschritte (Zusammenfassung), Output, ggf. Ablehnungen/Sonderfaelle'
+    : 'Zielbild, Prozessausloeser, Bearbeitungsschritte (Zusammenfassung), Output, ggf. Ablehnungen/Sonderfaelle';
+
+  const prompt=`${ctx}Die Prozesstabelle fuer ${label} steht bereits (siehe oben). Schreibe jetzt NUR den ${label}-Fliesstext – keinen anderen Abschnitt, keine Tabelle, keine Rueckfragen.\n\nDer Fliesstext fasst den Prozess ueberblicksartig in 3-5 zusammenhaengenden Saetzen zusammen. **Fettdruck** fuer Systeme, Rollen und Schluesselwoerter. Unterueberschriften: ${unterueberschriften}.\n\nAusgabe (EXAKT so, nur diese Sektion):\n\n${label}:\n[Fliesstext mit Unterueberschriften]`;
+
+  const sysFliesstext=`Du bist der Anforderungs-Assistent der SBK. Deine einzige Aufgabe in dieser Anfrage: Schreibe den ${label}-Fliesstext basierend auf der vorhandenen Prozesstabelle. Keine Rueckfragen, keine Bewertung, keine anderen Sektionen. Nur den ${label}-Fliesstext im angegebenen Format.`;
+
+  isRunning=true;
+  try{
+    const raw=await callKIA([{role:'user',content:prompt}], sysFliesstext);
+    const p=parseKIA(raw);
+    const textVal = field==='ist' ? p.ist : p.soll;
+    if(textVal&&textVal!=='[Noch nicht erfasst]'){
+      updateDoc(field, textVal, 'draft');
+      showToast(label+'-Fliesstext ergaenzt.','ok');
+      addMsg('kia','',`<div style="font-size:12.5px;color:var(--green);font-weight:600;margin-bottom:6px;">✓ ${label}-Fliesstext nachgeneriert</div>${renderMd(textVal)}`);
+      /* Finalize-View live aktualisieren wenn gerade aktiv */
+      if(g('v-final')&&g('v-final').classList.contains('active')){startFinalize();}
+    } else {
+      showToast('KIA hat keinen Fliesstext geliefert – bitte nochmal versuchen.','warn');
+      if(btn){btn.classList.remove('loading');btn.textContent='↻ Fliesstext';}
+    }
+  }catch(e){
+    showToast('Fehler: '+e.message,'err');
+    if(btn){btn.classList.remove('loading');btn.textContent='↻ Fliesstext';}
+  }finally{isRunning=false;}
 }
 
 /* Hilfsfunktion: IST/SOLL Section mit Tabs rendern wenn Tabelle vorhanden */
@@ -2752,11 +2818,9 @@ function parseTeamTicket(raw){
   /* Header-Pattern (analog parseKIA, mit norm()) */
   const H_TEAM   =[/^TEAM[\s-]*TICKET\s*:/i];
   const H_IST_TAB=[/^IST[\s-]*TABELLE\s*:?$/i, /^IST[\s-]*PROZESSTABELLE\s*:?$/i];
-  /* Erweiterte IST/SOLL-Patterns: auch "IST – Aktueller Prozess:" etc. abfangen.
-     Negativer Lookahead verhindert false match auf IST-TABELLE/IST-PROZESSTABELLE. */
-  const H_IST    =[/^IST\s*:/i, /^IST[\s-]*BESCHREIBUNG\s*:?$/i, /^AKTUELLER\s+ZUSTAND\s*:?$/i, /^IST[\s-]+(?!TABELLE|PROZESSTABELLE)[A-Za-z\u00C0-\u00FF]/i];
+  const H_IST    =[/^IST\s*:/i, /^IST[\s-]*BESCHREIBUNG\s*:?$/i, /^AKTUELLER\s+ZUSTAND\s*:?$/i];
   const H_SOLL_TAB=[/^SOLL[\s-]*TABELLE\s*:?$/i, /^SOLL[\s-]*PROZESSTABELLE\s*:?$/i];
-  const H_SOLL   =[/^SOLL\s*:/i, /^SOLL[\s-]*BESCHREIBUNG\s*:?$/i, /^ZIELZUSTAND\s*:?$/i, /^SOLL[\s-]+(?!TABELLE|PROZESSTABELLE)[A-Za-z\u00C0-\u00FF]/i];
+  const H_SOLL   =[/^SOLL\s*:/i, /^SOLL[\s-]*BESCHREIBUNG\s*:?$/i, /^ZIELZUSTAND\s*:?$/i];
   const H_KZ     =[/^KENNZAHLEN\s*:/i];
   const H_AK     =[/^AKZEPTANZKRITERIEN\s*:?$/i];
   const H_TF     =[/^TESTFAE?LLE\s*:?$/i];
@@ -2796,18 +2860,16 @@ function parseTeamTicket(raw){
     if(isH(nCl,H_TF)){ mode='tf'; continue; }
     if(isH(nCl,H_ABH)){ mode='abh'; continue; }
 
-    /* Inhalt sammeln */
+    /* Inhalt sammeln – Pipe-Zeilen in ist/soll-Mode direkt nach istTab/sollTab umleiten (v2.5.2-Fix) */
+    const pipeCount=(trimmed.match(/\|/g)||[]).length;
+    const isPipeLine=pipeCount>=3 && !/^[\s|:-]+$/.test(trimmed);
     if(mode==='ist'){
-      /* Pipe-Zeilen (>=3 Pipes) direkt in istTab umleiten – analog parseKIA.
-         Verhindert dass Tabellen ohne eigene IST-TABELLE-Sektion im Fliesstext landen. */
-      const pc=(trimmed.match(/\|/g)||[]).length;
-      if(pc>=3 && !trimmed.match(/^[\s|:-]+$/)) istTab+=(istTab?'\n':'')+trimmed;
+      if(isPipeLine) istTab+=(istTab?'\n':'')+trimmed;
       else ist+=(ist?'\n':'')+trimmed;
     }
     else if(mode==='istTab') istTab+=(istTab?'\n':'')+trimmed;
     else if(mode==='soll'){
-      const pc=(trimmed.match(/\|/g)||[]).length;
-      if(pc>=3 && !trimmed.match(/^[\s|:-]+$/)) sollTab+=(sollTab?'\n':'')+trimmed;
+      if(isPipeLine) sollTab+=(sollTab?'\n':'')+trimmed;
       else soll+=(soll?'\n':'')+trimmed;
     }
     else if(mode==='sollTab') sollTab+=(sollTab?'\n':'')+trimmed;
@@ -2817,7 +2879,7 @@ function parseTeamTicket(raw){
     else if(mode==='abh') abh+=(abh?'\n':'')+trimmed;
   }
 
-  /* Fallback 1: Pipe-Tabellen aus IST/SOLL-Fliesstext extrahieren */
+  /* Fallback: Pipe-Tabellen aus IST/SOLL-Fliesstext extrahieren */
   if(ist && !istTab){
     const parts=splitPipesFromText(ist);
     ist=parts.text; istTab=parts.pipes;
@@ -2825,29 +2887,6 @@ function parseTeamTicket(raw){
   if(soll && !sollTab){
     const parts=splitPipesFromText(soll);
     soll=parts.text; sollTab=parts.pipes;
-  }
-
-  /* Fallback 2: Wenn ist/soll leer – Fliesstext direkt aus Rohtext extrahieren.
-     Greift wenn KIA den Fliesstext weglaesst und direkt die Tabelle schreibt. */
-  if(!ist && istTab){
-    const m=raw.match(/\bIST\s*:\s*\n([\s\S]*?)(?:\n\s*IST[\s-]*TABELLE|\n\s*SOLL\b|$)/i);
-    if(m){
-      const candidate=m[1].split('\n').filter(l=>{
-        const t=l.trim();
-        return t && (t.match(/\|/g)||[]).length<3 && !t.match(/^[\s|:-]+$/);
-      });
-      if(candidate.length>0) ist=candidate.join('\n').trim();
-    }
-  }
-  if(!soll && sollTab){
-    const m=raw.match(/\bSOLL\s*:\s*\n([\s\S]*?)(?:\n\s*SOLL[\s-]*TABELLE|\n\s*KENNZAHLEN\b|$)/i);
-    if(m){
-      const candidate=m[1].split('\n').filter(l=>{
-        const t=l.trim();
-        return t && (t.match(/\|/g)||[]).length<3 && !t.match(/^[\s|:-]+$/);
-      });
-      if(candidate.length>0) soll=candidate.join('\n').trim();
-    }
   }
 
   console.log('parseTeamTicket:',{teamHeader,ist:!!ist,istTab:!!istTab,soll:!!soll,sollTab:!!sollTab,kz:!!kz,ak:!!ak,tf:!!tf,abh:!!abh});
@@ -2936,14 +2975,6 @@ function renderKIAMsg(p, rawText){
 
   const istOk=p.ist&&p.ist!=='[Noch nicht erfasst]';
   const sollOk=p.soll&&p.soll!=='[Noch nicht erfasst]';
-
-  /* IST/SOLL-Vorschau im Chat – verhindert raw-Text-Fallback mit Pipe-Tabellen.
-     Nur wenn kein Analyse-Block und keine Rueckfragen: KIA hat direkt Inhalt geliefert. */
-  if(!p.analyse && p.questions.length===0 && (istOk||sollOk)){
-    if(istOk) h+=`<div style="border-left:3px solid var(--blue-strong);padding:8px 12px;margin-bottom:10px;background:var(--blue-pale);border-radius:0 var(--rs) var(--rs) 0;"><div style="font-size:11px;font-weight:600;color:var(--blue-strong);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">IST</div>${renderMd(p.ist)}</div>`;
-    if(sollOk) h+=`<div style="border-left:3px solid var(--green);padding:8px 12px;margin-bottom:10px;background:var(--green-light);border-radius:0 var(--rs) var(--rs) 0;"><div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">SOLL</div>${renderMd(p.soll)}</div>`;
-  }
-
   const hasHiddenQuestions=rawText && rawText.match(/^\d+[.)]\s*.+\?/m);
   if(istOk&&sollOk&&p.questions.length===0&&!hasHiddenQuestions)
     h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen.</div>`;
@@ -3570,7 +3601,8 @@ function startFinalize(){
       copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+istTableId+'\',this)" type="button">Kopieren</button>';
     }
     copyBtns+='</div>';
-    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">${num}</div><div class="sec-card-title">IST Beschreibung</div>${copyBtns}</div><div class="sec-card-body" style="padding:0;">${body}</div>`;
+    const istRegenBtn=(!istOk&&istTabOk)?`<button class="btn-regen-text visible" id="btn-regen-ist" onclick="regenFliesstext('ist')" type="button" title="Fliesstext fehlt – hier neu generieren" style="margin-right:6px;">↻ Fliesstext</button>`:'';
+    card.innerHTML=`<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">${num}</div><div class="sec-card-title">IST Beschreibung</div><div style="display:flex;align-items:center;gap:4px;">${istRegenBtn}${copyBtns}</div></div><div class="sec-card-body" style="padding:0;">${body}</div>`;
     c.appendChild(card);
   }
 
@@ -3818,7 +3850,8 @@ function renderZustaendigCard(){
   html+='<div class="zustaendig-haupt"><span class="badge-haupt">★ '+escH(hauptKuerzel||'?')+'</span> '+escH(hauptText)+'</div>';
 
   /* Editierbare Tabelle – 6 Spalten: Radio, Kuerzel, Bereich, Genereller Verantwortungsbereich, Beitrag, Liefert an, Empfaengt von, Loeschen */
-  html+='<table class="zustaendig-tabelle" id="tblZustaendig"><thead><tr><th style="width:30px;"></th><th>Kuerzel</th><th>Umsetzungsbereich</th><th>Genereller Verantwortungsbereich</th><th>Beitrag zu dieser Anforderung</th><th>Liefert an</th><th>Empfaengt von</th><th style="width:36px;"></th></tr></thead><tbody>';
+  html+='<div class="zustaendig-wrap">';
+  html+='<table class="zustaendig-tabelle" id="tblZustaendig" style="min-width:820px;"><thead><tr><th style="width:30px;"></th><th style="min-width:70px;">Kuerzel</th><th style="min-width:160px;">Umsetzungsbereich</th><th style="min-width:180px;">Genereller Verantwortungsbereich</th><th style="min-width:200px;">Beitrag zu dieser Anforderung</th><th style="min-width:80px;">Liefert an</th><th style="min-width:90px;">Empfaengt von</th><th style="width:36px;"></th></tr></thead><tbody>';
 
   d.tabelle.forEach((row,i)=>{
     const isHaupt=row.kuerzel===hauptKuerzel;
@@ -3834,6 +3867,7 @@ function renderZustaendigCard(){
     html+='</tr>';
   });
   html+='</tbody></table>';
+  html+='</div>'; /* Ende overflow-x:auto Wrapper */
 
   /* Zeile hinzufuegen */
   html+='<button class="btn-add-row" onclick="addZustaendigRow()">+ Bereich hinzufuegen</button>';
