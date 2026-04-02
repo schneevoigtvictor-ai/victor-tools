@@ -479,6 +479,22 @@ textarea.fi{min-height:80px;}
 .abh-tabelle td{padding:6px 10px;border-bottom:1px solid var(--bd2);vertical-align:top;color:var(--tx2);}
 .abh-tabelle tr:hover{background:var(--sf2);}
 
+/* Dropdown-Panel Bereich hinzufuegen */
+.zustaendig-add-panel{display:none;border:1.5px solid var(--blue-vivid);border-radius:var(--rs);background:var(--sf);box-shadow:var(--shadow-lg);padding:0;margin-bottom:12px;overflow:hidden;}
+.zustaendig-add-panel.open{display:block;}
+.zadd-header{padding:10px 14px;background:var(--blue-pale);border-bottom:1px solid var(--bd);font-size:12.5px;font-weight:700;color:var(--blue-deep);display:flex;align-items:center;justify-content:space-between;}
+.zadd-close{background:none;border:none;font-size:16px;color:var(--mu);cursor:pointer;padding:0 2px;border-radius:3px;}
+.zadd-close:hover{color:var(--tx);}
+.zadd-list{max-height:320px;overflow-y:auto;}
+.zadd-group{border-bottom:1px solid var(--bd2);}
+.zadd-group:last-child{border-bottom:none;}
+.zadd-group-label{padding:6px 14px;font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--dm);background:var(--sf2);}
+.zadd-item{display:flex;align-items:flex-start;gap:10px;padding:8px 14px;cursor:pointer;transition:background .15s var(--ease);border:none;background:none;width:100%;text-align:left;font-family:inherit;}
+.zadd-item:hover{background:var(--blue-pale);}
+.zadd-item-kuerzel{font-size:12px;font-weight:700;color:var(--blue-deep);min-width:80px;flex-shrink:0;padding-top:1px;}
+.zadd-item-desc{font-size:12px;color:var(--tx2);line-height:1.45;}
+.zadd-item-desc strong{color:var(--tx);font-weight:600;}
+
 /* Fortschrittsanzeige Team-Ticket-Generierung */
 .gen-progress{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--blue-pale);border-radius:var(--rs);font-size:13px;color:var(--blue-strong);font-weight:600;margin-top:12px;}
 .gen-progress .spin{width:16px;height:16px;border:2.5px solid var(--bd);border-top-color:var(--blue-strong);border-radius:50%;animation:spin .7s linear infinite;}
@@ -1631,7 +1647,7 @@ BETRIEB WEITERENTWICKLUNG INFRASTRUKTUR (ITB I):
 - ITB-I: Betrieb WE Infrastruktur. Auszuwaehlen fuer Neu- oder Weiterentwicklungen von Applikationen oder Infrastrukturkomponenten bei ITB I (Kommunikationsplattform Webex/Finesse, OV, Server Lifecycling, MAP, ProFokus). Team-Container: ITBI, TEC.
 
 BITMARCK 21c_ng (IT WS DM):
-- BM: BITMARCK 21c_ng. Auszuwaehlen fuer Neu- oder Weiterentwicklungen im Kernsystem 21c_ng. Unterbereiche: Versorgungsmanagement (Leistungen, DMP, Pflege), Meldungen, Beitraege, Partner, CRM, ZVK, RSA/Statistik, QI/Integrationsplattform, Sonstiges. Team-Container: BMSW21C.
+- BM: BITMARCK 21c_ng. NUR auszuwaehlen wenn grundlegende Neu- oder Weiterentwicklungen im KERN des 21c_ng-Systems selbst notwendig sind (Datenmodell, Kernanwendung). Beispiele: neues Meldungsverfahren, neue Leistungsart im Kernsystem, Erweiterung des Beitragsmodells. NICHT auszuwaehlen wenn 21c_ng lediglich als Datenspeicher oder Nachschlagsystem genutzt wird (Lesen/Schreiben bestehender Felder, Standard-Workflowsteuerung). Unterbereiche: Versorgungsmanagement (Leistungen, DMP, Pflege), Meldungen, Beitraege, Partner, CRM, ZVK, RSA/Statistik, QI/Integrationsplattform, Sonstiges. Team-Container: BMSW21C.
 
 BRIEFTEAM-OMS (IT WS OPS OMS):
 - OMS: Briefteam-OMS. Auszuwaehlen wenn Schreiben, Formulare oder Merkblaetter im Briefsystem INSPIRE neuerstellt, geaendert oder geloescht werden sollen. Team-Container: BRC, DIM.
@@ -3869,8 +3885,120 @@ function renderZustaendigCard(){
   html+='</tbody></table>';
   html+='</div>'; /* Ende overflow-x:auto Wrapper */
 
-  /* Zeile hinzufuegen */
-  html+='<button class="btn-add-row" onclick="addZustaendigRow()">+ Bereich hinzufuegen</button>';
+  /* Zeile hinzufuegen – Dropdown-Panel */
+  html+='<button class="btn-add-row" onclick="toggleZustaendigAddPanel()">+ Bereich hinzufuegen</button>';
+  html+=`<div class="zustaendig-add-panel" id="zustaendig-add-panel">
+  <div class="zadd-header"><span>Umsetzungsbereich auswaehlen</span><button class="zadd-close" onclick="toggleZustaendigAddPanel()" type="button">&times;</button></div>
+  <div class="zadd-list">
+    <div class="zadd-group">
+      <div class="zadd-group-label">Analytik (IT WS A)</div>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('KI','Kuenstliche Intelligenz','KI Use Cases bei der SBK')">
+        <span class="zadd-item-kuerzel">KI</span>
+        <span class="zadd-item-desc"><strong>Kuenstliche Intelligenz</strong><br>Auszuwaehlen wenn ein KI Use Case umgesetzt werden soll.</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('ANA-K','Analyse-Kontingent','Datenauswertungen &gt;20h')">
+        <span class="zadd-item-kuerzel">ANA-K</span>
+        <span class="zadd-item-desc"><strong>Analyse-Kontingent</strong><br>Groessere Datenauswertungen &gt;20h (Freigabe Koordinationskreis).</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('ANA-B','Bereichs-Kontingent','Datenselektionen &lt;20h, MDB, Dimensionale Modelle')">
+        <span class="zadd-item-kuerzel">ANA-B</span>
+        <span class="zadd-item-desc"><strong>Bereichs-Kontingent</strong><br>Datenselektionen/-auswertungen &lt;20h, MDB, Dimensionale Modelle, KB-Cockpit.</span>
+      </button>
+    </div>
+    <div class="zadd-group">
+      <div class="zadd-group-label">Automatisierung (IT diPro BAI)</div>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('AUT','Automatisierung','Manuelle Prozesse automatisieren (Aktionssteuerung, Eigenentwicklungen, Workflowloesungen)')">
+        <span class="zadd-item-kuerzel">AUT</span>
+        <span class="zadd-item-desc"><strong>Automatisierung</strong><br>Auszuwaehlen wenn ein manueller Fach-Prozess automatisiert werden soll (Aktionssteuerung, Eigenentwicklungen, Workflowloesungen).</span>
+      </button>
+    </div>
+    <div class="zadd-group">
+      <div class="zadd-group-label">Betrieb WE Applikationen (ITB A)</div>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('ITB-A','Betrieb WE Applikationen','21c_ng, ikv, Zentrale Aufgabenliste, FAMI_Online, Process Excellence, 21c_docs/helic')">
+        <span class="zadd-item-kuerzel">ITB-A</span>
+        <span class="zadd-item-desc"><strong>Betrieb WE Applikationen</strong><br>Neu- oder Weiterentwicklungen von Applikationen bei ITB A: 21c_ng, ikv, Zentrale Aufgabenliste, FAMI_Online, 21c_docs/helic.</span>
+      </button>
+    </div>
+    <div class="zadd-group">
+      <div class="zadd-group-label">Betrieb WE Infrastruktur (ITB I)</div>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('ITB-I','Betrieb WE Infrastruktur','Kommunikationsplattform Webex/Finesse, OV, Server Lifecycling, MAP, ProFokus')">
+        <span class="zadd-item-kuerzel">ITB-I</span>
+        <span class="zadd-item-desc"><strong>Betrieb WE Infrastruktur</strong><br>Neu- oder Weiterentwicklungen bei ITB I: Kommunikationsplattform Webex/Finesse, OV, Server Lifecycling, MAP, ProFokus.</span>
+      </button>
+    </div>
+    <div class="zadd-group">
+      <div class="zadd-group-label">BITMARCK 21c_ng (IT WS DM)</div>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('BM','BITMARCK 21c_ng','Kernsystem 21c_ng: Versorgungsmanagement, Meldungen, Beitraege, Partner, CRM, ZVK')">
+        <span class="zadd-item-kuerzel">BM</span>
+        <span class="zadd-item-desc"><strong>BITMARCK 21c_ng</strong><br>NUR fuer grundlegende Neu-/Weiterentwicklungen im Kernsystem selbst (Datenmodell, Kernanwendung). <em>Nicht</em> wenn 21c_ng nur als Datenspeicher genutzt wird.</span>
+      </button>
+    </div>
+    <div class="zadd-group">
+      <div class="zadd-group-label">Briefteam-OMS (IT WS OPS OMS)</div>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('OMS','Briefteam-OMS','Schreiben, Formulare oder Merkblaetter im Briefsystem INSPIRE')">
+        <span class="zadd-item-kuerzel">OMS</span>
+        <span class="zadd-item-desc"><strong>Briefteam-OMS</strong><br>Wenn Schreiben, Formulare oder Merkblaetter im Briefsystem INSPIRE neuerstellt, geaendert oder geloescht werden sollen.</span>
+      </button>
+    </div>
+    <div class="zadd-group">
+      <div class="zadd-group-label">Content Management (VMA M)</div>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('CM','Content Management sbk.org','Redaktionelle Arbeiten auf sbk.org (Texte, Tippfehler, neue Seiten)')">
+        <span class="zadd-item-kuerzel">CM</span>
+        <span class="zadd-item-desc"><strong>Content Management sbk.org</strong><br>Redaktionelle Arbeiten auf sbk.org: Textanpassungen, Tippfehler, neue Impfseiten, Bewerbungsteaser.</span>
+      </button>
+    </div>
+    <div class="zadd-group">
+      <div class="zadd-group-label">Digitale Kundenschnittstelle (IT diPro WM)</div>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('DKS-MSBK','Meine SBK','Online-Formulare, Online-Services, Bonusprogramm, Online-Post')">
+        <span class="zadd-item-kuerzel">DKS-MSBK</span>
+        <span class="zadd-item-desc"><strong>Meine SBK</strong><br>Aenderungen an Online-Formularen, neue Online-Services, Bonusprogramm, Online-Post.</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('DKS-SBK','SBK.org (technisch)','Technische Funktionalitaeten und Formulare auf sbk.org')">
+        <span class="zadd-item-kuerzel">DKS-SBK</span>
+        <span class="zadd-item-desc"><strong>SBK.org (technisch)</strong><br>Technische Funktionalitaeten und Formulare auf sbk.org (nicht redaktionell).</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('DKS-OIP','Online-Informations-Paket (OIP)','Anpassungen im OIP/Konfigurator')">
+        <span class="zadd-item-kuerzel">DKS-OIP</span>
+        <span class="zadd-item-desc"><strong>Online-Informations-Paket (OIP)</strong><br>Anpassungen im OIP/Konfigurator.</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('DKS-WST','Werkstudententool','Anpassungen im Werkstudententool')">
+        <span class="zadd-item-kuerzel">DKS-WST</span>
+        <span class="zadd-item-desc"><strong>Werkstudententool</strong><br>Anpassungen im Werkstudententool.</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('DKS-VPT','Vertriebspartnertool','Anpassungen im Vertriebspartnertool')">
+        <span class="zadd-item-kuerzel">DKS-VPT</span>
+        <span class="zadd-item-desc"><strong>Vertriebspartnertool</strong><br>Anpassungen im Vertriebspartnertool.</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('DKS-EXP','Expat-Health-Insurance-Tool','Anpassungen im Expat-Tool')">
+        <span class="zadd-item-kuerzel">DKS-EXP</span>
+        <span class="zadd-item-desc"><strong>Expat-Health-Insurance-Tool</strong><br>Anpassungen im Expat-Tool.</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('DKS-ATM','Aktions-Teilnehmer-Management (ATM)','Gesundheits-/Aktions-Portale, Terminbuchung, Online-/Offline-Aktionen')">
+        <span class="zadd-item-kuerzel">DKS-ATM</span>
+        <span class="zadd-item-desc"><strong>Aktions-Teilnehmer-Management (ATM)</strong><br>Gesundheits-/Aktions-Portale, Terminbuchung, Online-/Offline-Aktionen.</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('DKS-SONST','Tooluebergreifend/Sonstiges','Corporate Design, Datenschutz, oder Themen ohne anderen DKS-Unterbereich')">
+        <span class="zadd-item-kuerzel">DKS-SONST</span>
+        <span class="zadd-item-desc"><strong>Tooluebergreifend / Sonstiges</strong><br>Corporate Design, Datenschutz (Cookies, Tracking), oder Themen ohne anderen DKS-Unterbereich.</span>
+      </button>
+    </div>
+    <div class="zadd-group">
+      <div class="zadd-group-label">Systementwicklung (IT WS SE)</div>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('SE-IMS','Input-/Workflow-Management (IMS/WMS)','Verarbeitungsprozess von Eingangsdokumenten (Dokumentenklassen, Routing, Beleglesung)')">
+        <span class="zadd-item-kuerzel">SE-IMS</span>
+        <span class="zadd-item-desc"><strong>Input-/Workflow-Management (IMS/WMS)</strong><br>Verarbeitungsprozess von Eingangsdokumenten erweitern/aendern: Dokumentenklassen, Routing, Beleglesung.</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('SE-XOM','Outputmanagement / Email-Services','Ausgangskommunikation per Post/Online-Post oder Email')">
+        <span class="zadd-item-kuerzel">SE-XOM</span>
+        <span class="zadd-item-desc"><strong>Outputmanagement / Email-Services (Cross-Channel)</strong><br>Teil-/automatisierte Ausgangskommunikation per Post, Online-Post oder Email erweitern/aendern.</span>
+      </button>
+      <button class="zadd-item" onclick="addZustaendigFromDropdown('SE-INDIV','Sonstige Individualsoftware','ITSC, Integrationsplattform IPL, Bonus, KIA, FETK')">
+        <span class="zadd-item-kuerzel">SE-INDIV</span>
+        <span class="zadd-item-desc"><strong>Sonstige Individualsoftware</strong><br>Sonstige Individualsoftware entwickeln/anpassen: IT Systemcockpit ITSC, Integrationsplattform IPL, Bonus, KIA, FETK.</span>
+      </button>
+    </div>
+  </div>
+</div>`;
 
   /* Aktions-Buttons */
   html+='<div class="zustaendig-actions">';
@@ -3914,18 +4042,37 @@ function removeZustaendigRow(idx){
 }
 
 /* Zeile hinzufuegen */
-function addZustaendigRow(){
-  zustaendigState.tabelle.push({kuerzel:'',bereich:'',generellerBereich:'',beitrag:'',liefertAn:'–',empfaengtVon:'–'});
+function toggleZustaendigAddPanel(){
+  const panel=g('zustaendig-add-panel');
+  if(panel) panel.classList.toggle('open');
+}
+
+function addZustaendigFromDropdown(kuerzel, bereich, generellerBereich){
+  /* Pruefen ob Kuerzel bereits vorhanden */
+  if(zustaendigState.tabelle.some(r=>r.kuerzel===kuerzel)){
+    showToast(kuerzel+' ist bereits in der Tabelle.','warn');return;
+  }
+  readZustaendigFromDom();
+  zustaendigState.tabelle.push({kuerzel,bereich,generellerBereich,beitrag:'',liefertAn:'–',empfaengtVon:'–'});
   renderZustaendigCard();
-  /* Fokus auf neue Zeile */
+  /* Panel schliessen */
+  const panel=g('zustaendig-add-panel');
+  if(panel) panel.classList.remove('open');
+  showToast(kuerzel+' hinzugefuegt.','ok');
+  /* Fokus auf Beitrag-Zelle der neuen Zeile */
   setTimeout(()=>{
     const rows=document.querySelectorAll('#tblZustaendig tbody tr');
     const last=rows[rows.length-1];
     if(last){
-      const firstCell=last.querySelector('td:nth-child(2)');
-      if(firstCell){ firstCell.setAttribute('contenteditable','true'); firstCell.focus(); }
+      const beitragCell=last.querySelector('td:nth-child(5)');
+      if(beitragCell){beitragCell.focus();}
     }
   },50);
+}
+
+/* Veraltet – wird nicht mehr verwendet, bleibt fuer Rueckwaertskompatibilitaet */
+function addZustaendigRow(){
+  toggleZustaendigAddPanel();
 }
 
 /* DOM-Werte zurueck in State lesen */
@@ -4153,7 +4300,9 @@ function renderSingleTeamTicket(kuerzel){
       copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+tableId+'\',this)" type="button">Kopieren</button>';
     }
     copyBtns+='</div>';
-    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">'+num+'</div><div class="sec-card-title">IST Beschreibung</div>'+copyBtns+'</div><div class="sec-card-body" style="padding:0;">'+body+'</div></div>';
+    const istRegenId='tt-regen-'+prefix.replace('tt-','')+'-ist';
+    const istRegenBtn=(!istOk&&istTabOk)?'<button class="btn-regen-text visible" id="'+istRegenId+'" onclick="regenTeamTicketFliesstext(\''+kuerzel+'\',' + "'ist'" + ')" type="button" style="margin-right:6px;">↻ Fliesstext</button>':'';
+    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">'+num+'</div><div class="sec-card-title">IST Beschreibung</div><div style="display:flex;align-items:center;gap:4px;">'+istRegenBtn+copyBtns+'</div></div><div class="sec-card-body" style="padding:0;">'+body+'</div></div>';
   }
 
   /* SOLL */
@@ -4174,7 +4323,9 @@ function renderSingleTeamTicket(kuerzel){
       copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+tableId+'\',this)" type="button">Kopieren</button>';
     }
     copyBtns+='</div>';
-    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--green)">'+num+'</div><div class="sec-card-title">SOLL Beschreibung</div>'+copyBtns+'</div><div class="sec-card-body" style="padding:0;">'+body+'</div></div>';
+    const sollRegenId='tt-regen-'+prefix.replace('tt-','')+'-soll';
+    const sollRegenBtn=(!sollOk&&sollTabOk)?'<button class="btn-regen-text visible" id="'+sollRegenId+'" onclick="regenTeamTicketFliesstext(\''+kuerzel+'\',' + "'soll'" + ')" type="button" style="margin-right:6px;">↻ Fliesstext</button>':'';
+    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--green)">'+num+'</div><div class="sec-card-title">SOLL Beschreibung</div><div style="display:flex;align-items:center;gap:4px;">'+sollRegenBtn+copyBtns+'</div></div><div class="sec-card-body" style="padding:0;">'+body+'</div></div>';
   }
 
   /* Kennzahlen */
@@ -4217,6 +4368,49 @@ function renderSingleTeamTicket(kuerzel){
 /**
  * Einzelsektion eines Team-Tickets kopieren.
  */
+async function regenTeamTicketFliesstext(kuerzel, field){
+  if(isRunning){showToast('Bitte warte bis der aktuelle Vorgang abgeschlossen ist.','warn');return;}
+  const ticket=zustaendigState.teamTickets[kuerzel];
+  if(!ticket){showToast('Kein Ticket gefunden.','warn');return;}
+
+  /* Button-Feedback */
+  const btnId='tt-regen-'+kuerzel.replace(/[^a-zA-Z0-9-]/g,'').toLowerCase()+'-'+field;
+  const btn=g(btnId);
+  if(btn){btn.classList.add('loading');btn.textContent='...';}
+
+  const label=field==='ist'?'IST':'SOLL';
+  const tabData=field==='ist'?ticket.istTab:ticket.sollTab;
+  if(!tabData){showToast('Keine Tabellendaten vorhanden.','warn');if(btn){btn.classList.remove('loading');btn.textContent='↻ Fliesstext';}return;}
+
+  const b=zustaendigState.tabelle.find(r=>r.kuerzel===kuerzel)||{bereich:kuerzel};
+  const unterueberschriften=field==='ist'
+    ?'Prozessausloeser, Bearbeitungsschritte, Output, ggf. Ablehnungen/Sonderfaelle'
+    :'Zielbild, Prozessausloeser, Bearbeitungsschritte, Output, ggf. Ablehnungen/Sonderfaelle';
+
+  const ctx=`BEREICH: ${kuerzel} – ${b.bereich}\n\n${label}-TABELLE (bereits vorhanden):\n${tabData}`;
+  const prompt=`${ctx}\n\nDie Prozesstabelle fuer ${label} steht bereits. Schreibe jetzt NUR den ${label}-Fliesstext fuer diesen Bereich – keinen anderen Abschnitt, keine Tabelle, keine Rueckfragen.\n\nDer Fliesstext fasst den Prozessanteil dieses Bereichs ueberblicksartig in 2-4 Saetzen zusammen. Unterueberschriften: ${unterueberschriften}.\n\nAusgabe (NUR diese Sektion):\n\n${label}:\n[Fliesstext mit Unterueberschriften]`;
+  const sys=`Du bist der Anforderungs-Assistent der SBK. Schreibe ausschliesslich den ${label}-Fliesstext fuer den Bereich ${kuerzel} basierend auf der vorhandenen Prozesstabelle. Keine Rueckfragen, keine Bewertung, keine anderen Sektionen.`;
+
+  isRunning=true;
+  try{
+    const raw=await callKIA([{role:'user',content:prompt}],sys);
+    const p=parseTeamTicket(raw);
+    const textVal=field==='ist'?p.ist:p.soll;
+    if(textVal&&textVal.length>10){
+      if(field==='ist') ticket.ist=textVal;
+      else ticket.soll=textVal;
+      showToast(label+'-Fliesstext fuer '+kuerzel+' ergaenzt.','ok');
+      renderSingleTeamTicket(kuerzel);
+    } else {
+      showToast('KIA hat keinen Fliesstext geliefert – bitte nochmal versuchen.','warn');
+      if(btn){btn.classList.remove('loading');btn.textContent='↻ Fliesstext';}
+    }
+  }catch(e){
+    showToast('Fehler: '+e.message,'err');
+    if(btn){btn.classList.remove('loading');btn.textContent='↻ Fliesstext';}
+  }finally{isRunning=false;}
+}
+
 function copyTeamTicketSec(kuerzel, key, btn){
   const ticket=zustaendigState.teamTickets[kuerzel];
   if(!ticket) return;
