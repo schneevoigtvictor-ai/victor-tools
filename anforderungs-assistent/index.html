@@ -429,6 +429,53 @@ textarea.fi{min-height:80px;}
   .intake-type-row{flex-direction:column;}
   .tok-row{flex-direction:column;}
 }
+
+/* ═══ ZUSTÄNDIGKEITEN & TEAM-TICKETS (v2.5) ═══ */
+
+/* Hauptverantwortung-Anzeige */
+.zustaendig-haupt{display:flex;align-items:center;gap:10px;padding:14px 0;margin-bottom:12px;font-size:14px;color:var(--tx2);line-height:1.5;}
+.badge-haupt{display:inline-flex;align-items:center;gap:4px;background:var(--blue-deep);color:#fff;font-size:11px;font-weight:700;letter-spacing:.04em;padding:4px 10px;border-radius:6px;white-space:nowrap;}
+
+/* Editierbare Zuständigkeitstabelle */
+.zustaendig-tabelle{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;}
+.zustaendig-tabelle th{background:var(--sf3);color:var(--tx2);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;text-align:left;border-bottom:2px solid var(--bd);}
+.zustaendig-tabelle td{padding:7px 10px;border-bottom:1px solid var(--bd2);vertical-align:top;color:var(--tx2);}
+.zustaendig-tabelle tr:hover{background:var(--sf2);}
+.zustaendig-tabelle tr.haupt-row{background:var(--blue-pale);}
+.zustaendig-tabelle td[contenteditable="true"]{outline:none;border-radius:4px;transition:box-shadow .15s var(--ease);}
+.zustaendig-tabelle td[contenteditable="true"]:focus{box-shadow:inset 0 0 0 2px var(--blue-vivid);background:#fff;}
+.zustaendig-tabelle .row-actions{display:flex;gap:4px;align-items:center;}
+.zustaendig-tabelle .radio-haupt{cursor:pointer;accent-color:var(--blue-strong);}
+.zustaendig-tabelle .btn-row-del{background:none;border:none;color:var(--dm);cursor:pointer;font-size:16px;padding:2px 6px;border-radius:4px;transition:color .15s, background .15s;}
+.zustaendig-tabelle .btn-row-del:hover{color:var(--red);background:var(--red-light);}
+.zustaendig-tabelle.locked td[contenteditable]{pointer-events:none;color:var(--mu);}
+.zustaendig-tabelle.locked .row-actions{opacity:.3;pointer-events:none;}
+
+/* Zuständigkeiten Button-Leiste */
+.zustaendig-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-top:8px;}
+.btn-add-row{background:none;border:1px dashed var(--bd);border-radius:var(--rs);padding:6px 14px;font-family:inherit;font-size:12px;color:var(--mu);cursor:pointer;transition:all .2s var(--ease);margin-bottom:12px;width:100%;}
+.btn-add-row:hover{border-color:var(--blue-strong);color:var(--blue-strong);background:var(--blue-pale);}
+
+/* Team-Tickets Tab-Navigation */
+.team-tabs{display:flex;gap:4px;flex-wrap:wrap;padding:0 0 16px;border-bottom:2px solid var(--bd);margin-bottom:20px;}
+.team-tab{background:none;border:1px solid var(--bd);border-bottom:2px solid transparent;border-radius:var(--rs) var(--rs) 0 0;padding:8px 16px;font-family:inherit;font-size:13px;font-weight:600;color:var(--mu);cursor:pointer;transition:all .2s var(--ease);display:inline-flex;align-items:center;gap:5px;margin-bottom:-2px;}
+.team-tab:hover{color:var(--tx);border-color:var(--dm);background:var(--sf2);}
+.team-tab.active{color:var(--blue-strong);border-color:var(--blue-strong);border-bottom-color:var(--sf);background:var(--sf);}
+.team-tab .star{color:var(--yellow);font-size:14px;}
+
+/* Team-Ticket Inhalt */
+.team-ticket-content{min-height:200px;}
+.team-ticket-header{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:var(--tx);margin-bottom:20px;}
+
+/* Abhängigkeiten-Tabelle (kompakter als Haupt-Tabellen) */
+.abh-tabelle{width:100%;border-collapse:collapse;font-size:13px;}
+.abh-tabelle th{background:var(--sf3);color:var(--tx2);font-weight:700;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;padding:7px 10px;text-align:left;border-bottom:2px solid var(--bd);}
+.abh-tabelle td{padding:6px 10px;border-bottom:1px solid var(--bd2);vertical-align:top;color:var(--tx2);}
+.abh-tabelle tr:hover{background:var(--sf2);}
+
+/* Fortschrittsanzeige Team-Ticket-Generierung */
+.gen-progress{display:flex;align-items:center;gap:10px;padding:12px 16px;background:var(--blue-pale);border-radius:var(--rs);font-size:13px;color:var(--blue-strong);font-weight:600;margin-top:12px;}
+.gen-progress .spin{width:16px;height:16px;border:2.5px solid var(--bd);border-top-color:var(--blue-strong);border-radius:50%;animation:spin .7s linear infinite;}
 </style>
 </head>
 <body>
@@ -989,6 +1036,22 @@ Testfall 1: Erstattung prüfen - sollte funktionieren" style="min-height:140px;p
 </div>
 </div>
 
+<!-- TEAM-TICKETS VIEW (v2.5) -->
+<div class="view" id="v-teamtickets">
+<div class="final-view">
+  <div class="final-top">
+    <div><div class="landing-tag">Anforderungs-Assistent</div><div class="landing-title" style="margin-bottom:0;font-size:26px;">Team-Tickets</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="bprim" id="btnCopyAllTeam" onclick="copyAllTeamTickets(this)">Alle Tickets kopieren</button>
+      <button class="bsec" onclick="showView('v-final')">Zurueck zur Uebersicht</button>
+      <button class="bsec" onclick="confirmNewReq()">Neue Anforderung</button>
+    </div>
+  </div>
+  <div class="team-tabs" id="teamTabBar"></div>
+  <div class="team-ticket-content" id="teamTicketContent"></div>
+</div>
+</div>
+
 <!-- AKTION PLACEHOLDER -->
 <div class="view" id="v-aktion">
 <div class="landing" style="text-align:center;"><div class="landing-inner">
@@ -1537,6 +1600,148 @@ Wenn Angaben zu vage sind:
 RUECKFRAGEN:
 1. [Kurze, konkrete Frage – max. 1-2 Fragen]`;
 
+/* ═══ PROMPTS: ZUSTAENDIGKEITEN & TEAM-TICKETS (v2.5) ═══ */
+
+const SYS_ZUSTAENDIG=`Du bist der Anforderungs-Assistent der SBK. Du analysierst ein finalisiertes ANFO-Ticket und ordnest es den relevanten IT-Umsetzungsbereichen der SBK zu.
+
+${STYLE}
+
+REFERENZTABELLE UMSETZUNGSBEREICHE:
+
+Die folgende Tabelle zeigt alle verfuegbaren Umsetzungsbereiche, gruppiert nach Hauptkategorien. Jeder Bereich hat ein Kuerzel, eine Beschreibung (wann auszuwaehlen) und organisatorische Zuordnung.
+
+ANALYTIK (IT WS A):
+- KI: Kuenstliche Intelligenz. Auszuwaehlen wenn ein KI Use Case umgesetzt werden soll. Team-Container: ITWSA.
+- ANA-K: Analyse-Kontingent. Auszuwaehlen fuer groessere Datenauswertungen >20h (Freigabe Koordinationskreis). Kein fester Team-Container.
+- ANA-B: Bereichs-Kontingent. Auszuwaehlen fuer Datenselektionen/-auswertungen <20h, MDB, Dimensionale Modelle, KB-Cockpit. Kein fester Team-Container.
+
+AUTOMATISIERUNG (IT diPro BAI):
+- AUT: Automatisierung. Auszuwaehlen wenn ein aktuell existierender manueller Fach-Prozess automatisiert werden soll (Aktionssteuerung, Eigenentwicklungen, Workflowloesungen). Team-Container: AUT.
+
+BETRIEB WEITERENTWICKLUNG APPLIKATIONEN (ITB A):
+- ITB-A: Betrieb WE Applikationen. Auszuwaehlen fuer Neu- oder Weiterentwicklungen von Funktionalitaeten von Applikationen bei ITB A (21c_ng, ikv, Zentrale Aufgabenliste, FAMI_Online, Process Excellence, 21c_docs/helic). Team-Container: AITBAANFO.
+
+BETRIEB WEITERENTWICKLUNG INFRASTRUKTUR (ITB I):
+- ITB-I: Betrieb WE Infrastruktur. Auszuwaehlen fuer Neu- oder Weiterentwicklungen von Applikationen oder Infrastrukturkomponenten bei ITB I (Kommunikationsplattform Webex/Finesse, OV, Server Lifecycling, MAP, ProFokus). Team-Container: ITBI, TEC.
+
+BITMARCK 21c_ng (IT WS DM):
+- BM: BITMARCK 21c_ng. Auszuwaehlen fuer Neu- oder Weiterentwicklungen im Kernsystem 21c_ng. Unterbereiche: Versorgungsmanagement (Leistungen, DMP, Pflege), Meldungen, Beitraege, Partner, CRM, ZVK, RSA/Statistik, QI/Integrationsplattform, Sonstiges. Team-Container: BMSW21C.
+
+BRIEFTEAM-OMS (IT WS OPS OMS):
+- OMS: Briefteam-OMS. Auszuwaehlen wenn Schreiben, Formulare oder Merkblaetter im Briefsystem INSPIRE neuerstellt, geaendert oder geloescht werden sollen. Team-Container: BRC, DIM.
+
+CONTENT MANAGEMENT sbk.org (VMA M):
+- CM: Content Management sbk.org. Auszuwaehlen fuer redaktionelle Arbeiten auf sbk.org (Textanpassungen, Tippfehler, neue Impfseiten, Bewerbungsteaser). Team-Container: MKT.
+
+DIGITALE KUNDENSCHNITTSTELLE (IT diPro WM):
+- DKS-MSBK: Meine SBK. Auszuwaehlen fuer Aenderungen an Online-Formularen, neue Online-Formulare, Online-Services, Bonusprogramm, Online-Post. Team-Container: PMOD.
+- DKS-SBK: SBK.org (technisch). Auszuwaehlen fuer technische Funktionalitaeten und Formulare auf sbk.org (nicht redaktionell). Team-Container: PMOD (Weiterentwicklung), MKT (Redaktion).
+- DKS-OIP: Online-Informations-Paket (OIP). Auszuwaehlen fuer Anpassungen im OIP/Konfigurator. Team-Container: PMOD.
+- DKS-WST: Werkstudententool. Auszuwaehlen fuer Anpassungen im Werkstudententool. Team-Container: PMOD.
+- DKS-VPT: Vertriebspartnertool. Auszuwaehlen fuer Anpassungen im Vertriebspartnertool. Team-Container: PMOD.
+- DKS-EXP: Expat-Health-Insurance-Tool. Auszuwaehlen fuer Anpassungen im Expat-Tool. Team-Container: PMOD.
+- DKS-ATM: Aktions-Teilnehmer-Management (ATM). Auszuwaehlen fuer Gesundheits-/Aktions-Portale, Terminbuchung, Online-/Offline-Aktionen. Team-Container: PMOD.
+- DKS-SONST: Tooluebergreifend/Sonstiges. Auszuwaehlen fuer Corporate Design, Datenschutz (Cookies, Tracking), oder Themen die keinem anderen DKS-Unterbereich zugeordnet werden koennen. Team-Container: PMOD.
+
+SYSTEMENTWICKLUNG (IT WS SE):
+- SE-IMS: Input-/Workflow-Management (IMS/WMS). Auszuwaehlen wenn der Verarbeitungsprozess von Eingangsdokumenten erweitert oder geaendert werden muss (Dokumentenklassen, Dokumentenrouting, Beleglesung). Team-Container: WMS.
+- SE-XOM: Outputmanagement, Email-Services (Cross-Channel). Auszuwaehlen wenn der Verarbeitungsprozess von teil-/automatisierter Ausgangskommunikation per Post/Online-Post oder Email erweitert oder geaendert werden muss. Team-Container: XOM.
+- SE-INDIV: Sonstige Individualsoftware. Auszuwaehlen wenn sonstige Individualsoftware entwickelt oder angepasst werden muss (IT Systemcockpit ITSC, Integrationsplattform IPL, Bonus, KIA, FETK). Team-Container: FSA, BONUSHEFT, ITSC, KIA, FETK.
+
+WICHTIG: Das System 21c_ng wird IMMER so geschrieben (mit Unterstrich statt Pipe). Verwende NIEMALS das Pipe-Zeichen innerhalb von Tabellenzellinhalten.
+
+Deine Aufgabe:
+1. Lies das ANFO-Ticket (TITEL, IST, SOLL, KENNZAHLEN, AK, TF).
+2. Ordne die Anforderung den relevanten Umsetzungsbereichen aus der Referenztabelle zu.
+3. Bestimme die Hauptverantwortung (Bereich mit dem groessten Umsetzungsanteil).
+4. Beschreibe pro Bereich den generellen Verantwortungsbereich (aus der Referenztabelle) UND den konkreten Beitrag zu dieser Anforderung.
+
+Regeln:
+- Nur Bereiche zuordnen, die tatsaechlich betroffen sind – nicht alle auflisten.
+- Hauptverantwortung = der Bereich mit dem groessten Umsetzungsanteil.
+- Abhaengigkeiten konkret auf die Anforderung bezogen beschreiben, nicht generisch.
+- Wenn ein Bereich nicht in der Referenztabelle steht, aber offensichtlich betroffen ist: trotzdem vorschlagen mit Hinweis "(nicht in Referenztabelle)".
+- Keine erfundenen Systemnamen oder Team-Kuerzel.
+- "Liefert an" und "Empfaengt von" beziehen sich auf die anderen zugeordneten Bereiche in dieser Analyse.
+- NIEMALS das Pipe-Zeichen (|) innerhalb von Zellinhalten verwenden. Schreibe "21c_ng" statt "21c|ng".
+
+Ausgabeformat (EXAKT so):
+
+HAUPTVERANTWORTUNG:
+[Kuerzel] – Federfuehrung: [Kurze Begruendung]
+
+ZUSTAENDIGKEITSUEBERSICHT:
+[Kuerzel] ;; [Umsetzungsbereich] ;; [Genereller Verantwortungsbereich] ;; [Beitrag zu dieser Anforderung] ;; [Liefert an] ;; [Empfaengt von]
+[Kuerzel] ;; [Bereich] ;; [Wofuer dieser Bereich generell zustaendig ist – aus der Referenztabelle] ;; [Was dieser Bereich KONKRET fuer diese Anforderung umsetzen muss] ;; [Kuerzel(n)] ;; [Kuerzel(n) oder –]
+
+Verwende ";;" (doppeltes Semikolon) als Spaltentrenner, NICHT das Pipe-Zeichen.
+`;
+
+const SYS_TEAM_TICKET=`Du bist der Anforderungs-Assistent der SBK. Du erstellst ein zugeschnittenes ANFO-Ticket fuer einen spezifischen IT-Umsetzungsbereich.
+
+${STYLE}
+
+Du erhaeltst:
+1. Das vollstaendige ANFO-Ticket (IST, IST-TABELLE, SOLL, SOLL-TABELLE, KENNZAHLEN, AK, TF)
+2. Die bestaetigte Zustaendigkeitstabelle mit allen beteiligten Bereichen
+3. Den spezifischen Auftrag fuer EINEN Bereich
+
+Deine Aufgabe:
+Erstelle ein auf diesen Bereich zugeschnittenes ANFO-Ticket. Reduziere IST und SOLL auf den Anteil dieses Bereichs. Formuliere AK und TF neu, nur die fuer diesen Bereich relevanten.
+
+Regeln:
+- IST und SOLL nur auf den Anteil dieses Bereichs reduzieren – irrelevante Prozessschritte weglassen.
+- Wenn ein Bereich nur einen kleinen Beitrag hat (z.B. "manuelle Aufgabe anlegen"), trotzdem vollstaendiges Format liefern, aber mit entsprechend kurzem Inhalt.
+- AK und TF neu formulieren, nur die fuer diesen Bereich relevanten.
+- Keine Fake-Daten, keine erfundenen Systemnamen.
+- Abhaengigkeiten konkret auf die Schnittstellen zu den anderen Bereichen in der Zustaendigkeitstabelle beziehen.
+- IST-TABELLE und SOLL-TABELLE als Pipe-Tabellen mit den Spalten: Schritt | Beschreibung | System | Rolle
+- AK als Pipe-Tabelle: Nr. | Akzeptanzkriterium | Erwartetes Ergebnis
+- TF als Pipe-Tabelle mit Kategorie-Prefix: Nr. | Beschreibung | Vorbedingungen | Testschritte | Erwartetes Ergebnis
+  Kategorien: Positiv, Grenzwert, Negativ, Eingangspruefung (Sortierung in dieser Reihenfolge)
+- Kennzahlen nur die fuer diesen Bereich relevanten. Wenn keine teamspezifischen existieren: "Keine teamspezifischen Kennzahlen – siehe Gesamt-ANFO"
+- WICHTIG: Verwende NIEMALS das Pipe-Zeichen innerhalb von Zellinhalten. Schreibe "21c_ng" statt "21c|ng". Das Pipe-Zeichen darf NUR als Spaltentrenner in Tabellen verwendet werden.
+
+PFLICHT FLIESSTEXT: Unter IST und SOLL MUSS jeweils ein Fliesstext-Abschnitt stehen (mindestens 2-3 zusammenhaengende Saetze in ganzen Saetzen). Der Fliesstext fasst den Prozessanteil dieses Bereichs ueberblicksartig zusammen. Er darf NIEMALS leer sein oder weggelassen werden. Erst nach dem Fliesstext folgt die Tabelle als eigene IST-TABELLE / SOLL-TABELLE Sektion.
+
+Fliesstext-Unterueberschriften IST: Prozessausloeser, Bearbeitungsschritte, Output, ggf. Ablehnungen/Sonderfaelle
+Fliesstext-Unterueberschriften SOLL: Zielbild, Prozessausloeser, Bearbeitungsschritte, Output, ggf. Ablehnungen/Sonderfaelle
+
+Ausgabeformat (EXAKT so):
+
+TEAM-TICKET: [Kuerzel] – [Umsetzungsbereich]
+
+IST:
+[Fliesstext mit Unterueberschriften – nur der fuer diesen Bereich relevante Ausschnitt]
+
+IST-TABELLE:
+| Schritt | Beschreibung | System | Rolle |
+| 1 | ... | ... | ... |
+
+SOLL:
+[Fliesstext mit Unterueberschriften – nur die Schritte, die dieser Bereich umsetzen muss]
+
+SOLL-TABELLE:
+| Schritt | Beschreibung | System | Rolle |
+| 1 | ... | ... | ... |
+
+KENNZAHLEN:
+[Teamrelevante Kennzahlen oder "Keine teamspezifischen Kennzahlen – siehe Gesamt-ANFO"]
+
+AKZEPTANZKRITERIEN:
+| Nr. | Akzeptanzkriterium | Erwartetes Ergebnis |
+| AK-1 | ... | ... |
+
+TESTFAELLE:
+| Nr. | Beschreibung | Vorbedingungen | Testschritte | Erwartetes Ergebnis |
+| 1 | Positiv - ... | 1. ... 2. ... | 1. ... 2. ... | ... |
+
+ABHAENGIGKEITEN:
+| Richtung | Bereich | Beschreibung |
+| Empfaengt von | [Kuerzel] | [Was dieser Bereich von dort erhaelt] |
+| Liefert an | [Kuerzel] | [Was dieser Bereich dorthin liefert] |
+`;
+
 /* ═══ STATE ═══ */
 let apiToken='',selectedMode='',reqType='',msgs=[],isRunning=false,currentPhase=0,sparringCount=0;
 let docState={titel:'',ist:'',istTab:'',soll:'',sollTab:'',kz:'',ak:'',tf:'',open:''};
@@ -1557,6 +1762,14 @@ let testStatus=''; /* 'ok', 'partial', 'fail' */
 let testScreenshot=null;
 let testSparringCount=0;
 const tfRawStore=new Map(); /* Speichert Pipe-Tabellen-Rohdaten per ID */
+
+/* Zustaendigkeiten & Team-Tickets State (v2.5) */
+let zustaendigState={
+  hauptTeam:'',
+  tabelle:[],
+  confirmed:false,
+  teamTickets:{}
+};
 
 /* ═══ SPEECH RECOGNITION (Spracheingabe) ═══ */
 let speechRecognition=null, speechTarget=null;
@@ -2165,6 +2378,30 @@ function renderIstTable(raw){
   let headers=lines[0].split('|').map(c=>c.trim()).filter(c=>c);
   let data=lines.slice(1);
   data=data.filter(l=>!l.match(/^[\s|:-]+$/));
+  const expectedCols=headers.length;
+
+  /**
+   * Intelligentes Pipe-Split: Wenn eine Zeile mehr Zellen als Header hat,
+   * werden ueberzaehlige Zellen mit der vorherigen zusammengefuegt.
+   * Schuetzt gegen Pipes in Zellinhalten (z.B. "21c|ng").
+   */
+  function smartSplit(row, numCols){
+    const rawCells=row.split('|').map(c=>c.trim()).filter(c=>c);
+    if(rawCells.length<=numCols) return rawCells;
+    /* Zu viele Zellen – ueberzaehlige zurueckmergen */
+    const result=[];
+    for(let i=0;i<rawCells.length;i++){
+      if(result.length<numCols-1){
+        result.push(rawCells[i]);
+      } else {
+        /* Letzte(n) Zelle(n) zusammenfuegen */
+        if(result.length===numCols-1) result.push(rawCells[i]);
+        else result[result.length-1]+='|'+rawCells[i];
+      }
+    }
+    return result;
+  }
+
   /* Hilfsfunktion: HTML-Escape + Markdown-Fett/Kursiv in Tabellenzellen */
   /* v2.3: Ja/Nein-Logik als Bulletpoints mit Fettdruck */
   const cellHtml=t=>{
@@ -2174,19 +2411,16 @@ function renderIstTable(raw){
     s=s.replace(/\*([^*\s][^*]*?)\*/g,'<em>$1</em>');
     /* Ja/Nein-Logik erkennen und als Bulletpoints darstellen */
     if(s.match(/\b(Ja|Nein)\b/i) && s.match(/[→\u2192;]/)){
-      /* Semikolon-getrennte Teile (z.B. "Ja → weiter zu 3; Nein → Ablehnung") */
       const parts=s.split(/;\s*/);
       if(parts.length>=2){
         s='<ul class="ist-logic-list">';
         parts.forEach(p=>{
-          /* Ja/Nein am Anfang fett machen */
           let item=p.trim();
           item=item.replace(/^(Ja|Nein)\b/i, '<strong>$1</strong>');
           if(item) s+='<li>'+item+'</li>';
         });
         s+='</ul>';
       } else {
-        /* Einzelne Zeile: trotzdem Ja/Nein fett machen */
         s=s.replace(/\b(Ja|Nein)\b/gi, '<strong>$1</strong>');
       }
     }
@@ -2196,7 +2430,7 @@ function renderIstTable(raw){
   headers.forEach(hd=>{h+=`<th>${escH(hd)}</th>`;});
   h+='</tr></thead><tbody>';
   data.forEach(row=>{
-    const cells=row.split('|').map(c=>c.trim()).filter(c=>c);
+    const cells=smartSplit(row, expectedCols);
     h+='<tr>';cells.forEach(c=>{h+=`<td>${cellHtml(c)}</td>`;});h+='</tr>';
   });
   h+='</tbody></table></div>';
@@ -2300,8 +2534,9 @@ function parseKIA(text){
 
     if(mode==='ist'){
       /* Pipe-Zeilen im IST-Text automatisch in istTab umleiten */
+      /* Mindestens 3 Pipes = echte Tabellenzeile (verhindert false positives bei "21c|ng") */
       const pipeCount=(raw.match(/\|/g)||[]).length;
-      if(pipeCount>=2 && !raw.match(/^[\s|:-]+$/)){
+      if(pipeCount>=3 && !raw.match(/^[\s|:-]+$/)){
         istTab += (istTab?'\n':'') + raw;
       } else {
         ist += (ist?'\n':'') + raw;
@@ -2310,7 +2545,7 @@ function parseKIA(text){
     else if(mode==='soll'){
       /* Pipe-Zeilen im SOLL-Text automatisch in sollTab umleiten */
       const pipeCount=(raw.match(/\|/g)||[]).length;
-      if(pipeCount>=2 && !raw.match(/^[\s|:-]+$/)){
+      if(pipeCount>=3 && !raw.match(/^[\s|:-]+$/)){
         sollTab += (sollTab?'\n':'') + raw;
       } else {
         soll += (soll?'\n':'') + raw;
@@ -2377,8 +2612,9 @@ function parseIST(text){
     if(isHeader(nCl, H_RUECK)){ mode='q'; continue; }
 
     if(mode==='text'){
+      /* Mindestens 3 Pipes = echte Tabellenzeile (verhindert false positives bei "21c|ng") */
       const pipeCount=(raw.match(/\|/g)||[]).length;
-      if(pipeCount>=2 && !raw.match(/^[A-Za-zÄÖÜäöüß]{10,}[^|]*$/)){
+      if(pipeCount>=3 && !raw.match(/^[A-Za-zÄÖÜäöüß]{10,}[^|]*$/)){
         if(!raw.match(/^[\s|:-]+$/)){
           tabelle+=(tabelle?'\n':'')+raw;
         }
@@ -2403,7 +2639,8 @@ function parseIST(text){
     const textLines=istText.split('\n');
     const pureText=[],pipeLines=[];
     for(const l of textLines){
-      if((l.match(/\|/g)||[]).length>=2 && !l.match(/^[\s|:-]+$/)) pipeLines.push(l);
+      /* Mindestens 3 Pipes = echte Tabellenzeile (verhindert false positives bei "21c|ng") */
+      if((l.match(/\|/g)||[]).length>=3 && !l.match(/^[\s|:-]+$/)) pipeLines.push(l);
       else pureText.push(l);
     }
     if(pipeLines.length>=2){
@@ -2418,6 +2655,216 @@ function parseIST(text){
   const bewertung = parseBewertung(bewertungRaw);
 
   return{titel,istText,tabelle,kz,analyse,questions,bewertung};
+}
+
+/* ═══ PARSER: ZUSTAENDIGKEITEN (v2.5) ═══ */
+function parseZustaendig(raw){
+  function norm(s){
+    return s.replace(/\u00fc/gi,'ue').replace(/\u00e4/gi,'ae').replace(/\u00f6/gi,'oe')
+            .replace(/\u00dc/gi,'UE').replace(/\u00c4/gi,'AE').replace(/\u00d6/gi,'OE')
+            .replace(/[\u2011\u2013\u2014]/g,'-');
+  }
+  let hauptTeam='',tabelle=[];
+  const lines=raw.split('\n');
+  let mode=null;
+  let headerSkipped=false;
+
+  for(const line of lines){
+    const trimmed=line.trim();
+    if(!trimmed) continue;
+    const nLine=norm(trimmed.replace(/\*\*/g,'').replace(/^#+\s*/,''));
+
+    /* Header-Erkennung */
+    if(/^HAUPTVERANTWORTUNG\s*:?/i.test(nLine)){
+      const after=trimmed.replace(/^[^:]*:\s*/,'').trim();
+      if(after && after.length>2) hauptTeam=after.replace(/\*\*/g,'');
+      mode='haupt'; continue;
+    }
+    if(/^ZUSTAENDIGKEITSUEBERSICHT\s*:?/i.test(nLine) || /^ZUSTANDIGKEITSUBERSICHT\s*:?/i.test(nLine) || /^ZUSTAENDIGKEITS-?TABELLE\s*:?/i.test(nLine)){
+      mode='tabelle'; headerSkipped=false; continue;
+    }
+
+    if(mode==='haupt' && !hauptTeam){
+      hauptTeam=trimmed.replace(/\*\*/g,'');
+      mode=null; continue;
+    }
+
+    if(mode==='tabelle'){
+      /* Primaer: ";;" Trennzeichen (neues Format) */
+      if(trimmed.includes(';;')){
+        const cells=trimmed.split(';;').map(c=>c.trim());
+        /* Header-Zeile erkennen und ueberspringen */
+        if(!headerSkipped){
+          const looksLikeHeader=cells.some(c=>/^(Kuerzel|Umsetzungsbereich|Genereller|Beitrag|Liefert|Empfaengt)/i.test(c));
+          if(looksLikeHeader){ headerSkipped=true; continue; }
+          headerSkipped=true;
+        }
+        if(cells.length>=4){
+          tabelle.push({
+            kuerzel:cells[0]||'',
+            bereich:cells[1]||'',
+            generellerBereich:cells[2]||'',
+            beitrag:cells[3]||'',
+            liefertAn:cells[4]||'–',
+            empfaengtVon:cells[5]||'–'
+          });
+        }
+        continue;
+      }
+      /* Fallback: Pipe-Trennzeichen (falls KIA altes Format liefert) */
+      if(trimmed.includes('|')){
+        if(/^[\s|:-]+$/.test(trimmed)){ headerSkipped=true; continue; }
+        const cells=trimmed.split('|').map(c=>c.trim()).filter(c=>c);
+        if(!headerSkipped && cells.length>=3){
+          const allText=cells.every(c=>/^[A-Za-zÄÖÜäöüß\s\/\-().]+$/.test(c));
+          if(allText){ headerSkipped=true; continue; }
+        }
+        headerSkipped=true;
+        if(cells.length>=3){
+          tabelle.push({
+            kuerzel:cells[0]||'',
+            bereich:cells[1]||'',
+            generellerBereich:cells[2]||'',
+            beitrag:cells.length>=4?cells[3]:'',
+            liefertAn:cells.length>=5?cells[4]:'–',
+            empfaengtVon:cells.length>=6?cells[5]:'–'
+          });
+        }
+      }
+    }
+  }
+
+  console.log('parseZustaendig:',{hauptTeam,rows:tabelle.length});
+  return{hauptTeam,tabelle};
+}
+
+/* ═══ PARSER: TEAM-TICKET (v2.5) ═══ */
+function parseTeamTicket(raw){
+  function norm(s){
+    return s.replace(/\u00fc/gi,'ue').replace(/\u00e4/gi,'ae').replace(/\u00f6/gi,'oe')
+            .replace(/\u00dc/gi,'UE').replace(/\u00c4/gi,'AE').replace(/\u00d6/gi,'OE')
+            .replace(/[\u2011\u2013\u2014]/g,'-');
+  }
+  let teamHeader='',ist='',istTab='',soll='',sollTab='',kz='',ak='',tf='',abh='';
+  const lines=raw.split('\n');
+  let mode=null;
+
+  /* Header-Pattern (analog parseKIA, mit norm()) */
+  const H_TEAM   =[/^TEAM[\s-]*TICKET\s*:/i];
+  const H_IST_TAB=[/^IST[\s-]*TABELLE\s*:?$/i, /^IST[\s-]*PROZESSTABELLE\s*:?$/i];
+  /* Erweiterte IST/SOLL-Patterns: auch "IST – Aktueller Prozess:" etc. abfangen.
+     Negativer Lookahead verhindert false match auf IST-TABELLE/IST-PROZESSTABELLE. */
+  const H_IST    =[/^IST\s*:/i, /^IST[\s-]*BESCHREIBUNG\s*:?$/i, /^AKTUELLER\s+ZUSTAND\s*:?$/i, /^IST[\s-]+(?!TABELLE|PROZESSTABELLE)[A-Za-z\u00C0-\u00FF]/i];
+  const H_SOLL_TAB=[/^SOLL[\s-]*TABELLE\s*:?$/i, /^SOLL[\s-]*PROZESSTABELLE\s*:?$/i];
+  const H_SOLL   =[/^SOLL\s*:/i, /^SOLL[\s-]*BESCHREIBUNG\s*:?$/i, /^ZIELZUSTAND\s*:?$/i, /^SOLL[\s-]+(?!TABELLE|PROZESSTABELLE)[A-Za-z\u00C0-\u00FF]/i];
+  const H_KZ     =[/^KENNZAHLEN\s*:/i];
+  const H_AK     =[/^AKZEPTANZKRITERIEN\s*:?$/i];
+  const H_TF     =[/^TESTFAE?LLE\s*:?$/i];
+  const H_ABH    =[/^ABHAE?NGIGKEITEN\s*:?$/i];
+
+  function isH(s,patterns){ return patterns.some(p=>p.test(s)); }
+
+  for(const line of lines){
+    const trimmed=line.trim();
+    if(!trimmed) continue;
+    const cl=trimmed.replace(/\*\*/g,'').replace(/^#+\s*/,'').trim();
+    const nCl=norm(cl);
+
+    /* Reihenfolge ist wichtig: spezifischere Header zuerst */
+    if(isH(nCl,H_TEAM)){
+      teamHeader=cl.replace(/^TEAM[\s\-]*TICKET\s*:\s*/i,'').trim();
+      mode=null; continue;
+    }
+    if(isH(nCl,H_IST_TAB)){ mode='istTab'; continue; }
+    if(isH(nCl,H_IST)){
+      const v=cl.replace(/^IST[\s\-A-Za-z]*:\s*/i,'').trim();
+      if(v) ist=v;
+      mode='ist'; continue;
+    }
+    if(isH(nCl,H_SOLL_TAB)){ mode='sollTab'; continue; }
+    if(isH(nCl,H_SOLL)){
+      const v=cl.replace(/^SOLL[\s\-A-Za-z]*:\s*/i,'').trim();
+      if(v) soll=v;
+      mode='soll'; continue;
+    }
+    if(isH(nCl,H_KZ)){
+      const v=cl.replace(/^KENNZAHLEN\s*:\s*/i,'').trim();
+      if(v) kz=v;
+      mode='kz'; continue;
+    }
+    if(isH(nCl,H_AK)){ mode='ak'; continue; }
+    if(isH(nCl,H_TF)){ mode='tf'; continue; }
+    if(isH(nCl,H_ABH)){ mode='abh'; continue; }
+
+    /* Inhalt sammeln */
+    if(mode==='ist'){
+      /* Pipe-Zeilen (>=3 Pipes) direkt in istTab umleiten – analog parseKIA.
+         Verhindert dass Tabellen ohne eigene IST-TABELLE-Sektion im Fliesstext landen. */
+      const pc=(trimmed.match(/\|/g)||[]).length;
+      if(pc>=3 && !trimmed.match(/^[\s|:-]+$/)) istTab+=(istTab?'\n':'')+trimmed;
+      else ist+=(ist?'\n':'')+trimmed;
+    }
+    else if(mode==='istTab') istTab+=(istTab?'\n':'')+trimmed;
+    else if(mode==='soll'){
+      const pc=(trimmed.match(/\|/g)||[]).length;
+      if(pc>=3 && !trimmed.match(/^[\s|:-]+$/)) sollTab+=(sollTab?'\n':'')+trimmed;
+      else soll+=(soll?'\n':'')+trimmed;
+    }
+    else if(mode==='sollTab') sollTab+=(sollTab?'\n':'')+trimmed;
+    else if(mode==='kz') kz+=(kz?'\n':'')+trimmed;
+    else if(mode==='ak') ak+=(ak?'\n':'')+trimmed;
+    else if(mode==='tf') tf+=(tf?'\n':'')+trimmed;
+    else if(mode==='abh') abh+=(abh?'\n':'')+trimmed;
+  }
+
+  /* Fallback 1: Pipe-Tabellen aus IST/SOLL-Fliesstext extrahieren */
+  if(ist && !istTab){
+    const parts=splitPipesFromText(ist);
+    ist=parts.text; istTab=parts.pipes;
+  }
+  if(soll && !sollTab){
+    const parts=splitPipesFromText(soll);
+    soll=parts.text; sollTab=parts.pipes;
+  }
+
+  /* Fallback 2: Wenn ist/soll leer – Fliesstext direkt aus Rohtext extrahieren.
+     Greift wenn KIA den Fliesstext weglaesst und direkt die Tabelle schreibt. */
+  if(!ist && istTab){
+    const m=raw.match(/\bIST\s*:\s*\n([\s\S]*?)(?:\n\s*IST[\s-]*TABELLE|\n\s*SOLL\b|$)/i);
+    if(m){
+      const candidate=m[1].split('\n').filter(l=>{
+        const t=l.trim();
+        return t && (t.match(/\|/g)||[]).length<3 && !t.match(/^[\s|:-]+$/);
+      });
+      if(candidate.length>0) ist=candidate.join('\n').trim();
+    }
+  }
+  if(!soll && sollTab){
+    const m=raw.match(/\bSOLL\s*:\s*\n([\s\S]*?)(?:\n\s*SOLL[\s-]*TABELLE|\n\s*KENNZAHLEN\b|$)/i);
+    if(m){
+      const candidate=m[1].split('\n').filter(l=>{
+        const t=l.trim();
+        return t && (t.match(/\|/g)||[]).length<3 && !t.match(/^[\s|:-]+$/);
+      });
+      if(candidate.length>0) soll=candidate.join('\n').trim();
+    }
+  }
+
+  console.log('parseTeamTicket:',{teamHeader,ist:!!ist,istTab:!!istTab,soll:!!soll,sollTab:!!sollTab,kz:!!kz,ak:!!ak,tf:!!tf,abh:!!abh});
+  return{teamHeader,ist,istTab,soll,sollTab,kz,ak,tf,abh};
+}
+
+/* Hilfsfunktion: Pipe-Tabellen-Zeilen aus gemischtem Text trennen */
+function splitPipesFromText(text){
+  const lines=text.split('\n');
+  const textLines=[],pipeLines=[];
+  for(const l of lines){
+    /* Mindestens 3 Pipes = echte Tabellenzeile (4+ Spalten). */
+    /* 2 Pipes koennte "21c|ng" + 1 Trenner sein = Falsch-Positiv. */
+    if((l.match(/\|/g)||[]).length>=3 && !/^[\s|:-]+$/.test(l)) pipeLines.push(l);
+    else textLines.push(l);
+  }
+  return{text:textLines.join('\n').trim(),pipes:pipeLines.length>=2?pipeLines.join('\n'):''};
 }
 
 /* ═══ SPARRING START (Allgemein) ═══ */
@@ -2489,6 +2936,14 @@ function renderKIAMsg(p, rawText){
 
   const istOk=p.ist&&p.ist!=='[Noch nicht erfasst]';
   const sollOk=p.soll&&p.soll!=='[Noch nicht erfasst]';
+
+  /* IST/SOLL-Vorschau im Chat – verhindert raw-Text-Fallback mit Pipe-Tabellen.
+     Nur wenn kein Analyse-Block und keine Rueckfragen: KIA hat direkt Inhalt geliefert. */
+  if(!p.analyse && p.questions.length===0 && (istOk||sollOk)){
+    if(istOk) h+=`<div style="border-left:3px solid var(--blue-strong);padding:8px 12px;margin-bottom:10px;background:var(--blue-pale);border-radius:0 var(--rs) var(--rs) 0;"><div style="font-size:11px;font-weight:600;color:var(--blue-strong);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">IST</div>${renderMd(p.ist)}</div>`;
+    if(sollOk) h+=`<div style="border-left:3px solid var(--green);padding:8px 12px;margin-bottom:10px;background:var(--green-light);border-radius:0 var(--rs) var(--rs) 0;"><div style="font-size:11px;font-weight:600;color:var(--green);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">SOLL</div>${renderMd(p.soll)}</div>`;
+  }
+
   const hasHiddenQuestions=rawText && rawText.match(/^\d+[.)]\s*.+\?/m);
   if(istOk&&sollOk&&p.questions.length===0&&!hasHiddenQuestions)
     h+=`<div style="margin-top:14px;padding:12px 16px;background:var(--green-light);border:1px solid var(--green-border);border-radius:var(--rs);font-size:13.5px;color:var(--green);line-height:1.6;">IST und SOLL stehen. Du kannst jetzt Akzeptanzkriterien und Testfaelle generieren lassen oder die Anforderung weiter schaerfen.</div>`;
@@ -3169,6 +3624,42 @@ function startFinalize(){
     c.appendChild(card);
   }
 
+  /* Zustaendigkeiten ableiten – nur im ANFO-Ticket-Modus (v2.5) */
+  if(selectedMode==='general'){
+    const zDiv=document.createElement('div');
+    zDiv.id='card-zustaendig';
+    zDiv.style.display='none';
+    c.appendChild(zDiv);
+
+    const btnDiv=document.createElement('div');
+    btnDiv.style.cssText='text-align:center;margin:20px 0 8px;';
+    btnDiv.id='btnGenZustaendigWrap';
+    btnDiv.innerHTML='<button class="bprim" id="btnGenZustaendig" onclick="generateZustaendig()" style="background:var(--blue-deep);">Zustaendigkeiten ableiten</button>';
+    c.appendChild(btnDiv);
+
+    /* Falls bereits generiert (z.B. Rueckkehr von Team-Tickets-View) */
+    if(zustaendigState.confirmed && zustaendigState.tabelle.length){
+      renderZustaendigCard();
+      const tbl=g('tblZustaendig');if(tbl)tbl.classList.add('locked');
+      const addBtns=g('card-zustaendig')?.querySelectorAll('.btn-add-row, .zustaendig-actions');
+      if(addBtns) addBtns.forEach(el=>el.style.display='none');
+      const conf=g('zustaendigConfirmed');if(conf)conf.style.display='';
+      btnDiv.style.display='none';
+      /* Team-Tickets-Link falls bereits generiert */
+      if(Object.keys(zustaendigState.teamTickets).length){
+        let linkDiv=g('teamTicketsLink');
+        if(!linkDiv){
+          linkDiv=document.createElement('div');linkDiv.id='teamTicketsLink';linkDiv.style.cssText='margin-top:12px;';
+          g('card-zustaendig').querySelector('.sec-card-body').appendChild(linkDiv);
+        }
+        linkDiv.innerHTML='<button class="bprim" onclick="showView(\'v-teamtickets\')" style="background:var(--green);">Team-Tickets anzeigen ('+Object.keys(zustaendigState.teamTickets).length+')</button>';
+      }
+    } else if(zustaendigState.tabelle.length){
+      renderZustaendigCard();
+      btnDiv.style.display='none';
+    }
+  }
+
   showView('v-final');
 }
 
@@ -3262,6 +3753,537 @@ function copyAllSections(){
   copyRich(plain, html).then(()=>showToast('Anforderung kopiert (mit Formatierung)','ok'));
 }
 
+/* ═══ ZUSTAENDIGKEITEN & TEAM-TICKETS (v2.5) ═══ */
+
+/**
+ * Schritt 1: KIA-Call fuer Zustaendigkeits-Analyse.
+ * Sammelt alle finalisierten Daten aus docState und sendet sie an KIA.
+ */
+async function generateZustaendig(){
+  const btn=g('btnGenZustaendig');
+  if(btn)btn.disabled=true;
+  const container=g('card-zustaendig');
+  container.innerHTML='<div class="gen-progress"><div class="spin"></div>KIA analysiert Zustaendigkeiten...</div>';
+  container.style.display='';
+
+  /* Kontext aus docState zusammenbauen */
+  let ctx='TITEL: '+(docState.titel||'(kein Titel)')+'\n\n';
+  if(docState.ist) ctx+='IST:\n'+docState.ist+'\n\n';
+  if(docState.istTab) ctx+='IST-TABELLE:\n'+docState.istTab+'\n\n';
+  if(docState.soll) ctx+='SOLL:\n'+docState.soll+'\n\n';
+  if(docState.sollTab) ctx+='SOLL-TABELLE:\n'+docState.sollTab+'\n\n';
+  if(docState.kz) ctx+='KENNZAHLEN:\n'+docState.kz+'\n\n';
+  if(docState.ak) ctx+='AKZEPTANZKRITERIEN:\n'+docState.ak+'\n\n';
+  if(tfRawData) ctx+='TESTFAELLE:\n'+tfRawData+'\n\n';
+
+  try{
+    const raw=await callKIA([{role:'user',content:ctx}], SYS_ZUSTAENDIG);
+    const data=parseZustaendig(raw);
+    if(!data.tabelle.length){
+      container.innerHTML='<p style="color:var(--red);padding:16px;">KIA konnte keine Zustaendigkeiten ableiten. Bitte erneut versuchen.</p><div class="zustaendig-actions"><button class="bsec" onclick="generateZustaendig()">Erneut versuchen</button></div>';
+      if(btn)btn.disabled=false;
+      return;
+    }
+    zustaendigState.hauptTeam=data.hauptTeam;
+    zustaendigState.tabelle=data.tabelle;
+    zustaendigState.confirmed=false;
+    renderZustaendigCard();
+  }catch(e){
+    container.innerHTML='<p style="color:var(--red);padding:16px;">Fehler: '+escH(e.message)+'</p><div class="zustaendig-actions"><button class="bsec" onclick="generateZustaendig()">Erneut versuchen</button></div>';
+    if(btn)btn.disabled=false;
+  }
+}
+
+/**
+ * Rendert die editierbare Zustaendigkeitskarte in der Finalize-View.
+ * Liest aus zustaendigState.hauptTeam und zustaendigState.tabelle.
+ */
+function renderZustaendigCard(){
+  const container=g('card-zustaendig');
+  const d=zustaendigState;
+
+  /* Hauptverantwortung-Badge extrahieren + Markdown strippen */
+  let hauptKuerzel='', hauptText=stripMd(d.hauptTeam);
+  const hMatch=hauptText.match(/^([A-Z\-_]+(?:\s*\([^)]*\))?)\s*[\u2013\u2014–\-]\s*(.*)/i);
+  if(hMatch){ hauptKuerzel=hMatch[1].trim(); hauptText=hMatch[2].trim(); }
+  else{
+    if(d.tabelle.length) hauptKuerzel=d.tabelle[0].kuerzel;
+    hauptText=stripMd(d.hauptTeam);
+  }
+
+  let html='<div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-deep)">Z</div><div class="sec-card-title">Zustaendigkeiten</div><button class="sec-card-copy" onclick="copyZustaendigAll(this)" type="button">Kopieren</button></div>';
+  html+='<div class="sec-card-body">';
+
+  /* Hauptverantwortung */
+  html+='<div class="zustaendig-haupt"><span class="badge-haupt">★ '+escH(hauptKuerzel||'?')+'</span> '+escH(hauptText)+'</div>';
+
+  /* Editierbare Tabelle – 6 Spalten: Radio, Kuerzel, Bereich, Genereller Verantwortungsbereich, Beitrag, Liefert an, Empfaengt von, Loeschen */
+  html+='<table class="zustaendig-tabelle" id="tblZustaendig"><thead><tr><th style="width:30px;"></th><th>Kuerzel</th><th>Umsetzungsbereich</th><th>Genereller Verantwortungsbereich</th><th>Beitrag zu dieser Anforderung</th><th>Liefert an</th><th>Empfaengt von</th><th style="width:36px;"></th></tr></thead><tbody>';
+
+  d.tabelle.forEach((row,i)=>{
+    const isHaupt=row.kuerzel===hauptKuerzel;
+    html+='<tr class="'+(isHaupt?'haupt-row':'')+'" data-idx="'+i+'">';
+    html+='<td><input type="radio" name="hauptRadio" class="radio-haupt" '+(isHaupt?'checked':'')+' onchange="setHauptTeam('+i+')"></td>';
+    html+='<td>'+escH(row.kuerzel)+'</td>';
+    html+='<td>'+escH(row.bereich)+'</td>';
+    html+='<td contenteditable="true">'+escH(row.generellerBereich||'')+'</td>';
+    html+='<td contenteditable="true">'+escH(row.beitrag||'')+'</td>';
+    html+='<td contenteditable="true">'+escH(row.liefertAn)+'</td>';
+    html+='<td contenteditable="true">'+escH(row.empfaengtVon)+'</td>';
+    html+='<td><button class="btn-row-del" onclick="removeZustaendigRow('+i+')" title="Zeile entfernen">✕</button></td>';
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+
+  /* Zeile hinzufuegen */
+  html+='<button class="btn-add-row" onclick="addZustaendigRow()">+ Bereich hinzufuegen</button>';
+
+  /* Aktions-Buttons */
+  html+='<div class="zustaendig-actions">';
+  html+='<button class="bprim" onclick="confirmZustaendig()">Zuordnung bestaetigen</button>';
+  html+='<button class="bsec" onclick="regenZustaendig()">Neu generieren</button>';
+  html+='</div>';
+
+  /* Team-Tickets generieren (erst nach Bestaetigung sichtbar) */
+  html+='<div id="zustaendigConfirmed" style="display:none;margin-top:16px;padding-top:16px;border-top:1px solid var(--bd);">';
+  html+='<button class="bprim" onclick="generateTeamTickets()" id="btnGenTeamTickets" style="background:var(--green);">Team-Tickets generieren</button>';
+  html+='<div id="teamGenProgress"></div>';
+  html+='</div>';
+
+  html+='</div>';
+  container.innerHTML=html;
+  container.className='sec-card';
+  container.style.display='';
+}
+
+/* Hauptverantwortung aendern */
+function setHauptTeam(idx){
+  const row=zustaendigState.tabelle[idx];
+  if(!row) return;
+  zustaendigState.hauptTeam=row.kuerzel+' – Federfuehrung';
+  /* Alle Zeilen aktualisieren */
+  const rows=document.querySelectorAll('#tblZustaendig tbody tr');
+  rows.forEach(tr=>{
+    const i=parseInt(tr.dataset.idx);
+    if(i===idx) tr.classList.add('haupt-row');
+    else tr.classList.remove('haupt-row');
+  });
+  /* Badge aktualisieren */
+  const badge=document.querySelector('.zustaendig-haupt .badge-haupt');
+  if(badge) badge.textContent='★ '+row.kuerzel;
+}
+
+/* Zeile entfernen */
+function removeZustaendigRow(idx){
+  zustaendigState.tabelle.splice(idx,1);
+  renderZustaendigCard();
+}
+
+/* Zeile hinzufuegen */
+function addZustaendigRow(){
+  zustaendigState.tabelle.push({kuerzel:'',bereich:'',generellerBereich:'',beitrag:'',liefertAn:'–',empfaengtVon:'–'});
+  renderZustaendigCard();
+  /* Fokus auf neue Zeile */
+  setTimeout(()=>{
+    const rows=document.querySelectorAll('#tblZustaendig tbody tr');
+    const last=rows[rows.length-1];
+    if(last){
+      const firstCell=last.querySelector('td:nth-child(2)');
+      if(firstCell){ firstCell.setAttribute('contenteditable','true'); firstCell.focus(); }
+    }
+  },50);
+}
+
+/* DOM-Werte zurueck in State lesen */
+function readZustaendigFromDom(){
+  const rows=document.querySelectorAll('#tblZustaendig tbody tr');
+  const result=[];
+  let hauptIdx=0;
+  rows.forEach((tr,i)=>{
+    const cells=tr.querySelectorAll('td');
+    const radio=tr.querySelector('.radio-haupt');
+    if(radio && radio.checked) hauptIdx=i;
+    result.push({
+      kuerzel:(cells[1]?.textContent||'').trim(),
+      bereich:(cells[2]?.textContent||'').trim(),
+      generellerBereich:(cells[3]?.textContent||'').trim(),
+      beitrag:(cells[4]?.textContent||'').trim(),
+      liefertAn:(cells[5]?.textContent||'').trim(),
+      empfaengtVon:(cells[6]?.textContent||'').trim()
+    });
+  });
+  zustaendigState.tabelle=result;
+  if(result[hauptIdx]) zustaendigState.hauptTeam=result[hauptIdx].kuerzel+' – Federfuehrung';
+}
+
+/* Zuordnung bestaetigen */
+function confirmZustaendig(){
+  readZustaendigFromDom();
+  /* Validierung: mindestens 1 Bereich */
+  if(!zustaendigState.tabelle.length || !zustaendigState.tabelle.some(r=>r.kuerzel)){
+    showToast('Mindestens ein Bereich mit Kuerzel erforderlich.','warn');
+    return;
+  }
+  zustaendigState.confirmed=true;
+
+  /* Tabelle sperren */
+  const tbl=g('tblZustaendig');
+  if(tbl) tbl.classList.add('locked');
+  document.querySelectorAll('.btn-add-row, .zustaendig-actions').forEach(el=>el.style.display='none');
+
+  /* Team-Tickets-Button anzeigen */
+  g('zustaendigConfirmed').style.display='';
+  showToast('Zuordnung bestaetigt – Team-Tickets koennen generiert werden.','ok');
+}
+
+/* Zustaendigkeiten neu generieren */
+function regenZustaendig(){
+  zustaendigState={hauptTeam:'',tabelle:[],confirmed:false,teamTickets:{}};
+  generateZustaendig();
+}
+
+/* Zustaendigkeitstabelle Confluence-kompatibel kopieren */
+function copyZustaendigAll(btn){
+  readZustaendigFromDom();
+  const d=zustaendigState;
+  /* Plain-Text */
+  let plain='HAUPTVERANTWORTUNG: '+stripMd(d.hauptTeam)+'\n\n';
+  plain+='ZUSTAENDIGKEITSUEBERSICHT:\nKuerzel\tUmsetzungsbereich\tGenereller Verantwortungsbereich\tBeitrag zu dieser Anforderung\tLiefert an\tEmpfaengt von\n';
+  d.tabelle.forEach(r=>{
+    plain+=r.kuerzel+'\t'+r.bereich+'\t'+r.generellerBereich+'\t'+r.beitrag+'\t'+r.liefertAn+'\t'+r.empfaengtVon+'\n';
+  });
+
+  /* HTML fuer Confluence */
+  let html='<h3>Hauptverantwortung</h3><p><strong>'+escH(stripMd(d.hauptTeam))+'</strong></p>';
+  html+='<h3>Zustaendigkeitsuebersicht</h3>';
+  html+='<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;">';
+  html+='<thead><tr>';
+  ['Kuerzel','Umsetzungsbereich','Genereller Verantwortungsbereich','Beitrag zu dieser Anforderung','Liefert an','Empfaengt von'].forEach(h=>{
+    html+='<th style="background-color:#002B52;color:#ffffff;padding:8px 12px;text-align:left;font-weight:bold;border:1px solid #cbd5e0;">'+h+'</th>';
+  });
+  html+='</tr></thead><tbody>';
+  d.tabelle.forEach((r,i)=>{
+    const bg=i%2===0?'#ffffff':'#f7fafc';
+    html+='<tr>';
+    [r.kuerzel,r.bereich,r.generellerBereich,r.beitrag,r.liefertAn,r.empfaengtVon].forEach(c=>{
+      html+='<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:'+bg+';vertical-align:top;">'+escH(c)+'</td>';
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+
+  copyRich(plain,html).then(()=>{
+    btn.classList.add('copied');btn.textContent='Kopiert';
+    setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Kopieren';},2000);
+  });
+}
+
+/**
+ * Schritt 2: Team-Tickets sequenziell generieren.
+ * Pro Bereich ein KIA-Call mit dem gesamten ANFO als Kontext.
+ */
+async function generateTeamTickets(){
+  const btn=g('btnGenTeamTickets');
+  if(btn)btn.disabled=true;
+  const prog=g('teamGenProgress');
+  const bereiche=zustaendigState.tabelle;
+  zustaendigState.teamTickets={};
+
+  /* Kontext aus docState zusammenbauen (gleich wie bei generateZustaendig) */
+  let ctx='';
+  if(docState.ist) ctx+='IST:\n'+docState.ist+'\n\n';
+  if(docState.istTab) ctx+='IST-TABELLE:\n'+docState.istTab+'\n\n';
+  if(docState.soll) ctx+='SOLL:\n'+docState.soll+'\n\n';
+  if(docState.sollTab) ctx+='SOLL-TABELLE:\n'+docState.sollTab+'\n\n';
+  if(docState.kz) ctx+='KENNZAHLEN:\n'+docState.kz+'\n\n';
+  if(docState.ak) ctx+='AKZEPTANZKRITERIEN:\n'+docState.ak+'\n\n';
+  if(tfRawData) ctx+='TESTFAELLE:\n'+tfRawData+'\n\n';
+
+  /* Zustaendigkeitstabelle als Kontext (;; Trennzeichen um Pipe-Probleme zu vermeiden) */
+  let ztab='ZUSTAENDIGKEITSTABELLE:\nKuerzel ;; Bereich ;; Genereller Verantwortungsbereich ;; Beitrag zu dieser Anforderung ;; Liefert an ;; Empfaengt von\n';
+  bereiche.forEach(r=>{
+    ztab+=r.kuerzel+' ;; '+r.bereich+' ;; '+r.generellerBereich+' ;; '+r.beitrag+' ;; '+r.liefertAn+' ;; '+r.empfaengtVon+'\n';
+  });
+
+  for(let i=0;i<bereiche.length;i++){
+    const b=bereiche[i];
+    if(prog) prog.innerHTML='<div class="gen-progress"><div class="spin"></div>Generiere Ticket '+(i+1)+'/'+bereiche.length+' ('+escH(b.kuerzel)+')...</div>';
+
+    const auftrag='Erstelle ein Team-Ticket fuer '+b.kuerzel+' – '+b.bereich+'.\nGenereller Verantwortungsbereich: '+b.generellerBereich+'\nBeitrag zu dieser Anforderung: '+b.beitrag+'\nLiefert an: '+b.liefertAn+'\nEmpfaengt von: '+b.empfaengtVon;
+    const userMsg=ctx+'\n'+ztab+'\n'+auftrag;
+
+    try{
+      const raw=await callKIA([{role:'user',content:userMsg}], SYS_TEAM_TICKET);
+      const parsed=parseTeamTicket(raw);
+      zustaendigState.teamTickets[b.kuerzel]=parsed;
+    }catch(e){
+      console.error('Team-Ticket Fehler ('+b.kuerzel+'):', e);
+      zustaendigState.teamTickets[b.kuerzel]={teamHeader:b.kuerzel+' – '+b.bereich,ist:'Fehler bei Generierung: '+e.message,istTab:'',soll:'',sollTab:'',kz:'',ak:'',tf:'',abh:''};
+    }
+  }
+
+  if(prog) prog.innerHTML='<div class="gen-progress" style="background:var(--green-light);color:var(--green);">✓ Alle '+bereiche.length+' Team-Tickets generiert</div>';
+
+  /* Team-Tickets-View rendern und Button in Finalize anzeigen */
+  renderTeamTicketsView();
+
+  /* Link in Finalize-View anzeigen */
+  let linkDiv=g('teamTicketsLink');
+  if(!linkDiv){
+    linkDiv=document.createElement('div');
+    linkDiv.id='teamTicketsLink';
+    linkDiv.style.cssText='margin-top:12px;';
+    g('card-zustaendig').querySelector('.sec-card-body').appendChild(linkDiv);
+  }
+  linkDiv.innerHTML='<button class="bprim" onclick="showView(\'v-teamtickets\')" style="background:var(--green);">Team-Tickets anzeigen ('+bereiche.length+')</button>';
+
+  if(btn)btn.disabled=false;
+}
+
+/**
+ * Team-Tickets-View mit Tab-Navigation rendern.
+ */
+function renderTeamTicketsView(){
+  const tabBar=g('teamTabBar');
+  const content=g('teamTicketContent');
+  tabBar.innerHTML='';
+  content.innerHTML='';
+
+  const bereiche=zustaendigState.tabelle;
+  const hauptKuerzel=(zustaendigState.hauptTeam.match(/^([A-Z\-]+)/i)||[])[1]||'';
+
+  bereiche.forEach((b,i)=>{
+    const isHaupt=b.kuerzel===hauptKuerzel;
+    const btn=document.createElement('button');
+    btn.className='team-tab'+(i===0?' active':'');
+    btn.innerHTML=(isHaupt?'<span class="star">★</span> ':'')+escH(b.kuerzel);
+    btn.onclick=()=>showTeamTicket(b.kuerzel);
+    tabBar.appendChild(btn);
+  });
+
+  /* Erstes Ticket anzeigen */
+  if(bereiche.length) showTeamTicket(bereiche[0].kuerzel);
+}
+
+/**
+ * Tab-Wechsel: Zeigt ein bestimmtes Team-Ticket.
+ */
+function showTeamTicket(kuerzel){
+  /* Tab aktiv setzen */
+  document.querySelectorAll('#teamTabBar .team-tab').forEach(btn=>{
+    const text=btn.textContent.replace('★','').trim();
+    if(text===kuerzel) btn.classList.add('active');
+    else btn.classList.remove('active');
+  });
+
+  /* Ticket rendern */
+  renderSingleTeamTicket(kuerzel);
+}
+
+/**
+ * Rendering eines einzelnen Team-Tickets.
+ * Nutzt bestehende Render-Funktionen.
+ */
+function renderSingleTeamTicket(kuerzel){
+  const container=g('teamTicketContent');
+  const ticket=zustaendigState.teamTickets[kuerzel];
+  if(!ticket){container.innerHTML='<p>Kein Ticket fuer '+escH(kuerzel)+' vorhanden.</p>';return;}
+
+  const b=zustaendigState.tabelle.find(r=>r.kuerzel===kuerzel)||{bereich:''};
+  const prefix='tt-'+kuerzel.replace(/[^a-zA-Z0-9-]/g,'').toLowerCase();
+  let html='';
+
+  /* Header mit Copy-All */
+  html+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px;">';
+  html+='<div class="team-ticket-header">'+escH(ticket.teamHeader||kuerzel+' – '+b.bereich)+'</div>';
+  html+='<button class="bprim" onclick="copyTeamTicket(\''+escH(kuerzel)+'\',this)" style="font-size:13px;padding:7px 16px;">Ticket kopieren</button>';
+  html+='</div>';
+
+  let num=0;
+
+  /* IST */
+  const istOk=ticket.ist&&ticket.ist.length>5;
+  const istTabOk=ticket.istTab&&ticket.istTab.length>5;
+  if(istOk||istTabOk){
+    num++;
+    const tableId=prefix+'-ist-tbl';
+    const body=renderIstOutputCard(ticket.ist||'', ticket.istTab||'', tableId, prefix+'-ist');
+    let copyBtns='<div class="sec-card-copy-group">';
+    if(istOk&&istTabOk){
+      copyBtns+='<button class="sec-card-copy" onclick="copyTeamTicketSec(\''+kuerzel+'\',\'ist+istTab\',this)" type="button">Text + Tabelle</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copyTeamTicketSec(\''+kuerzel+'\',\'ist\',this)" type="button">Nur Text</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+tableId+'\',this)" type="button">Nur Tabelle</button>';
+    } else if(istOk){
+      copyBtns+='<button class="sec-card-copy" onclick="copyTeamTicketSec(\''+kuerzel+'\',\'ist\',this)" type="button">Kopieren</button>';
+    } else {
+      copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+tableId+'\',this)" type="button">Kopieren</button>';
+    }
+    copyBtns+='</div>';
+    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-strong)">'+num+'</div><div class="sec-card-title">IST Beschreibung</div>'+copyBtns+'</div><div class="sec-card-body" style="padding:0;">'+body+'</div></div>';
+  }
+
+  /* SOLL */
+  const sollOk=ticket.soll&&ticket.soll.length>5;
+  const sollTabOk=ticket.sollTab&&ticket.sollTab.length>5;
+  if(sollOk||sollTabOk){
+    num++;
+    const tableId=prefix+'-soll-tbl';
+    const body=renderIstOutputCard(ticket.soll||'', ticket.sollTab||'', tableId, prefix+'-soll');
+    let copyBtns='<div class="sec-card-copy-group">';
+    if(sollOk&&sollTabOk){
+      copyBtns+='<button class="sec-card-copy" onclick="copyTeamTicketSec(\''+kuerzel+'\',\'soll+sollTab\',this)" type="button">Text + Tabelle</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copyTeamTicketSec(\''+kuerzel+'\',\'soll\',this)" type="button">Nur Text</button>';
+      copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+tableId+'\',this)" type="button">Nur Tabelle</button>';
+    } else if(sollOk){
+      copyBtns+='<button class="sec-card-copy" onclick="copyTeamTicketSec(\''+kuerzel+'\',\'soll\',this)" type="button">Kopieren</button>';
+    } else {
+      copyBtns+='<button class="sec-card-copy" onclick="copyTfFromChat(\''+tableId+'\',this)" type="button">Kopieren</button>';
+    }
+    copyBtns+='</div>';
+    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--green)">'+num+'</div><div class="sec-card-title">SOLL Beschreibung</div>'+copyBtns+'</div><div class="sec-card-body" style="padding:0;">'+body+'</div></div>';
+  }
+
+  /* Kennzahlen */
+  if(ticket.kz&&ticket.kz.length>3){
+    num++;
+    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--lila)">'+num+'</div><div class="sec-card-title">Kennzahlen</div><button class="sec-card-copy" onclick="copyTeamTicketSec(\''+kuerzel+'\',\'kz\',this)" type="button">Kopieren</button></div><div class="sec-card-body"><div class="rendered">'+renderMd(ticket.kz)+'</div></div></div>';
+  }
+
+  /* Akzeptanzkriterien */
+  if(ticket.ak&&ticket.ak.includes('|')){
+    num++;
+    const akId=prefix+'-ak';
+    const akBody=renderAkAsTable(ticket.ak, akId);
+    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--orange)">'+num+'</div><div class="sec-card-title">Akzeptanzkriterien</div><button class="sec-card-copy" onclick="copyTfFromChat(\''+akId+'\',this)" type="button">Kopieren</button></div><div class="sec-card-body">'+akBody+'</div></div>';
+  }
+
+  /* Testfaelle */
+  if(ticket.tf&&ticket.tf.includes('|')){
+    num++;
+    const tfId=prefix+'-tf';
+    /* Rohdaten in tfRawStore speichern fuer Filter/Copy */
+    tfRawStore.set(tfId, ticket.tf);
+    const tfBody=renderTfWithToolbar(ticket.tf, tfId);
+    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--blue-deep)">'+num+'</div><div class="sec-card-title">Testfaelle</div></div><div class="sec-card-body">'+tfBody+'</div></div>';
+  }
+
+  /* Abhaengigkeiten */
+  if(ticket.abh&&ticket.abh.includes('|')){
+    num++;
+    const abhId=prefix+'-abh';
+    const abhTable=renderIstTable(ticket.abh);
+    html+='<div class="sec-card"><div class="sec-card-head"><div class="sec-card-num" style="background:var(--mu)">'+num+'</div><div class="sec-card-title">Abhaengigkeiten</div><button class="sec-card-copy" onclick="copyTeamTicketSec(\''+kuerzel+'\',\'abh\',this)" type="button">Kopieren</button></div><div class="sec-card-body"><div id="'+abhId+'">'+abhTable+'</div></div></div>';
+  }
+
+  container.innerHTML=html;
+}
+
+/* ═══ TEAM-TICKET COPY-FUNKTIONEN (v2.5) ═══ */
+
+/**
+ * Einzelsektion eines Team-Tickets kopieren.
+ */
+function copyTeamTicketSec(kuerzel, key, btn){
+  const ticket=zustaendigState.teamTickets[kuerzel];
+  if(!ticket) return;
+
+  const labels={ist:'IST BESCHREIBUNG',istTab:'IST PROZESSTABELLE',soll:'SOLL BESCHREIBUNG',sollTab:'SOLL PROZESSTABELLE',kz:'KENNZAHLEN',ak:'AKZEPTANZKRITERIEN',tf:'TESTFAELLE',abh:'ABHAENGIGKEITEN'};
+  let plain='',html='';
+
+  if(key==='ist+istTab' || key==='soll+sollTab'){
+    const textKey=key.split('+')[0];
+    const tabKey=key.split('+')[1];
+    const textV=ticket[textKey]||'';
+    const tabV=ticket[tabKey]||'';
+    if(textV){
+      plain+=labels[textKey]+':\n'+stripMd(textV);
+      html+='<h3>'+labels[textKey]+'</h3>'+mdToClipboardHtml(textV);
+    }
+    if(tabV){
+      plain+=(plain?'\n\n':'')+labels[tabKey]+':\n'+tabV;
+      html+='<h3>'+labels[tabKey]+'</h3>'+pipeTableToClipboardHtml(tabV);
+    }
+  } else if(key==='abh' || key==='ak'){
+    const v=ticket[key]||'';
+    plain=labels[key]+':\n'+v;
+    html='<h3>'+labels[key]+'</h3>'+pipeTableToClipboardHtml(v);
+  } else {
+    const v=ticket[key]||'';
+    plain=labels[key]+':\n'+stripMd(v);
+    html='<h3>'+labels[key]+'</h3>'+mdToClipboardHtml(v);
+  }
+
+  copyRich(plain,html).then(()=>{
+    btn.classList.add('copied');btn.textContent='Kopiert';
+    setTimeout(()=>{btn.classList.remove('copied');btn.textContent='Kopieren';},2000);
+  });
+}
+
+/**
+ * Ein komplettes Team-Ticket kopieren (alle Sektionen).
+ */
+function copyTeamTicket(kuerzel, btn){
+  const ticket=zustaendigState.teamTickets[kuerzel];
+  if(!ticket) return;
+  const b=zustaendigState.tabelle.find(r=>r.kuerzel===kuerzel)||{bereich:''};
+
+  const order=['ist','istTab','soll','sollTab','kz','ak','tf','abh'];
+  const labels={ist:'IST BESCHREIBUNG',istTab:'IST PROZESSTABELLE',soll:'SOLL BESCHREIBUNG',sollTab:'SOLL PROZESSTABELLE',kz:'KENNZAHLEN',ak:'AKZEPTANZKRITERIEN',tf:'TESTFAELLE',abh:'ABHAENGIGKEITEN'};
+  let plainParts=['TEAM-TICKET: '+kuerzel+' – '+b.bereich];
+  let htmlParts=['<h2>Team-Ticket: '+escH(kuerzel)+' – '+escH(b.bereich)+'</h2>'];
+
+  order.forEach(k=>{
+    const v=ticket[k];
+    if(!v||v.length<3) return;
+    if(k==='istTab'||k==='sollTab'||k==='ak'||k==='tf'||k==='abh'){
+      plainParts.push(labels[k]+':\n'+v);
+      htmlParts.push('<h3>'+labels[k]+'</h3>'+pipeTableToClipboardHtml(v));
+    } else {
+      plainParts.push(labels[k]+':\n'+stripMd(v));
+      htmlParts.push('<h3>'+labels[k]+'</h3>'+mdToClipboardHtml(v));
+    }
+  });
+
+  copyRich(plainParts.join('\n\n'),htmlParts.join('')).then(()=>{
+    showToast('Team-Ticket '+kuerzel+' kopiert','ok');
+    if(btn){btn.classList.add('copied');const orig=btn.textContent;btn.textContent='Kopiert';setTimeout(()=>{btn.classList.remove('copied');btn.textContent=orig;},2000);}
+  });
+}
+
+/**
+ * Alle Team-Tickets kopieren.
+ */
+function copyAllTeamTickets(btn){
+  const bereiche=zustaendigState.tabelle;
+  const order=['ist','istTab','soll','sollTab','kz','ak','tf','abh'];
+  const labels={ist:'IST BESCHREIBUNG',istTab:'IST PROZESSTABELLE',soll:'SOLL BESCHREIBUNG',sollTab:'SOLL PROZESSTABELLE',kz:'KENNZAHLEN',ak:'AKZEPTANZKRITERIEN',tf:'TESTFAELLE',abh:'ABHAENGIGKEITEN'};
+  let plainParts=[],htmlParts=[];
+
+  bereiche.forEach(b=>{
+    const ticket=zustaendigState.teamTickets[b.kuerzel];
+    if(!ticket) return;
+    plainParts.push('═══ TEAM-TICKET: '+b.kuerzel+' – '+b.bereich+' ═══');
+    htmlParts.push('<h2>Team-Ticket: '+escH(b.kuerzel)+' – '+escH(b.bereich)+'</h2><hr>');
+    order.forEach(k=>{
+      const v=ticket[k];
+      if(!v||v.length<3) return;
+      if(k==='istTab'||k==='sollTab'||k==='ak'||k==='tf'||k==='abh'){
+        plainParts.push(labels[k]+':\n'+v);
+        htmlParts.push('<h3>'+labels[k]+'</h3>'+pipeTableToClipboardHtml(v));
+      } else {
+        plainParts.push(labels[k]+':\n'+stripMd(v));
+        htmlParts.push('<h3>'+labels[k]+'</h3>'+mdToClipboardHtml(v));
+      }
+    });
+    plainParts.push(''); /* Leerzeile zwischen Tickets */
+  });
+
+  copyRich(plainParts.join('\n\n'),htmlParts.join('')).then(()=>{
+    showToast('Alle '+bereiche.length+' Team-Tickets kopiert','ok');
+    if(btn){btn.classList.add('copied');const orig=btn.textContent;btn.textContent='Kopiert';setTimeout(()=>{btn.classList.remove('copied');btn.textContent=orig;},2000);}
+  });
+}
+
 /* ═══ RESET ═══ */
 function confirmNewReq(){
   const confirmMsg = selectedMode==='test' ? 'Neuen Test starten? Aktuelle Eingaben gehen verloren.' : 'Neue Anforderung starten? Aktuelle Eingaben gehen verloren.';
@@ -3299,6 +4321,10 @@ function confirmNewReq(){
   ['modul','testfaelle','ergebnis'].forEach(f=>updateTestDoc(f,'',null));
   g('ds-test-ergebnis').style.display='none';
   g('btnCopyTest').disabled=true;g('btnFinalizeTest').disabled=true;
+
+  /* Zustaendigkeiten & Team-Tickets Reset (v2.5) */
+  zustaendigState={hauptTeam:'',tabelle:[],confirmed:false,teamTickets:{}};
+  g('teamTabBar').innerHTML='';g('teamTicketContent').innerHTML='';
 
   backToLanding();
 }
