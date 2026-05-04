@@ -1,508 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Victor Tools</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      /* Warm Claude-like palette */
-      --bg:           #f5efe6;
-      --bg-card:      #fdf8f2;
-      --bg-topbar:    #fdf8f2;
-      --border:       #e8ddd0;
-      --border-card:  #ecdfd0;
-
-      --text:         #1c1611;
-      --text-muted:   #7a6a58;
-      --text-light:   #a8967e;
-
-      --blue:         #c17d3a;   /* warm amber-brown as primary accent */
-      --blue-light:   #f5ece0;
-
-      /* tool accent colours – warm toned */
-      --c1:      #b85c38;   /* terracotta  – Anforderungs Assistent */
-      --c1-bg:   #fdf0eb;
-      --c2:      #3a7d6e;   /* sage green  – API Katalog */
-      --c2-bg:   #eaf4f1;
-      --c3:      #8b6914;   /* gold        – KI Usecase */
-      --c3-bg:   #fdf6e3;
-      --c4:      #5a4e8c;   /* muted violet – KI News */
-      --c4-bg:   #f0eef8;
-
-      --radius-lg: 16px;
-      --radius-sm: 10px;
-      --shadow:    0 1px 2px rgba(80,50,20,.06), 0 4px 18px rgba(80,50,20,.08);
-      --shadow-hover: 0 6px 24px rgba(80,50,20,.14), 0 1px 3px rgba(80,50,20,.08);
-      --font: 'DM Sans', system-ui, sans-serif;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ── TOPBAR ──────────────────────────────────── */
-    .topbar {
-      background: var(--bg-topbar);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .topbar-inner {
-      max-width: 1040px;
-      margin: 0 auto;
-      height: 58px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* SVG logo mark */
-    .nav-logo {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-    }
-    .nav-logo svg { width: 34px; height: 34px; }
-
-    .nav-wordmark {
-      font-size: .95rem;
-      font-weight: 700;
-      letter-spacing: -.02em;
-      color: var(--text);
-    }
-    .nav-wordmark em { font-style: normal; color: var(--c1); }
-
-    .nav-sep { flex: 1; }
-
-    .nav-contact-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font);
-      font-size: .82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      background: transparent;
-      border: 1px solid var(--border-card);
-      border-radius: 8px;
-      padding: 7px 14px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background .15s, color .15s, border-color .15s;
-    }
-    .nav-contact-btn:hover {
-      background: var(--c1-bg);
-      color: var(--c1);
-      border-color: var(--c1);
-    }
-    .nav-contact-btn svg { width: 14px; height: 14px; fill: currentColor; }
-
-    /* ── MAIN ────────────────────────────────────── */
-    main {
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 60px 32px 100px;
-    }
-
-    /* ── HERO ────────────────────────────────────── */
-    .hero {
-      display: flex;
-      align-items: center;
-      gap: 40px;
-      margin-bottom: 64px;
-    }
-
-    .hero-text { flex: 1; }
-
-    .hero-text h1 {
-      font-size: 2.6rem;
-      font-weight: 700;
-      letter-spacing: -.05em;
-      line-height: 1.12;
-      color: var(--text);
-      margin-bottom: 14px;
-    }
-    .hero-text h1 span { color: var(--c1); }
-
-    .hero-text p {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-      line-height: 1.65;
-      max-width: 400px;
-    }
-
-    /* ── BIG LOGO ────────────────────────────────── */
-    .hero-logo {
-      flex-shrink: 0;
-      width: 160px;
-      height: 160px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .hero-logo svg { width: 160px; height: 160px; }
-
-    @media (max-width: 640px) {
-      .hero { flex-direction: column; gap: 24px; }
-      .hero-logo { width: 100px; height: 100px; }
-      .hero-logo svg { width: 100px; height: 100px; }
-      .hero-text h1 { font-size: 2rem; }
-    }
-
-    /* ── LABEL ───────────────────────────────────── */
-    .label {
-      font-size: .7rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--text-light);
-      margin-bottom: 20px;
-    }
-
-    /* ── GRID ────────────────────────────────────── */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    @media (max-width: 780px) { .grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
-
-    /* ── CARD ────────────────────────────────────── */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-lg);
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: box-shadow .2s ease, transform .2s ease;
-    }
-    .card:hover {
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-3px);
-    }
-
-    .card-band { height: 5px; width: 100%; flex-shrink: 0; }
-
-    .card-body {
-      padding: 24px 22px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex: 1;
-    }
-
-    .card-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius-sm);
-      display: grid;
-      place-items: center;
-    }
-    .card-icon svg { width: 20px; height: 20px; }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: -.02em;
-      color: var(--text);
-      line-height: 1.3;
-    }
-
-    .card-desc {
-      font-size: .86rem;
-      color: var(--text-muted);
-      line-height: 1.55;
-      flex: 1;
-    }
-
-    .card-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: .81rem;
-      font-weight: 600;
-      margin-top: 6px;
-      transition: gap .18s ease;
-    }
-    .card:hover .card-cta { gap: 9px; }
-    .card-cta svg { width: 13px; height: 13px; fill: currentColor; }
-
-    /* per-card colours */
-    .c1 .card-band { background: var(--c1); }
-    .c1 .card-icon { background: var(--c1-bg); }
-    .c1 .card-icon svg { fill: var(--c1); }
-    .c1 .card-cta  { color: var(--c1); }
-
-    .c2 .card-band { background: var(--c2); }
-    .c2 .card-icon { background: var(--c2-bg); }
-    .c2 .card-icon svg { fill: var(--c2); }
-    .c2 .card-cta  { color: var(--c2); }
-
-    .c3 .card-band { background: var(--c3); }
-    .c3 .card-icon { background: var(--c3-bg); }
-    .c3 .card-icon svg { fill: var(--c3); }
-    .c3 .card-cta  { color: var(--c3); }
-
-    .c4 .card-band { background: var(--c4); }
-    .c4 .card-icon { background: var(--c4-bg); }
-    .c4 .card-icon svg { fill: var(--c4); }
-    .c4 .card-cta  { color: var(--c4); }
-
-    .badge-new {
-      display: inline-block;
-      font-size: .63rem;
-      font-weight: 700;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      background: var(--c4);
-      color: #fff;
-      padding: 2px 7px;
-      border-radius: 20px;
-      vertical-align: middle;
-      margin-left: 6px;
-      position: relative;
-      top: -1px;
-    }
-
-    /* ── CONTACT SECTION ─────────────────────────── */
-    .contact-section {
-      margin-top: 64px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-lg);
-      padding: 32px 36px;
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      box-shadow: var(--shadow);
-    }
-
-    .contact-icon-wrap {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: var(--c1-bg);
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-    }
-    .contact-icon-wrap svg { width: 24px; height: 24px; fill: var(--c1); }
-
-    .contact-text { flex: 1; }
-    .contact-text h3 {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: -.02em;
-      margin-bottom: 4px;
-    }
-    .contact-text p {
-      font-size: .87rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .contact-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-family: var(--font);
-      font-size: .87rem;
-      font-weight: 600;
-      color: #fff;
-      background: var(--c1);
-      border: none;
-      border-radius: 10px;
-      padding: 11px 22px;
-      cursor: pointer;
-      text-decoration: none;
-      flex-shrink: 0;
-      transition: opacity .15s, transform .15s;
-    }
-    .contact-btn:hover { opacity: .88; transform: translateY(-1px); }
-    .contact-btn svg { width: 15px; height: 15px; fill: currentColor; }
-
-    @media (max-width: 600px) {
-      .contact-section { flex-direction: column; align-items: flex-start; }
-    }
-
-    /* ── FOOTER ──────────────────────────────────── */
-    footer {
-      text-align: center;
-      font-size: .76rem;
-      color: var(--text-light);
-      padding: 28px 0;
-      border-top: 1px solid var(--border);
-      margin-top: 60px;
-    }
-  </style>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Victor KI Use-Case Studio</title>
+<style>
+:root{--bg:#f6f8ff;--ink:#0f172a;--muted:#5b647a;--pri:#5b5cf0;--pri2:#00b3ff;--ok:#1f7a38;--warn:#a16207;--bad:#b91c1c;--line:#d7dff6;--card:#ffffffcc}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,Segoe UI,Arial,sans-serif;color:var(--ink);background:radial-gradient(1100px 650px at 15% -5%,#dbeafe,transparent),radial-gradient(900px 600px at 90% 0,#e9d5ff,transparent),var(--bg)}
+.wrap{max-width:1320px;margin:auto;padding:24px}.hero{background:linear-gradient(140deg,#0b1023,#1e1b4b 46%,#0b1023);color:#fff;border-radius:28px;padding:28px;box-shadow:0 18px 44px rgba(20,30,90,.24)}
+.hero h1{margin:0;font-size:clamp(1.9rem,4vw,3rem)}.hero p{opacity:.9;max-width:930px}.mode{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}.chip{border:1px solid #ffffff40;border-radius:999px;padding:8px 12px;background:#ffffff10;color:#fff;cursor:pointer}.chip.active{background:#fff;color:#0b1023;font-weight:700}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:16px;margin-top:16px}.card{background:var(--card);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:18px;padding:16px}
+fieldset{border:none;padding:0;margin:0 0 12px}.sec{font-weight:700;margin:10px 0}.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}.full{grid-column:1/-1}
+label{font-size:.84rem;font-weight:650;display:block;margin:0 0 5px}input,select,textarea{width:100%;padding:10px;border:1px solid #c7d2fe;border-radius:10px;background:#fff}textarea{min-height:86px}
+button{padding:10px 12px;border-radius:10px;border:1px solid #c7d2fe;background:#fff;cursor:pointer;font-weight:650}.pri{border:none;background:linear-gradient(100deg,var(--pri),var(--pri2));color:#fff}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,.chip:focus-visible{outline:3px solid #111827;outline-offset:2px}
+.actions{display:flex;flex-wrap:wrap;gap:8px}.sticky{position:sticky;top:10px}.badge{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.75rem;font-weight:800;border:1px solid}.ok{background:#dcfce7;color:var(--ok)}.warn{background:#fef3c7;color:var(--warn)}.bad{background:#fee2e2;color:var(--bad)}
+#results{display:none;margin-top:16px}.tabs{display:flex;flex-wrap:wrap;gap:8px}.tab{border-radius:999px}.tab.active{background:#0f172a;color:#fff;border-color:#0f172a}.pane{display:none}.pane.active{display:block}
+.bar{height:10px;background:#e2e8f0;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4f46e5,#06b6d4);transition:.8s}
+.toast{position:fixed;right:14px;bottom:14px;background:#0f172a;color:#fff;padding:10px 14px;border-radius:10px;opacity:0;transform:translateY(10px);transition:.2s}.toast.show{opacity:1;transform:none}
+.drop{border:2px dashed #93c5fd;border-radius:14px;padding:16px;text-align:center;background:#f8fbff}.small{color:var(--muted);font-size:.86rem}
+@media (max-width:1024px){.grid{grid-template-columns:1fr}.g{grid-template-columns:1fr}}
+@media print{body>*:not(#printSummary){display:none!important}#printSummary{display:block!important;padding:20px;white-space:pre-wrap}}
+</style>
 </head>
 <body>
-
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <div class="topbar-inner">
-      <!-- small nav logo -->
-      <div class="nav-logo">
-        <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="34" height="34" rx="8" fill="#b85c38"/>
-          <!-- wrench shape -->
-          <path d="M22.5 8.5c-2.2-.8-4.7-.2-6.4 1.5-1.4 1.4-2 3.3-1.7 5.1l-6 6c-.8.8-.8 2 0 2.8l1.7 1.7c.8.8 2 .8 2.8 0l6-6c1.8.3 3.7-.3 5.1-1.7 1.7-1.7 2.3-4.2 1.5-6.4l-3 3-2-2 3-3z" fill="white"/>
-        </svg>
-      </div>
-      <span class="nav-wordmark"><em>Victor</em> Tools</span>
-      <div class="nav-sep"></div>
-      <a class="nav-contact-btn" href="mailto:victor.schneevoigt@sbk.org?subject=Frage%20zu%20Victor%20Tools">
-        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-        Frage stellen
-      </a>
-    </div>
-  </header>
-
-  <main>
-
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-text">
-        <h1>Pilot: Browser-Tools für<br>den <span>Arbeitsalltag.</span></h1>
-        <p>Kein Login, keine Installation –<br>einfach öffnen und loslegen.</p>
-      </div>
-
-      <!-- Hero Logo -->
-      <div class="hero-logo">
-        <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- outer circle background -->
-          <circle cx="80" cy="80" r="78" fill="#fdf0eb" stroke="#e8c8b0" stroke-width="2"/>
-
-          <!-- gear ring -->
-          <circle cx="80" cy="80" r="52" fill="none" stroke="#e0c0a0" stroke-width="3" stroke-dasharray="8 5"/>
-
-          <!-- inner circle -->
-          <circle cx="80" cy="80" r="38" fill="#b85c38" opacity=".12"/>
-          <circle cx="80" cy="80" r="38" fill="none" stroke="#b85c38" stroke-width="2" opacity=".3"/>
-
-          <!-- wrench icon centred -->
-          <g transform="translate(80,80)">
-            <path d="M14-18c-5.5-2-11.5-.5-15.5 3.5-3.4 3.4-4.8 8-4 12.4L-20 13c-1.9 1.9-1.9 5 0 6.9l4.1 4.1c1.9 1.9 5 1.9 6.9 0l14.6-14.6c4.4.8 9-.6 12.4-4 4-4 5.5-10 3.5-15.5l-7.3 7.3-4.9-4.9 7.3-7.3z" fill="#b85c38"/>
-          </g>
-
-          <!-- "VT" monogram subtle -->
-          <text x="80" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#b85c38" opacity=".55" letter-spacing="3">VICTOR TOOLS</text>
-
-          <!-- small dots decoration -->
-          <circle cx="80" cy="18" r="3" fill="#b85c38" opacity=".4"/>
-          <circle cx="80" cy="142" r="3" fill="#b85c38" opacity=".4"/>
-          <circle cx="18" cy="80" r="3" fill="#b85c38" opacity=".4"/>
-          <circle cx="142" cy="80" r="3" fill="#b85c38" opacity=".4"/>
-        </svg>
-      </div>
-    </section>
-
-    <!-- TOOLS -->
-    <p class="label">Verfügbare Tools</p>
-    <div class="grid">
-
-      <a class="card c1" href="anforderungs-assistent/">
-        <div class="card-band"></div>
-        <div class="card-body">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-          </div>
-          <div class="card-title">Anforderungs Assistent</div>
-          <div class="card-desc">Iterativer Sparringspartner zum Erarbeiten von JIRA-Anforderungen</div>
-          <span class="card-cta">
-            Öffnen
-            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <a class="card c2" href="api-katalog-manager/">
-        <div class="card-band"></div>
-        <div class="card-body">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 14H7v-2h4v2zm0-4H7v-2h4v2zm0-4H7V7h4v2zm6 8h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V7h4v2z"/></svg>
-          </div>
-          <div class="card-title">API Katalog Manager</div>
-          <div class="card-desc">Excel-Kataloge durchsuchen und Quartalsvergleiche als PowerPoint exportieren</div>
-          <span class="card-cta">
-            Öffnen
-            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <a class="card c3" href="ki-usecase-einordnung/">
-        <div class="card-band"></div>
-        <div class="card-body">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
-          </div>
-          <div class="card-title">KI Usecase Einordnung</div>
-          <div class="card-desc">Quiz-Tool zum Einordnen von KI-Use-Cases in 6 Kategorien</div>
-          <span class="card-cta">
-            Öffnen
-            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <a class="card c4" href="KI-News-Template/">
-        <div class="card-band"></div>
-        <div class="card-body">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M22 3l-1.67 1.67L18.67 3 17 4.67 15.33 3l-1.66 1.67L12 3l-1.67 1.67L8.67 3 7 4.67 5.33 3 3.67 4.67 2 3v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V3zm-2 16H4V5.08l.33.29L6.33 4 8 5.67 9.67 4l1.66 1.67L13 4l1.67 1.67L16.33 4 18 5.67l1.67-1.34.33.29V19zM5 15h14v2H5zm0-4h8v2H5zm0-4h8v2H5zm10 0h4v6h-4z"/></svg>
-          </div>
-          <div class="card-title">
-            KI News Template
-            <span class="badge-new">Neu</span>
-          </div>
-          <div class="card-desc">Template zum strukturierten Aufbereiten und Teilen von KI-News im Team</div>
-          <span class="card-cta">
-            Öffnen
-            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-          </span>
-        </div>
-      </a>
-
-    </div>
-
-    <!-- CONTACT SECTION -->
-    <div class="contact-section">
-      <div class="contact-icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-      </div>
-      <div class="contact-text">
-        <h3>Fragen oder Ideen?</h3>
-        <p>Feedback, Wünsche für neue Tools oder Bugs direkt melden – Victor antwortet schnell.</p>
-      </div>
-      <a class="contact-btn" href="mailto:victor.schneevoigt@sbk.org?subject=Frage%20zu%20Victor%20Tools">
-        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-        E-Mail schreiben
-      </a>
-    </div>
-
-  </main>
-
-  <footer>
-    Victor Tools · SBK Siemens Betriebskrankenkasse · Kein Login, keine Installation
-  </footer>
-
+<div class="wrap">
+<header class="hero">
+<h1>KI-Use-Cases bewerten. Schärfer. Schneller. Übergabefähig.</h1>
+<p>Ausdata-inspirierte, moderne Studio-Oberfläche: zwei Pfade für Victor – (1) PDF-Template analysieren, (2) Formular nutzen und daraus eine starke Anforderung erzeugen.</p>
+<div class="mode" role="tablist" aria-label="Use-Case-Modus">
+<button class="chip active" id="modePdf">Use Case A · PDF-Analyse</button>
+<button class="chip" id="modeForm">Use Case B · Formular zu Anforderung</button>
+</div>
+</header>
+<div class="grid">
+<section class="card" id="left"></section>
+<aside class="card sticky" id="side" aria-live="polite"></aside>
+</div>
+<section class="card" id="results"></section>
+<section id="printSummary" style="display:none"></section>
+</div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script>
+const state={mode:'pdf',assessment:null};
+const formFields=[['title','Titel'],['department','Fachbereich'],['submitter','Einreicher'],['goal','Ziel / Nutzen','textarea'],['description','Kurzbeschreibung','textarea'],['inputData','Input-Daten','textarea'],['sources','Datenquellen','textarea'],['output','Erwarteter Output','textarea'],['outputExample','Output-Beispiel','textarea'],['textGen','Textgenerierung','select',['Ja','Nein','Unklar']],['mlTask','Klassifikation/Prognose/Optimierung','select',['Ja','Nein','Unklar']],['assistant','Chatbot/Assistent','select',['Ja','Nein','Unklar']],['humanCheck','Menschliche Prüfung','select',['Ja','Nein','Unklar']],['qualityDefined','Qualitätskriterien','select',['Ja','Teilweise','Nein','Unklar']],['acceptance','Abnahmekriterien','textarea'],['personalData','Personenbezogene Daten','select',['Ja','Nein','Unklar']],['highRiskDomain','Hochrisikobereich','select',['Ja','Nein','Unklar']],['privacyConcept','Datenschutz-/Löschkonzept','select',['Ja','Teilweise','Nein','Unklar']],['impact','Business Impact','textarea'],['strategicRelevance','Strategische Relevanz','select',['Niedrig','Mittel','Hoch','Unklar']],['victorNotes','Victors Notizen','textarea']];
+function leftPanel(){const p=document.getElementById('left');p.innerHTML=state.mode==='pdf'?pdfView():formView();bindLeft();renderSide();}
+function pdfView(){return `<h2>Use Case A: PDF hochladen und analysieren</h2><p class='small'>Lokal: PDF-Dateiname & Metadaten werden ausgelesen. Inhaltliche KI-Analyse erfolgt regelbasiert vorbereitend (LLM-ready Architektur).</p><div class='drop'><label for='pdfFile'><strong>PDF-Template hier auswählen</strong></label><input id='pdfFile' type='file' accept='.pdf,application/pdf' aria-label='PDF hochladen'></div><div id='pdfMeta' class='small' style='margin-top:10px'>Noch keine Datei geladen.</div><div class='actions' style='margin-top:10px'><button class='pri' id='analyzePdf'>PDF Use Case bewerten</button><button id='loadExamplePdf'>Beispielinhalt laden</button><button id='resetPdf'>Reset</button></div>`}
+function formView(){return `<h2>Use Case B: Formular zu starker Anforderung</h2><form id='f'>${formFields.map(f=>field(f)).join('')}<div class='actions'><button type='button' class='pri' id='evalForm'>Use Case bewerten</button><button type='button' id='ex'>Beispieldaten laden</button><button type='button' id='save'>Zwischenstand speichern</button><button type='button' id='load'>Gespeicherten Stand laden</button><button type='button' id='clear'>Lokale Daten löschen</button></div></form>`}
+function field([id,l,t='text',opts=[]]){if(t==='select')return `<div><label for='${id}'>${l}</label><select id='${id}'><option value=''>Bitte wählen</option>${opts.map(o=>`<option>${o}</option>`).join('')}</select></div>`;return `<div class='${t==='textarea'?'full':''}'><label for='${id}'>${l}</label>${t==='textarea'?`<textarea id='${id}'></textarea>`:`<input id='${id}'>`}</div>`}
+function collect(){const d={};formFields.forEach(([id])=>d[id]=(document.getElementById(id)?.value||'').trim());return d}
+function detectType(d){const txt=JSON.stringify(d).toLowerCase();const llm=/chatbot|llm|gpt|dokument|text|prompt|zusammenfassung/.test(txt)||d.textGen==='Ja'||d.assistant==='Ja';const ml=/prognose|klassifikation|optimierung|forecast|ml|machine learning/.test(txt)||d.mlTask==='Ja';if(llm&&ml)return['Hybrid: LLM + ML','LLM- und ML-Merkmale erkannt.'];if(llm)return['LLM-orientiert','Text-/Dokumenten-/Assistentenlogik erkannt.'];if(ml)return['ML-orientiert','Prognose-/Klassifikationslogik erkannt.'];return['Unklar – nachschärfen','Zu wenige Signale für ML/LLM.']}
+function risk(d){let r='🟢 Geringes Risiko',why='Interne Unterstützung ohne starke Risikotreiber.';if(/social scoring|manipulation|biometr|emotionserkennung/.test(JSON.stringify(d).toLowerCase())){r='🔴 Inakzeptables Risiko';why='Mögliche verbotene Praktik.'}else if(d.highRiskDomain==='Ja'||(d.personalData==='Ja'&&d.humanCheck!=='Ja')){r='🟠 Hochrisiko';why='Hochrisikofeld oder Personenbezug mit schwacher Kontrolle.'}else if(d.textGen==='Ja'||d.assistant==='Ja'){r='🟡 Begrenztes Risiko';why='Generative Interaktion erfordert Transparenzmaßnahmen.'}if(d.privacyConcept==='Unklar'&&r==='🟢 Geringes Risiko'){r='🟡 Begrenztes Risiko';why+=' Vorläufig wegen unklarer Datenschutzangaben.'}return {level:r,why}}
+function evaluate(d){const miss=['goal','inputData','sources','output','qualityDefined','privacyConcept','impact'].filter(k=>!d[k]||d[k]==='Unklar');const [type,typeWhy]=detectType(d);const r=risk(d);const score=Math.max(0,100-(miss.length*12)-(r.level.startsWith('🟠')?16:0)-(r.level.startsWith('🔴')?40:0));const overall=miss.length>4||r.level.startsWith('🔴')?'Rot':miss.length>=2?'Gelb':'Grün';const cat=score>=75?'MVP-tauglich':score>=60?'POC-tauglich':score>=40?'Frühe Idee':'Nicht bewertungsreif';const qs=[];if(!d.goal)qs.push('Welche konkrete Entscheidung/Tätigkeit unterstützt die KI?');if(!d.sources)qs.push('Welche Datenquellen sind konkret verfügbar?');if(!d.output)qs.push('Wie sieht ein konkretes Output-Beispiel aus?');if(d.humanCheck!=='Ja')qs.push('Wer übernimmt Human-in-the-loop vor Nutzung?');const jira=overall==='Grün'?'Deine Beschreibung ist vollständig und gut verständlich. IT-Analytik prüft das Ticket als nächsten Schritt.':`Danke für deinen Use Case. Bitte beantworte folgende Rückfragen:\n- ${qs.join('\n- ')}`;const summary=`Titel: ${d.title||'—'}\nUse-Case-Typ: ${type}\nReifegrad: ${score}/100\nGesamtampel: ${overall}\nEU-AI-Act: ${r.level}\nKategorie: ${cat}\n\nZiel/Nutzen: ${d.goal||'—'}\nOffene Punkte: ${miss.join(', ')||'keine'}\nNächster Schritt: ${qs[0]||'IT-Handover starten.'}`;return {data:d,type,typeWhy,risk:r,missing:miss,score,overall,category:cat,questions:qs,jira,summary}}
+function render(a){state.assessment=a;const el=document.getElementById('results');el.style.display='block';el.innerHTML=`<h2>Bewertungsdashboard</h2><p><span class='badge ${a.overall==='Grün'?'ok':a.overall==='Gelb'?'warn':'bad'}'>${a.overall}</span> <strong>${a.type}</strong> · ${a.typeWhy}</p><div class='bar'><i id='fill'></i></div><p><strong>Score:</strong> ${a.score}/100 · <strong>EU AI Act:</strong> ${a.risk.level} (${a.risk.why})</p><div class='tabs'>${['Überblick','Rückfragen','JIRA-Kommentar','Management Summary','JSON'].map((t,i)=>`<button class='tab ${i===0?'active':''}' data-t='p${i}'>${t}</button>`).join('')}</div><div id='p0' class='pane active'><p><strong>Kategorie:</strong> ${a.category}</p><p><strong>Top-Lücken:</strong> ${a.missing.join(', ')||'keine'}</p></div><div id='p1' class='pane'><ul>${a.questions.map(q=>`<li>${q}</li>`).join('')}</ul></div><div id='p2' class='pane'><pre>${a.jira}</pre><button id='copyJ'>JIRA-Kommentar kopieren</button></div><div id='p3' class='pane'><div class='actions'><button id='genS'>Management Summary generieren</button><button id='copyS'>Management Summary kopieren</button><button id='printS'>Druckansicht Management Summary</button></div><pre id='sum'></pre></div><div id='p4' class='pane'><div class='actions'><button id='export'>Bewertung als JSON exportieren</button><button id='copyJson'>JSON kopieren</button></div><pre id='json'>${JSON.stringify(payload(a),null,2)}</pre></div>`;setTimeout(()=>document.getElementById('fill').style.width=a.score+'%',40);bindResults();el.scrollIntoView({behavior:'smooth'});renderSide();}
+function bindResults(){document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');document.querySelectorAll('.pane').forEach(p=>p.classList.remove('active'));document.getElementById(t.dataset.t).classList.add('active')});document.getElementById('copyJ').onclick=()=>copy(state.assessment.jira,'JIRA-Kommentar kopiert.');document.getElementById('genS').onclick=()=>{document.getElementById('sum').textContent=state.assessment.summary;toast('Management Summary generiert.')};document.getElementById('copyS').onclick=()=>copy(state.assessment.summary,'Management Summary kopiert.');document.getElementById('printS').onclick=()=>{document.getElementById('printSummary').textContent=state.assessment.summary;window.print()};document.getElementById('export').onclick=exportJson;document.getElementById('copyJson').onclick=()=>copy(document.getElementById('json').textContent,'JSON kopiert.');}
+function payload(a){return {timestamp:new Date().toISOString(),mode:state.mode,eingabedaten:a.data,useCaseTyp:a.type,reifegrad:a.score,gesamtampel:a.overall,euAiAct:a.risk,rueckfragen:a.questions,jiraKommentar:a.jira,managementSummary:a.summary,topLuecken:a.missing}}
+function exportJson(){const b=new Blob([JSON.stringify(payload(state.assessment),null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='ki-use-case-bewertung-'+new Date().toISOString().slice(0,10)+'.json';a.click();URL.revokeObjectURL(a.href);toast('JSON exportiert.');}
+async function copy(t,m){try{if(navigator.clipboard)await navigator.clipboard.writeText(t);else{const x=document.createElement('textarea');x.value=t;document.body.appendChild(x);x.select();document.execCommand('copy');x.remove()}toast(m)}catch{toast('Kopieren fehlgeschlagen.')}}
+function renderSide(){const s=state.assessment;s?document.getElementById('side').innerHTML=`<h3>Assessment Panel</h3><p><strong>Status:</strong> ${s.overall}</p><p><strong>Nächste beste Aktion:</strong><br>${s.questions[0]||'IT-Übergabe starten.'}</p><p><strong>bereit für IT-Analytik?</strong><br>${s.missing.includes('sources')?'offen':'erfüllt'} · ${s.missing.includes('output')?'offen':'erfüllt'} · ${s.data.humanCheck==='Ja'?'erfüllt':'teilweise'}</p><p><strong>bereit für Steuerkreis KI?</strong><br>${s.data.impact?'erfüllt':'offen'} · ${s.risk.level} · ${s.score>=75?'erfüllt':'teilweise'}</p>`:document.getElementById('side').innerHTML='<h3>Assessment Panel</h3><p>Noch keine Bewertung vorhanden.</p>'}
+function bindLeft(){if(state.mode==='pdf'){let pdfData={};document.getElementById('pdfFile').onchange=e=>{const f=e.target.files[0];if(!f)return;pdfData={title:f.name,description:'PDF-Template Upload',goal:'Automatisierte Analyse eines eingereichten Templates',inputData:'PDF-Inhalt',sources:'PDF-Upload',output:'Bewertung mit Rückfragen',textGen:'Ja',assistant:'Ja',qualityDefined:'Teilweise',privacyConcept:'Unklar',impact:'Schnellere Vorprüfung'};document.getElementById('pdfMeta').textContent=`Datei: ${f.name} · ${(f.size/1024).toFixed(1)} KB`;};document.getElementById('analyzePdf').onclick=()=>{if(!pdfData.title)return toast('Bitte erst PDF hochladen.');render(evaluate(pdfData));};document.getElementById('loadExamplePdf').onclick=()=>{pdfData={title:'usecase-template.pdf',description:'Template mit Use-Case-Skizze',goal:'Standardisierte Vorprüfung',inputData:'Template-Felder',sources:'JIRA+PDF',output:'JIRA-Kommentar + Summary',textGen:'Ja',assistant:'Ja',qualityDefined:'Teilweise',privacyConcept:'Unklar',impact:'Weniger Rückfragen'};document.getElementById('pdfMeta').textContent='Beispieldatei simuliert: usecase-template.pdf';toast('Beispielinhalt geladen.');};document.getElementById('resetPdf').onclick=()=>{leftPanel();toast('PDF-Ansicht zurückgesetzt.');};}else{document.getElementById('evalForm').onclick=()=>render(evaluate(collect()));document.getElementById('ex').onclick=()=>{const x={title:'Automatisierte Vorbewertung von KI-Use-Cases',department:'KI-Governance / Business Analyse',submitter:'Victor',description:'Ein KI-Assistent prüft eingereichte Use Cases und erzeugt Rückfragen.',goal:'Standardisierte und schnellere Vorprüfung für IT/FEX/Steuerkreis.',inputData:'Prozesstemplate, JIRA-Ticket',sources:'JIRA, Prozesstemplate',output:'Ampelbewertung, Rückfragen, JIRA-Kommentar',outputExample:'Gesamtampel Gelb mit priorisierten Rückfragen',textGen:'Ja',mlTask:'Nein',assistant:'Ja',humanCheck:'Ja',qualityDefined:'Teilweise',acceptance:'Stichprobenprüfung durch Victor',personalData:'Unklar',highRiskDomain:'Nein',privacyConcept:'Unklar',impact:'Weniger Rückfragen und schnellere Freigabe',strategicRelevance:'Mittel'};Object.entries(x).forEach(([k,v])=>{const el=document.getElementById(k);if(el)el.value=v});toast('Beispieldaten geladen.');};document.getElementById('save').onclick=()=>{localStorage.setItem('victorDraft',JSON.stringify(collect()));toast('Zwischenstand gespeichert.');};document.getElementById('load').onclick=()=>{const r=localStorage.getItem('victorDraft');if(!r)return toast('Kein gespeicherter Stand.');Object.entries(JSON.parse(r)).forEach(([k,v])=>{const el=document.getElementById(k);if(el)el.value=v});toast('Gespeicherter Stand geladen.');};document.getElementById('clear').onclick=()=>{localStorage.removeItem('victorDraft');toast('Lokale Daten gelöscht.');};}}
+function toast(t){const x=document.getElementById('toast');x.textContent=t;x.classList.add('show');setTimeout(()=>x.classList.remove('show'),1700)}
+document.getElementById('modePdf').onclick=()=>{state.mode='pdf';document.getElementById('modePdf').classList.add('active');document.getElementById('modeForm').classList.remove('active');leftPanel()};
+document.getElementById('modeForm').onclick=()=>{state.mode='form';document.getElementById('modeForm').classList.add('active');document.getElementById('modePdf').classList.remove('active');leftPanel()};
+leftPanel();
+</script>
 </body>
 </html>
