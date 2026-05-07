@@ -32,6 +32,8 @@
       --c3-bg:   #fdf6e3;
       --c4:      #5a4e8c;   /* muted violet – KI News */
       --c4-bg:   #f0eef8;
+      --c5:      #2f7f9f;   /* teal blue     – Dienstplaner */
+      --c5-bg:   #e8f5f8;
 
       --radius-lg: 16px;
       --radius-sm: 10px;
@@ -265,6 +267,11 @@
     .c4 .card-icon svg { fill: var(--c4); }
     .c4 .card-cta  { color: var(--c4); }
 
+    .c5 .card-band { background: var(--c5); }
+    .c5 .card-icon { background: var(--c5-bg); }
+    .c5 .card-icon svg { fill: var(--c5); }
+    .c5 .card-cta  { color: var(--c5); }
+
     .badge-new {
       display: inline-block;
       font-size: .63rem;
@@ -474,6 +481,24 @@
             <span class="badge-new">Neu</span>
           </div>
           <div class="card-desc">Template zum strukturierten Aufbereiten und Teilen von KI-News im Team</div>
+          <span class="card-cta">
+            Öffnen
+            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
+          </span>
+        </div>
+      </a>
+
+      <a class="card c5" href="dienstplaner/">
+        <div class="card-band"></div>
+        <div class="card-body">
+          <div class="card-icon">
+            <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V9h14v10zM7 11h5v5H7z"/></svg>
+          </div>
+          <div class="card-title">
+            Dienstplaner
+            <span class="badge-new">Neu</span>
+          </div>
+          <div class="card-desc">Dienstpläne erstellen, Schichten fair verteilen und Auswertungen transparent exportieren</div>
           <span class="card-cta">
             Öffnen
             <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
