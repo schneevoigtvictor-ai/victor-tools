@@ -1,508 +1,817 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Victor Tools</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      /* Warm Claude-like palette */
-      --bg:           #f5efe6;
-      --bg-card:      #fdf8f2;
-      --bg-topbar:    #fdf8f2;
-      --border:       #e8ddd0;
-      --border-card:  #ecdfd0;
-
-      --text:         #1c1611;
-      --text-muted:   #7a6a58;
-      --text-light:   #a8967e;
-
-      --blue:         #c17d3a;   /* warm amber-brown as primary accent */
-      --blue-light:   #f5ece0;
-
-      /* tool accent colours – warm toned */
-      --c1:      #b85c38;   /* terracotta  – Anforderungs Assistent */
-      --c1-bg:   #fdf0eb;
-      --c2:      #3a7d6e;   /* sage green  – API Katalog */
-      --c2-bg:   #eaf4f1;
-      --c3:      #8b6914;   /* gold        – KI Usecase */
-      --c3-bg:   #fdf6e3;
-      --c4:      #5a4e8c;   /* muted violet – KI News */
-      --c4-bg:   #f0eef8;
-
-      --radius-lg: 16px;
-      --radius-sm: 10px;
-      --shadow:    0 1px 2px rgba(80,50,20,.06), 0 4px 18px rgba(80,50,20,.08);
-      --shadow-hover: 0 6px 24px rgba(80,50,20,.14), 0 1px 3px rgba(80,50,20,.08);
-      --font: 'DM Sans', system-ui, sans-serif;
-    }
-
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ── TOPBAR ──────────────────────────────────── */
-    .topbar {
-      background: var(--bg-topbar);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-    .topbar-inner {
-      max-width: 1040px;
-      margin: 0 auto;
-      height: 58px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    /* SVG logo mark */
-    .nav-logo {
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-    }
-    .nav-logo svg { width: 34px; height: 34px; }
-
-    .nav-wordmark {
-      font-size: .95rem;
-      font-weight: 700;
-      letter-spacing: -.02em;
-      color: var(--text);
-    }
-    .nav-wordmark em { font-style: normal; color: var(--c1); }
-
-    .nav-sep { flex: 1; }
-
-    .nav-contact-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-family: var(--font);
-      font-size: .82rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      background: transparent;
-      border: 1px solid var(--border-card);
-      border-radius: 8px;
-      padding: 7px 14px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background .15s, color .15s, border-color .15s;
-    }
-    .nav-contact-btn:hover {
-      background: var(--c1-bg);
-      color: var(--c1);
-      border-color: var(--c1);
-    }
-    .nav-contact-btn svg { width: 14px; height: 14px; fill: currentColor; }
-
-    /* ── MAIN ────────────────────────────────────── */
-    main {
-      max-width: 1040px;
-      margin: 0 auto;
-      padding: 60px 32px 100px;
-    }
-
-    /* ── HERO ────────────────────────────────────── */
-    .hero {
-      display: flex;
-      align-items: center;
-      gap: 40px;
-      margin-bottom: 64px;
-    }
-
-    .hero-text { flex: 1; }
-
-    .hero-text h1 {
-      font-size: 2.6rem;
-      font-weight: 700;
-      letter-spacing: -.05em;
-      line-height: 1.12;
-      color: var(--text);
-      margin-bottom: 14px;
-    }
-    .hero-text h1 span { color: var(--c1); }
-
-    .hero-text p {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-      line-height: 1.65;
-      max-width: 400px;
-    }
-
-    /* ── BIG LOGO ────────────────────────────────── */
-    .hero-logo {
-      flex-shrink: 0;
-      width: 160px;
-      height: 160px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .hero-logo svg { width: 160px; height: 160px; }
-
-    @media (max-width: 640px) {
-      .hero { flex-direction: column; gap: 24px; }
-      .hero-logo { width: 100px; height: 100px; }
-      .hero-logo svg { width: 100px; height: 100px; }
-      .hero-text h1 { font-size: 2rem; }
-    }
-
-    /* ── LABEL ───────────────────────────────────── */
-    .label {
-      font-size: .7rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--text-light);
-      margin-bottom: 20px;
-    }
-
-    /* ── GRID ────────────────────────────────────── */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-    @media (max-width: 780px) { .grid { grid-template-columns: repeat(2,1fr); } }
-    @media (max-width: 500px) { .grid { grid-template-columns: 1fr; } }
-
-    /* ── CARD ────────────────────────────────────── */
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-lg);
-      text-decoration: none;
-      color: inherit;
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      transition: box-shadow .2s ease, transform .2s ease;
-    }
-    .card:hover {
-      box-shadow: var(--shadow-hover);
-      transform: translateY(-3px);
-    }
-
-    .card-band { height: 5px; width: 100%; flex-shrink: 0; }
-
-    .card-body {
-      padding: 24px 22px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex: 1;
-    }
-
-    .card-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: var(--radius-sm);
-      display: grid;
-      place-items: center;
-    }
-    .card-icon svg { width: 20px; height: 20px; }
-
-    .card-title {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: -.02em;
-      color: var(--text);
-      line-height: 1.3;
-    }
-
-    .card-desc {
-      font-size: .86rem;
-      color: var(--text-muted);
-      line-height: 1.55;
-      flex: 1;
-    }
-
-    .card-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: .81rem;
-      font-weight: 600;
-      margin-top: 6px;
-      transition: gap .18s ease;
-    }
-    .card:hover .card-cta { gap: 9px; }
-    .card-cta svg { width: 13px; height: 13px; fill: currentColor; }
-
-    /* per-card colours */
-    .c1 .card-band { background: var(--c1); }
-    .c1 .card-icon { background: var(--c1-bg); }
-    .c1 .card-icon svg { fill: var(--c1); }
-    .c1 .card-cta  { color: var(--c1); }
-
-    .c2 .card-band { background: var(--c2); }
-    .c2 .card-icon { background: var(--c2-bg); }
-    .c2 .card-icon svg { fill: var(--c2); }
-    .c2 .card-cta  { color: var(--c2); }
-
-    .c3 .card-band { background: var(--c3); }
-    .c3 .card-icon { background: var(--c3-bg); }
-    .c3 .card-icon svg { fill: var(--c3); }
-    .c3 .card-cta  { color: var(--c3); }
-
-    .c4 .card-band { background: var(--c4); }
-    .c4 .card-icon { background: var(--c4-bg); }
-    .c4 .card-icon svg { fill: var(--c4); }
-    .c4 .card-cta  { color: var(--c4); }
-
-    .badge-new {
-      display: inline-block;
-      font-size: .63rem;
-      font-weight: 700;
-      letter-spacing: .05em;
-      text-transform: uppercase;
-      background: var(--c4);
-      color: #fff;
-      padding: 2px 7px;
-      border-radius: 20px;
-      vertical-align: middle;
-      margin-left: 6px;
-      position: relative;
-      top: -1px;
-    }
-
-    /* ── CONTACT SECTION ─────────────────────────── */
-    .contact-section {
-      margin-top: 64px;
-      background: var(--bg-card);
-      border: 1px solid var(--border-card);
-      border-radius: var(--radius-lg);
-      padding: 32px 36px;
-      display: flex;
-      align-items: center;
-      gap: 28px;
-      box-shadow: var(--shadow);
-    }
-
-    .contact-icon-wrap {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: var(--c1-bg);
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-    }
-    .contact-icon-wrap svg { width: 24px; height: 24px; fill: var(--c1); }
-
-    .contact-text { flex: 1; }
-    .contact-text h3 {
-      font-size: 1rem;
-      font-weight: 700;
-      letter-spacing: -.02em;
-      margin-bottom: 4px;
-    }
-    .contact-text p {
-      font-size: .87rem;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-
-    .contact-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-family: var(--font);
-      font-size: .87rem;
-      font-weight: 600;
-      color: #fff;
-      background: var(--c1);
-      border: none;
-      border-radius: 10px;
-      padding: 11px 22px;
-      cursor: pointer;
-      text-decoration: none;
-      flex-shrink: 0;
-      transition: opacity .15s, transform .15s;
-    }
-    .contact-btn:hover { opacity: .88; transform: translateY(-1px); }
-    .contact-btn svg { width: 15px; height: 15px; fill: currentColor; }
-
-    @media (max-width: 600px) {
-      .contact-section { flex-direction: column; align-items: flex-start; }
-    }
-
-    /* ── FOOTER ──────────────────────────────────── */
-    footer {
-      text-align: center;
-      font-size: .76rem;
-      color: var(--text-light);
-      padding: 28px 0;
-      border-top: 1px solid var(--border);
-      margin-top: 60px;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dienstplaner · SBK Hilfsmittel</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --c-brand:#003C6E;--c-brand-dark:#002B52;--c-brand-light:#BAF6FF;--c-brand-mid:#2B6CB0;
+  --c-bg:#F0F4F8;--c-surface:#FFFFFF;--c-border:#E2E8F0;--c-border-mid:#CBD5E0;
+  --c-text:#1A202C;--c-text-mid:#4A5568;--c-text-soft:#718096;--c-text-faint:#A0AEC0;
+  --c-warn-bg:#FFFBEB;--c-warn:#7B341E;--c-warn-border:#F6E05E;
+  --r-sm:6px;--r-md:10px;--r-lg:14px;--r-xl:20px;--r-full:9999px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--c-bg);font-family:'DM Sans',sans-serif;color:var(--c-text);font-size:15px;line-height:1.65}
+.topbar{height:60px;background:var(--c-brand-dark);color:#fff;display:flex;align-items:center;padding:0 24px;gap:12px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.topbar .bl{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+.topbar .tn{font-family:'Fraunces',serif;font-size:1.1rem;font-weight:700}
+.tabs{display:flex;gap:2px;background:var(--c-surface);border-bottom:2px solid var(--c-border);padding:0 24px;overflow-x:auto}
+.tab{padding:10px 18px;font-family:inherit;font-size:13px;font-weight:700;color:var(--c-text-soft);background:0;border:0;border-bottom:2px solid transparent;margin-bottom:-2px;cursor:pointer;white-space:nowrap;transition:.15s}
+.tab:hover{color:var(--c-text-mid)}.tab.on{color:var(--c-brand);border-bottom-color:var(--c-brand)}
+.btn{font-family:inherit;font-size:13px;font-weight:700;border-radius:var(--r-md);padding:9px 20px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:.15s;border:1.5px solid transparent}
+.btn-p{background:var(--c-brand);color:#fff;border-color:var(--c-brand)}.btn-p:hover{background:var(--c-brand-dark)}
+.btn-s{background:#fff;color:var(--c-brand);border-color:var(--c-brand)}.btn-s:hover{background:var(--c-brand);color:#fff}
+.btn-g{background:0;color:var(--c-text-mid);border-color:var(--c-border-mid)}.btn-g:hover{border-color:var(--c-text-mid)}
+.btn-ok{background:#16A34A;color:#fff;border-color:#16A34A}.btn-ok:hover{background:#15803D}
+.btn-d{background:0;color:#C53030;border-color:#FC8181}.btn-d:hover{background:#FFF5F5}
+.btn-sm{padding:6px 12px;font-size:12px;border-radius:var(--r-sm)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.card{background:var(--c-surface);border:1px solid var(--c-border);border-radius:var(--r-lg);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.card-h{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--c-border);background:#FAFBFC;gap:8px;flex-wrap:wrap}
+.card-h h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--c-text-mid);display:flex;align-items:center;gap:8px}
+.card-b{padding:20px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{background:#F7FAFC;color:var(--c-text-mid);font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:9px 12px;border:1px solid var(--c-border);text-align:left;white-space:nowrap}
+.tbl td{padding:10px 12px;border:1px solid var(--c-border);vertical-align:top;line-height:1.5}
+.tbl tr:nth-child(even) td{background:#FAFBFC}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:500;padding:24px}
+.modal{background:#fff;border-radius:var(--r-xl);padding:28px 32px;max-width:600px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.18);max-height:90vh;overflow-y:auto}
+.modal h3{font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:16px}
+.modal label{display:block;font-size:13px;font-weight:700;color:var(--c-text-mid);margin-bottom:4px;margin-top:14px}
+.modal label:first-of-type{margin-top:0}
+.inp{width:100%;padding:10px 14px;border:1.5px solid var(--c-border);border-radius:var(--r-md);font-family:inherit;font-size:14px;color:var(--c-text);outline:0;transition:.15s}
+.inp:focus{border-color:var(--c-brand-mid);box-shadow:0 0 0 3px rgba(43,108,176,.1)}
+select.inp{appearance:auto;cursor:pointer}
+.toast{position:fixed;bottom:20px;right:20px;background:var(--c-brand-dark);color:#fff;border-radius:var(--r-md);padding:11px 18px;font-size:13px;font-weight:500;box-shadow:0 10px 25px rgba(0,0,0,.12);transform:translateY(44px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:600}
+.toast.on{transform:translateY(0);opacity:1}.toast.ok{background:#16A34A}.toast.warn{background:#C05621}.toast.err{background:#C53030}
+.info-btn{width:20px;height:20px;border-radius:50%;background:#EBF8FF;color:var(--c-brand-mid);border:1px solid #BEE3F8;font-size:11px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;font-family:inherit}
+.info-btn:hover{background:var(--c-brand-mid);color:#fff}
+.info-pop{position:absolute;z-index:300;background:#fff;border:1px solid var(--c-border);border-radius:var(--r-lg);padding:16px 20px;box-shadow:0 8px 24px rgba(0,0,0,.1);max-width:340px;font-size:13px;color:var(--c-text-mid);line-height:1.6}
+.info-pop strong{color:var(--c-text)}
+.info-pop .ex{background:#F7FAFC;border:1px solid var(--c-border);border-radius:var(--r-sm);padding:8px 12px;margin-top:8px;font-size:12px}
+.nav{background:var(--c-surface);border-bottom:1px solid var(--c-border);padding:10px 24px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.nav-btn{background:0;border:1.5px solid var(--c-border);color:var(--c-text-mid);padding:4px 12px;cursor:pointer;border-radius:var(--r-sm);font-size:18px;font-family:inherit;line-height:1;transition:.15s}
+.nav-btn:hover{border-color:var(--c-brand-mid);color:var(--c-brand)}
+.nav-title{font-family:'Fraunces',serif;font-size:16px;font-weight:700;min-width:180px;text-align:center}
+.sl{display:inline-flex;align-items:center;padding:2px 8px;border-radius:var(--r-sm);font-size:11px;font-weight:700;border:1px solid}
+.dot{width:8px;height:8px;border-radius:2px;display:inline-block;flex-shrink:0}
+.dot-sm{width:6px;height:6px;border-radius:2px;display:inline-block;flex-shrink:0}
+.cell{cursor:pointer;padding:3px 10px;border-radius:var(--r-sm);display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:500;transition:.15s;min-width:70px;border:1px solid transparent}
+.cell:hover{border-color:var(--c-brand-mid)}.cell.empty{color:var(--c-text-faint);border:1px dashed var(--c-border)}
+.cell-sel{padding:4px 8px;border:1.5px solid var(--c-brand-mid);border-radius:var(--r-sm);font-family:inherit;font-size:13px;color:var(--c-text);background:var(--c-surface);outline:0;box-shadow:0 0 0 3px rgba(43,108,176,.1)}
+.bar-t{height:6px;background:var(--c-border);border-radius:var(--r-full);overflow:hidden}
+.bar-f{height:100%;border-radius:var(--r-full);transition:width .3s}
+.abs-d{width:100%;height:30px;border-radius:var(--r-sm);border:1.5px solid var(--c-border);cursor:pointer;background:var(--c-surface);color:var(--c-text-mid);font-size:11px;font-family:inherit;font-weight:500;display:flex;align-items:center;justify-content:center;transition:.15s;position:relative}
+.abs-d:hover{border-color:var(--c-brand-mid)}
+.abs-d.hol{background:var(--c-warn-bg);border-color:var(--c-warn-border);color:var(--c-warn);cursor:default}
+.abs-d.abs-urlaub{background:#EDE9FE;border-color:#C4B5FD;color:#553C9A;font-weight:700}
+.abs-d.abs-gleit{background:#E6FFFA;border-color:#81E6D9;color:#234E52;font-weight:700}
+.abs-d.abs-krank{background:#FFF5F5;border-color:#FC8181;color:#742A2A;font-weight:700}
+.abs-d.abs-kindkrank{background:#FFF5F5;border-color:#FEB2B2;color:#9B2C2C;font-weight:700}
+.abs-d.abs-seminar{background:#EBF8FF;border-color:#90CDF4;color:#2A4365;font-weight:700}
+.abs-d.abs-sonstige{background:#F7FAFC;border-color:#CBD5E0;color:#4A5568;font-weight:700}
+.warn-box{background:var(--c-warn-bg);border:1px solid var(--c-warn-border);border-radius:var(--r-md);padding:12px 16px;margin-bottom:12px;display:flex;align-items:flex-start;gap:10px}
+.warn-box .wt{font-size:13px;color:var(--c-warn);line-height:1.5}
+.toggle{position:relative;width:40px;height:22px;background:var(--c-border-mid);border-radius:11px;cursor:pointer;transition:.2s;border:0;flex-shrink:0}
+.toggle.on{background:#16A34A}
+.toggle::after{content:'';position:absolute;left:2px;top:2px;width:18px;height:18px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.toggle.on::after{left:20px}
+.sc-blue{background:#EBF8FF;border-color:#90CDF4;color:#2A4365}
+.sc-green{background:#F0FFF4;border-color:#9AE6B4;color:#22543D}
+.sc-orange{background:#FFFBEB;border-color:#F6E05E;color:#7B341E}
+.sc-purple{background:#F3F0FF;border-color:#C4B5FD;color:#553C9A}
+.sc-red{background:#FFF5F5;border-color:#FC8181;color:#742A2A}
+.sc-teal{background:#E6FFFA;border-color:#81E6D9;color:#234E52}
+.vac-grid{display:grid;grid-template-columns:40px repeat(5,1fr);gap:2px;font-size:12px}
+.vac-hdr{font-weight:700;color:var(--c-text-soft);text-align:center;padding:4px 0;font-size:11px;text-transform:uppercase}
+.vac-kw{font-weight:700;color:var(--c-text-faint);font-size:10px;display:flex;align-items:center;justify-content:center}
+.day-chip{display:inline-flex;align-items:center;gap:3px;padding:2px 6px;border-radius:4px;font-size:11px;font-weight:600}
+.day-chip.pref{background:#F0FFF4;color:#22543D}.day-chip.ok{background:#F7FAFC;color:var(--c-text-mid)}.day-chip.no{background:#FFF5F5;color:#C53030;text-decoration:line-through}
+.abs-picker{position:fixed;z-index:600;background:#fff;border:1px solid var(--c-border);border-radius:var(--r-md);box-shadow:0 8px 24px rgba(0,0,0,.18);padding:4px;min-width:150px}
+.abs-picker button{display:block;width:100%;text-align:left;padding:6px 10px;border:0;background:0;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;border-radius:4px;transition:.1s}
+.abs-picker button:hover{background:var(--c-bg)}
+.abs-legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.abs-legend span{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;border:1px solid}
+.copy-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border:1.5px solid var(--c-border-mid);border-radius:var(--r-sm);background:#fff;font-size:12px;font-weight:700;color:var(--c-text-mid);cursor:pointer;transition:all .15s;font-family:inherit}
+.copy-btn:hover{border-color:var(--c-brand-mid);color:var(--c-brand);background:#F7FAFC}
+.copy-btn.copied{border-color:#16A34A;color:#16A34A;background:#F0FFF4}
+.copy-btn svg{flex-shrink:0}
+.sr-toggle{display:inline-flex;border:1.5px solid var(--c-border);border-radius:var(--r-md);overflow:hidden}
+.sr-toggle button{padding:6px 14px;font-family:inherit;font-size:12px;font-weight:700;border:0;background:#fff;color:var(--c-text-mid);cursor:pointer;transition:.15s;border-right:1px solid var(--c-border)}
+.sr-toggle button:last-child{border-right:0}
+.sr-toggle button:hover{background:var(--c-bg)}
+.sr-toggle button.on{background:var(--c-brand);color:#fff}
+@media print{.no-print{display:none!important}body{background:#fff}.topbar{position:static}}
+</style>
 </head>
 <body>
+<div id="root"></div>
+<script type="text/babel">
+var useState=React.useState,useMemo=React.useMemo,useEffect=React.useEffect,useRef=React.useRef;
+var MN=["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+var DOW=["So","Mo","Di","Mi","Do","Fr","Sa"];
+var COLORS=[{id:"blue",label:"Blau",cls:"sc-blue"},{id:"green",label:"Grün",cls:"sc-green"},{id:"orange",label:"Orange",cls:"sc-orange"},{id:"purple",label:"Lila",cls:"sc-purple"},{id:"red",label:"Rot",cls:"sc-red"},{id:"teal",label:"Türkis",cls:"sc-teal"}];
+var STORE_KEY="sbk_dienstplaner_v3";
+var DE_STATES=[{code:"BW",label:"Baden-Württemberg"},{code:"BY",label:"Bayern"},{code:"BE",label:"Berlin"},{code:"BB",label:"Brandenburg"},{code:"HB",label:"Bremen"},{code:"HH",label:"Hamburg"},{code:"HE",label:"Hessen"},{code:"MV",label:"Mecklenburg-Vorp."},{code:"NI",label:"Niedersachsen"},{code:"NW",label:"Nordrhein-Westfalen"},{code:"RP",label:"Rheinland-Pfalz"},{code:"SL",label:"Saarland"},{code:"SN",label:"Sachsen"},{code:"ST",label:"Sachsen-Anhalt"},{code:"SH",label:"Schleswig-Holstein"},{code:"TH",label:"Thüringen"}];
+var STATE_COL={SN:"#3868C6",BY:"#C05621",BW:"#16A34A",BE:"#A584FF",BB:"#718096",HB:"#2B6CB0",HH:"#C53030",HE:"#DD6B20",MV:"#38A169",NI:"#805AD5",NW:"#D69E2E",RP:"#E53E3E",SL:"#319795",ST:"#667EEA",SH:"#00B5D8",TH:"#9F7AEA"};
 
-  <!-- TOPBAR -->
-  <header class="topbar">
-    <div class="topbar-inner">
-      <!-- small nav logo -->
-      <div class="nav-logo">
-        <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="34" height="34" rx="8" fill="#b85c38"/>
-          <!-- wrench shape -->
-          <path d="M22.5 8.5c-2.2-.8-4.7-.2-6.4 1.5-1.4 1.4-2 3.3-1.7 5.1l-6 6c-.8.8-.8 2 0 2.8l1.7 1.7c.8.8 2 .8 2.8 0l6-6c1.8.3 3.7-.3 5.1-1.7 1.7-1.7 2.3-4.2 1.5-6.4l-3 3-2-2 3-3z" fill="white"/>
-        </svg>
-      </div>
-      <span class="nav-wordmark"><em>Victor</em> Tools</span>
-      <div class="nav-sep"></div>
-      <a class="nav-contact-btn" href="mailto:victor.schneevoigt@sbk.org?subject=Frage%20zu%20Victor%20Tools">
-        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-        Frage stellen
-      </a>
+// Abwesenheitstypen
+var ABS_TYPES=[
+  {id:"urlaub",label:"Urlaub",emoji:"🌴",cls:"abs-urlaub",color:"#553C9A"},
+  {id:"gleit",label:"Gleittag",emoji:"⏰",cls:"abs-gleit",color:"#234E52"},
+  {id:"krank",label:"Krank",emoji:"🤒",cls:"abs-krank",color:"#742A2A"},
+  {id:"kindkrank",label:"Kindkrank",emoji:"👶",cls:"abs-kindkrank",color:"#9B2C2C"},
+  {id:"seminar",label:"Seminar",emoji:"📚",cls:"abs-seminar",color:"#2A4365"},
+  {id:"sonstige",label:"Sonstige",emoji:"📌",cls:"abs-sonstige",color:"#4A5568"}
+];
+function absInfo(typeId){return ABS_TYPES.find(function(a){return a.id===typeId})||ABS_TYPES[0]}
+// Check if member is absent on date (any type)
+function isAbsent(absences,memberId,dk){var ma=absences[memberId];if(!ma)return null;return ma[dk]||null}
+
+var RULE_TYPES=[
+  {id:"no_consecutive",label:"Keine Folgetage",desc:"Nie zwei Dienste an aufeinanderfolgenden Tagen",hasValue:false},
+  {id:"different_per_day",label:"Verschiedene Personen pro Tag",desc:"Verschiedene Slots am selben Tag = verschiedene Personen",hasValue:false},
+  {id:"max_per_week",label:"Max. Dienste pro Woche",desc:"Maximale Anzahl Dienste pro Person pro Woche",hasValue:true,defaultVal:3},
+  {id:"min_rest_days",label:"Min. Ruhetage pro Woche",desc:"Mindestanzahl freie Tage pro Woche",hasValue:true,defaultVal:2},
+  {id:"max_consecutive_days",label:"Max. aufeinanderfolgende Tage",desc:"Max. Tage in Folge mit Dienst",hasValue:true,defaultVal:5}
+];
+var DAY_STATUSES=[
+  {id:"available",label:"Verfügbar",emoji:"✅",color:"var(--c-text-mid)"},
+  {id:"preferred",label:"Bevorzugt",emoji:"⭐",color:"#16A34A"},
+  {id:"if_needed",label:"Nur im Notfall",emoji:"⚠️",color:"#C05621"},
+  {id:"unavailable",label:"Nicht verfügbar",emoji:"🚫",color:"#C53030"}
+];
+
+function uid(){return Math.random().toString(36).slice(2,9)}
+var escH=function(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')};
+async function copyRich(plain,html){try{var hb=new Blob([html],{type:'text/html'});var tb=new Blob([plain],{type:'text/plain'});await navigator.clipboard.write([new ClipboardItem({'text/html':hb,'text/plain':tb})]);return true}catch(e){console.warn('Rich-Copy fallback:',e);await navigator.clipboard.writeText(plain);return true}}
+function setCopyFeedback(btn){var orig=btn.innerHTML;btn.classList.add('copied');btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Kopiert';setTimeout(function(){btn.classList.remove('copied');btn.innerHTML=orig},2000)}
+var COPY_ICON='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>';
+function fk(d){return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+function addD(d,n){var r=new Date(d);r.setDate(r.getDate()+n);return r}
+function getKW(d){var u=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));var day=u.getUTCDay()||7;u.setUTCDate(u.getUTCDate()+4-day);var y0=new Date(Date.UTC(u.getUTCFullYear(),0,1));return Math.ceil((((u-y0)/864e5)+1)/7)}
+function daysInMonth(y,m){var d=[];var x=new Date(y,m,1);while(x.getMonth()===m){d.push(new Date(x));x.setDate(x.getDate()+1)}return d}
+function getEaster(y){var a=y%19,b=Math.floor(y/100),c=y%100,dd=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),hh=(19*a+b-dd-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-hh-k)%7,mm=Math.floor((a+11*hh+22*l)/451),mo=Math.floor((hh+l-7*mm+114)/31),dy=((hh+l-7*mm+114)%31)+1;return new Date(y,mo-1,dy)}
+function getBBT(y){var d=new Date(y,10,22);while(d.getDay()!==3)d.setDate(d.getDate()-1);return d}
+function colorCls(cid){var f=COLORS.find(function(c){return c.id===cid});return f?f.cls:"sc-blue"}
+function findMem(members,id){return members.find(function(m){return m.id===id})||null}
+function findSt(code){var f=DE_STATES.find(function(s){return s.code===code});return f?f.label:code}
+function getDayStatus(member,dayNum){if(!member.dayPrefs)return"available";var p=member.dayPrefs.find(function(x){return x.day===dayNum});return p?p.status:"available"}
+
+function shiftActiveOnDate(shift,date){
+  var dow=date.getDay();var kw=getKW(date);var rhythm=shift.rhythm||"every";
+  if(rhythm==="every"){return(shift.days||[]).indexOf(dow)>=0}
+  if(rhythm==="even_odd"){var isEven=kw%2===0;return isEven?(shift.daysEven||[]).indexOf(dow)>=0:(shift.daysOdd||[]).indexOf(dow)>=0}
+  if(rhythm==="interval"){var iw=shift.intervalWeeks||2;var sk=shift.intervalStartKW||1;var diff=kw-sk;if(diff<0)diff+=52;return diff%iw===0&&(shift.intervalDays||[]).indexOf(dow)>=0}
+  return(shift.days||[]).indexOf(dow)>=0;
+}
+function shiftDaysSummary(shift){
+  var rhythm=shift.rhythm||"every";
+  if(rhythm==="every")return(shift.days||[]).map(function(d){return DOW[d]}).join(", ");
+  if(rhythm==="even_odd")return"Gerade KW: "+(shift.daysEven||[]).map(function(d){return DOW[d]}).join(", ")+" · Ungerade KW: "+(shift.daysOdd||[]).map(function(d){return DOW[d]}).join(", ");
+  if(rhythm==="interval")return(shift.intervalDays||[]).map(function(d){return DOW[d]}).join(", ")+" alle "+(shift.intervalWeeks||2)+" Wo. (ab KW"+(shift.intervalStartKW||1)+")";
+  return"";
+}
+
+function buildHol(y){
+  var e=getEaster(y);
+  var list=[
+    {d:new Date(y,0,1),name:"Neujahr",st:["ALL"]},{d:new Date(y,0,6),name:"Hl. Drei Könige",st:["BY","BW","ST"]},
+    {d:new Date(y,2,8),name:"Int. Frauentag",st:["BE","MV"]},{d:addD(e,-2),name:"Karfreitag",st:["ALL"]},
+    {d:addD(e,1),name:"Ostermontag",st:["ALL"]},{d:new Date(y,4,1),name:"Tag der Arbeit",st:["ALL"]},
+    {d:addD(e,39),name:"Christi Himmelfahrt",st:["ALL"]},{d:addD(e,50),name:"Pfingstmontag",st:["ALL"]},
+    {d:addD(e,60),name:"Fronleichnam",st:["BY","BW","HE","NW","RP","SL"]},
+    {d:new Date(y,7,15),name:"Mariä Himmelfahrt",st:["BY","SL"]},
+    {d:new Date(y,9,3),name:"Tag d. Dt. Einheit",st:["ALL"]},{d:new Date(y,9,31),name:"Reformationstag",st:["BB","MV","SN","ST","TH"]},
+    {d:new Date(y,10,1),name:"Allerheiligen",st:["BY","BW","NW","RP","SL"]},{d:getBBT(y),name:"Buß- und Bettag",st:["SN"]},
+    {d:new Date(y,11,25),name:"1. Weihnachtstag",st:["ALL"]},{d:new Date(y,11,26),name:"2. Weihnachtstag",st:["ALL"]}
+  ];
+  var idx={};list.forEach(function(h){var k=fk(h.d);if(!idx[k])idx[k]=[];idx[k].push(h)});return idx;
+}
+function isHolFor(hols,dk,state){var hs=hols[dk];if(!hs)return null;for(var i=0;i<hs.length;i++){if(hs[i].st.indexOf("ALL")>=0||hs[i].st.indexOf(state)>=0)return hs[i]}return null}
+
+// Migrate old vacations format (array) to new (object with types)
+function migrateVac(vac){
+  if(!vac)return{};
+  var out={};
+  Object.keys(vac).forEach(function(mid){
+    var mv=vac[mid];
+    if(Array.isArray(mv)){out[mid]={};mv.forEach(function(dk){out[mid][dk]="urlaub"})}
+    else if(mv&&typeof mv==="object"){out[mid]=mv}
+    else{out[mid]={}}
+  });
+  return out;
+}
+
+var DEFAULT_CFG={
+  teamName:"Mein Team",members:[],
+  shifts:[{id:"s1",name:"Spätdienst",label:"17:00",color:"blue",days:[1,2,3,4,5],distribution:"proportional"}],
+  shiftRules:[{id:"sr1",type:"no_consecutive",enabled:true},{id:"sr2",type:"different_per_day",enabled:true}],
+  vacRules:[{id:"vr1",type:"max_concurrent",value:3,enabled:true,desc:"Max. gleichzeitig im Urlaub"}],
+  needsBackup:true,backupLabel:"VT",backupColor:"purple",fullTimeHours:38
+};
+
+function InfoBtn(props){
+  var ref=useRef();var s=useState(false),open=s[0],setOpen=s[1];
+  useEffect(function(){if(!open)return;function handler(e){if(ref.current&&!ref.current.contains(e.target))setOpen(false)}document.addEventListener("mousedown",handler);return function(){document.removeEventListener("mousedown",handler)}},[open]);
+  return <span style={{position:"relative",display:"inline-flex"}} ref={ref}>
+    <button className="info-btn" onClick={function(e){e.stopPropagation();setOpen(!open)}}>?</button>
+    {open&&<div className="info-pop" style={{top:28,left:-10}} onClick={function(e){e.stopPropagation()}}><div dangerouslySetInnerHTML={{__html:props.text}}/>{props.example&&<div className="ex">{"💡 "+props.example}</div>}</div>}
+  </span>;
+}
+function Toggle(props){return <button className={"toggle"+(props.on?" on":"")} onClick={props.onChange}/>}
+function CopyBtn(props){return <button className="copy-btn" onClick={props.onClick} title={props.title||"Für Confluence kopieren"} dangerouslySetInnerHTML={{__html:COPY_ICON+(props.label||"Kopieren")}}/>}
+
+function CellEdit(props){
+  var dk=props.dk,slotKey=props.slotKey,dp=props.dp,shift=props.shift,activeShifts=props.activeShifts,editCell=props.editCell,setEditCell=props.setEditCell,setCell=props.setCell,members=props.members;
+  var ck=dk+"-"+slotKey;var mid=dp[slotKey];var member=findMem(members,mid);
+  var isActive=shift?activeShifts.some(function(s){return s.id===shift.id}):true;
+  if(!isActive)return <span style={{color:"var(--c-text-faint)",fontSize:11}}>–</span>;
+  if(editCell===ck){return <select autoFocus className="cell-sel" onChange={function(e){setCell(dk,slotKey,e.target.value)}} onBlur={function(){setEditCell(null)}}><option value="">– leer –</option>{members.map(function(m){return <option key={m.id} value={m.id}>{m.name}</option>})}</select>}
+  return <span onClick={function(){setEditCell(ck)}} className={"cell"+(mid?"":" empty")}>{member?member.name:"···"}{member&&<span className="dot-sm" style={{background:STATE_COL[member.state]||"var(--c-text-faint)"}}/>}</span>;
+}
+
+function MemberModal(props){
+  var member=props.member,cfg=props.cfg,onSave=props.onSave,onClose=props.onClose;
+  var sn=useState(member?member.name:""),sh=useState(member?member.hours:cfg.fullTimeHours),sr=useState(member?member.role:""),ss=useState(member?member.state:"SN");
+  var swd=useState(member?member.workDaysPerWeek||5:5);
+  var sdp=useState(member&&member.dayPrefs?JSON.parse(JSON.stringify(member.dayPrefs)):[]);
+  var n=sn[0],setN=sn[1],hours=sh[0],setH=sh[1],role=sr[0],setR=sr[1],st=ss[0],setSt=ss[1];
+  var wd=swd[0],setWd=swd[1],dayPrefs=sdp[0],setDayPrefs=sdp[1];
+  function cycleDayPref(dayNum){
+    var order=["available","preferred","if_needed","unavailable"];
+    var cur=dayPrefs.find(function(x){return x.day===dayNum});
+    var curStatus=cur?cur.status:"available";
+    var idx=order.indexOf(curStatus);var next=order[(idx+1)%order.length];
+    if(next==="available"){setDayPrefs(dayPrefs.filter(function(x){return x.day!==dayNum}))}
+    else if(cur){setDayPrefs(dayPrefs.map(function(x){if(x.day===dayNum)return{day:dayNum,status:next};return x}))}
+    else{setDayPrefs(dayPrefs.concat([{day:dayNum,status:next}]))}
+  }
+  function doSave(){if(!n.trim())return;onSave({id:member?member.id:uid(),name:n.trim(),hours:Number(hours),role:role.trim(),state:st,workDaysPerWeek:Number(wd),dayPrefs:dayPrefs});onClose()}
+  return <div className="modal-bg" onClick={onClose}><div className="modal" onClick={function(e){e.stopPropagation()}}>
+    <h3>{member?"Mitarbeiter bearbeiten":"Neuer Mitarbeiter"}</h3>
+    <label>Name</label><input className="inp" value={n} onChange={function(e){setN(e.target.value)}} placeholder="z.B. Max Mustermann"/>
+    <div style={{display:"flex",gap:12,marginTop:14}}>
+      <div style={{flex:1}}><label>Wochenstunden</label><input className="inp" type="number" value={hours} onChange={function(e){setH(e.target.value)}} min={1} max={45}/></div>
+      <div style={{flex:1}}><label>Arbeitstage/Woche</label><input className="inp" type="number" value={wd} onChange={function(e){setWd(e.target.value)}} min={1} max={7}/></div>
     </div>
-  </header>
+    <label>Rolle (optional)</label><input className="inp" value={role} onChange={function(e){setR(e.target.value)}} placeholder="z.B. TL, Azubi"/>
+    <label>Bundesland</label>
+    <select className="inp" value={st} onChange={function(e){setSt(e.target.value)}}>{DE_STATES.map(function(s){return <option key={s.code} value={s.code}>{s.label}</option>})}</select>
+    <label style={{marginTop:18}}>Tagespräferenzen (Mo–Fr)</label>
+    <div style={{display:"flex",gap:6,marginTop:8,flexWrap:"wrap"}}>
+      {[1,2,3,4,5].map(function(d){
+        var pref=dayPrefs.find(function(x){return x.day===d});var status=pref?pref.status:"available";
+        var info=DAY_STATUSES.find(function(x){return x.id===status});
+        return <button key={d} onClick={function(){cycleDayPref(d)}} style={{display:"flex",flexDirection:"column",alignItems:"center",gap:2,padding:"8px 12px",border:"1.5px solid",borderColor:status==="unavailable"?"#FC8181":status==="preferred"?"#9AE6B4":status==="if_needed"?"#F6E05E":"var(--c-border)",borderRadius:"var(--r-md)",background:status==="unavailable"?"#FFF5F5":status==="preferred"?"#F0FFF4":status==="if_needed"?"#FFFBEB":"#fff",cursor:"pointer",minWidth:48,transition:".15s",fontFamily:"inherit"}}>
+          <span style={{fontWeight:700,fontSize:13,color:info?info.color:"var(--c-text-mid)"}}>{DOW[d]}</span>
+          <span style={{fontSize:14}}>{info?info.emoji:"✅"}</span>
+          <span style={{fontSize:9,color:"var(--c-text-soft)"}}>{info?info.label:"Verfügbar"}</span>
+        </button>;
+      })}
+    </div>
+    <div style={{display:"flex",gap:8,marginTop:20,justifyContent:"flex-end"}}><button className="btn btn-g" onClick={onClose}>Abbrechen</button><button className="btn btn-p" onClick={doSave}>Speichern</button></div>
+  </div></div>;
+}
 
-  <main>
-
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-text">
-        <h1>Pilot: Browser-Tools für<br>den <span>Arbeitsalltag.</span></h1>
-        <p>Kein Login, keine Installation –<br>einfach öffnen und loslegen.</p>
+function ShiftModal(props){
+  var shift=props.shift,onSave=props.onSave,onClose=props.onClose;
+  var sn=useState(shift?shift.name:""),sl=useState(shift?shift.label:""),sc=useState(shift?shift.color:"blue");
+  var sdi=useState(shift?shift.distribution:"proportional");
+  var srhy=useState(shift?shift.rhythm||"every":"every");
+  var sd=useState(shift?shift.days||[1,2,3,4,5]:[1,2,3,4,5]);
+  var sde=useState(shift?shift.daysEven||[1,3]:[1,3]);
+  var sdo=useState(shift?shift.daysOdd||[2,4]:[2,4]);
+  var sid=useState(shift?shift.intervalDays||[5]:[5]);
+  var siw=useState(shift?shift.intervalWeeks||2:2);
+  var ssk=useState(shift?shift.intervalStartKW||1:1);
+  var n=sn[0],setN=sn[1],lbl=sl[0],setL=sl[1],col=sc[0],setC=sc[1],dist=sdi[0],setDist=sdi[1];
+  var rhythm=srhy[0],setRhythm=srhy[1],ds=sd[0],setDs=sd[1],dsE=sde[0],setDsE=sde[1],dsO=sdo[0],setDsO=sdo[1];
+  var intDays=sid[0],setIntDays=sid[1],intWeeks=siw[0],setIntWeeks=siw[1],startKW=ssk[0],setStartKW=ssk[1];
+  function tog(arr,setArr,d){setArr(arr.indexOf(d)>=0?arr.filter(function(x){return x!==d}):arr.concat([d]))}
+  function doSave(){
+    if(!n.trim()||!lbl.trim())return;
+    var obj={id:shift?shift.id:uid(),name:n.trim(),label:lbl.trim(),color:col,distribution:dist,rhythm:rhythm};
+    if(rhythm==="every"){obj.days=ds}
+    else if(rhythm==="even_odd"){obj.daysEven=dsE;obj.daysOdd=dsO;obj.days=[]}
+    else if(rhythm==="interval"){obj.intervalDays=intDays;obj.intervalWeeks=Number(intWeeks);obj.intervalStartKW=Number(startKW);obj.days=[]}
+    onSave(obj);onClose();
+  }
+  function dayBtns(arr,setArr){return <div style={{display:"flex",gap:4,marginTop:4}}>{[1,2,3,4,5,6,0].map(function(d){return <button key={d} className={"btn btn-sm "+(arr.indexOf(d)>=0?"btn-p":"btn-g")} onClick={function(){tog(arr,setArr,d)}}>{DOW[d]}</button>})}</div>}
+  return <div className="modal-bg" onClick={onClose}><div className="modal" onClick={function(e){e.stopPropagation()}}>
+    <h3>{shift?"Diensttyp bearbeiten":"Neuer Diensttyp"}</h3>
+    <label>Name</label><input className="inp" value={n} onChange={function(e){setN(e.target.value)}} placeholder="z.B. Spätdienst"/>
+    <label>Zeitlabel</label><input className="inp" value={lbl} onChange={function(e){setL(e.target.value)}} placeholder="z.B. 17:00"/>
+    <label>Farbe</label>
+    <div style={{display:"flex",gap:6,marginTop:4}}>{COLORS.map(function(cl){return <button key={cl.id} className={"sl "+cl.cls} onClick={function(){setC(cl.id)}} style={{padding:"6px 14px",cursor:"pointer",outline:col===cl.id?"2px solid var(--c-brand)":"none",outlineOffset:2}}>{cl.label}</button>})}</div>
+    <label>Rhythmus <InfoBtn text="<strong>Jede Woche:</strong> Gleiche Tage jede Woche.<br><strong>Gerade/Ungerade KW:</strong> Unterschiedliche Tage je nach KW.<br><strong>Alle N Wochen:</strong> Z.B. nur jeden 4. Freitag." example="Spätdienst: Gerade KW Mo+Mi, Ungerade KW Di+Do"/></label>
+    <select className="inp" value={rhythm} onChange={function(e){setRhythm(e.target.value)}}>
+      <option value="every">Jede Woche</option>
+      <option value="even_odd">Gerade / Ungerade KW</option>
+      <option value="interval">Alle N Wochen</option>
+    </select>
+    {rhythm==="every"&&<div><label>Aktive Wochentage</label>{dayBtns(ds,setDs)}</div>}
+    {rhythm==="even_odd"&&<div>
+      <label style={{color:"#16A34A"}}>Gerade KWs (2, 4, 6 ...)</label>{dayBtns(dsE,setDsE)}
+      <label style={{color:"#C05621"}}>Ungerade KWs (1, 3, 5 ...)</label>{dayBtns(dsO,setDsO)}
+    </div>}
+    {rhythm==="interval"&&<div>
+      <label>Wochentage</label>{dayBtns(intDays,setIntDays)}
+      <div style={{display:"flex",gap:12,marginTop:14}}>
+        <div style={{flex:1}}><label>Alle __ Wochen</label><input className="inp" type="number" value={intWeeks} onChange={function(e){setIntWeeks(e.target.value)}} min={2} max={12}/></div>
+        <div style={{flex:1}}><label>Ab KW (Startwoche)</label><input className="inp" type="number" value={startKW} onChange={function(e){setStartKW(e.target.value)}} min={1} max={53}/></div>
       </div>
+      <div style={{fontSize:12,color:"var(--c-text-soft)",marginTop:6,fontStyle:"italic"}}>{"Beispiel: Alle "+intWeeks+" Wochen ab KW"+startKW+" → KW"+startKW+", KW"+(Number(startKW)+Number(intWeeks))+", KW"+(Number(startKW)+2*Number(intWeeks))+" ..."}</div>
+    </div>}
+    <label>Verteilung</label>
+    <select className="inp" value={dist} onChange={function(e){setDist(e.target.value)}}><option value="proportional">Proportional zu Wochenstunden</option><option value="equal">Gleichmäßig auf alle</option></select>
+    <div style={{display:"flex",gap:8,marginTop:20,justifyContent:"flex-end"}}><button className="btn btn-g" onClick={onClose}>Abbrechen</button><button className="btn btn-p" onClick={doSave}>Speichern</button></div>
+  </div></div>;
+}
 
-      <!-- Hero Logo -->
-      <div class="hero-logo">
-        <svg viewBox="0 0 160 160" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- outer circle background -->
-          <circle cx="80" cy="80" r="78" fill="#fdf0eb" stroke="#e8c8b0" stroke-width="2"/>
+function ShiftRuleModal(props){
+  var rule=props.rule,onSave=props.onSave,onClose=props.onClose;
+  var st=useState(rule?rule.type:"no_consecutive"),sv=useState(rule&&rule.value?rule.value:3),sd=useState(rule?rule.desc||"":"");
+  var type=st[0],setType=st[1],val=sv[0],setVal=sv[1],desc=sd[0],setDesc=sd[1];
+  var rType=RULE_TYPES.find(function(r){return r.id===type});
+  function doSave(){var id=rule?rule.id:uid();var nr={id:id,type:type,enabled:rule?rule.enabled!==false:true,desc:desc||(rType?rType.label:"Regel")};if(rType&&rType.hasValue)nr.value=Number(val);onSave(nr);onClose()}
+  return <div className="modal-bg" onClick={onClose}><div className="modal" onClick={function(e){e.stopPropagation()}}>
+    <h3>{rule?"Dienstregel bearbeiten":"Neue Dienstregel"}</h3>
+    <label>Regeltyp</label>
+    <select className="inp" value={type} onChange={function(e){setType(e.target.value);var rt=RULE_TYPES.find(function(r){return r.id===e.target.value});if(rt&&rt.defaultVal)setVal(rt.defaultVal)}}>{RULE_TYPES.map(function(r){return <option key={r.id} value={r.id}>{r.label}</option>})}</select>
+    {rType&&<div style={{fontSize:12,color:"var(--c-text-soft)",marginTop:4,fontStyle:"italic"}}>{rType.desc}</div>}
+    {rType&&rType.hasValue&&<div><label>Wert</label><input className="inp" type="number" value={val} onChange={function(e){setVal(e.target.value)}} min={1}/></div>}
+    <label>Beschreibung (optional)</label><input className="inp" value={desc} onChange={function(e){setDesc(e.target.value)}}/>
+    <div style={{display:"flex",gap:8,marginTop:20,justifyContent:"flex-end"}}><button className="btn btn-g" onClick={onClose}>Abbrechen</button><button className="btn btn-p" onClick={doSave}>Speichern</button></div>
+  </div></div>;
+}
 
-          <!-- gear ring -->
-          <circle cx="80" cy="80" r="52" fill="none" stroke="#e0c0a0" stroke-width="3" stroke-dasharray="8 5"/>
+function VacRuleModal(props){
+  var rule=props.rule,members=props.members,onSave=props.onSave,onClose=props.onClose;
+  var st=useState(rule?rule.type:"max_concurrent"),sv=useState(rule?(rule.value||3):3),sd=useState(rule?(rule.desc||""):""),sm=useState(rule?(rule.memberIds||[]):[]);
+  var type=st[0],setType=st[1],val=sv[0],setVal=sv[1],desc=sd[0],setDesc=sd[1],mids=sm[0],setMids=sm[1];
+  function toggleMid(id){setMids(mids.indexOf(id)>=0?mids.filter(function(x){return x!==id}):mids.concat([id]))}
+  function doSave(){var id=rule?rule.id:uid();var dd=type==="max_concurrent"?"Max. "+val+" gleichzeitig":type==="min_present"?"Min. "+val+" anwesend":"Ausschlussregel";var nr={id:id,type:type,enabled:rule?rule.enabled!==false:true,desc:desc||dd};if(type==="exclusion"){nr.memberIds=mids}else{nr.value=Number(val)}onSave(nr);onClose()}
+  return <div className="modal-bg" onClick={onClose}><div className="modal" onClick={function(e){e.stopPropagation()}}>
+    <h3>{rule?"Abwesenheitsregel bearbeiten":"Neue Abwesenheitsregel"}</h3>
+    <label>Regeltyp</label><select className="inp" value={type} onChange={function(e){setType(e.target.value)}}><option value="max_concurrent">Max. gleichzeitig abwesend</option><option value="exclusion">Ausschluss-Paar</option><option value="min_present">Min. anwesend</option></select>
+    {type!=="exclusion"&&<div><label>Wert</label><input className="inp" type="number" value={val} onChange={function(e){setVal(e.target.value)}} min={1}/></div>}
+    {type==="exclusion"&&<div><label>Betroffene (min. 2)</label><div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:6}}>{members.map(function(m){return <button key={m.id} className={"btn btn-sm "+(mids.indexOf(m.id)>=0?"btn-p":"btn-g")} onClick={function(){toggleMid(m.id)}}>{m.name}</button>})}</div></div>}
+    <label>Beschreibung</label><input className="inp" value={desc} onChange={function(e){setDesc(e.target.value)}}/>
+    <div style={{display:"flex",gap:8,marginTop:20,justifyContent:"flex-end"}}><button className="btn btn-g" onClick={onClose}>Abbrechen</button><button className="btn btn-p" onClick={doSave}>Speichern</button></div>
+  </div></div>;
+}
 
-          <!-- inner circle -->
-          <circle cx="80" cy="80" r="38" fill="#b85c38" opacity=".12"/>
-          <circle cx="80" cy="80" r="38" fill="none" stroke="#b85c38" stroke-width="2" opacity=".3"/>
+// AbsenceDay cell component for vacation calendar
+function AbsDay(props){
+  var date=props.date,memberId=props.memberId,absences=props.absences,holidays=props.holidays,memberState=props.memberState,setAbsences=props.setAbsences;
+  var dk=fk(date);var hol=isHolFor(holidays,dk,memberState);
+  var curType=isAbsent(absences,memberId,dk);
+  var _pk=useState(false),showPicker=_pk[0],setShowPicker=_pk[1];
+  var _pos=useState({top:0,left:0}),pickerPos=_pos[0],setPickerPos=_pos[1];
+  var ref=useRef();var btnRef=useRef();
+  useEffect(function(){if(!showPicker)return;function handler(e){if(ref.current&&!ref.current.contains(e.target))setShowPicker(false)}document.addEventListener("mousedown",handler);return function(){document.removeEventListener("mousedown",handler)}},[showPicker]);
 
-          <!-- wrench icon centred -->
-          <g transform="translate(80,80)">
-            <path d="M14-18c-5.5-2-11.5-.5-15.5 3.5-3.4 3.4-4.8 8-4 12.4L-20 13c-1.9 1.9-1.9 5 0 6.9l4.1 4.1c1.9 1.9 5 1.9 6.9 0l14.6-14.6c4.4.8 9-.6 12.4-4 4-4 5.5-10 3.5-15.5l-7.3 7.3-4.9-4.9 7.3-7.3z" fill="#b85c38"/>
-          </g>
+  function openPicker(){
+    if(btnRef.current){var r=btnRef.current.getBoundingClientRect();var top=r.bottom+4;var left=r.left;if(top+220>window.innerHeight)top=r.top-220;if(left+150>window.innerWidth)left=window.innerWidth-160;setPickerPos({top:top,left:left})}
+    setShowPicker(!showPicker);
+  }
 
-          <!-- "VT" monogram subtle -->
-          <text x="80" y="118" text-anchor="middle" font-family="'DM Sans', sans-serif" font-size="11" font-weight="700" fill="#b85c38" opacity=".55" letter-spacing="3">VICTOR TOOLS</text>
+  function pickType(typeId){
+    var nv={};for(var kk in absences)nv[kk]=absences[kk];
+    var ma=nv[memberId]?Object.assign({},nv[memberId]):{};
+    if(curType===typeId){delete ma[dk]}else{ma[dk]=typeId}
+    nv[memberId]=ma;setAbsences(nv);setShowPicker(false);
+  }
 
-          <!-- small dots decoration -->
-          <circle cx="80" cy="18" r="3" fill="#b85c38" opacity=".4"/>
-          <circle cx="80" cy="142" r="3" fill="#b85c38" opacity=".4"/>
-          <circle cx="18" cy="80" r="3" fill="#b85c38" opacity=".4"/>
-          <circle cx="142" cy="80" r="3" fill="#b85c38" opacity=".4"/>
-        </svg>
+  if(hol)return <div className="abs-d hol" title={hol.name}>🏖</div>;
+  var ai=curType?absInfo(curType):null;
+  return <div ref={ref} style={{position:"relative"}}>
+    <button ref={btnRef} onClick={openPicker} className={"abs-d"+(curType?" "+ai.cls:"")} title={DOW[date.getDay()]+" "+date.getDate()+"."+(date.getMonth()+1)+(ai?" – "+ai.label:"")}>
+      {curType?ai.emoji:date.getDate()}
+    </button>
+    {showPicker&&<div className="abs-picker" style={{top:pickerPos.top,left:pickerPos.left}}>
+      {ABS_TYPES.map(function(at){return <button key={at.id} onClick={function(){pickType(at.id)}} style={{color:at.color,fontWeight:curType===at.id?800:600,background:curType===at.id?"var(--c-bg)":"transparent"}}>{at.emoji+" "+at.label}{curType===at.id?" ✓":""}</button>})}
+      {curType&&<button onClick={function(){pickType(curType)}} style={{color:"var(--c-text-soft)",borderTop:"1px solid var(--c-border)",marginTop:2,paddingTop:8}}>✕ Entfernen</button>}
+    </div>}
+  </div>;
+}
+
+function buildConfTable(headers,rows){
+  var plain=headers.join('\t')+'\n';rows.forEach(function(r){plain+=r.join('\t')+'\n'});
+  var html='<table border="1" cellpadding="8" cellspacing="0" style="border-collapse:collapse;width:100%;">';
+  html+='<thead><tr>';headers.forEach(function(h){html+='<th style="background-color:#002B52;color:#ffffff;padding:8px 12px;text-align:left;font-weight:bold;border:1px solid #cbd5e0;">'+escH(h)+'</th>'});
+  html+='</tr></thead><tbody>';
+  rows.forEach(function(r,idx){var bg=idx%2===0?'#ffffff':'#f7fafc';html+='<tr>';r.forEach(function(c){html+='<td style="padding:8px 12px;border:1px solid #e2e8f0;background-color:'+bg+';vertical-align:top;">'+escH(c)+'</td>'});html+='</tr>'});
+  html+='</tbody></table>';return{plain:plain,html:html};
+}
+
+function copyPlanTable(cfg,days,curPlan,holidays,absences,vy,vm,btn){
+  var headers=["KW","Tag","Datum"].concat(cfg.shifts.map(function(s){return s.name}));
+  if(cfg.needsBackup)headers.push(cfg.backupLabel);headers.push("Info");
+  var rows=[];days.forEach(function(d){var dow=d.getDay();if(dow===0||dow===6)return;var dk=fk(d);var dp=curPlan[dk]||{};
+    var row=["KW "+getKW(d),DOW[dow],String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+"."];
+    cfg.shifts.forEach(function(s){var active=shiftActiveOnDate(s,d);if(!active){row.push("–")}else{var m2=findMem(cfg.members,dp[s.id]);row.push(m2?m2.name:"")}});
+    if(cfg.needsBackup){var mb=findMem(cfg.members,dp.backup);row.push(mb?mb.name:"")}
+    var infoParts=[];var holAff=cfg.members.filter(function(m){return isHolFor(holidays,dk,m.state)});
+    if(holAff.length)infoParts.push(holAff.map(function(m){var h=isHolFor(holidays,dk,m.state);return h?h.name:""}).filter(function(v,i,a){return v&&a.indexOf(v)===i}).join(", "));
+    var absAff=cfg.members.filter(function(m){return isAbsent(absences,m.id,dk)});
+    if(absAff.length)infoParts.push(absAff.map(function(m){var at=absInfo(isAbsent(absences,m.id,dk));return at.emoji+" "+m.name}).join(", "));
+    row.push(infoParts.join(" | "));rows.push(row)});
+  var t=buildConfTable(headers,rows);
+  var title='<h2>Dienstplan '+MN[vm]+' '+vy+'</h2>';
+  copyRich(MN[vm]+' '+vy+'\n'+t.plain,title+t.html).then(function(){if(btn)setCopyFeedback(btn)});
+}
+
+function copyTeamTable(cfg,btn){
+  var headers=["Name","Stunden","Tage/Wo","Arbeitstage","Rolle","Bundesland","Tagespräferenzen"];
+  var rows=cfg.members.map(function(m){
+    var wd=m.workDaysPerWeek||5;
+    var unavail=(m.dayPrefs||[]).filter(function(p){return p.status==="unavailable"}).map(function(p){return p.day});
+    var workDays=[1,2,3,4,5].filter(function(d){return unavail.indexOf(d)<0}).map(function(d){return DOW[d]});
+    if(wd>=6)workDays.push("Sa");if(wd>=7)workDays.push("So");
+    var prefs=(m.dayPrefs||[]).filter(function(p){return p.status!=="available"});
+    var prefStr=prefs.length===0?"–":prefs.map(function(p){var info=DAY_STATUSES.find(function(x){return x.id===p.status});return DOW[p.day]+": "+(info?info.label:"")}).join(", ");
+    return[m.name,m.hours+"h",wd+" Tage",workDays.join(", "),m.role||"–",findSt(m.state),prefStr]});
+  var t=buildConfTable(headers,rows);
+  var title='<h2>Team: '+escH(cfg.teamName)+'</h2>';
+  copyRich('Team: '+cfg.teamName+'\n'+t.plain,title+t.html).then(function(){if(btn)setCopyFeedback(btn)});
+}
+
+function copyStatsTable(cfg,stats,label,btn){
+  var headers=["Mitarbeiter","Std."];cfg.shifts.forEach(function(sh){headers.push(sh.name+" ("+sh.label+")")});
+  if(cfg.needsBackup)headers.push(cfg.backupLabel);headers.push("Ges.");
+  ABS_TYPES.forEach(function(at){headers.push(at.emoji+" "+at.label)});
+  var rows=cfg.members.map(function(m){var s=stats[m.id]||{perShift:{},backup:0,total:0,abs:{}};
+    var row=[m.name,m.hours+"h"];cfg.shifts.forEach(function(sh){row.push(String((s.perShift||{})[sh.id]||0))});
+    if(cfg.needsBackup)row.push(String(s.backup));row.push(String(s.total));
+    ABS_TYPES.forEach(function(at){row.push(String((s.abs||{})[at.id]||0))});return row});
+  var t=buildConfTable(headers,rows);
+  var title='<h2>Statistik '+escH(label)+'</h2>';
+  copyRich('Statistik '+label+'\n'+t.plain,title+t.html).then(function(){if(btn)setCopyFeedback(btn)});
+}
+
+function copyShiftTypes(cfg,btn){
+  var headers=["Diensttyp","Zeitlabel","Rhythmus","Verteilung"];
+  var rows=cfg.shifts.map(function(s){return[s.name,s.label,shiftDaysSummary(s),s.distribution==="equal"?"Gleichmäßig":"Proportional"]});
+  var t=buildConfTable(headers,rows);
+  var title='<h2>Diensttypen</h2>';
+  copyRich('Diensttypen\n'+t.plain,title+t.html).then(function(){if(btn)setCopyFeedback(btn)});
+}
+
+function copyShiftRules(cfg,btn){
+  var headers=["Regel","Beschreibung","Wert","Status"];
+  var rows=(cfg.shiftRules||[]).map(function(r){var rt=RULE_TYPES.find(function(x){return x.id===r.type});
+    return[r.desc||(rt?rt.label:r.type),rt?rt.desc:"",r.value?String(r.value):"–",r.enabled?"Aktiv":"Inaktiv"]});
+  var t=buildConfTable(headers,rows);
+  var title='<h2>Dienstregeln</h2>';
+  copyRich('Dienstregeln\n'+t.plain,title+t.html).then(function(){if(btn)setCopyFeedback(btn)});
+}
+
+function copyVacRules(cfg,btn){
+  var headers=["Regel","Details","Status"];
+  var rows=cfg.vacRules.map(function(r){var detail="";
+    if(r.type==="max_concurrent")detail="Max. "+r.value+" gleichzeitig";
+    if(r.type==="min_present")detail="Min. "+r.value+" anwesend";
+    if(r.type==="exclusion")detail="Ausschluss: "+(r.memberIds||[]).map(function(id){var m2=findMem(cfg.members,id);return m2?m2.name:"?"}).join(" & ");
+    return[r.desc||r.type,detail,r.enabled?"Aktiv":"Inaktiv"]});
+  var t=buildConfTable(headers,rows);
+  var title='<h2>Abwesenheitsregeln</h2>';
+  copyRich('Abwesenheitsregeln\n'+t.plain,title+t.html).then(function(){if(btn)setCopyFeedback(btn)});
+}
+
+function copyAbsenceTable(cfg,absences,days,vy,vm,holidays,btn){
+  /* Detailtabelle: Zeilen = Werktage, Spalten = Mitarbeiter */
+  var wdays=days.filter(function(d){return d.getDay()!==0&&d.getDay()!==6});
+  var headers=["KW","Tag","Datum"].concat(cfg.members.map(function(m){return m.name}));
+  var rows=wdays.map(function(d){var dk=fk(d);
+    var row=["KW "+getKW(d),DOW[d.getDay()],String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+"."];
+    cfg.members.forEach(function(m){var hol=isHolFor(holidays,dk,m.state);var ab=isAbsent(absences,m.id,dk);
+      if(hol){row.push("Feiertag")}else if(ab){var ai=absInfo(ab);row.push(ai.emoji+" "+ai.label)}else{row.push("")}});
+    return row});
+  /* Zusammenfassung */
+  var sumHeaders=["Mitarbeiter"].concat(ABS_TYPES.map(function(at){return at.emoji+" "+at.label})).concat(["Tage gesamt"]);
+  var sumRows=cfg.members.map(function(m){var ma=absences[m.id]||{};var counts={};ABS_TYPES.forEach(function(at){counts[at.id]=0});var total=0;
+    Object.keys(ma).forEach(function(dk){var d3=new Date(dk);if(d3.getFullYear()===vy&&d3.getMonth()===vm){if(counts[ma[dk]]!==undefined)counts[ma[dk]]++;total++}});
+    var row=[m.name];ABS_TYPES.forEach(function(at){row.push(String(counts[at.id]))});row.push(String(total));return row});
+  var t1=buildConfTable(headers,rows);var t2=buildConfTable(sumHeaders,sumRows);
+  var title='<h2>Abwesenheiten '+MN[vm]+' '+vy+'</h2>';
+  var plain='Abwesenheiten '+MN[vm]+' '+vy+'\n\nDetail:\n'+t1.plain+'\nZusammenfassung:\n'+t2.plain;
+  var html=title+'<h3>Kalenderübersicht</h3>'+t1.html+'<br><h3>Zusammenfassung</h3>'+t2.html;
+  copyRich(plain,html).then(function(){if(btn)setCopyFeedback(btn)});
+}
+
+function copyAllSections(cfg,days,curPlan,holidays,absences,stats,vy,vm,statsLabel,btn){
+  var parts=[],hparts=[];
+  /* Plan */
+  var ph=["KW","Tag","Datum"].concat(cfg.shifts.map(function(s){return s.name}));if(cfg.needsBackup)ph.push(cfg.backupLabel);
+  var pr=[];days.forEach(function(d){var dow=d.getDay();if(dow===0||dow===6)return;var dk=fk(d);var dp=curPlan[dk]||{};
+    var row=["KW "+getKW(d),DOW[dow],String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+"."];
+    cfg.shifts.forEach(function(s){var m2=findMem(cfg.members,dp[s.id]);row.push(m2?m2.name:"")});
+    if(cfg.needsBackup){var mb=findMem(cfg.members,dp.backup);row.push(mb?mb.name:"")}pr.push(row)});
+  var pt=buildConfTable(ph,pr);parts.push('DIENSTPLAN '+MN[vm]+' '+vy+'\n'+pt.plain);hparts.push('<h2>Dienstplan '+MN[vm]+' '+vy+'</h2>'+pt.html);
+  /* Team */
+  var th2=["Name","Stunden","Tage/Wo","Arbeitstage","Rolle","Bundesland","Tagespräferenzen"];
+  var tr2=cfg.members.map(function(m){var wd=m.workDaysPerWeek||5;
+    var unavail=(m.dayPrefs||[]).filter(function(p){return p.status==="unavailable"}).map(function(p){return p.day});
+    var workDays=[1,2,3,4,5].filter(function(d){return unavail.indexOf(d)<0}).map(function(d){return DOW[d]});
+    if(wd>=6)workDays.push("Sa");if(wd>=7)workDays.push("So");
+    var prefs=(m.dayPrefs||[]).filter(function(p){return p.status!=="available"});
+    var prefStr=prefs.length===0?"–":prefs.map(function(p){var info=DAY_STATUSES.find(function(x){return x.id===p.status});return DOW[p.day]+": "+(info?info.label:"")}).join(", ");
+    return[m.name,m.hours+"h",wd+" Tage",workDays.join(", "),m.role||"–",findSt(m.state),prefStr]});
+  var tt=buildConfTable(th2,tr2);parts.push('TEAM\n'+tt.plain);hparts.push('<h2>Team: '+escH(cfg.teamName)+'</h2>'+tt.html);
+  /* Abwesenheiten */
+  var absHdr=["KW","Tag","Datum"].concat(cfg.members.map(function(m){return m.name}));
+  var absRows=[];var wdays2=days.filter(function(d){return d.getDay()!==0&&d.getDay()!==6});
+  wdays2.forEach(function(d){var dk=fk(d);var row=["KW "+getKW(d),DOW[d.getDay()],String(d.getDate()).padStart(2,"0")+"."+String(d.getMonth()+1).padStart(2,"0")+"."];
+    cfg.members.forEach(function(m){var hol=isHolFor(holidays,dk,m.state);var ab=isAbsent(absences,m.id,dk);if(hol){row.push("Feiertag")}else if(ab){var ai=absInfo(ab);row.push(ai.emoji+" "+ai.label)}else{row.push("")}});absRows.push(row)});
+  var abt=buildConfTable(absHdr,absRows);parts.push('ABWESENHEITEN '+MN[vm]+' '+vy+'\n'+abt.plain);hparts.push('<h2>Abwesenheiten '+MN[vm]+' '+vy+'</h2>'+abt.html);
+  /* Stats */
+  var sh2=["Mitarbeiter"];cfg.shifts.forEach(function(sh){sh2.push(sh.name)});if(cfg.needsBackup)sh2.push(cfg.backupLabel);sh2.push("Ges.");
+  var sr2=cfg.members.map(function(m){var s=stats[m.id]||{perShift:{},backup:0,total:0};var r=[m.name];cfg.shifts.forEach(function(sh){r.push(String((s.perShift||{})[sh.id]||0))});if(cfg.needsBackup)r.push(String(s.backup));r.push(String(s.total));return r});
+  var st2=buildConfTable(sh2,sr2);parts.push('STATISTIK '+statsLabel+'\n'+st2.plain);hparts.push('<h2>Statistik '+escH(statsLabel)+'</h2>'+st2.html);
+  /* Diensttypen */
+  var dth=["Diensttyp","Zeitlabel","Rhythmus","Verteilung"];
+  var dtr=cfg.shifts.map(function(s){return[s.name,s.label,shiftDaysSummary(s),s.distribution==="equal"?"Gleichmäßig":"Proportional"]});
+  var dtt=buildConfTable(dth,dtr);parts.push('DIENSTTYPEN\n'+dtt.plain);hparts.push('<h2>Diensttypen</h2>'+dtt.html);
+  /* Dienstregeln */
+  if((cfg.shiftRules||[]).length){var rrh=["Regel","Beschreibung","Wert","Status"];
+    var rrr=(cfg.shiftRules||[]).map(function(r){var rt=RULE_TYPES.find(function(x){return x.id===r.type});return[r.desc||(rt?rt.label:r.type),rt?rt.desc:"",r.value?String(r.value):"–",r.enabled?"Aktiv":"Inaktiv"]});
+    var rrt=buildConfTable(rrh,rrr);parts.push('DIENSTREGELN\n'+rrt.plain);hparts.push('<h2>Dienstregeln</h2>'+rrt.html)}
+  /* Abwesenheitsregeln */
+  if(cfg.vacRules.length){var vh=["Regel","Details","Status"];
+    var vr2=cfg.vacRules.map(function(r){var det="";if(r.type==="max_concurrent")det="Max. "+r.value+" gleichzeitig";if(r.type==="min_present")det="Min. "+r.value+" anwesend";if(r.type==="exclusion")det="Ausschluss: "+(r.memberIds||[]).map(function(id){var m2=findMem(cfg.members,id);return m2?m2.name:"?"}).join(" & ");return[r.desc||r.type,det,r.enabled?"Aktiv":"Inaktiv"]});
+    var vt2=buildConfTable(vh,vr2);parts.push('ABWESENHEITSREGELN\n'+vt2.plain);hparts.push('<h2>Abwesenheitsregeln</h2>'+vt2.html)}
+  copyRich(parts.join('\n\n'),hparts.join('')).then(function(){if(btn)setCopyFeedback(btn)});
+}
+
+function App(){
+  var now=new Date();
+  var _c=useState(DEFAULT_CFG),cfg=_c[0],setCfg=_c[1];
+  var _p=useState({}),plans=_p[0],setPlans=_p[1];
+  var _v=useState({}),absences=_v[0],setAbsences=_v[1];
+  var _t=useState("plan"),tab=_t[0],setTab=_t[1];
+  var _vy=useState(now.getFullYear()),vy=_vy[0],setVy=_vy[1];
+  var _vm=useState(now.getMonth()),vm=_vm[0],setVm=_vm[1];
+  var _ec=useState(null),editCell=_ec[0],setEditCell=_ec[1];
+  var _mo=useState(null),modal=_mo[0],setModal=_mo[1];
+  var _tm=useState(""),toastMsg=_tm[0],setToastMsg=_tm[1];
+  var _tt=useState(""),toastType=_tt[0],setToastType=_tt[1];
+  var _sr=useState("month"),statsRange=_sr[0],setStatsRange=_sr[1];
+
+  useEffect(function(){try{var r=localStorage.getItem(STORE_KEY);if(r){var d=JSON.parse(r);if(d.cfg){var mg={};for(var k in DEFAULT_CFG)mg[k]=DEFAULT_CFG[k];for(var k2 in d.cfg)mg[k2]=d.cfg[k2];if(!Array.isArray(mg.shiftRules))mg.shiftRules=DEFAULT_CFG.shiftRules;setCfg(mg)}if(d.plans)setPlans(d.plans);var rawVac=d.vacations||d.absences||{};setAbsences(migrateVac(rawVac))}}catch(e){}},[]);
+
+  function save(c,p,v){try{localStorage.setItem(STORE_KEY,JSON.stringify({cfg:c,plans:p,absences:v}));toast("Gespeichert","ok")}catch(e){toast("Fehler","err")}}
+  function toast(m,t){setToastMsg(m);setToastType(t||"ok");setTimeout(function(){setToastMsg("");setToastType("")},2800)}
+  function cloneCfg(ov){var nc={};for(var k in cfg)nc[k]=cfg[k];for(var k2 in ov)nc[k2]=ov[k2];setCfg(nc);return nc}
+
+  var holidays=useMemo(function(){return buildHol(vy)},[vy]);
+  var days=useMemo(function(){return daysInMonth(vy,vm)},[vy,vm]);
+  var mk=vy+"-"+vm;var curPlan=plans[mk]||{};
+  function navM(dir){var m=vm+dir,y=vy;if(m<0){m=11;y--}if(m>11){m=0;y++}setVm(m);setVy(y)}
+  function ruleEnabled(rType){return(cfg.shiftRules||[]).some(function(r){return r.type===rType&&r.enabled})}
+
+  function checkVV(abs,date){var dk=fk(date),violations=[];var onAbs=cfg.members.filter(function(m){return isAbsent(abs,m.id,dk)});cfg.vacRules.filter(function(r){return r.enabled}).forEach(function(r){if(r.type==="max_concurrent"&&onAbs.length>r.value)violations.push("Max. "+r.value+" gleichzeitig – aktuell "+onAbs.length);if(r.type==="exclusion"&&r.memberIds){var excl=r.memberIds.filter(function(id){return onAbs.some(function(m){return m.id===id})});if(excl.length>1)violations.push("Ausschluss: "+excl.map(function(id){var m2=findMem(cfg.members,id);return m2?m2.name:"?"}).join(" & "))}if(r.type==="min_present"){var present=cfg.members.length-onAbs.length;if(present<r.value)violations.push("Min. "+r.value+" anwesend – nur "+present)}});return violations}
+  var mvv=useMemo(function(){var vs=[];days.forEach(function(d){if(d.getDay()===0||d.getDay()===6)return;var v=checkVV(absences,d);if(v.length)vs.push({date:d,dk:fk(d),violations:v})});return vs},[days,absences,cfg.members,cfg.vacRules]);
+
+  function autoGen(){
+    if(!cfg.members.length){toast("Erst Mitarbeiter anlegen","warn");return}
+    var plan={},counts={};
+    cfg.members.forEach(function(m){counts[m.id]={main:0,backup:0}});
+    Object.keys(plans).forEach(function(k){if(k===mk)return;var mp=plans[k];Object.keys(mp).forEach(function(dk2){var dp2=mp[dk2];Object.keys(dp2).forEach(function(slot){var mid2=dp2[slot];if(counts[mid2]){if(slot==="backup")counts[mid2].backup++;else counts[mid2].main++}})})});
+    days.forEach(function(date){
+      var dow=date.getDay();if(dow===0||dow===6)return;var dk=fk(date);plan[dk]={};var assigned=[];
+      cfg.shifts.filter(function(s){return shiftActiveOnDate(s,date)}).forEach(function(shift){
+        var avail=cfg.members.filter(function(m){
+          if(assigned.indexOf(m.id)>=0)return false;
+          if(isAbsent(absences,m.id,dk))return false;
+          if(isHolFor(holidays,dk,m.state))return false;
+          if(getDayStatus(m,dow)==="unavailable")return false;
+          if(ruleEnabled("no_consecutive")){var prev=addD(date,-1);var pp=plan[fk(prev)];if(pp){var vals=Object.keys(pp).map(function(k3){return pp[k3]});if(vals.indexOf(m.id)>=0)return false}}
+          return true;
+        }).map(function(m){var w=shift.distribution==="equal"?1:(m.hours||cfg.fullTimeHours)/cfg.fullTimeHours;var score=counts[m.id].main/w;var ds=getDayStatus(m,dow);if(ds==="preferred")score-=0.5;if(ds==="if_needed")score+=2;return{id:m.id,score:score}}).sort(function(a,b){return a.score-b.score});
+        if(avail.length){plan[dk][shift.id]=avail[0].id;assigned.push(avail[0].id);counts[avail[0].id].main++}
+      });
+      if(cfg.needsBackup){var ba=cfg.members.filter(function(m){if(assigned.indexOf(m.id)>=0)return false;if(isAbsent(absences,m.id,dk))return false;if(isHolFor(holidays,dk,m.state))return false;if(getDayStatus(m,dow)==="unavailable")return false;return true}).map(function(m){return{id:m.id,score:counts[m.id].backup/((m.hours||cfg.fullTimeHours)/cfg.fullTimeHours)}}).sort(function(a,b){return a.score-b.score});if(ba.length){plan[dk].backup=ba[0].id;counts[ba[0].id].backup++}}
+    });
+    var up={};for(var kk in plans)up[kk]=plans[kk];up[mk]=plan;setPlans(up);save(cfg,up,absences);
+  }
+
+  function setCell(dk,slot,val){var np={};for(var kk in plans)np[kk]=plans[kk];var dayP={};var ex=curPlan[dk]||{};for(var k2 in ex)dayP[k2]=ex[k2];dayP[slot]=val;var monthP={};for(var k3 in curPlan)monthP[k3]=curPlan[k3];monthP[dk]=dayP;np[mk]=monthP;setPlans(np);setEditCell(null)}
+
+  var statsMonths=useMemo(function(){
+    if(statsRange==="year")return[0,1,2,3,4,5,6,7,8,9,10,11];
+    if(statsRange==="quarter"){var q=Math.floor(vm/3);return[q*3,q*3+1,q*3+2]}
+    return[vm];
+  },[statsRange,vm]);
+
+  var statsLabel=useMemo(function(){
+    if(statsRange==="year")return"Jahr "+vy;
+    if(statsRange==="quarter"){var q=Math.floor(vm/3)+1;return"Q"+q+" "+vy+" ("+MN[statsMonths[0]]+" – "+MN[statsMonths[2]]+")";}
+    return MN[vm]+" "+vy;
+  },[statsRange,vm,vy,statsMonths]);
+
+  var stats=useMemo(function(){
+    var s={};cfg.members.forEach(function(m){s[m.id]={perShift:{},backup:0,total:0,abs:{}}; cfg.shifts.forEach(function(sh){s[m.id].perShift[sh.id]=0}); ABS_TYPES.forEach(function(at){s[m.id].abs[at.id]=0})});
+    statsMonths.forEach(function(mo){
+      var moKey=vy+"-"+mo;var moPlan=plans[moKey]||{};
+      Object.keys(moPlan).forEach(function(dk2){var dp2=moPlan[dk2];Object.keys(dp2).forEach(function(slot){var mid2=dp2[slot];if(s[mid2]){if(slot==="backup"){s[mid2].backup++}else{if(s[mid2].perShift[slot]!==undefined)s[mid2].perShift[slot]++;} s[mid2].total++}})});
+      cfg.members.forEach(function(m){var ma=absences[m.id]||{};Object.keys(ma).forEach(function(dk3){var d3=new Date(dk3);if(d3.getFullYear()===vy&&d3.getMonth()===mo&&s[m.id].abs[ma[dk3]]!==undefined){s[m.id].abs[ma[dk3]]++}})});
+    });
+    return s;
+  },[plans,cfg.members,cfg.shifts,absences,vy,statsMonths]);
+
+  function exportCSV(){var rows=[["Datum","KW","Tag"].concat(cfg.shifts.map(function(s){return s.name})).concat(cfg.needsBackup?[cfg.backupLabel]:[])];days.forEach(function(d){if(d.getDay()===0||d.getDay()===6)return;var dk=fk(d);var dp=curPlan[dk]||{};var row=[dk,"KW "+getKW(d),DOW[d.getDay()]];cfg.shifts.forEach(function(s){var m2=findMem(cfg.members,dp[s.id]);row.push(m2?m2.name:"")});if(cfg.needsBackup){var mb=findMem(cfg.members,dp.backup);row.push(mb?mb.name:"")}rows.push(row)});var blob=new Blob(["\uFEFF"+rows.map(function(r){return r.join(";")}).join("\n")],{type:"text/csv;charset=utf-8;"});var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="Dienstplan_"+MN[vm]+"_"+vy+".csv";a.click()}
+
+  function handleMemberSave(data){var ex=findMem(cfg.members,data.id);var updated=ex?cfg.members.map(function(m){return m.id===data.id?data:m}):cfg.members.concat([data]);var nc=cloneCfg({members:updated});save(nc,plans,absences)}
+  function handleShiftSave(data){var ex=cfg.shifts.find(function(s){return s.id===data.id});var updated=ex?cfg.shifts.map(function(s){return s.id===data.id?data:s}):cfg.shifts.concat([data]);var nc=cloneCfg({shifts:updated});save(nc,plans,absences)}
+  function handleSRSave(data){var ex=(cfg.shiftRules||[]).find(function(r){return r.id===data.id});var updated=ex?(cfg.shiftRules||[]).map(function(r){return r.id===data.id?data:r}):(cfg.shiftRules||[]).concat([data]);var nc=cloneCfg({shiftRules:updated});save(nc,plans,absences)}
+  function handleVRSave(data){var ex=cfg.vacRules.find(function(r){return r.id===data.id});var updated=ex?cfg.vacRules.map(function(r){return r.id===data.id?data:r}):cfg.vacRules.concat([data]);var nc=cloneCfg({vacRules:updated});save(nc,plans,absences)}
+
+  var vacWeeks=useMemo(function(){var wd=days.filter(function(d){return d.getDay()!==0&&d.getDay()!==6});var weeks=[];var curW=null;wd.forEach(function(d){var kw=getKW(d);if(!curW||curW.kw!==kw){curW={kw:kw,days:[]};weeks.push(curW)}curW.days.push(d)});return weeks},[days]);
+
+  return <div style={{minHeight:"100vh"}}>
+    <div className="topbar no-print"><div><div className="bl">SBK</div><div className="tn">{cfg.teamName||"Dienstplaner"}</div></div><div style={{marginLeft:"auto"}}><button className="btn btn-sm btn-ok" onClick={function(){save(cfg,plans,absences)}}>💾 Speichern</button></div></div>
+    <div className="tabs no-print">{[["plan","📋 Dienstplan"],["absence","📅 Abwesenheiten"],["team","👥 Team"],["settings","⚙️ Einstellungen"],["stats","📊 Statistik"]].map(function(t){return <button key={t[0]} className={"tab"+(tab===t[0]?" on":"")} onClick={function(){setTab(t[0])}}>{t[1]}</button>})}</div>
+    {(tab==="plan"||tab==="absence"||tab==="stats")&&<div className="nav no-print">
+      <button className="nav-btn" onClick={function(){navM(-1)}}>‹</button><span className="nav-title">{MN[vm]+" "+vy}</span><button className="nav-btn" onClick={function(){navM(1)}}>›</button>
+      {tab==="plan"&&<div style={{marginLeft:"auto",display:"flex",gap:8}}>
+        <button className="btn btn-sm btn-p" onClick={autoGen} disabled={!cfg.members.length}>⚡ Auto-Planen</button>
+        <button className="btn btn-sm btn-g" onClick={exportCSV}>↓ CSV</button>
+        <button className="copy-btn" onClick={function(e){copyPlanTable(cfg,days,curPlan,holidays,absences,vy,vm,e.currentTarget)}} dangerouslySetInnerHTML={{__html:COPY_ICON+'Tabelle kopieren'}}/>
+        <button className="copy-btn" onClick={function(e){copyAllSections(cfg,days,curPlan,holidays,absences,stats,vy,vm,statsLabel,e.currentTarget)}} dangerouslySetInnerHTML={{__html:COPY_ICON+'Alles kopieren'}}/>
+        {plans[mk]&&<button className="btn btn-sm btn-d" onClick={function(){if(!confirm("Plan leeren?"))return;var up={};for(var kk in plans)up[kk]=plans[kk];delete up[mk];setPlans(up);save(cfg,up,absences)}}>✕ Leeren</button>}
+      </div>}
+      {tab==="absence"&&<div style={{marginLeft:"auto",display:"flex",gap:8}}>
+        <button className="copy-btn" onClick={function(e){copyAbsenceTable(cfg,absences,days,vy,vm,holidays,e.currentTarget)}} dangerouslySetInnerHTML={{__html:COPY_ICON+'Abwesenheiten kopieren'}}/>
+      </div>}
+      {tab==="stats"&&<div style={{marginLeft:"auto",display:"flex",gap:8}}>
+        <button className="copy-btn" onClick={function(e){copyStatsTable(cfg,stats,statsLabel,e.currentTarget)}} dangerouslySetInnerHTML={{__html:COPY_ICON+'Statistik kopieren'}}/>
+      </div>}
+    </div>}
+    <div style={{padding:"20px 24px"}}>
+
+{tab==="plan"&&<div>
+  {cfg.members.length===0?<div className="card"><div className="card-b" style={{textAlign:"center",padding:40}}><div style={{fontSize:32,marginBottom:12}}>👥</div><h3 style={{fontFamily:"'Fraunces',serif",fontSize:"1.3rem",marginBottom:8}}>Noch keine Mitarbeiter</h3><p style={{color:"var(--c-text-mid)",marginBottom:16}}>Gehe zum Tab Team, um dein Team aufzubauen.</p><button className="btn btn-p" onClick={function(){setTab("team")}}>→ Team einrichten</button></div></div>
+  :<div>
+    <div style={{display:"flex",gap:12,marginBottom:14,flexWrap:"wrap",alignItems:"center"}}>
+      {cfg.shifts.map(function(s){return <span key={s.id} className={"sl "+colorCls(s.color)}>{s.label+" "+s.name}</span>})}
+      {cfg.needsBackup&&<span className={"sl "+colorCls(cfg.backupColor)}>{cfg.backupLabel}</span>}
+    </div>
+    <div className="card"><div style={{overflowX:"auto"}}><table className="tbl"><thead><tr>
+      <th>KW</th><th>Tag</th><th>Datum</th>
+      {cfg.shifts.map(function(s){return <th key={s.id}>{s.label}</th>})}
+      {cfg.needsBackup&&<th>{cfg.backupLabel}</th>}<th>Info</th>
+    </tr></thead><tbody>
+      {days.map(function(date){var dow=date.getDay();if(dow===0||dow===6)return null;var dk=fk(date);var dp=curPlan[dk]||{};var activeShifts=cfg.shifts.filter(function(s){return shiftActiveOnDate(s,date)});var holAff=cfg.members.filter(function(m){return isHolFor(holidays,dk,m.state)});var absAff=cfg.members.filter(function(m){return isAbsent(absences,m.id,dk)});var allOff=holAff.length===cfg.members.length;
+        return <tr key={dk} style={allOff?{background:"var(--c-warn-bg)",opacity:.6}:{}}>
+          <td><span style={{fontWeight:700,color:"var(--c-text-mid)"}}>{getKW(date)}</span></td>
+          <td style={{fontWeight:500,color:"var(--c-text-mid)"}}>{DOW[dow]}</td>
+          <td style={{whiteSpace:"nowrap",color:"var(--c-text-mid)"}}>{String(date.getDate()).padStart(2,"0")+"."+String(date.getMonth()+1).padStart(2,"0")+"."}</td>
+          {cfg.shifts.map(function(s){return <td key={s.id}>{!allOff&&<CellEdit dk={dk} slotKey={s.id} dp={dp} shift={s} activeShifts={activeShifts} editCell={editCell} setEditCell={setEditCell} setCell={setCell} members={cfg.members}/>}</td>})}
+          {cfg.needsBackup&&<td>{!allOff&&<CellEdit dk={dk} slotKey="backup" dp={dp} shift={null} activeShifts={activeShifts} editCell={editCell} setEditCell={setEditCell} setCell={setCell} members={cfg.members}/>}</td>}
+          <td style={{fontSize:12}}>{holAff.length>0&&<div style={{color:"var(--c-warn)"}}>{"🏖 "+holAff.map(function(m){var h=isHolFor(holidays,dk,m.state);return h?h.name:""}).filter(function(v,i,a){return v&&a.indexOf(v)===i}).join(", ")}</div>}{absAff.length>0&&<div>{absAff.map(function(m){var at=absInfo(isAbsent(absences,m.id,dk));return <span key={m.id} style={{color:at.color,marginRight:6}}>{at.emoji+" "+m.name}</span>})}</div>}</td>
+        </tr>})}
+    </tbody></table></div></div>
+  </div>}
+</div>}
+
+{tab==="absence"&&<div>
+  {mvv.length>0&&<div style={{marginBottom:16}}><div style={{fontWeight:700,color:"var(--c-warn)",fontSize:13,marginBottom:8}}>⚠️ Regelverstöße</div>{mvv.map(function(v){return <div key={v.dk} className="warn-box"><span>⚠️</span><div className="wt"><strong>{String(new Date(v.dk).getDate()).padStart(2,"0")+"."+String(new Date(v.dk).getMonth()+1).padStart(2,"0")+"."}</strong>{" – "+v.violations.join(" | ")}</div></div>})}</div>}
+  <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:16,flexWrap:"wrap"}}>
+    <span style={{fontSize:14,color:"var(--c-text-mid)"}}>Klicke auf einen Tag → Abwesenheitstyp wählen.</span>
+    <div className="abs-legend">
+      {ABS_TYPES.map(function(at){return <span key={at.id} className={"abs-d "+at.cls} style={{width:"auto",height:"auto",padding:"2px 8px",fontSize:11}}>{at.emoji+" "+at.label}</span>})}
+    </div>
+  </div>
+  {cfg.members.length===0?<div className="card"><div className="card-b" style={{textAlign:"center",padding:40,color:"var(--c-text-mid)"}}>Bitte erst Mitarbeiter anlegen.<br/><button className="btn btn-p" style={{marginTop:12}} onClick={function(){setTab("team")}}>→ Team</button></div></div>
+  :<div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(380px,1fr))",gap:16}}>
+    {cfg.members.map(function(member){
+      var ma=absences[member.id]||{};var mAbsMonth=Object.keys(ma).filter(function(dk3){var d3=new Date(dk3);return d3.getFullYear()===vy&&d3.getMonth()===vm});
+      var absCounts={};ABS_TYPES.forEach(function(at){absCounts[at.id]=0});mAbsMonth.forEach(function(dk3){var t=ma[dk3];if(absCounts[t]!==undefined)absCounts[t]++});
+      return <div key={member.id} className="card">
+        <div className="card-h">
+          <h4><span className="dot" style={{background:STATE_COL[member.state]||"var(--c-text-faint)"}}/> {member.name}</h4>
+          <span style={{fontSize:12,color:"var(--c-text-soft)"}}>{member.hours+"h · "+findSt(member.state)}</span>
+        </div>
+        <div className="card-b">
+          <div className="vac-grid">
+            <div className="vac-hdr">KW</div><div className="vac-hdr">Mo</div><div className="vac-hdr">Di</div><div className="vac-hdr">Mi</div><div className="vac-hdr">Do</div><div className="vac-hdr">Fr</div>
+            {vacWeeks.map(function(week){
+              var slots=[null,null,null,null,null];week.days.forEach(function(d){var di=d.getDay()-1;if(di>=0&&di<5)slots[di]=d});
+              return <React.Fragment key={week.kw}>
+                <div className="vac-kw">{"KW"+week.kw}</div>
+                {slots.map(function(date,i){
+                  if(!date)return <div key={i}/>;
+                  return <AbsDay key={i} date={date} memberId={member.id} absences={absences} holidays={holidays} memberState={member.state} setAbsences={setAbsences}/>;
+                })}
+              </React.Fragment>;
+            })}
+          </div>
+          <div style={{marginTop:10,fontSize:12,color:"var(--c-text-soft)",display:"flex",gap:8,flexWrap:"wrap"}}>
+            {ABS_TYPES.filter(function(at){return absCounts[at.id]>0}).map(function(at){return <span key={at.id} style={{color:at.color}}>{at.emoji+" "+absCounts[at.id]}</span>})}
+            {mAbsMonth.length===0&&<span>Keine Abwesenheiten</span>}
+          </div>
+        </div>
+      </div>;
+    })}
+  </div>}
+  {cfg.members.length>0&&<div style={{marginTop:20}}><button className="btn btn-ok" onClick={function(){save(cfg,plans,absences)}}>💾 Speichern</button></div>}
+</div>}
+
+{tab==="team"&&<div>
+  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:16,flexWrap:"wrap",gap:10}}>
+    <h2 style={{fontFamily:"'Fraunces',serif",fontSize:"1.4rem"}}>Team verwalten</h2>
+    <div style={{display:"flex",gap:8}}><button className="copy-btn" onClick={function(e){copyTeamTable(cfg,e.currentTarget)}} dangerouslySetInnerHTML={{__html:COPY_ICON+'Team kopieren'}}/><button className="btn btn-p" onClick={function(){setModal({type:"member"})}}>+ Mitarbeiter</button></div>
+  </div>
+  {cfg.members.length===0?<div className="card"><div className="card-b" style={{textAlign:"center",padding:40}}><div style={{fontSize:40,marginBottom:12}}>👋</div><h3 style={{fontFamily:"'Fraunces',serif",marginBottom:8}}>Willkommen!</h3><p style={{color:"var(--c-text-mid)",maxWidth:400,margin:"0 auto"}}>Klicke auf + Mitarbeiter um dein Team aufzubauen.</p></div></div>
+  :<div className="card"><div style={{overflowX:"auto"}}><table className="tbl"><thead><tr><th>Name</th><th>Stunden</th><th>Tage/Wo</th><th>Rolle</th><th>Bundesland</th><th>Tagespräf.</th><th>Aktionen</th></tr></thead>
+    <tbody>{cfg.members.map(function(m){
+      var prefs=(m.dayPrefs||[]).filter(function(p){return p.status!=="available"});
+      return <tr key={m.id}>
+        <td style={{fontWeight:700}}>{m.name}</td><td>{m.hours+"h"}</td><td>{(m.workDaysPerWeek||5)+" Tage"}</td><td>{m.role||"–"}</td><td>{findSt(m.state)}</td>
+        <td>{prefs.length===0?"–":<div style={{display:"flex",gap:3,flexWrap:"wrap"}}>{prefs.map(function(p){var info=DAY_STATUSES.find(function(x){return x.id===p.status});return <span key={p.day} className={"day-chip "+(p.status==="preferred"?"pref":p.status==="unavailable"?"no":"ok")}>{info?info.emoji:""}{DOW[p.day]}</span>})}</div>}</td>
+        <td><div style={{display:"flex",gap:6}}>
+          <button className="btn btn-sm btn-g" onClick={function(){setModal({type:"member",data:m})}}>✏️</button>
+          <button className="btn btn-sm btn-d" onClick={function(){if(!confirm(m.name+" entfernen?"))return;var nc=cloneCfg({members:cfg.members.filter(function(x){return x.id!==m.id})});save(nc,plans,absences)}}>🗑</button>
+        </div></td></tr>})}</tbody></table></div></div>}
+  <div className="card" style={{marginTop:16}}><div className="card-h"><h4>Teamname</h4></div><div className="card-b"><input className="inp" value={cfg.teamName} onChange={function(e){cloneCfg({teamName:e.target.value})}} onBlur={function(){save(cfg,plans,absences)}} placeholder="z.B. Kundenservice"/></div></div>
+</div>}
+
+{tab==="settings"&&<div>
+  <h2 style={{fontFamily:"'Fraunces',serif",fontSize:"1.4rem",marginBottom:20}}>Einstellungen</h2>
+  <div className="card" style={{marginBottom:16}}>
+    <div className="card-h"><h4>📋 Diensttypen</h4><div style={{display:"flex",gap:6}}><button className="copy-btn" onClick={function(e){copyShiftTypes(cfg,e.currentTarget)}} dangerouslySetInnerHTML={{__html:COPY_ICON+'Kopieren'}}/><button className="btn btn-sm btn-p" onClick={function(){setModal({type:"shift"})}}>+ Diensttyp</button></div></div>
+    <div className="card-b">{cfg.shifts.map(function(s){return <div key={s.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:"1px solid var(--c-border)"}}><span className={"sl "+colorCls(s.color)}>{s.label}</span><div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{s.name}</div><div style={{fontSize:12,color:"var(--c-text-soft)"}}>{shiftDaysSummary(s)+" · "+(s.distribution==="equal"?"Gleichmäßig":"Proportional")}</div></div><button className="btn btn-sm btn-g" onClick={function(){setModal({type:"shift",data:s})}}>✏️</button><button className="btn btn-sm btn-d" onClick={function(){var nc=cloneCfg({shifts:cfg.shifts.filter(function(x){return x.id!==s.id})});save(nc,plans,absences)}}>🗑</button></div>})}</div>
+  </div>
+  <div className="card" style={{marginBottom:16}}>
+    <div className="card-h"><h4>⚖️ Dienstregeln</h4><div style={{display:"flex",gap:6}}><button className="copy-btn" onClick={function(e){copyShiftRules(cfg,e.currentTarget)}} dangerouslySetInnerHTML={{__html:COPY_ICON+'Kopieren'}}/><button className="btn btn-sm btn-p" onClick={function(){setModal({type:"shiftRule"})}}>+ Regel</button></div></div>
+    <div className="card-b">{(cfg.shiftRules||[]).map(function(r){var rType=RULE_TYPES.find(function(x){return x.id===r.type});return <div key={r.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:"1px solid var(--c-border)"}}>
+      <Toggle on={r.enabled} onChange={function(){var nc=cloneCfg({shiftRules:(cfg.shiftRules||[]).map(function(x){if(x.id===r.id){var cp={};for(var kk in x)cp[kk]=x[kk];cp.enabled=!x.enabled;return cp}return x})});save(nc,plans,absences)}}/>
+      <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{r.desc||(rType?rType.label:r.type)}</div><div style={{fontSize:12,color:"var(--c-text-soft)"}}>{rType?rType.desc:""}{r.value?" (Wert: "+r.value+")":""}</div></div>
+      <button className="btn btn-sm btn-g" onClick={function(){setModal({type:"shiftRule",data:r})}}>✏️</button>
+      <button className="btn btn-sm btn-d" onClick={function(){var nc=cloneCfg({shiftRules:(cfg.shiftRules||[]).filter(function(x){return x.id!==r.id})});save(nc,plans,absences)}}>🗑</button>
+    </div>})}</div>
+  </div>
+  <div className="card" style={{marginBottom:16}}>
+    <div className="card-h"><h4>🛡️ Vertretung</h4></div>
+    <div className="card-b">
+      <div style={{display:"flex",alignItems:"center",gap:16,marginBottom:12}}><Toggle on={cfg.needsBackup} onChange={function(){var nc=cloneCfg({needsBackup:!cfg.needsBackup});save(nc,plans,absences)}}/><span style={{fontSize:14,fontWeight:500}}>{cfg.needsBackup?"Aktiv":"Deaktiviert"}</span></div>
+      {cfg.needsBackup&&<div><label style={{fontSize:12,fontWeight:700,color:"var(--c-text-mid)",marginBottom:4,display:"block"}}>Label</label><input className="inp" style={{maxWidth:200}} value={cfg.backupLabel} onChange={function(e){cloneCfg({backupLabel:e.target.value})}} onBlur={function(){save(cfg,plans,absences)}}/></div>}
+    </div>
+  </div>
+  <div className="card" style={{marginBottom:16}}>
+    <div className="card-h"><h4>📅 Abwesenheitsregeln</h4><div style={{display:"flex",gap:6}}><button className="copy-btn" onClick={function(e){copyVacRules(cfg,e.currentTarget)}} dangerouslySetInnerHTML={{__html:COPY_ICON+'Kopieren'}}/><button className="btn btn-sm btn-p" onClick={function(){setModal({type:"vacRule"})}}>+ Regel</button></div></div>
+    <div className="card-b">{cfg.vacRules.map(function(r){return <div key={r.id} style={{display:"flex",alignItems:"center",gap:12,padding:"10px 0",borderBottom:"1px solid var(--c-border)"}}>
+      <Toggle on={r.enabled} onChange={function(){var nc=cloneCfg({vacRules:cfg.vacRules.map(function(x){if(x.id===r.id){var cp={};for(var kk in x)cp[kk]=x[kk];cp.enabled=!x.enabled;return cp}return x})});save(nc,plans,absences)}}/>
+      <div style={{flex:1}}><div style={{fontWeight:700,fontSize:14}}>{r.desc||r.type}</div><div style={{fontSize:12,color:"var(--c-text-soft)"}}>{r.type==="max_concurrent"&&"Max. "+r.value+" gleichzeitig"}{r.type==="min_present"&&"Min. "+r.value+" anwesend"}{r.type==="exclusion"&&"Ausschluss: "+(r.memberIds||[]).map(function(id){var m2=findMem(cfg.members,id);return m2?m2.name:"?"}).join(" & ")}</div></div>
+      <button className="btn btn-sm btn-g" onClick={function(){setModal({type:"vacRule",data:r})}}>✏️</button>
+      <button className="btn btn-sm btn-d" onClick={function(){var nc=cloneCfg({vacRules:cfg.vacRules.filter(function(x){return x.id!==r.id})});save(nc,plans,absences)}}>🗑</button>
+    </div>})}</div>
+  </div>
+  <div className="card" style={{marginBottom:16}}><div className="card-h"><h4>⏰ Vollzeit-Basis</h4></div><div className="card-b"><div style={{display:"flex",alignItems:"center",gap:12}}><input className="inp" type="number" style={{width:100}} value={cfg.fullTimeHours} onChange={function(e){cloneCfg({fullTimeHours:Number(e.target.value)})}} onBlur={function(){save(cfg,plans,absences)}} min={1} max={50}/><span style={{fontSize:14,color:"var(--c-text-mid)"}}>Stunden/Woche = 100%</span></div></div></div>
+  <div className="card"><div className="card-h"><h4>💾 Daten</h4></div><div className="card-b"><div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+    <button className="btn btn-g" onClick={function(){var data=JSON.stringify({cfg:cfg,plans:plans,absences:absences},null,2);var blob=new Blob([data],{type:"application/json"});var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="dienstplaner_export.json";a.click()}}>↓ Export</button>
+    <button className="btn btn-g" onClick={function(){var inp2=document.createElement("input");inp2.type="file";inp2.accept=".json";inp2.onchange=function(e){var f=e.target.files[0];if(!f)return;var reader=new FileReader();reader.onload=function(ev){try{var d=JSON.parse(ev.target.result);if(d.cfg)setCfg(d.cfg);if(d.plans)setPlans(d.plans);var rv=d.vacations||d.absences||{};setAbsences(migrateVac(rv));save(d.cfg||cfg,d.plans||plans,migrateVac(rv))}catch(ex){toast("Ungültige Datei","err")}};reader.readAsText(f)};inp2.click()}}>↑ Import</button>
+    <button className="btn btn-d" onClick={function(){if(!confirm("Alle Daten löschen?"))return;localStorage.removeItem(STORE_KEY);setCfg(DEFAULT_CFG);setPlans({});setAbsences({});toast("Zurückgesetzt","warn")}}>✕ Reset</button>
+  </div></div></div>
+</div>}
+
+{tab==="stats"&&<div>
+  {cfg.members.length===0?<div className="card"><div className="card-b" style={{textAlign:"center",padding:40,color:"var(--c-text-mid)"}}>Keine Daten.</div></div>
+  :<div>
+    <div style={{marginBottom:16,display:"flex",alignItems:"center",gap:12,flexWrap:"wrap"}}>
+      <div className="sr-toggle">
+        <button className={statsRange==="month"?"on":""} onClick={function(){setStatsRange("month")}}>Monat</button>
+        <button className={statsRange==="quarter"?"on":""} onClick={function(){setStatsRange("quarter")}}>Quartal</button>
+        <button className={statsRange==="year"?"on":""} onClick={function(){setStatsRange("year")}}>Jahr</button>
       </div>
-    </section>
-
-    <!-- TOOLS -->
-    <p class="label">Verfügbare Tools</p>
-    <div class="grid">
-
-      <a class="card c1" href="anforderungs-assistent/">
-        <div class="card-band"></div>
-        <div class="card-body">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z"/></svg>
-          </div>
-          <div class="card-title">Anforderungs Assistent</div>
-          <div class="card-desc">Iterativer Sparringspartner zum Erarbeiten von JIRA-Anforderungen</div>
-          <span class="card-cta">
-            Öffnen
-            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <a class="card c2" href="api-katalog-manager/">
-        <div class="card-band"></div>
-        <div class="card-body">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-8 14H7v-2h4v2zm0-4H7v-2h4v2zm0-4H7V7h4v2zm6 8h-4v-2h4v2zm0-4h-4v-2h4v2zm0-4h-4V7h4v2z"/></svg>
-          </div>
-          <div class="card-title">API Katalog Manager</div>
-          <div class="card-desc">Excel-Kataloge durchsuchen und Quartalsvergleiche als PowerPoint exportieren</div>
-          <span class="card-cta">
-            Öffnen
-            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <a class="card c3" href="ki-usecase-einordnung/">
-        <div class="card-band"></div>
-        <div class="card-body">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
-          </div>
-          <div class="card-title">KI Usecase Einordnung</div>
-          <div class="card-desc">Quiz-Tool zum Einordnen von KI-Use-Cases in 6 Kategorien</div>
-          <span class="card-cta">
-            Öffnen
-            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-          </span>
-        </div>
-      </a>
-
-      <a class="card c4" href="KI-News-Template/">
-        <div class="card-band"></div>
-        <div class="card-body">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24"><path d="M22 3l-1.67 1.67L18.67 3 17 4.67 15.33 3l-1.66 1.67L12 3l-1.67 1.67L8.67 3 7 4.67 5.33 3 3.67 4.67 2 3v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V3zm-2 16H4V5.08l.33.29L6.33 4 8 5.67 9.67 4l1.66 1.67L13 4l1.67 1.67L16.33 4 18 5.67l1.67-1.34.33.29V19zM5 15h14v2H5zm0-4h8v2H5zm0-4h8v2H5zm10 0h4v6h-4z"/></svg>
-          </div>
-          <div class="card-title">
-            KI News Template
-            <span class="badge-new">Neu</span>
-          </div>
-          <div class="card-desc">Template zum strukturierten Aufbereiten und Teilen von KI-News im Team</div>
-          <span class="card-cta">
-            Öffnen
-            <svg viewBox="0 0 24 24"><path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/></svg>
-          </span>
-        </div>
-      </a>
+      <span style={{color:"var(--c-text-mid)",fontSize:14}}>Auswertung: <strong style={{color:"var(--c-brand)"}}>{statsLabel}</strong></span>
+    </div>
+    <div className="card" style={{marginBottom:20}}><div style={{overflowX:"auto"}}><table className="tbl"><thead><tr><th>Mitarbeiter</th><th>Std.</th>{cfg.shifts.map(function(sh){return <th key={sh.id} style={{textAlign:"center"}}><span className={"sl "+colorCls(sh.color)}>{sh.label}</span></th>})}{cfg.needsBackup&&<th style={{textAlign:"center"}}>{cfg.backupLabel}</th>}<th style={{textAlign:"center"}}>Ges.</th>{ABS_TYPES.map(function(at){return <th key={at.id} style={{textAlign:"center"}}>{at.emoji}</th>})}</tr></thead>
+      <tbody>{cfg.members.map(function(m){var s=stats[m.id]||{perShift:{},backup:0,total:0,abs:{}};return <tr key={m.id}><td style={{fontWeight:700}}>{m.name}</td><td>{m.hours+"h"}</td>{cfg.shifts.map(function(sh){var sv=(s.perShift||{})[sh.id]||0;return <td key={sh.id} style={{textAlign:"center",fontWeight:700,color:sv?"var(--c-brand)":"var(--c-text-faint)"}}>{sv||"–"}</td>})}{cfg.needsBackup&&<td style={{textAlign:"center",fontWeight:700,color:"#553C9A"}}>{s.backup}</td>}<td style={{textAlign:"center",fontWeight:700}}>{s.total}</td>{ABS_TYPES.map(function(at){var v=(s.abs||{})[at.id]||0;return <td key={at.id} style={{textAlign:"center",color:v?at.color:"var(--c-text-faint)"}}>{v||"–"}</td>})}</tr>})}</tbody></table></div></div>
+    <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(250px,1fr))",gap:16}}>
+      {cfg.shifts.map(function(sh){var cObj=COLORS.find(function(c){return c.id===sh.color});var barColor=cObj?({blue:"#2A4365",green:"#22543D",orange:"#7B341E",purple:"#553C9A",red:"#742A2A",teal:"#234E52"}[cObj.id]||"var(--c-brand)"):"var(--c-brand)";return{label:sh.name+" ("+sh.label+")",key:sh.id,color:barColor,isShift:true}}).concat(cfg.needsBackup?[{label:cfg.backupLabel,key:"backup",color:"#553C9A"}]:[]).concat([{label:"Gesamt",key:"total",color:"var(--c-text)"}]).map(function(card){var maxVal=Math.max.apply(null,cfg.members.map(function(m){var st2=stats[m.id]||{perShift:{},backup:0,total:0};if(card.isShift)return(st2.perShift||{})[card.key]||0;return st2[card.key]||0}).concat([1]));return <div key={card.key} className="card"><div className="card-h"><h4>{card.label}</h4></div><div className="card-b">{cfg.members.map(function(m){var st2=stats[m.id]||{perShift:{},backup:0,total:0};var val=card.isShift?(st2.perShift||{})[card.key]||0:st2[card.key]||0;return <div key={m.id} style={{marginBottom:10}}><div style={{display:"flex",justifyContent:"space-between",fontSize:13,marginBottom:4}}><span>{m.name}</span><span style={{color:card.color,fontWeight:700}}>{val}</span></div><div className="bar-t"><div className="bar-f" style={{width:(val/maxVal*100)+"%",background:card.color}}/></div></div>})}</div></div>})}
+    </div>
+  </div>}
+</div>}
 
     </div>
-
-    <!-- CONTACT SECTION -->
-    <div class="contact-section">
-      <div class="contact-icon-wrap">
-        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-      </div>
-      <div class="contact-text">
-        <h3>Fragen oder Ideen?</h3>
-        <p>Feedback, Wünsche für neue Tools oder Bugs direkt melden – Victor antwortet schnell.</p>
-      </div>
-      <a class="contact-btn" href="mailto:victor.schneevoigt@sbk.org?subject=Frage%20zu%20Victor%20Tools">
-        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-        E-Mail schreiben
-      </a>
-    </div>
-
-  </main>
-
-  <footer>
-    Victor Tools · SBK Siemens Betriebskrankenkasse · Kein Login, keine Installation
-  </footer>
-
+    <div className={"toast"+(toastMsg?" on":"")+" "+toastType}>{toastMsg}</div>
+    {modal&&modal.type==="member"&&<MemberModal member={modal.data||null} cfg={cfg} onSave={handleMemberSave} onClose={function(){setModal(null)}}/>}
+    {modal&&modal.type==="shift"&&<ShiftModal shift={modal.data||null} onSave={handleShiftSave} onClose={function(){setModal(null)}}/>}
+    {modal&&modal.type==="shiftRule"&&<ShiftRuleModal rule={modal.data||null} onSave={handleSRSave} onClose={function(){setModal(null)}}/>}
+    {modal&&modal.type==="vacRule"&&<VacRuleModal rule={modal.data||null} members={cfg.members} onSave={handleVRSave} onClose={function(){setModal(null)}}/>}
+  </div>;
+}
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
 </body>
 </html>
