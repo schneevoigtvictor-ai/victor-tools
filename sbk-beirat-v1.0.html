@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBK Beirat · Board of Directors</title>
+<!-- Google Fonts: DM Sans + Fraunces (SBK Design System) -->
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+<!-- PptxGenJS fuer PowerPoint-Export -->
+<script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS@3.12.0/dist/pptxgen.bundle.js"></script>
+<style>
+/* ══════════════════════════════════════════
+   CSS-Reset & SBK Design-System Tokens
+   ══════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --c-brand: #003C6E;
+  --c-brand-dark: #002B52;
+  --c-brand-light: #BAF6FF;
+  --c-brand-mid: #2B6CB0;
+  --c-blue-sec: #3868C6;
+  --c-cyan: #45D9FF;
+  --c-yellow: #FFD500;
+  --c-purple: #A584FF;
+  --c-bg: #F0F4F8;
+  --c-surface: #FFFFFF;
+  --c-border: #E2E8F0;
+  --c-border-mid: #CBD5E0;
+  --c-text: #1A202C;
+  --c-text-mid: #4A5568;
+  --c-text-soft: #718096;
+  --c-text-faint: #A0AEC0;
+  --sp-1: 4px; --sp-2: 8px; --sp-3: 12px; --sp-4: 16px;
+  --sp-5: 20px; --sp-6: 24px; --sp-8: 32px; --sp-10: 40px;
+  --r-sm: 6px; --r-md: 10px; --r-lg: 14px; --r-xl: 20px; --r-full: 9999px;
+}
+
+body {
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 15px;
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* ══════════════════════════════════════════
+   Topbar
+   ══════════════════════════════════════════ */
+.topbar {
+  height: 60px;
+  background: var(--c-brand-dark);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 12px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.topbar .brand-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  opacity: .65;
+}
+.topbar .tool-name {
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+.topbar .spacer { flex: 1; }
+.topbar-btn {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.2);
+  border-radius: var(--r-md);
+  padding: 6px 14px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+}
+.topbar-btn:hover { background: rgba(255,255,255,.22); }
+
+/* ══════════════════════════════════════════
+   Setup-Karte (API-Provider + Token)
+   ══════════════════════════════════════════ */
+.setup-overlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  padding: 24px;
+}
+.setup-card {
+  background: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-xl);
+  padding: 32px;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+.setup-card h2 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  margin-bottom: 4px;
+}
+.setup-card .subtitle {
+  font-size: 13px;
+  color: var(--c-text-soft);
+  margin-bottom: 20px;
+}
+
+/* Provider-Toggle */
+.provider-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.provider-opt {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid var(--c-border);
+  border-radius: var(--r-lg);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  text-align: center;
+}
+.provider-opt:hover { border-color: var(--c-brand-mid); }
+.provider-opt.active {
+  border-color: var(--c-brand);
+  background: #EBF8FF;
+}
+.provider-opt h4 { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.provider-opt p { font-size: 11px; color: var(--c-text-soft); }
+
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text-mid);
+  margin-bottom: 6px;
+}
+.input-field {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-md);
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--c-text);
+  background: #fff;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+  resize: vertical;
+}
+.input-field:focus {
+  border-color: var(--c-brand-mid);
+  box-shadow: 0 0 0 3px rgba(43,108,176,.1);
+}
+.input-field::placeholder { color: var(--c-text-faint); }
+
+select.input-field {
+  cursor: pointer;
+  appearance: auto;
+}
+
+.tok-hint { font-size: 12px; color: var(--c-text-faint); margin-top: 4px; }
+.tok-err { font-size: 12px; color: #C53030; margin-top: 5px; display: none; }
+.tok-err.on { display: block; }
+
+/* ══════════════════════════════════════════
+   Buttons (SBK Design System)
+   ══════════════════════════════════════════ */
+.btn-primary {
+  background: var(--c-brand);
+  color: #fff;
+  border: none;
+  border-radius: var(--r-md);
+  padding: 11px 24px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, transform .1s;
+  width: 100%;
+}
+.btn-primary:hover { background: var(--c-brand-dark); }
+.btn-primary:active { transform: scale(.98); }
+.btn-primary:disabled { opacity: .4; cursor: not-allowed; }
+
+.btn-secondary {
+  background: #fff;
+  color: var(--c-brand);
+  border: 1.5px solid var(--c-brand);
+  border-radius: var(--r-md);
+  padding: 10px 22px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.btn-secondary:hover { background: var(--c-brand); color: #fff; }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--c-text-mid);
+  border: 1.5px solid var(--c-border-mid);
+  border-radius: var(--r-md);
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color .15s, color .15s;
+}
+.btn-ghost:hover { border-color: var(--c-text-mid); color: var(--c-text); }
+
+/* ══════════════════════════════════════════
+   Haupt-App Container
+   ══════════════════════════════════════════ */
+#mainApp { display: none; }
+
+.app-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* ══════════════════════════════════════════
+   Stepper (Fortschrittsanzeige)
+   ══════════════════════════════════════════ */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 28px;
+}
+.step-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text-faint);
+  cursor: pointer;
+  transition: color .15s;
+}
+.step-item.active { color: var(--c-brand); }
+.step-item.done { color: #22543D; }
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid var(--c-border);
+  background: #fff;
+  transition: all .15s;
+}
+.step-item.active .step-num {
+  border-color: var(--c-brand);
+  background: var(--c-brand);
+  color: #fff;
+}
+.step-item.done .step-num {
+  border-color: #22543D;
+  background: #F0FFF4;
+  color: #22543D;
+}
+.step-connector {
+  width: 40px;
+  height: 2px;
+  background: var(--c-border);
+  margin: 0 8px;
+}
+.step-connector.done { background: #22543D; }
+
+/* ══════════════════════════════════════════
+   Step 1: Board-Auswahl (Direktoren-Grid)
+   ══════════════════════════════════════════ */
+.step-panel { display: none; }
+.step-panel.active { display: block; }
+
+.step-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.step-desc {
+  font-size: 14px;
+  color: var(--c-text-mid);
+  margin-bottom: 24px;
+}
+
+.directors-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.director-card {
+  background: #fff;
+  border: 2px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: 16px;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s, transform .15s;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  user-select: none;
+}
+.director-card:hover {
+  border-color: var(--c-brand-mid);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+  transform: translateY(-1px);
+}
+.director-card.selected {
+  border-color: var(--c-brand);
+  background: #EBF8FF;
+}
+.director-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.director-info h4 { font-size: 14px; font-weight: 700; line-height: 1.3; }
+.director-role { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; margin-top: 2px; }
+.director-desc { font-size: 12px; color: var(--c-text-soft); margin-top: 4px; line-height: 1.4; }
+
+/* ══════════════════════════════════════════
+   Step 2: Kontext + Frage
+   ══════════════════════════════════════════ */
+.context-area {
+  background: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  margin-bottom: 16px;
+}
+.context-area h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 12px; }
+
+.file-upload-zone {
+  border: 2px dashed var(--c-border-mid);
+  border-radius: var(--r-md);
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--c-text-soft);
+}
+.file-upload-zone:hover {
+  border-color: var(--c-brand-mid);
+  background: #EBF8FF;
+}
+.file-upload-zone.has-file {
+  border-color: #22543D;
+  background: #F0FFF4;
+  color: #22543D;
+}
+.file-upload-zone input { display: none; }
+
+.rounds-config {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--c-text-mid);
+}
+.rounds-config select {
+  padding: 6px 10px;
+  border: 1.5px solid var(--c-border);
+  border-radius: var(--r-sm);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+/* ══════════════════════════════════════════
+   Step 3: Live Boardroom (Diskussion)
+   ══════════════════════════════════════════ */
+.boardroom {
+  background: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.boardroom-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: var(--c-brand-dark);
+  color: #fff;
+}
+.boardroom-header h3 {
+  font-size: 14px;
+  font-weight: 700;
+}
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #48BB78;
+  animation: pulse-dot 1.5s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+
+.boardroom-avatars {
+  display: flex;
+  gap: 0;
+  padding: 12px 20px;
+  background: #F7FAFC;
+  border-bottom: 1px solid var(--c-border);
+  flex-wrap: wrap;
+}
+.mini-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  margin-left: -6px;
+  border: 2px solid #fff;
+  transition: opacity .15s;
+}
+.mini-avatar:first-child { margin-left: 0; }
+.mini-avatar.speaking {
+  box-shadow: 0 0 0 3px var(--c-cyan);
+  z-index: 2;
+}
+.mini-avatar.inactive { opacity: .35; }
+
+.discussion-feed {
+  padding: 20px;
+  max-height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.discussion-empty {
+  text-align: center;
+  padding: 40px;
+  color: var(--c-text-faint);
+  font-size: 14px;
+}
+
+/* Diskussions-Nachricht */
+.disc-msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  animation: fadeIn .3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.disc-msg .avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.disc-bubble {
+  flex: 1;
+  background: #F7FAFC;
+  border-radius: 4px 14px 14px 14px;
+  padding: 12px 16px;
+  font-size: 14px;
+  line-height: 1.6;
+  border-left: 3px solid var(--c-border);
+}
+.disc-bubble .name {
+  font-size: 12px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.disc-bubble .role-tag {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  margin-left: 6px;
+  opacity: .7;
+}
+.disc-bubble .round-tag {
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--c-brand);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: var(--r-full);
+  margin-left: 8px;
+}
+.disc-bubble .text { margin-top: 6px; white-space: pre-wrap; }
+
+/* Loading-Indikator im Boardroom */
+.typing-indicator {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  font-size: 13px;
+  color: var(--c-text-soft);
+}
+.typing-indicator.on { display: flex; }
+.typing-dots { display: flex; gap: 3px; }
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-brand-mid);
+  animation: typeBounce .8s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay: .15s; }
+.typing-dots span:nth-child(3) { animation-delay: .3s; }
+@keyframes typeBounce {
+  0%, 80%, 100% { transform: scale(.6); opacity: .4; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Fortschrittsbalken */
+.progress-bar-wrap {
+  padding: 0 20px 12px;
+  display: none;
+}
+.progress-bar-wrap.on { display: block; }
+.progress-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--c-text-soft);
+  margin-bottom: 4px;
+}
+.progress-bar {
+  height: 6px;
+  background: var(--c-border);
+  border-radius: var(--r-full);
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--c-brand);
+  border-radius: var(--r-full);
+  transition: width .5s ease;
+  width: 0%;
+}
+
+/* ══════════════════════════════════════════
+   Step 4: Ergebnis (Tabs)
+   ══════════════════════════════════════════ */
+.result-panel {
+  background: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #FAFBFC;
+  border-bottom: 1px solid var(--c-border);
+}
+.result-header h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.tab-bar {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--c-border);
+  padding: 0 20px;
+}
+.tab-btn {
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--c-text-soft);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color .15s, border-color .15s;
+}
+.tab-btn:hover { color: var(--c-text-mid); }
+.tab-btn.active { color: var(--c-brand); border-bottom-color: var(--c-brand); }
+
+.tab-content {
+  padding: 24px;
+  display: none;
+  font-size: 14px;
+  line-height: 1.65;
+  white-space: pre-wrap;
+}
+.tab-content.active { display: block; }
+
+/* Export-Toolbar */
+.export-bar {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--c-border);
+  background: #FAFBFC;
+}
+
+/* Copy-Button (Confluence-Skill) */
+.copy-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 16px;
+  border: 1px solid var(--c-border-mid);
+  border-radius: var(--r-sm);
+  background: #fff;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--c-text-mid);
+  cursor: pointer;
+  transition: all .15s;
+}
+.copy-btn:hover { border-color: var(--c-brand-mid); color: var(--c-brand); background: #EBF8FF; }
+.copy-btn.copied { border-color: #38A169; color: #38A169; background: #F0FFF4; }
+.copy-btn svg { flex-shrink: 0; }
+
+/* ══════════════════════════════════════════
+   Toast
+   ══════════════════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--c-brand-dark);
+  color: #fff;
+  border-radius: var(--r-md);
+  padding: 11px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 10px 25px rgba(0,0,0,.06);
+  transform: translateY(44px);
+  opacity: 0;
+  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  z-index: 600;
+}
+.toast.on { transform: translateY(0); opacity: 1; }
+.toast.ok { background: #16A34A; }
+.toast.warn { background: #C05621; }
+.toast.err { background: #C53030; }
+
+/* ══════════════════════════════════════════
+   Responsive
+   ══════════════════════════════════════════ */
+@media (max-width: 600px) {
+  .directors-grid { grid-template-columns: 1fr; }
+  .provider-toggle { flex-direction: column; }
+  .topbar { padding: 0 12px; }
+  .app-container { padding: 16px; }
+}
+
+/* Steuerungs-Buttons am Step-Ende */
+.step-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+.step-actions .btn-primary { width: auto; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     TOPBAR
+     ══════════════════════════════════════════ -->
+<div class="topbar">
+  <span class="brand-label">SBK</span>
+  <span class="tool-name">Beirat · Board of Directors</span>
+  <div class="spacer"></div>
+  <button class="topbar-btn" onclick="showSettings()">Einstellungen</button>
+  <button class="topbar-btn" onclick="resetAll()">Neu starten</button>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SETUP-KARTE (Provider + Token)
+     ══════════════════════════════════════════ -->
+<div id="setupView" class="setup-overlay">
+  <div class="setup-card">
+    <h2>Willkommen beim Beirat</h2>
+    <p class="subtitle">Waehle deinen KI-Provider und gib das Token ein.</p>
+
+    <!-- Provider-Auswahl -->
+    <div class="provider-toggle">
+      <div class="provider-opt active" id="provKIA" onclick="selectProvider('kia')">
+        <h4>KIA (SBK)</h4>
+        <p>Interne SBK Plattform</p>
+      </div>
+      <div class="provider-opt" id="provOR" onclick="selectProvider('openrouter')">
+        <h4>OpenRouter</h4>
+        <p>Kostenfreie Alternative</p>
+      </div>
+    </div>
+
+    <!-- KIA-URL (editierbar) -->
+    <div class="form-group" id="grpKiaUrl">
+      <label class="form-label">KIA Base-URL</label>
+      <input class="input-field" id="kiaUrlIn" value="https://kia-int.apps.test.sbk.de" placeholder="https://kia-int.apps.test.sbk.de">
+    </div>
+
+    <!-- Modell-Auswahl -->
+    <div class="form-group">
+      <label class="form-label" id="modelLabel">KIA Modell</label>
+      <select class="input-field" id="modelIn">
+        <option value="openai/gpt-oss-120b">openai/gpt-oss-120b (KIA Standard)</option>
+      </select>
+    </div>
+
+    <!-- Token-Eingabe -->
+    <div class="form-group">
+      <label class="form-label">API Token</label>
+      <input class="input-field" type="password" id="tokIn" placeholder="Token eingeben" autocomplete="off"
+             onkeydown="if(event.key==='Enter')connectAPI()">
+      <div class="tok-hint" id="tokHint">KIA: Token aus Einstellungen &rarr; Konto. OpenRouter: API Key von openrouter.ai</div>
+    </div>
+
+    <div class="tok-err" id="tokErr"></div>
+    <button class="btn-primary" onclick="connectAPI()">Verbinden</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HAUPT-APP
+     ══════════════════════════════════════════ -->
+<div id="mainApp">
+  <div class="app-container">
+
+    <!-- Stepper -->
+    <div class="stepper" id="stepper"></div>
+
+    <!-- ────── Step 1: Board zusammenstellen ────── -->
+    <div class="step-panel active" id="step1">
+      <h2 class="step-title">Board zusammenstellen</h2>
+      <p class="step-desc">Waehle die Direktoren, die an der Diskussion teilnehmen sollen.</p>
+      <div class="directors-grid" id="directorsGrid"></div>
+      <div class="step-actions">
+        <button class="btn-primary" onclick="goStep(2)" id="btnStep1Next">Weiter: Kontext &amp; Frage</button>
+      </div>
+    </div>
+
+    <!-- ────── Step 2: Kontext + Frage ────── -->
+    <div class="step-panel" id="step2">
+      <h2 class="step-title">Kontext &amp; Frage</h2>
+      <p class="step-desc">Beschreibe die Situation und formuliere eine klare strategische Frage.</p>
+
+      <div class="context-area">
+        <h3>Kontext bereitstellen</h3>
+        <textarea class="input-field" id="contextIn" rows="6" placeholder="Beschreibe die Ausgangslage, relevante Daten, Hintergrund..."></textarea>
+        <div class="file-upload-zone" id="fileZone" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" accept=".txt,.md,.csv,.json" onchange="handleFileUpload(event)">
+          Datei hochladen (.txt, .md, .csv, .json) oder hier klicken
+        </div>
+      </div>
+
+      <div class="context-area">
+        <h3>Strategische Frage</h3>
+        <textarea class="input-field" id="questionIn" rows="3" placeholder="z.B.: Sollten wir dieses KI-Startup kaufen, intern aufbauen oder eine Partnerschaft eingehen?"></textarea>
+        <div class="rounds-config">
+          <label>Diskussionsrunden:</label>
+          <select id="roundsSelect">
+            <option value="1">1 Runde (Schnell)</option>
+            <option value="2" selected>2 Runden (Standard)</option>
+            <option value="3">3 Runden (Tiefgehend)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="step-actions">
+        <button class="btn-ghost" onclick="goStep(1)">Zurueck</button>
+        <button class="btn-primary" onclick="startDiscussion()">Diskussion starten</button>
+      </div>
+    </div>
+
+    <!-- ────── Step 3: Live Boardroom ────── -->
+    <div class="step-panel" id="step3">
+      <h2 class="step-title">Live Boardroom</h2>
+      <p class="step-desc" id="roundLabel">Die Direktoren diskutieren deine Frage.</p>
+
+      <div class="boardroom">
+        <div class="boardroom-header">
+          <h3>Board-Diskussion</h3>
+          <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+        </div>
+        <div class="boardroom-avatars" id="boardAvatars"></div>
+        <div class="progress-bar-wrap" id="progressWrap">
+          <div class="progress-label" id="progressLabel">Runde 1 von 2</div>
+          <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+        <div class="discussion-feed" id="discFeed">
+          <div class="discussion-empty">Die Diskussion beginnt gleich...</div>
+        </div>
+        <div class="typing-indicator" id="typingInd">
+          <div class="typing-dots"><span></span><span></span><span></span></div>
+          <span id="typingName">denkt nach...</span>
+        </div>
+      </div>
+
+      <div class="step-actions" id="step3Actions" style="display:none;">
+        <button class="btn-primary" onclick="consolidateResults()">Ergebnis zusammenfassen</button>
+      </div>
+    </div>
+
+    <!-- ────── Step 4: Ergebnis ────── -->
+    <div class="step-panel" id="step4">
+      <h2 class="step-title">Ergebnis des Beirats</h2>
+      <p class="step-desc">Die verdichtete Analyse und Empfehlung.</p>
+
+      <div class="result-panel">
+        <div class="result-header">
+          <h3>Beirats-Empfehlung</h3>
+        </div>
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('erkenntnisse')">Erkenntnisse</button>
+          <button class="tab-btn" onclick="switchTab('risiken')">Risiken</button>
+          <button class="tab-btn" onclick="switchTab('optionen')">Optionen</button>
+          <button class="tab-btn" onclick="switchTab('empfehlung')">Empfehlung</button>
+          <button class="tab-btn" onclick="switchTab('diskussion')">Diskussion</button>
+        </div>
+        <div class="tab-content active" id="tabErkenntnisse">Wird geladen...</div>
+        <div class="tab-content" id="tabRisiken">Wird geladen...</div>
+        <div class="tab-content" id="tabOptionen">Wird geladen...</div>
+        <div class="tab-content" id="tabEmpfehlung">Wird geladen...</div>
+        <div class="tab-content" id="tabDiskussion">Wird geladen...</div>
+        <div class="export-bar">
+          <button class="copy-btn" onclick="copyAllConfluence(this)">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+            Alles kopieren (Confluence)
+          </button>
+          <button class="copy-btn" onclick="exportPPTX()">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            PowerPoint Export
+          </button>
+          <button class="copy-btn" onclick="goStep(2)">
+            Neue Frage stellen
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════════════════════════════
+     EINSTELLUNGEN-MODAL
+     ══════════════════════════════════════════ -->
+<div id="settingsOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:none;align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#fff;border-radius:var(--r-xl);padding:32px;max-width:480px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.18);max-height:90vh;overflow-y:auto;">
+    <h2 style="font-family:'Fraunces',serif;font-size:1.3rem;margin-bottom:16px;">Einstellungen</h2>
+    <div class="form-group">
+      <label class="form-label">Provider</label>
+      <select class="input-field" id="setProvider" onchange="onSettingsProviderChange()">
+        <option value="kia">KIA (SBK)</option>
+        <option value="openrouter">OpenRouter</option>
+      </select>
+    </div>
+    <div class="form-group" id="setGrpUrl">
+      <label class="form-label">Base-URL</label>
+      <input class="input-field" id="setUrl">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Modell</label>
+      <input class="input-field" id="setModel">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Token</label>
+      <input class="input-field" type="password" id="setToken">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px;">
+      <button class="btn-ghost" onclick="closeSettings()">Abbrechen</button>
+      <button class="btn-secondary" onclick="saveSettings()">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════
+   DIREKTOREN-DEFINITIONEN
+   Die 10 festen Board-Mitglieder mit Persona-Prompts
+   ══════════════════════════════════════════ */
+var DIRECTORS = [
+  {
+    id: 'jobs',
+    name: 'Steve Jobs',
+    initials: 'SJ',
+    role: 'Innovation',
+    color: '#333333',
+    desc: 'Denkt voraus und hinterfragt den Status quo.',
+    prompt: 'Du bist Steve Jobs, Visionaer und Gruender von Apple. Du denkst in Produkten, die die Welt veraendern. Du hinterfragst den Status quo radikal, hasst Mittelmass und forderst immer die einfachste, eleganteste Loesung. Du fragst: Was ist die 10x-Wette? Was wuerde den Nutzer begeistern? Du sprichst direkt, klar und provokant.'
+  },
+  {
+    id: 'buffett',
+    name: 'Warren Buffett',
+    initials: 'WB',
+    role: 'Finanzen & M&A',
+    color: '#2D572C',
+    desc: 'Disziplinierter Kapitalallokator und Risikobewerter.',
+    prompt: 'Du bist Warren Buffett, legendaerer Investor. Du denkst in Rendite, Burggraeben und langfristigem Wert. Du bist diszipliniert, geduldig und risikoavers. Du fragst: Wo ist der Burggraben? Wie hoch ist die Rendite? Was ist der faire Preis? Du sprichst ruhig, mit Folkweisheiten und konkreten Zahlen.'
+  },
+  {
+    id: 'ogilvy',
+    name: 'David Ogilvy',
+    initials: 'DO',
+    role: 'Medien & Werbung',
+    color: '#8B0000',
+    desc: 'Versteht Aufmerksamkeit, Marke und Ueberzeugung.',
+    prompt: 'Du bist David Ogilvy, der Vater der modernen Werbung. Du verstehst, wie man Aufmerksamkeit gewinnt und Menschen ueberzeugt. Du denkst in Headlines, Positionierung und Markenwert. Du sagst Dinge wie: Der Verbraucher ist kein Idiot, sie ist deine Frau. Du sprichst elegant, pointiert und mit britischem Understatement.'
+  },
+  {
+    id: 'grove',
+    name: 'Andrew Grove',
+    initials: 'AG',
+    role: 'Management & Organisation',
+    color: '#1A365D',
+    desc: 'Baut starke Teams und skalierbare Organisationen.',
+    prompt: 'Du bist Andrew Grove, legendaerer CEO von Intel. Du denkst in Organisationsstrukturen, Prozessen und strategischen Wendepunkten. Du fragst: Ist das ein strategischer Wendepunkt? Wer hat die Accountability? Wie skaliert das? Du sprichst pragmatisch, strukturiert und fordernd. Only the paranoid survive.'
+  },
+  {
+    id: 'mrbeast',
+    name: 'MrBeast',
+    initials: 'MB',
+    role: 'Kreativitaet & Aufmerksamkeit',
+    color: '#FF0050',
+    desc: 'Schafft enorme Reichweite und kulturelle Relevanz.',
+    prompt: 'Du bist MrBeast (James Donaldson), der groesste YouTube-Creator der Welt. Du denkst in Viralitaet, Hooks, Retention und Content-Formaten. Du fragst: Wie machen wir das so, dass Millionen darauf klicken? Was ist der Hook in den ersten 3 Sekunden? Du sprichst jung, energetisch und direkt. Daten und Thumbnails sind dein Ding.'
+  },
+  {
+    id: 'dalailama',
+    name: 'Dalai Lama',
+    initials: 'DL',
+    role: 'Moral & Weisheit',
+    color: '#B7410E',
+    desc: 'Bringt Mitgefuehl, Ethik und langfristige Perspektive.',
+    prompt: 'Du bist der Dalai Lama. Du bringst Mitgefuehl, Ethik und eine langfristige menschliche Perspektive ein. Du fragst: Welche Auswirkungen hat das auf die Menschen? Handeln wir mit Integritaet? Was ist das Richtige, nicht nur das Profitable? Du sprichst sanft, weise und mit Gleichnissen.'
+  },
+  {
+    id: 'suntzu',
+    name: 'Sun Tzu',
+    initials: 'ST',
+    role: 'Sondersituationen (Strategie)',
+    color: '#4A0E0E',
+    desc: 'Erkennt Muster, Strategie und den Weg zum Sieg.',
+    prompt: 'Du bist Sun Tzu, Autor der Kunst des Krieges. Du denkst strategisch: Terrain, Timing, Taeuschung, Ressourcenallokation. Du fragst: Wo ist die Schwaeche des Gegners? Wie gewinnen wir ohne zu kaempfen? Was sieht der Feind nicht? Du sprichst in kurzen, praegnanten Weisheiten und Metaphern.'
+  },
+  {
+    id: 'specter',
+    name: 'Harvey Specter',
+    initials: 'HS',
+    role: 'Sondersituationen (Verhandlung)',
+    color: '#1C1C1C',
+    desc: 'Nutzt Deals, Hebel und Verhandlungsgeschick.',
+    prompt: 'Du bist Harvey Specter, Top-Anwalt aus Suits. Du denkst in Deals, Hebeln und Verhandlungstaktiken. Du fragst: Was ist unser Leverage? Was will die Gegenseite wirklich? Wie schliessen wir das hier und jetzt ab? Du sprichst selbstbewusst, schlagfertig und mit einem Hauch Arroganz. Du gewinnst immer.'
+  },
+  {
+    id: 'victor',
+    name: 'Victor',
+    initials: 'VS',
+    role: 'Business Analyse & KI',
+    color: '#003C6E',
+    desc: 'Pragmatische, toolgestuetzte Loesungen. Bruecke zwischen Fachbereich und Technik.',
+    prompt: 'Du bist Victor, Business Analyst und KI-Spezialist bei der SBK (Siemens Betriebskrankenkasse). Du denkst in pragmatischen, tool-gestuetzten Loesungen. Du bist die Bruecke zwischen Fachbereich und Technik. Du hinterfragst Machbarkeit, Aufwand und Skalierbarkeit. Du fragst: Koennen wir das mit einem Browser-Tool loesen? Was ist der MVP? Wie schnell koennen wir Ergebnisse liefern? Du sprichst direkt, loesungsorientiert und ohne Buzzwords.'
+  },
+  {
+    id: 'katharina',
+    name: 'Katharina',
+    initials: 'KT',
+    role: 'Teamleitung & Strategie',
+    color: '#6B3FA0',
+    desc: 'Strategische SBK-Perspektive, Teamsteuerung und Stakeholder.',
+    prompt: 'Du bist Katharina, Teamleiterin des BA-Teams bei der SBK. Du denkst strategisch aus der Perspektive einer gesetzlichen Krankenkasse: Versorgungsqualitaet, Wirtschaftlichkeit, Digitalisierung, Mitgliederzufriedenheit. Du fragst: Passt das in unsere SBK-Strategie? Wie kommunizieren wir das nach oben? Was sagt der Vorstand? Haben wir die Ressourcen? Du sprichst strukturiert, stakeholder-orientiert und mit Blick aufs grosse Ganze. Du kennst die Spannungsfelder zwischen Innovation und Regulierung im GKV-Umfeld.'
+  }
+];
+
+/* ══════════════════════════════════════════
+   GLOBALER STATE
+   ══════════════════════════════════════════ */
+var state = {
+  provider: 'kia',        /* 'kia' oder 'openrouter' */
+  baseUrl: 'https://kia-int.apps.test.sbk.de',
+  model: 'openai/gpt-oss-120b',
+  token: '',
+  selectedDirectors: [],   /* Array von Director-IDs */
+  context: '',
+  fileContent: '',
+  question: '',
+  rounds: 2,
+  discussion: [],          /* Array von {directorId, round, content} */
+  currentStep: 1,
+  isRunning: false,
+  /* Ergebnisse */
+  erkenntnisse: '',
+  risiken: '',
+  optionen: '',
+  empfehlung: ''
+};
+
+/* ══════════════════════════════════════════
+   PROVIDER-KONFIGURATION
+   ══════════════════════════════════════════ */
+var OPENROUTER_MODELS = [
+  { value: 'qwen/qwen3-235b-a22b:free', label: 'Qwen3 235B (kostenlos)' },
+  { value: 'deepseek/deepseek-chat-v3-0324:free', label: 'DeepSeek V3 (kostenlos)' },
+  { value: 'meta-llama/llama-4-maverick:free', label: 'Llama 4 Maverick (kostenlos)' },
+  { value: 'google/gemini-2.0-flash-exp:free', label: 'Gemini 2.0 Flash (kostenlos)' }
+];
+
+var KIA_MODELS = [
+  { value: 'openai/gpt-oss-120b', label: 'openai/gpt-oss-120b (Standard)' }
+];
+
+/* ══════════════════════════════════════════
+   SETUP & PROVIDER-LOGIK
+   ══════════════════════════════════════════ */
+function selectProvider(p) {
+  state.provider = p;
+  document.getElementById('provKIA').className = 'provider-opt' + (p === 'kia' ? ' active' : '');
+  document.getElementById('provOR').className = 'provider-opt' + (p === 'openrouter' ? ' active' : '');
+
+  /* KIA-URL Feld nur bei KIA anzeigen */
+  document.getElementById('grpKiaUrl').style.display = p === 'kia' ? '' : 'none';
+
+  /* Modell-Dropdown aktualisieren */
+  var sel = document.getElementById('modelIn');
+  sel.innerHTML = '';
+  var models = p === 'kia' ? KIA_MODELS : OPENROUTER_MODELS;
+  models.forEach(function(m) {
+    var opt = document.createElement('option');
+    opt.value = m.value;
+    opt.textContent = m.label;
+    sel.appendChild(opt);
+  });
+  document.getElementById('modelLabel').textContent = p === 'kia' ? 'KIA Modell' : 'OpenRouter Modell';
+  document.getElementById('tokHint').textContent = p === 'kia'
+    ? 'Token aus KIA \u2192 Einstellungen \u2192 Konto'
+    : 'API Key von openrouter.ai (kostenlos erstellbar)';
+}
+
+function connectAPI() {
+  var token = document.getElementById('tokIn').value.trim();
+  var err = document.getElementById('tokErr');
+  if (!token) {
+    err.textContent = 'Bitte Token eingeben.';
+    err.style.display = 'block';
+    return;
+  }
+  err.style.display = 'none';
+  state.token = token;
+  state.baseUrl = state.provider === 'kia'
+    ? document.getElementById('kiaUrlIn').value.trim()
+    : 'https://openrouter.ai/api/v1';
+  state.model = document.getElementById('modelIn').value;
+
+  /* In localStorage sichern */
+  try {
+    localStorage.setItem('beirat-provider', state.provider);
+    localStorage.setItem('beirat-token', token);
+    localStorage.setItem('beirat-url', state.baseUrl);
+    localStorage.setItem('beirat-model', state.model);
+  } catch(e) {}
+
+  showToast('Verbunden mit ' + (state.provider === 'kia' ? 'KIA' : 'OpenRouter'), 'ok');
+  document.getElementById('setupView').style.display = 'none';
+  document.getElementById('mainApp').style.display = '';
+  renderStepper();
+  renderDirectorsGrid();
+}
+
+/* Gespeicherte Einstellungen wiederherstellen */
+function restoreSettings() {
+  try {
+    var p = localStorage.getItem('beirat-provider');
+    if (p) { selectProvider(p); }
+    var t = localStorage.getItem('beirat-token');
+    if (t) { document.getElementById('tokIn').value = t; }
+    var u = localStorage.getItem('beirat-url');
+    if (u && p === 'kia') { document.getElementById('kiaUrlIn').value = u; }
+    var m = localStorage.getItem('beirat-model');
+    if (m) {
+      var sel = document.getElementById('modelIn');
+      for (var i = 0; i < sel.options.length; i++) {
+        if (sel.options[i].value === m) { sel.selectedIndex = i; break; }
+      }
+    }
+  } catch(e) {}
+}
+
+/* ══════════════════════════════════════════
+   EINSTELLUNGEN-MODAL
+   ══════════════════════════════════════════ */
+function showSettings() {
+  var ov = document.getElementById('settingsOverlay');
+  ov.style.display = 'flex';
+  document.getElementById('setProvider').value = state.provider;
+  document.getElementById('setUrl').value = state.baseUrl;
+  document.getElementById('setModel').value = state.model;
+  document.getElementById('setToken').value = state.token;
+  onSettingsProviderChange();
+}
+function closeSettings() {
+  document.getElementById('settingsOverlay').style.display = 'none';
+}
+function onSettingsProviderChange() {
+  var p = document.getElementById('setProvider').value;
+  document.getElementById('setGrpUrl').style.display = p === 'kia' ? '' : 'none';
+  if (p === 'openrouter') {
+    document.getElementById('setUrl').value = 'https://openrouter.ai/api/v1';
+  }
+}
+function saveSettings() {
+  state.provider = document.getElementById('setProvider').value;
+  state.baseUrl = state.provider === 'openrouter'
+    ? 'https://openrouter.ai/api/v1'
+    : document.getElementById('setUrl').value.trim();
+  state.model = document.getElementById('setModel').value.trim();
+  state.token = document.getElementById('setToken').value.trim();
+  try {
+    localStorage.setItem('beirat-provider', state.provider);
+    localStorage.setItem('beirat-token', state.token);
+    localStorage.setItem('beirat-url', state.baseUrl);
+    localStorage.setItem('beirat-model', state.model);
+  } catch(e) {}
+  closeSettings();
+  showToast('Einstellungen gespeichert', 'ok');
+}
+
+/* ══════════════════════════════════════════
+   API-AUFRUF (Abstrahiert fuer KIA + OpenRouter)
+   ══════════════════════════════════════════ */
+function callLLM(messages, systemPrompt) {
+  var endpoint = state.provider === 'kia'
+    ? state.baseUrl + '/api/chat/completions'
+    : state.baseUrl + '/chat/completions';
+
+  var headers = {
+    'Authorization': 'Bearer ' + state.token,
+    'Content-Type': 'application/json'
+  };
+  /* OpenRouter empfiehlt HTTP-Referer und App-Name */
+  if (state.provider === 'openrouter') {
+    headers['HTTP-Referer'] = 'https://sbk-beirat.local';
+    headers['X-Title'] = 'SBK Beirat';
+  }
+
+  var body = {
+    model: state.model,
+    messages: [{ role: 'system', content: systemPrompt }].concat(messages),
+    stream: false
+  };
+
+  return fetch(endpoint, {
+    method: 'POST',
+    headers: headers,
+    body: JSON.stringify(body)
+  }).then(function(response) {
+    if (!response.ok) {
+      return response.text().then(function(t) {
+        throw new Error('API ' + response.status + ': ' + t.substring(0, 300));
+      });
+    }
+    return response.json();
+  }).then(function(data) {
+    var content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    if (!content) throw new Error('Leere Antwort von der API.');
+    return content;
+  });
+}
+
+/* ══════════════════════════════════════════
+   STEPPER-RENDERING
+   ══════════════════════════════════════════ */
+var STEPS = [
+  { num: 1, label: 'Board' },
+  { num: 2, label: 'Kontext' },
+  { num: 3, label: 'Diskussion' },
+  { num: 4, label: 'Ergebnis' }
+];
+
+function renderStepper() {
+  var wrap = document.getElementById('stepper');
+  wrap.innerHTML = '';
+  STEPS.forEach(function(s, i) {
+    var cls = 'step-item';
+    if (s.num === state.currentStep) cls += ' active';
+    else if (s.num < state.currentStep) cls += ' done';
+
+    var div = document.createElement('div');
+    div.className = cls;
+    div.onclick = function() { if (s.num < state.currentStep && !state.isRunning) goStep(s.num); };
+    div.innerHTML = '<span class="step-num">' + s.num + '</span><span>' + s.label + '</span>';
+    wrap.appendChild(div);
+
+    if (i < STEPS.length - 1) {
+      var conn = document.createElement('div');
+      conn.className = 'step-connector' + (s.num < state.currentStep ? ' done' : '');
+      wrap.appendChild(conn);
+    }
+  });
+}
+
+function goStep(n) {
+  if (state.isRunning) return;
+  /* Validierung Step 1 */
+  if (n > 1 && state.selectedDirectors.length < 2) {
+    showToast('Bitte mindestens 2 Direktoren auswaehlen.', 'warn');
+    return;
+  }
+  state.currentStep = n;
+  document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('active'); });
+  var panel = document.getElementById('step' + n);
+  if (panel) panel.classList.add('active');
+  renderStepper();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ══════════════════════════════════════════
+   STEP 1: DIREKTOREN-GRID
+   ══════════════════════════════════════════ */
+function renderDirectorsGrid() {
+  var grid = document.getElementById('directorsGrid');
+  grid.innerHTML = '';
+  /* Alle standardmaessig auswaehlen */
+  if (state.selectedDirectors.length === 0) {
+    state.selectedDirectors = DIRECTORS.map(function(d) { return d.id; });
+  }
+  DIRECTORS.forEach(function(d) {
+    var isSelected = state.selectedDirectors.indexOf(d.id) !== -1;
+    var card = document.createElement('div');
+    card.className = 'director-card' + (isSelected ? ' selected' : '');
+    card.onclick = function() { toggleDirector(d.id); };
+    card.innerHTML =
+      '<div class="director-avatar" style="background:' + d.color + '">' + d.initials + '</div>' +
+      '<div class="director-info">' +
+        '<h4>' + d.name + '</h4>' +
+        '<div class="director-role" style="color:' + d.color + '">' + d.role + '</div>' +
+        '<div class="director-desc">' + d.desc + '</div>' +
+      '</div>';
+    grid.appendChild(card);
+  });
+}
+
+function toggleDirector(id) {
+  var idx = state.selectedDirectors.indexOf(id);
+  if (idx === -1) {
+    state.selectedDirectors.push(id);
+  } else {
+    state.selectedDirectors.splice(idx, 1);
+  }
+  renderDirectorsGrid();
+}
+
+/* ══════════════════════════════════════════
+   STEP 2: DATEI-UPLOAD
+   ══════════════════════════════════════════ */
+function handleFileUpload(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var zone = document.getElementById('fileZone');
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    state.fileContent = e.target.result;
+    zone.className = 'file-upload-zone has-file';
+    zone.innerHTML = '<input type="file" id="fileInput" accept=".txt,.md,.csv,.json" onchange="handleFileUpload(event)">\u2705 ' + file.name + ' geladen (' + Math.round(file.size / 1024) + ' KB)';
+    showToast('Datei geladen: ' + file.name, 'ok');
+  };
+  reader.readAsText(file);
+}
+
+/* ══════════════════════════════════════════
+   STEP 3: DISKUSSION STARTEN (Multi-Runden)
+   ══════════════════════════════════════════ */
+function startDiscussion() {
+  state.context = document.getElementById('contextIn').value.trim();
+  state.question = document.getElementById('questionIn').value.trim();
+  state.rounds = parseInt(document.getElementById('roundsSelect').value);
+
+  if (!state.question) {
+    showToast('Bitte eine strategische Frage formulieren.', 'warn');
+    return;
+  }
+  if (state.selectedDirectors.length < 2) {
+    showToast('Mindestens 2 Direktoren auswaehlen.', 'warn');
+    return;
+  }
+
+  state.discussion = [];
+  goStep(3);
+  renderBoardAvatars();
+  runDiscussion();
+}
+
+function renderBoardAvatars() {
+  var wrap = document.getElementById('boardAvatars');
+  wrap.innerHTML = '';
+  DIRECTORS.forEach(function(d) {
+    var isActive = state.selectedDirectors.indexOf(d.id) !== -1;
+    var div = document.createElement('div');
+    div.className = 'mini-avatar' + (isActive ? '' : ' inactive');
+    div.style.background = d.color;
+    div.title = d.name;
+    div.id = 'ava-' + d.id;
+    div.textContent = d.initials;
+    wrap.appendChild(div);
+  });
+}
+
+function runDiscussion() {
+  state.isRunning = true;
+  var feed = document.getElementById('discFeed');
+  feed.innerHTML = '';
+  document.getElementById('step3Actions').style.display = 'none';
+  document.getElementById('progressWrap').classList.add('on');
+
+  var activeDirectors = DIRECTORS.filter(function(d) {
+    return state.selectedDirectors.indexOf(d.id) !== -1;
+  });
+
+  var totalSteps = activeDirectors.length * state.rounds;
+  var currentStepNum = 0;
+  var round = 1;
+
+  function runNextRound() {
+    if (round > state.rounds) {
+      /* Diskussion beendet */
+      state.isRunning = false;
+      document.getElementById('typingInd').classList.remove('on');
+      document.getElementById('progressLabel').textContent = 'Diskussion abgeschlossen';
+      document.getElementById('progressFill').style.width = '100%';
+      document.getElementById('step3Actions').style.display = '';
+      showToast('Diskussion beendet! Jetzt Ergebnis zusammenfassen.', 'ok');
+      return;
+    }
+
+    /* Runden-Trenner anzeigen */
+    var sep = document.createElement('div');
+    sep.style.cssText = 'text-align:center;font-size:11px;font-weight:700;color:var(--c-text-faint);text-transform:uppercase;letter-spacing:.08em;padding:8px 0;';
+    sep.textContent = '\u2500\u2500\u2500 Runde ' + round + ' von ' + state.rounds + ' \u2500\u2500\u2500';
+    feed.appendChild(sep);
+
+    var dirIdx = 0;
+
+    function nextDirector() {
+      if (dirIdx >= activeDirectors.length) {
+        round++;
+        runNextRound();
+        return;
+      }
+
+      var dir = activeDirectors[dirIdx];
+      currentStepNum++;
+
+      /* Typing-Indikator anzeigen */
+      document.getElementById('typingInd').classList.add('on');
+      document.getElementById('typingName').textContent = dir.name + ' denkt nach...';
+      document.getElementById('progressLabel').textContent = 'Runde ' + round + ': ' + dir.name;
+      document.getElementById('progressFill').style.width = Math.round((currentStepNum / totalSteps) * 100) + '%';
+
+      /* Avatar hervorheben */
+      document.querySelectorAll('.mini-avatar').forEach(function(a) { a.classList.remove('speaking'); });
+      var ava = document.getElementById('ava-' + dir.id);
+      if (ava) ava.classList.add('speaking');
+
+      /* System-Prompt zusammenbauen */
+      var sysPrompt = dir.prompt + '\n\n'
+        + 'Du sitzt in einem virtuellen Beirat (Board of Directors) mit anderen Experten. '
+        + 'Antworte auf Deutsch, konkret und in deiner typischen Stimme. '
+        + 'Halte dich auf 3-5 Saetze pro Beitrag. '
+        + 'Beziehe dich, wo sinnvoll, auf vorherige Beitraege anderer Direktoren.';
+
+      /* Messages mit bisheriger Diskussion aufbauen */
+      var msgs = [];
+
+      /* Kontext als initiale User-Nachricht */
+      var contextBlock = 'KONTEXT:\n' + (state.context || '(Kein Kontext angegeben)');
+      if (state.fileContent) {
+        contextBlock += '\n\nDOKUMENT-INHALT:\n' + state.fileContent.substring(0, 3000);
+      }
+      contextBlock += '\n\nSTRATEGISCHE FRAGE:\n' + state.question;
+
+      /* Bisherige Diskussion als Konversation einfuegen */
+      if (state.discussion.length > 0) {
+        contextBlock += '\n\nBISHERIGE DISKUSSION:';
+        state.discussion.forEach(function(entry) {
+          var dName = getDirector(entry.directorId).name;
+          contextBlock += '\n[' + dName + ' (Runde ' + entry.round + ')]: ' + entry.content;
+        });
+        contextBlock += '\n\nDu bist jetzt dran (Runde ' + round + '). Gib deine Perspektive ab. Beziehe dich auf vorherige Beitraege, stimme zu oder widersprich.';
+      } else {
+        contextBlock += '\n\nDu eroeffnest die Diskussion (Runde ' + round + '). Gib deine erste Einschaetzung ab.';
+      }
+
+      msgs.push({ role: 'user', content: contextBlock });
+
+      callLLM(msgs, sysPrompt).then(function(answer) {
+        state.discussion.push({
+          directorId: dir.id,
+          round: round,
+          content: answer
+        });
+        addDiscMessage(dir, round, answer);
+        dirIdx++;
+        nextDirector();
+      }).catch(function(err) {
+        showToast('Fehler bei ' + dir.name + ': ' + err.message, 'err');
+        dirIdx++;
+        nextDirector();
+      });
+    }
+
+    nextDirector();
+  }
+
+  runNextRound();
+}
+
+function addDiscMessage(dir, round, text) {
+  document.getElementById('typingInd').classList.remove('on');
+  var feed = document.getElementById('discFeed');
+  var div = document.createElement('div');
+  div.className = 'disc-msg';
+  div.innerHTML =
+    '<div class="avatar" style="background:' + dir.color + '">' + dir.initials + '</div>' +
+    '<div class="disc-bubble" style="border-left-color:' + dir.color + '">' +
+      '<div class="name" style="color:' + dir.color + '">' + dir.name +
+        '<span class="role-tag">' + dir.role + '</span>' +
+        '<span class="round-tag">Runde ' + round + '</span>' +
+      '</div>' +
+      '<div class="text">' + escH(text) + '</div>' +
+    '</div>';
+  feed.appendChild(div);
+  feed.scrollTop = feed.scrollHeight;
+}
+
+function getDirector(id) {
+  for (var i = 0; i < DIRECTORS.length; i++) {
+    if (DIRECTORS[i].id === id) return DIRECTORS[i];
+  }
+  return { name: 'Unbekannt', initials: '?', color: '#999', role: '' };
+}
+
+/* ══════════════════════════════════════════
+   STEP 4: ERGEBNIS KONSOLIDIEREN
+   ══════════════════════════════════════════ */
+function consolidateResults() {
+  goStep(4);
+
+  /* Diskussions-Tab sofort fuellen */
+  var discHtml = '';
+  state.discussion.forEach(function(entry) {
+    var dir = getDirector(entry.directorId);
+    discHtml += '<strong style="color:' + dir.color + '">' + dir.name + '</strong> <em>(' + dir.role + ', Runde ' + entry.round + ')</em>:\n' + entry.content + '\n\n';
+  });
+  document.getElementById('tabDiskussion').innerHTML = discHtml;
+
+  /* KI-Zusammenfassung in 4 Dimensionen generieren */
+  var consolidationPrompt = 'Du bist ein erfahrener Management-Berater. '
+    + 'Dir liegt die Diskussion eines virtuellen Beirats vor. '
+    + 'Erstelle eine strukturierte Zusammenfassung in vier Abschnitten. '
+    + 'Schreibe auf Deutsch, klar und konkret. Verwende Aufzaehlungen wo sinnvoll.\n\n'
+    + 'Antworte EXAKT in diesem Format (mit den Markern):\n'
+    + '===ERKENNTNISSE===\n(Die wichtigsten Einsichten und Kernaussagen aus der Diskussion)\n\n'
+    + '===RISIKEN===\n(Identifizierte Risiken und Bedenken)\n\n'
+    + '===OPTIONEN===\n(Moegliche Handlungsoptionen und Alternativen)\n\n'
+    + '===EMPFEHLUNG===\n(Eine klare, begruendete Handlungsempfehlung des Beirats)';
+
+  var discText = 'FRAGE: ' + state.question + '\n\nKONTEXT: ' + (state.context || '(Kein Kontext)') + '\n\nDISKUSSION:\n';
+  state.discussion.forEach(function(entry) {
+    var dir = getDirector(entry.directorId);
+    discText += '[' + dir.name + ' - ' + dir.role + ', Runde ' + entry.round + ']: ' + entry.content + '\n\n';
+  });
+
+  /* Ladezustand fuer die Tabs */
+  ['tabErkenntnisse', 'tabRisiken', 'tabOptionen', 'tabEmpfehlung'].forEach(function(id) {
+    document.getElementById(id).innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:var(--c-text-soft);"><div class="typing-dots" style="display:flex;gap:3px;"><span style="width:6px;height:6px;border-radius:50%;background:var(--c-brand-mid);animation:typeBounce .8s ease-in-out infinite;"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--c-brand-mid);animation:typeBounce .8s ease-in-out infinite .15s;"></span><span style="width:6px;height:6px;border-radius:50%;background:var(--c-brand-mid);animation:typeBounce .8s ease-in-out infinite .3s;"></span></div> Wird zusammengefasst...</div>';
+  });
+
+  callLLM([{ role: 'user', content: discText }], consolidationPrompt).then(function(answer) {
+    /* Antwort in die 4 Sektionen aufteilen */
+    var sections = parseConsolidation(answer);
+    state.erkenntnisse = sections.erkenntnisse;
+    state.risiken = sections.risiken;
+    state.optionen = sections.optionen;
+    state.empfehlung = sections.empfehlung;
+
+    document.getElementById('tabErkenntnisse').textContent = sections.erkenntnisse;
+    document.getElementById('tabRisiken').textContent = sections.risiken;
+    document.getElementById('tabOptionen').textContent = sections.optionen;
+    document.getElementById('tabEmpfehlung').textContent = sections.empfehlung;
+
+    showToast('Ergebnis steht bereit!', 'ok');
+  }).catch(function(err) {
+    showToast('Fehler bei Zusammenfassung: ' + err.message, 'err');
+    ['tabErkenntnisse', 'tabRisiken', 'tabOptionen', 'tabEmpfehlung'].forEach(function(id) {
+      document.getElementById(id).textContent = 'Fehler: ' + err.message;
+    });
+  });
+}
+
+function parseConsolidation(text) {
+  var result = {
+    erkenntnisse: '',
+    risiken: '',
+    optionen: '',
+    empfehlung: ''
+  };
+  var markers = ['===ERKENNTNISSE===', '===RISIKEN===', '===OPTIONEN===', '===EMPFEHLUNG==='];
+  var keys = ['erkenntnisse', 'risiken', 'optionen', 'empfehlung'];
+
+  for (var i = 0; i < markers.length; i++) {
+    var startIdx = text.indexOf(markers[i]);
+    if (startIdx === -1) continue;
+    startIdx += markers[i].length;
+    var endIdx = (i < markers.length - 1) ? text.indexOf(markers[i + 1]) : text.length;
+    if (endIdx === -1) endIdx = text.length;
+    result[keys[i]] = text.substring(startIdx, endIdx).trim();
+  }
+
+  /* Fallback: Falls Marker nicht gefunden, alles als Erkenntnisse */
+  if (!result.erkenntnisse && !result.risiken && !result.optionen && !result.empfehlung) {
+    result.erkenntnisse = text;
+  }
+
+  return result;
+}
+
+/* Tab-Wechsel */
+function switchTab(tabName) {
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+  var tabId = 'tab' + tabName.charAt(0).toUpperCase() + tabName.slice(1);
+  document.getElementById(tabId).classList.add('active');
+  /* Passenden Button aktivieren */
+  document.querySelectorAll('.tab-btn').forEach(function(b) {
+    if (b.textContent.toLowerCase().indexOf(tabName.substring(0, 4)) !== -1) {
+      b.classList.add('active');
+    }
+  });
+}
+
+/* ══════════════════════════════════════════
+   CONFLUENCE-KOMPATIBLES KOPIEREN
+   ══════════════════════════════════════════ */
+var escH = function(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+
+function stripMd(t) {
+  return (t || '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/\*([^*\n]+?)\*/g, '$1');
+}
+
+function mdToClipboardHtml(text) {
+  if (!text) return '';
+  var h = escH(text);
+  h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  h = h.replace(/\*([^*\s][^*\n]*?)\*/g, '<em>$1</em>');
+  var lines = h.split('\n');
+  var out = '', inUl = false, inOl = false;
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var ulMatch = line.match(/^(\s*)[-\u2013\u2014*\u2022]\s+(.+)/);
+    var olMatch = line.match(/^(\s*)\d+\.\s+(.+)/);
+    if (ulMatch) {
+      if (!inUl) { out += '<ul>'; inUl = true; }
+      out += '<li>' + ulMatch[2] + '</li>';
+    } else if (olMatch) {
+      if (inUl) { out += '</ul>'; inUl = false; }
+      if (!inOl) { out += '<ol>'; inOl = true; }
+      out += '<li>' + olMatch[2] + '</li>';
+    } else {
+      if (inUl) { out += '</ul>'; inUl = false; }
+      if (inOl) { out += '</ol>'; inOl = false; }
+      if (line.trim()) out += '<p>' + line + '</p>';
+    }
+  }
+  if (inUl) out += '</ul>';
+  if (inOl) out += '</ol>';
+  return out;
+}
+
+function copyRich(plain, html) {
+  try {
+    var htmlBlob = new Blob([html], { type: 'text/html' });
+    var textBlob = new Blob([plain], { type: 'text/plain' });
+    return navigator.clipboard.write([
+      new ClipboardItem({ 'text/html': htmlBlob, 'text/plain': textBlob })
+    ]);
+  } catch(e) {
+    return navigator.clipboard.writeText(plain);
+  }
+}
+
+function setCopyFeedback(btn) {
+  var orig = btn.innerHTML;
+  btn.classList.add('copied');
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Kopiert';
+  setTimeout(function() {
+    btn.classList.remove('copied');
+    btn.innerHTML = orig;
+  }, 2000);
+}
+
+function copyAllConfluence(btn) {
+  /* Gesamtes Ergebnis als formatiertes Dokument kopieren */
+  var plainParts = [];
+  var htmlParts = [];
+
+  /* Frage */
+  plainParts.push('STRATEGISCHE FRAGE: ' + state.question);
+  htmlParts.push('<h2>Strategische Frage</h2><p>' + escH(state.question) + '</p>');
+
+  /* Kontext */
+  if (state.context) {
+    plainParts.push('KONTEXT: ' + state.context);
+    htmlParts.push('<h3>Kontext</h3><p>' + escH(state.context) + '</p>');
+  }
+
+  /* Ergebnisse */
+  var tabs = [
+    { label: 'Erkenntnisse', data: state.erkenntnisse },
+    { label: 'Risiken', data: state.risiken },
+    { label: 'Optionen', data: state.optionen },
+    { label: 'Empfehlung', data: state.empfehlung }
+  ];
+  tabs.forEach(function(t) {
+    if (t.data) {
+      plainParts.push(t.label + ':\n' + stripMd(t.data));
+      htmlParts.push('<h3>' + t.label + '</h3>' + mdToClipboardHtml(t.data));
+    }
+  });
+
+  /* Diskussion */
+  plainParts.push('DISKUSSION:');
+  htmlParts.push('<h3>Diskussion</h3>');
+  state.discussion.forEach(function(entry) {
+    var dir = getDirector(entry.directorId);
+    plainParts.push(dir.name + ' (' + dir.role + ', Runde ' + entry.round + '): ' + entry.content);
+    htmlParts.push('<p><b>' + escH(dir.name) + '</b> <em>(' + escH(dir.role) + ', Runde ' + entry.round + ')</em>: ' + escH(entry.content) + '</p>');
+  });
+
+  copyRich(plainParts.join('\n\n'), htmlParts.join('')).then(function() {
+    setCopyFeedback(btn);
+    showToast('Ergebnis in Zwischenablage kopiert', 'ok');
+  });
+}
+
+/* ══════════════════════════════════════════
+   POWERPOINT-EXPORT (PptxGenJS)
+   ══════════════════════════════════════════ */
+function exportPPTX() {
+  if (typeof PptxGenJS === 'undefined') {
+    showToast('PptxGenJS nicht geladen. Bitte Internetverbindung pruefen.', 'err');
+    return;
+  }
+
+  var pptx = new PptxGenJS();
+  pptx.layout = 'LAYOUT_WIDE';
+  pptx.author = 'SBK Beirat';
+  pptx.title = 'Beirat: ' + state.question.substring(0, 50);
+
+  var NAVY = '002B52';
+  var WHITE = 'FFFFFF';
+  var LIGHT = 'F0F4F8';
+  var BRAND = '003C6E';
+
+  /* Slide 1: Titelfolie */
+  var slide1 = pptx.addSlide();
+  slide1.background = { color: NAVY };
+  slide1.addText('SBK Beirat', { x: 0.8, y: 0.5, w: 11, h: 0.6, fontSize: 14, fontFace: 'Calibri', color: '90CDF4', bold: true });
+  slide1.addText(state.question, { x: 0.8, y: 1.5, w: 11, h: 1.5, fontSize: 28, fontFace: 'Georgia', color: WHITE, bold: true });
+  slide1.addText('Virtueller Beirat aus legendaeren Koepfen', { x: 0.8, y: 3.5, w: 11, h: 0.5, fontSize: 14, fontFace: 'Calibri', color: '90CDF4' });
+
+  /* Aktive Direktoren auflisten */
+  var activeNames = state.selectedDirectors.map(function(id) { return getDirector(id).name; }).join(' \u00b7 ');
+  slide1.addText(activeNames, { x: 0.8, y: 4.3, w: 11, h: 0.5, fontSize: 11, fontFace: 'Calibri', color: 'A0AEC0' });
+
+  /* Slide 2: Erkenntnisse */
+  var slide2 = pptx.addSlide();
+  slide2.background = { color: WHITE };
+  slide2.addText('Erkenntnisse', { x: 0.8, y: 0.4, w: 11, h: 0.7, fontSize: 24, fontFace: 'Georgia', color: BRAND, bold: true });
+  slide2.addText(stripMd(state.erkenntnisse || 'Keine Erkenntnisse'), { x: 0.8, y: 1.3, w: 11, h: 4.0, fontSize: 13, fontFace: 'Calibri', color: '333333', valign: 'top' });
+
+  /* Slide 3: Risiken */
+  var slide3 = pptx.addSlide();
+  slide3.background = { color: WHITE };
+  slide3.addText('Risiken', { x: 0.8, y: 0.4, w: 11, h: 0.7, fontSize: 24, fontFace: 'Georgia', color: 'C53030', bold: true });
+  slide3.addText(stripMd(state.risiken || 'Keine Risiken'), { x: 0.8, y: 1.3, w: 11, h: 4.0, fontSize: 13, fontFace: 'Calibri', color: '333333', valign: 'top' });
+
+  /* Slide 4: Optionen */
+  var slide4 = pptx.addSlide();
+  slide4.background = { color: WHITE };
+  slide4.addText('Optionen', { x: 0.8, y: 0.4, w: 11, h: 0.7, fontSize: 24, fontFace: 'Georgia', color: BRAND, bold: true });
+  slide4.addText(stripMd(state.optionen || 'Keine Optionen'), { x: 0.8, y: 1.3, w: 11, h: 4.0, fontSize: 13, fontFace: 'Calibri', color: '333333', valign: 'top' });
+
+  /* Slide 5: Empfehlung */
+  var slide5 = pptx.addSlide();
+  slide5.background = { color: NAVY };
+  slide5.addText('Empfehlung des Beirats', { x: 0.8, y: 0.4, w: 11, h: 0.7, fontSize: 24, fontFace: 'Georgia', color: WHITE, bold: true });
+  slide5.addText(stripMd(state.empfehlung || 'Keine Empfehlung'), { x: 0.8, y: 1.3, w: 11, h: 4.0, fontSize: 14, fontFace: 'Calibri', color: 'E2E8F0', valign: 'top' });
+
+  /* Slide 6+: Diskussion (je 1 Slide pro Direktor-Beitrag, max 8) */
+  var discSlides = state.discussion.slice(0, 8);
+  discSlides.forEach(function(entry) {
+    var dir = getDirector(entry.directorId);
+    var s = pptx.addSlide();
+    s.background = { color: LIGHT };
+    s.addShape(pptx.ShapeType.ellipse, { x: 0.6, y: 0.4, w: 0.6, h: 0.6, fill: { color: dir.color.replace('#', '') } });
+    s.addText(dir.initials, { x: 0.6, y: 0.4, w: 0.6, h: 0.6, fontSize: 12, fontFace: 'Calibri', color: WHITE, bold: true, align: 'center', valign: 'middle' });
+    s.addText(dir.name, { x: 1.4, y: 0.35, w: 8, h: 0.35, fontSize: 18, fontFace: 'Georgia', color: dir.color.replace('#', ''), bold: true });
+    s.addText(dir.role + ' \u00b7 Runde ' + entry.round, { x: 1.4, y: 0.7, w: 8, h: 0.3, fontSize: 11, fontFace: 'Calibri', color: '718096' });
+    s.addText(stripMd(entry.content), { x: 0.8, y: 1.4, w: 11, h: 3.8, fontSize: 13, fontFace: 'Calibri', color: '333333', valign: 'top' });
+  });
+
+  pptx.writeFile({ fileName: 'SBK-Beirat-Ergebnis.pptx' }).then(function() {
+    showToast('PowerPoint exportiert!', 'ok');
+  }).catch(function(err) {
+    showToast('Export-Fehler: ' + err.message, 'err');
+  });
+}
+
+/* ══════════════════════════════════════════
+   HILFSFUNKTIONEN
+   ══════════════════════════════════════════ */
+function showToast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast on' + (type ? ' ' + type : '');
+  clearTimeout(el._t);
+  el._t = setTimeout(function() { el.classList.remove('on'); }, 3500);
+}
+
+function resetAll() {
+  if (state.isRunning) {
+    showToast('Diskussion laeuft noch...', 'warn');
+    return;
+  }
+  state.discussion = [];
+  state.context = '';
+  state.fileContent = '';
+  state.question = '';
+  state.erkenntnisse = '';
+  state.risiken = '';
+  state.optionen = '';
+  state.empfehlung = '';
+  document.getElementById('contextIn').value = '';
+  document.getElementById('questionIn').value = '';
+  var zone = document.getElementById('fileZone');
+  zone.className = 'file-upload-zone';
+  zone.innerHTML = '<input type="file" id="fileInput" accept=".txt,.md,.csv,.json" onchange="handleFileUpload(event)">Datei hochladen (.txt, .md, .csv, .json) oder hier klicken';
+  goStep(1);
+}
+
+/* ══════════════════════════════════════════
+   INITIALISIERUNG
+   ══════════════════════════════════════════ */
+restoreSettings();
+</script>
+</body>
+</html>
