@@ -629,8 +629,8 @@ function App(){
   function autoGen(){
     if(!cfg.members.length){toast("Erst Mitarbeiter anlegen","warn");return}
     var plan={},counts={};
-    cfg.members.forEach(function(m){counts[m.id]={main:0,backup:0}});
-    Object.keys(plans).forEach(function(k){if(k===mk)return;var mp=plans[k];Object.keys(mp).forEach(function(dk2){var dp2=mp[dk2];Object.keys(dp2).forEach(function(slot){var mid2=dp2[slot];if(counts[mid2]){if(slot==="backup")counts[mid2].backup++;else counts[mid2].main++}})})});
+    cfg.members.forEach(function(m){var ps={};cfg.shifts.forEach(function(s){ps[s.id]=0});counts[m.id]={perShift:ps,totalMain:0,backup:0}});
+    Object.keys(plans).forEach(function(k){if(k===mk)return;var mp=plans[k];Object.keys(mp).forEach(function(dk2){var dp2=mp[dk2];Object.keys(dp2).forEach(function(slot){var mid2=dp2[slot];if(counts[mid2]){if(slot==="backup")counts[mid2].backup++;else{counts[mid2].totalMain++;if(counts[mid2].perShift[slot]!==undefined)counts[mid2].perShift[slot]++}}})})});
     days.forEach(function(date){
       var dow=date.getDay();if(dow===0||dow===6)return;var dk=fk(date);plan[dk]={};var assigned=[];
       cfg.shifts.filter(function(s){return shiftActiveOnDate(s,date)}).forEach(function(shift){
@@ -641,8 +641,8 @@ function App(){
           if(getDayStatus(m,dow)==="unavailable")return false;
           if(ruleEnabled("no_consecutive")){var prev=addD(date,-1);var pp=plan[fk(prev)];if(pp){var vals=Object.keys(pp).map(function(k3){return pp[k3]});if(vals.indexOf(m.id)>=0)return false}}
           return true;
-        }).map(function(m){var w=shift.distribution==="equal"?1:(m.hours||cfg.fullTimeHours)/cfg.fullTimeHours;var score=counts[m.id].main/w;var ds=getDayStatus(m,dow);if(ds==="preferred")score-=0.5;if(ds==="if_needed")score+=2;var sp=getShiftPref(m,shift.id);if(sp==="preferred")score-=1;if(sp==="avoid")score+=3;return{id:m.id,score:score}}).sort(function(a,b){return a.score-b.score});
-        if(avail.length){plan[dk][shift.id]=avail[0].id;assigned.push(avail[0].id);counts[avail[0].id].main++}
+        }).map(function(m){var w=shift.distribution==="equal"?1:(m.hours||cfg.fullTimeHours)/cfg.fullTimeHours;var shiftCount=counts[m.id].perShift[shift.id]||0;var score=shiftCount/w+counts[m.id].totalMain*0.01;var ds=getDayStatus(m,dow);if(ds==="preferred")score-=0.5;if(ds==="if_needed")score+=2;var sp=getShiftPref(m,shift.id);if(sp==="preferred")score-=1;if(sp==="avoid")score+=3;return{id:m.id,score:score}}).sort(function(a,b){return a.score-b.score});
+        if(avail.length){plan[dk][shift.id]=avail[0].id;assigned.push(avail[0].id);counts[avail[0].id].perShift[shift.id]++;counts[avail[0].id].totalMain++}
       });
       if(cfg.needsBackup){var ba=cfg.members.filter(function(m){if(assigned.indexOf(m.id)>=0)return false;if(isAbsent(absences,m.id,dk))return false;if(isHolFor(holidays,dk,m.state))return false;if(getDayStatus(m,dow)==="unavailable")return false;return true}).map(function(m){return{id:m.id,score:counts[m.id].backup/((m.hours||cfg.fullTimeHours)/cfg.fullTimeHours)}}).sort(function(a,b){return a.score-b.score});if(ba.length){plan[dk].backup=ba[0].id;counts[ba[0].id].backup++}}
     });
