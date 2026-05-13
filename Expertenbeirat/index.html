@@ -982,6 +982,8 @@ option { background: var(--bg-card); color: var(--text-primary); }
 
 .disc-bubble {
   min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
   background: rgba(32,38,45,0.82);
   border-radius: var(--radius-lg);
   padding: 15px 18px;
@@ -1017,7 +1019,22 @@ option { background: var(--bg-card); color: var(--text-primary); }
   padding: 2px 8px;
   border-radius: 999px;
 }
-.disc-bubble .text { margin-top: 8px; color: var(--text-secondary); white-space: pre-wrap; }
+.disc-bubble .text {
+  margin-top: 10px;
+  color: var(--text-secondary);
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+.disc-bubble .text p { margin: 0 0 10px; }
+.disc-bubble .text p:last-child { margin-bottom: 0; }
+.disc-bubble .text ul,
+.disc-bubble .text ol { margin: 8px 0 0 20px; padding: 0; }
+.disc-bubble .text li { margin-bottom: 6px; }
+.disc-bubble .text strong { color: var(--text-primary); font-weight: 800; }
+.disc-bubble .text em { color: var(--text-secondary); }
+.disc-bubble .text .md-heading { margin-top: 12px; }
+.disc-bubble .text .md-table-wrap { max-width: 100%; }
 
 /* Typing Indicator */
 .typing-indicator { display: none; align-items: center; gap: 10px; padding: 13px 24px; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); background: rgba(20,24,29,0.66); }
@@ -1705,20 +1722,20 @@ option { background: var(--bg-card); color: var(--text-primary); }
         <div class="result-header">
           <div>
             <h3>Beiratsempfehlung</h3>
-            <p id="resultSubline">Erkenntnisse, Risiken, Optionen und Empfehlung werden aus der Diskussion konsolidiert.</p>
+            <p id="resultSubline">Empfehlung, Gruende, Risiken und naechste Schritte werden klar zusammengefasst.</p>
           </div>
         </div>
         <div class="tab-bar">
-          <button class="tab-btn active" data-tab="erkenntnisse" onclick="switchTab('erkenntnisse',this)">Erkenntnisse</button>
+          <button class="tab-btn active" data-tab="empfehlung" onclick="switchTab('empfehlung',this)">Empfehlung</button>
+          <button class="tab-btn" data-tab="erkenntnisse" onclick="switchTab('erkenntnisse',this)">Erkenntnisse</button>
           <button class="tab-btn" data-tab="risiken" onclick="switchTab('risiken',this)">Risiken</button>
           <button class="tab-btn" data-tab="optionen" onclick="switchTab('optionen',this)">Optionen</button>
-          <button class="tab-btn" data-tab="empfehlung" onclick="switchTab('empfehlung',this)">Empfehlung</button>
           <button class="tab-btn" data-tab="diskussion" onclick="switchTab('diskussion',this)">Diskussion</button>
         </div>
-        <div class="tab-content active" id="tabErkenntnisse"></div>
+        <div class="tab-content" id="tabErkenntnisse"></div>
         <div class="tab-content" id="tabRisiken"></div>
         <div class="tab-content" id="tabOptionen"></div>
-        <div class="tab-content" id="tabEmpfehlung"></div>
+        <div class="tab-content active" id="tabEmpfehlung"></div>
         <div class="tab-content" id="tabDiskussion"></div>
         <div class="export-bar">
           <div class="export-copy">
@@ -2572,7 +2589,7 @@ function runDiscussion() {
       if (ava) ava.classList.add('speaking');
       updateDiscussionStatus(dir, round, stepNum, total, false);
 
-      var sys = dir.prompt + '\n\nDu sitzt in einem virtuellen Beirat (Board of Directors) mit anderen Experten. Antworte auf Deutsch, konkret und in deiner typischen Stimme. Halte dich auf 3-5 Saetze pro Beitrag. Beziehe dich wo sinnvoll auf vorherige Beitraege anderer Direktoren.';
+      var sys = dir.prompt + '\n\nDu sitzt in einem virtuellen Beirat mit anderen Experten. Antworte auf Deutsch in der Sprache deiner Rolle, aber so einfach, dass auch fachfremde Leser den Punkt sofort verstehen. Keine Markdown-Syntax, keine Sternchen, keine Tabellen, keine Fachwort-Ketten. Wenn ein Fachbegriff noetig ist, erklaere ihn kurz in Alltagssprache. Halte dich an maximal 4 kurze Saetze. Nutze dieses einfache Muster: "Aus meiner ' + dir.role + '-Sicht: ... Empfehlung: ... Grund: ... Offener Punkt: ..." Beziehe dich in spaeteren Runden kurz auf vorherige Beitraege, wenn es der Entscheidung hilft.';
       var ctx = 'KONTEXT:\n' + (state.context || '(Kein Kontext)');
       if (state.fileContent) ctx += '\n\nDOKUMENT:\n' + state.fileContent.substring(0, 3000);
       ctx += '\n\nSTRATEGISCHE FRAGE:\n' + state.question;
@@ -2619,7 +2636,7 @@ function addDiscMsg(dir, round, text) {
         '<span class="category-tag">' + escH(dir.category || 'Expertenrolle') + '</span>' +
         '<span class="round-tag">R' + round + '</span>' +
       '</div>' +
-      '<div class="text">' + escH(text) + '</div>' +
+      '<div class="text">' + mdToClipboardHtml(text) + '</div>' +
     '</div>';
   feed.appendChild(div);
   feed.scrollTop = feed.scrollHeight;
@@ -2715,7 +2732,7 @@ function renderDiscussionTranscript() {
 }
 
 function resetResultView() {
-  setResultState('', 'Noch nicht erstellt', 'Erkenntnisse, Risiken, Optionen und Empfehlung werden aus der Diskussion konsolidiert.');
+  setResultState('', 'Noch nicht erstellt', 'Empfehlung, Gruende, Risiken und naechste Schritte werden klar zusammengefasst.');
   updateResultExportState(false);
   renderResultBrief();
   var empty = '<div class="result-message muted">Die Zusammenfassung wird nach Abschluss der Diskussion erstellt.</div>';
@@ -2729,8 +2746,9 @@ function resetResultView() {
 
 function consolidateResults() {
   goStep(4);
+  switchTab('empfehlung', document.querySelector('[data-tab="empfehlung"]'));
   renderResultBrief();
-  setResultState('loading', 'Konsolidiert', 'Der Beirat wird zu einer entscheidungsreifen Vorlage verdichtet.');
+  setResultState('loading', 'Konsolidiert', 'Der Beirat wird zu einer einfachen Empfehlung mit Gruenden verdichtet.');
   updateResultExportState(false);
   document.getElementById('tabDiskussion').innerHTML = renderDiscussionTranscript();
 
@@ -2741,66 +2759,68 @@ function consolidateResults() {
 
   var prompt = [
     'Du bist ein erfahrener Strategie- und Umsetzungsberater. Dir liegt die Diskussion eines virtuellen Beirats vor.',
-    'Erstelle daraus eine entscheidungsreife Vorlage fuer eine Fuehrungsrunde: klar, konkret, verstaendlich, handlungsorientiert.',
+    'Erstelle daraus eine einfache Entscheidungsvorlage. Ziel: Eine Fuehrungsrunde muss Empfehlung, Gruende und offene Risiken auf einen Blick verstehen.',
     '',
-    'Qualitaetsanspruch:',
+    'Sprache und Stil:',
+    '- Schreibe klar, ruhig und konkret. Nutze kurze Saetze.',
+    '- Vermeide technische Fachsprache. Wenn ein Fachbegriff noetig ist, erklaere ihn in wenigen Worten.',
+    '- Keine Tabellen, keine Codeblocks, keine Markdown-Zierzeilen, keine alleinstehenden **, keine --- Trennlinien.',
     '- Keine generischen Management-Floskeln. Jede Aussage muss der Entscheidung helfen.',
     '- Verdichte die Diskussion, wiederhole sie nicht chronologisch.',
-    '- Nenne Annahmen, fehlende Daten und Entscheidungskriterien offen.',
-    '- Erfinde keine Fakten, Zahlen, Namen oder regulatorischen Vorgaben. Nutze nur Angaben aus Kontext und Diskussion; wenn Zahlen fehlen, formuliere als zu pruefende Annahme.',
-    '- Schreibe kurze, praezise Saetze. Zielgruppe: Fach- und Managemententscheider.',
-    '- Keine Markdown-Zierzeilen, keine Codeblocks, keine alleinstehenden **, keine --- Trennlinien.',
+    '- Erfinde keine Fakten, Zahlen, Namen oder regulatorischen Vorgaben. Wenn Angaben fehlen, schreibe "noch zu pruefen".',
     '',
-    'Antworte EXAKT mit diesen vier Markern und der beschriebenen Struktur:',
+    'Wichtig: Im Abschnitt EMPFEHLUNG steht die Empfehlung direkt am Anfang. Danach kommen die Gruende.',
+    'Antworte EXAKT mit diesen vier Markern und der beschriebenen Struktur. Ersetze alle Beschreibungen durch konkrete Inhalte:',
     '',
     '===ERKENNTNISSE===',
-    '### Kurzfazit',
-    '1 Satz: Was ist die wichtigste Einsicht fuer die Entscheidung?',
+    '### Kurz gesagt',
+    '1 bis 2 Saetze: Was ist die wichtigste Einsicht fuer die Entscheidung?',
     '',
-    '| Erkenntnis | Bedeutung fuer die Entscheidung | Evidenz aus der Diskussion | Konsequenz |',
-    '|---|---|---|---|',
-    '| 3 bis 5 priorisierte Erkenntnisse | Warum relevant | Welche Rolle/Argumentlinie stuetzt es | Was daraus folgt |',
+    '### Was bedeutet das fuer die Entscheidung?',
+    '- 3 bis 5 einfache Punkte. Jeder Punkt beginnt mit der Kernaussage und erklaert danach kurz die Bedeutung.',
     '',
-    '### Offene Punkte',
-    '- 2 bis 4 Punkte, die vor einer finalen Entscheidung geklaert werden muessen.',
+    '### Noch zu klaeren',
+    '- 2 bis 4 offene Punkte, die vor einer verbindlichen Entscheidung geklaert werden muessen.',
     '',
     '===RISIKEN===',
-    '### Risikobild',
-    '1 Satz: Welches Risiko ist entscheidend, nicht nur auffaellig?',
+    '### Wichtigste Risiken',
+    '- 4 bis 6 Risiken in einfacher Sprache: Was kann schiefgehen? Warum zaehlt es? Was hilft dagegen?',
     '',
-    '| Risiko | Warum kritisch | Fruehwarnsignal | Gegenmassnahme |',
-    '|---|---|---|---|',
-    '| 4 bis 6 Risiken | Auswirkung auf Entscheidung/Umsetzung | Woran man es frueh erkennt | Konkrete Steuerung |',
+    '### Stopper',
+    '- 1 bis 3 Punkte, bei denen die Entscheidung gestoppt oder deutlich angepasst werden sollte.',
     '',
-    '### Entscheidungsrelevante Abwaegung',
-    '- 2 bis 3 Saetze: Welche Risiken sind tragbar, welche waeren Stopper?',
+    '### Tragbare Risiken',
+    '- 1 bis 3 Risiken, die akzeptabel sind, wenn die genannten Gegenmassnahmen umgesetzt werden.',
     '',
     '===OPTIONEN===',
-    '### Optionslogik',
-    '1 Satz: Welche realistischen Wege stehen zur Wahl?',
+    '### Moegliche Wege',
+    '- 2 bis 3 Optionen. Jede Option folgt diesem Muster: Option: Weg. Nutzen. Wann passt sie?',
     '',
-    '| Option | Nutzenversprechen | Voraussetzungen | Hauptrisiken | Entscheidungslogik |',
-    '|---|---|---|---|---|',
-    '| 3 bis 4 Optionen | Was wird gewonnen | Was muss stimmen | Was kann scheitern | Wann diese Option sinnvoll ist |',
+    '### Einordnung',
+    '1 bis 3 Saetze: Welche Option ist am naheliegendsten und warum?',
     '',
-    '### Nicht empfehlenswerte Variante',
-    '1 bis 2 Saetze: Welche scheinbare Option sollte nicht weiterverfolgt werden und warum?',
+    '### Nicht weiter verfolgen',
+    '1 Satz: Welche scheinbare Option sollte nicht weiterverfolgt werden und warum?',
     '',
     '===EMPFEHLUNG===',
-    '### Entscheidungsvorschlag',
-    '1 klarer Satz: Welche Option soll gewaehlt werden?',
+    '### Empfehlung auf einen Blick',
+    'Empfehlung: Ein klarer Satz, welche Option gewaehlt werden soll.',
+    'Warum:',
+    '- Grund 1 in einem kurzen Satz.',
+    '- Grund 2 in einem kurzen Satz.',
+    '- Grund 3 in einem kurzen Satz.',
+    'Bedingung: Ein Satz zur wichtigsten Voraussetzung oder Einschraenkung.',
     '',
-    '### Begruendung',
-    '- 3 bis 5 Gruende, jeweils mit Nutzen und Abwaegung.',
+    '### Gruende',
+    '- 3 bis 5 Gruende. Jeder Grund nennt Nutzen, Abwaegung und Bezug zur Diskussion in einfacher Sprache.',
     '',
     '### Naechste Schritte',
     '1. Konkreter Schritt mit Ziel, Verantwortungsbereich und Ergebnis.',
     '2. Konkreter Schritt mit Ziel, Verantwortungsbereich und Ergebnis.',
     '3. Konkreter Schritt mit Ziel, Verantwortungsbereich und Ergebnis.',
-    '4. Optionaler Schritt, falls noetig.',
     '',
-    '### Go/No-Go-Kriterien',
-    '- 3 bis 5 mess- oder pruefbare Kriterien, die ueber Fortfuehrung, Anpassung oder Abbruch entscheiden.'
+    '### Entscheidung offen halten, wenn',
+    '- 2 bis 4 einfache Go/No-Go-Kriterien: Woran erkennt man, ob fortgefuehrt, angepasst oder abgebrochen wird?'
   ].join('\n');
   var discText = 'FRAGE: ' + state.question + '\nKONTEXT: ' + (state.context || '(keiner)') + '\n\nDISKUSSION:\n';
   state.discussion.forEach(function(e) {
@@ -2812,11 +2832,11 @@ function consolidateResults() {
     var s = parseConsolidation(answer);
     state.erkenntnisse = cleanDecisionText(s.erkenntnisse); state.risiken = cleanDecisionText(s.risiken);
     state.optionen = cleanDecisionText(s.optionen); state.empfehlung = cleanDecisionText(s.empfehlung);
-    document.getElementById('tabErkenntnisse').innerHTML = renderDecisionText(state.erkenntnisse, 'Entscheidungsrelevante Erkenntnisse', 'Verdichtete Einsichten mit Bedeutung, Evidenz und Konsequenz.');
-    document.getElementById('tabRisiken').innerHTML = renderDecisionText(state.risiken, 'Risikobild und Steuerung', 'Welche Risiken entscheidend sind, woran sie frueh erkennbar werden und wie sie reduziert werden.');
-    document.getElementById('tabOptionen').innerHTML = renderDecisionText(state.optionen, 'Handlungsoptionen im Vergleich', 'Realistische Wege mit Voraussetzungen, Nutzen, Risiken und Entscheidungslogik.');
-    document.getElementById('tabEmpfehlung').innerHTML = renderDecisionText(state.empfehlung, 'Empfehlung und naechste Schritte', 'Klarer Vorschlag mit Begruendung, Umsetzungsplan und Go/No-Go-Kriterien.');
-    setResultState('ready', 'Bereit', 'Die Entscheidungsvorlage ist konsolidiert und kann exportiert werden.');
+    document.getElementById('tabErkenntnisse').innerHTML = renderDecisionText(state.erkenntnisse, 'Was wir aus der Diskussion mitnehmen', 'Die wichtigsten Einsichten in einfacher Sprache.');
+    document.getElementById('tabRisiken').innerHTML = renderDecisionText(state.risiken, 'Risiken und Stopper', 'Was schiefgehen kann und wie es steuerbar bleibt.');
+    document.getElementById('tabOptionen').innerHTML = renderDecisionText(state.optionen, 'Moegliche Wege', 'Welche Optionen realistisch sind und wann sie passen.');
+    document.getElementById('tabEmpfehlung').innerHTML = renderDecisionText(state.empfehlung, 'Empfehlung auf einen Blick', 'Klarer Vorschlag, wichtigste Gruende und naechste Schritte.');
+    setResultState('ready', 'Bereit', 'Empfehlung und Gruende sind zusammengefasst und koennen exportiert werden.');
     updateResultExportState(hasDecisionResults());
     showToast('Ergebnis steht bereit!', 'ok');
   }).catch(function(err) {
