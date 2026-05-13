@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Beirat · Board of Directors</title>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<title>Expertenbeirat | Entscheidungs-Cockpit</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS@3.12.0/dist/pptxgen.bundle.js"></script>
 <style>
 /* ══════════════════════════════════════════
@@ -14,48 +14,52 @@
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 :root {
-  --bg-deep: #0a0e1a;
-  --bg-card: #111827;
-  --bg-card-hover: #1a2235;
-  --bg-glass: rgba(17, 24, 39, 0.75);
-  --bg-surface: #1e293b;
-  --border: rgba(255,255,255,0.06);
-  --border-hover: rgba(255,255,255,0.12);
-  --border-active: rgba(99,179,237,0.4);
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --text-muted: #64748b;
-  --accent: #60a5fa;
-  --accent-glow: rgba(96,165,250,0.15);
-  --accent-bright: #93c5fd;
-  --gold: #f59e0b;
-  --gold-glow: rgba(245,158,11,0.12);
-  --success: #34d399;
-  --warn: #fbbf24;
-  --error: #f87171;
-  --radius: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 24px;
+  --bg-deep: #101316;
+  --bg-card: #171b20;
+  --bg-card-hover: #1d2329;
+  --bg-glass: rgba(23, 27, 32, 0.86);
+  --bg-surface: #20262d;
+  --bg-soft: #14181d;
+  --border: rgba(214,222,230,0.10);
+  --border-hover: rgba(214,222,230,0.18);
+  --border-active: rgba(80,151,146,0.55);
+  --text-primary: #eef2f4;
+  --text-secondary: #bac4cb;
+  --text-muted: #7f8b94;
+  --accent: #509792;
+  --accent-glow: rgba(80,151,146,0.14);
+  --accent-bright: #78b8b2;
+  --gold: #c79242;
+  --gold-glow: rgba(199,146,66,0.13);
+  --success: #5bb98c;
+  --warn: #d6a84e;
+  --error: #dc6f6b;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --shadow-panel: 0 18px 44px rgba(0,0,0,0.28);
 }
 
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg-deep);
+  background:
+    linear-gradient(180deg, #14181d 0%, var(--bg-deep) 260px),
+    var(--bg-deep);
   color: var(--text-primary);
   font-size: 15px;
-  line-height: 1.65;
+  line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
 }
 
-/* Subtiler animierter Hintergrund */
+/* Ruhige Oberflaechenstruktur ohne dekorative Effekte */
 body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background:
-    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(96,165,250,0.06), transparent),
-    radial-gradient(ellipse 60% 50% at 80% 90%, rgba(245,158,11,0.04), transparent);
+  background: linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: .24;
   pointer-events: none;
   z-index: 0;
 }
@@ -64,52 +68,63 @@ body::before {
    TOPBAR
    ══════════════════════════════════════════ */
 .topbar {
-  height: 64px;
-  background: rgba(10,14,26,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  min-height: 72px;
+  background: rgba(18,22,26,0.94);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  padding: 0 28px;
-  gap: 14px;
+  padding: 0 32px;
+  gap: 16px;
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: 0 1px 0 rgba(255,255,255,0.03);
 }
 .topbar-logo {
-  width: 32px;
-  height: 32px;
-  background: linear-gradient(135deg, var(--accent), #818cf8);
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  background: #222b31;
+  border: 1px solid var(--border-hover);
+  border-radius: var(--radius);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 800;
-  color: #fff;
+  color: var(--accent-bright);
+  letter-spacing: .02em;
 }
+.topbar-brand { display: flex; flex-direction: column; gap: 1px; }
 .topbar .tool-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 800;
   color: var(--text-primary);
+  line-height: 1.2;
+}
+.topbar .tool-subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
 }
 .topbar .spacer { flex: 1; }
 .topbar-btn {
-  background: rgba(255,255,255,0.05);
+  background: transparent;
   color: var(--text-secondary);
   border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 7px 16px;
+  border-radius: var(--radius);
+  padding: 8px 14px;
   font-family: inherit;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: all .2s;
 }
 .topbar-btn:hover {
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
   color: var(--text-primary);
   border-color: var(--border-hover);
 }
@@ -118,11 +133,11 @@ body::before {
 .provider-badge {
   font-size: 11px;
   font-weight: 700;
-  padding: 3px 10px;
-  border-radius: 20px;
-  background: var(--accent-glow);
-  color: var(--accent);
-  border: 1px solid rgba(96,165,250,0.2);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(80,151,146,0.10);
+  color: var(--accent-bright);
+  border: 1px solid rgba(80,151,146,0.26);
 }
 
 /* ══════════════════════════════════════════
@@ -134,53 +149,59 @@ body::before {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 64px);
-  padding: 24px;
+  min-height: calc(100vh - 72px);
+  padding: 40px 24px;
 }
 .setup-card {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-xl);
-  padding: 40px;
-  max-width: 480px;
+  padding: 34px;
+  max-width: 560px;
   width: 100%;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+  box-shadow: var(--shadow-panel);
+}
+.setup-kicker {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-bright);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  margin-bottom: 10px;
 }
 .setup-card h2 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
-  margin-bottom: 4px;
-  background: linear-gradient(135deg, var(--text-primary), var(--accent-bright));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 1.55rem;
+  line-height: 1.22;
+  margin-bottom: 8px;
+  color: var(--text-primary);
 }
 .setup-card .subtitle {
   font-size: 13px;
-  color: var(--text-muted);
-  margin-bottom: 28px;
+  color: var(--text-secondary);
+  margin-bottom: 26px;
+  max-width: 46rem;
 }
 
-.provider-toggle { display: flex; gap: 10px; margin-bottom: 24px; }
+.provider-toggle { display: flex; gap: 10px; margin-bottom: 22px; }
 .provider-opt {
   flex: 1;
   padding: 14px 16px;
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   cursor: pointer;
   transition: all .2s;
-  text-align: center;
-  background: transparent;
+  text-align: left;
+  background: var(--bg-soft);
 }
-.provider-opt:hover { border-color: var(--border-hover); background: rgba(255,255,255,0.02); }
+.provider-opt:hover { border-color: var(--border-hover); background: var(--bg-card-hover); }
 .provider-opt.active {
   border-color: var(--accent);
-  background: var(--accent-glow);
+  background: rgba(80,151,146,0.10);
 }
 .provider-opt h4 { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
 .provider-opt p { font-size: 11px; color: var(--text-muted); }
 
-.form-group { margin-bottom: 16px; }
+.form-group { margin-bottom: 15px; }
 .form-label {
   display: block;
   font-size: 12px;
@@ -192,9 +213,9 @@ body::before {
 }
 .input-field {
   width: 100%;
-  padding: 12px 16px;
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   font-family: inherit;
   font-size: 14px;
   color: var(--text-primary);
@@ -205,7 +226,7 @@ body::before {
 }
 .input-field:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-glow);
+  box-shadow: 0 0 0 3px rgba(80,151,146,0.18);
 }
 .input-field::placeholder { color: var(--text-muted); }
 select.input-field { cursor: pointer; }
@@ -214,15 +235,25 @@ option { background: var(--bg-card); color: var(--text-primary); }
 .tok-hint { font-size: 11px; color: var(--text-muted); margin-top: 5px; }
 .tok-err { font-size: 12px; color: var(--error); margin-top: 5px; display: none; }
 .tok-err.on { display: block; }
+.sensitive-note {
+  margin: 4px 0 18px;
+  padding: 10px 12px;
+  border: 1px solid rgba(214,222,230,0.10);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.025);
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
 
 /* ══════════════════════════════════════════
    BUTTONS
    ══════════════════════════════════════════ */
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), #818cf8);
+  background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius);
   padding: 13px 28px;
   font-family: inherit;
   font-size: 14px;
@@ -233,15 +264,15 @@ option { background: var(--bg-card); color: var(--text-primary); }
   position: relative;
   overflow: hidden;
 }
-.btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(96,165,250,0.25); }
+.btn-primary:hover { background: #5aa5a0; transform: translateY(-1px); box-shadow: 0 10px 24px rgba(0,0,0,0.24); }
 .btn-primary:active { transform: scale(.98); }
 .btn-primary:disabled { opacity: .35; cursor: not-allowed; filter: none; transform: none; }
 
 .btn-secondary {
   background: transparent;
   color: var(--accent);
-  border: 1.5px solid var(--accent);
-  border-radius: 10px;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
   padding: 11px 24px;
   font-family: inherit;
   font-size: 14px;
@@ -254,8 +285,8 @@ option { background: var(--bg-card); color: var(--text-primary); }
 .btn-ghost {
   background: transparent;
   color: var(--text-secondary);
-  border: 1.5px solid var(--border);
-  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   padding: 9px 18px;
   font-family: inherit;
   font-size: 13px;
@@ -270,60 +301,173 @@ option { background: var(--bg-card); color: var(--text-primary); }
    ══════════════════════════════════════════ */
 .main-app { display: none; position: relative; z-index: 1; }
 .main-app.visible { display: block; }
-.app-container { max-width: 1100px; margin: 0 auto; padding: 28px; }
+.app-container { max-width: 1180px; margin: 0 auto; padding: 32px 32px 42px; }
 
 /* ══════════════════════════════════════════
    STEPPER
    ══════════════════════════════════════════ */
-.stepper { display: flex; align-items: center; justify-content: center; gap: 0; margin-bottom: 32px; }
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 34px;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(20,24,29,0.78);
+}
 .step-item {
   display: flex; align-items: center; gap: 8px;
-  font-size: 13px; font-weight: 600; color: var(--text-muted);
+  font-size: 12px; font-weight: 800; color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
   cursor: pointer; transition: color .2s;
 }
 .step-item.active { color: var(--accent); }
 .step-item.done { color: var(--success); }
 .step-num {
-  width: 30px; height: 30px; border-radius: 50%;
+  width: 30px; height: 30px; border-radius: var(--radius);
   display: flex; align-items: center; justify-content: center;
   font-size: 12px; font-weight: 700;
-  border: 2px solid var(--border); background: var(--bg-card);
+  border: 1px solid var(--border); background: var(--bg-card);
   transition: all .2s;
 }
 .step-item.active .step-num { border-color: var(--accent); background: var(--accent); color: #fff; }
 .step-item.done .step-num { border-color: var(--success); background: rgba(52,211,153,0.15); color: var(--success); }
-.step-connector { width: 40px; height: 2px; background: var(--border); margin: 0 10px; }
+.step-connector { width: 48px; height: 1px; background: var(--border); margin: 0 12px; }
 .step-connector.done { background: var(--success); }
 
 /* ══════════════════════════════════════════
    STEP PANELS
    ══════════════════════════════════════════ */
-.step-panel { display: none; animation: fadeUp .4s ease; }
+.step-panel { display: none; animation: fadeUp .22s ease; }
 .step-panel.active { display: block; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 .step-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.6rem;
+  font-size: 1.45rem;
+  line-height: 1.24;
   font-weight: 800;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
-.step-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 28px; }
+.step-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 26px; max-width: 760px; }
+
+.board-toolbar,
+.input-guidance {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(20,24,29,0.74);
+  padding: 16px;
+  margin-bottom: 18px;
+}
+.toolbar-kicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 4px;
+}
+.selection-summary {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+.selection-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.selection-hint.warn { color: var(--warn); }
+.quick-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.mini-btn {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 11px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.mini-btn:hover {
+  border-color: var(--border-hover);
+  background: rgba(255,255,255,0.035);
+  color: var(--text-primary);
+}
+.mini-btn.primary {
+  border-color: rgba(80,151,146,0.38);
+  background: rgba(80,151,146,0.11);
+  color: var(--accent-bright);
+}
+.mini-select {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 8px 11px;
+  cursor: pointer;
+  max-width: 260px;
+}
+.mini-select:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.input-guidance {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.guidance-item {
+  border-left: 2px solid var(--border-hover);
+  padding-left: 12px;
+}
+.guidance-item strong {
+  display: block;
+  font-size: 12px;
+  color: var(--text-primary);
+  margin-bottom: 3px;
+}
+.guidance-item span {
+  display: block;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+.field-help {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 8px;
+}
 
 /* ══════════════════════════════════════════
    STEP 1: DIREKTOREN GRID (mit Fotos)
    ══════════════════════════════════════════ */
 .directors-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
   margin-bottom: 28px;
 }
 .director-card {
   background: var(--bg-card);
-  border: 1.5px solid var(--border);
+  border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 20px;
+  padding: 18px;
   cursor: pointer;
   transition: all .25s cubic-bezier(.4,0,.2,1);
   display: flex;
@@ -344,15 +488,33 @@ option { background: var(--bg-card); color: var(--text-primary); }
 .director-card:hover {
   border-color: var(--border-hover);
   background: var(--bg-card-hover);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.22);
 }
 .director-card.selected {
   border-color: var(--border-active);
-  background: rgba(96,165,250,0.06);
+  background: rgba(80,151,146,0.08);
 }
 .director-card.selected::before {
-  background: linear-gradient(90deg, var(--accent), #818cf8);
+  background: var(--accent);
+}
+.director-card.recommended:not(.selected) {
+  border-style: dashed;
+}
+.recommend-badge {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  margin-top: 9px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(80,151,146,0.10);
+  border: 1px solid rgba(80,151,146,0.22);
+  color: var(--accent-bright);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
 }
 /* Haekcken oben rechts wenn selektiert */
 .director-card .check-mark {
@@ -361,8 +523,8 @@ option { background: var(--bg-card); color: var(--text-primary); }
   right: 10px;
   width: 22px;
   height: 22px;
-  border-radius: 50%;
-  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -406,10 +568,86 @@ option { background: var(--bg-card); color: var(--text-primary); }
 .director-info h4 { font-size: 14px; font-weight: 700; line-height: 1.3; color: var(--text-primary); }
 .director-role {
   font-size: 11px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .05em; margin-top: 3px; display: inline-block;
-  padding: 2px 8px; border-radius: 20px; background: rgba(255,255,255,0.05);
+  letter-spacing: .05em; margin-top: 5px; display: inline-block;
+  padding: 2px 8px; border-radius: 999px; background: rgba(255,255,255,0.05);
+}
+.category-badge {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
 }
 .director-desc { font-size: 12px; color: var(--text-muted); margin-top: 6px; line-height: 1.45; }
+.persona-detail {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+.persona-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+.persona-perspective {
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-secondary);
+}
+.persona-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+.persona-tag {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 7px;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 700;
+}
+.persona-more {
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+.persona-more summary {
+  cursor: pointer;
+  color: var(--accent-bright);
+  font-weight: 800;
+  list-style: none;
+}
+.persona-more summary::-webkit-details-marker { display: none; }
+.persona-more summary::after {
+  content: '+';
+  margin-left: 6px;
+  color: var(--text-muted);
+}
+.persona-more[open] summary::after { content: '-'; }
+.persona-more-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+.persona-more-block strong {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 11px;
+  margin-bottom: 4px;
+}
 
 /* ══════════════════════════════════════════
    STEP 2: KONTEXT & FRAGE
@@ -418,7 +656,7 @@ option { background: var(--bg-card); color: var(--text-primary); }
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 24px;
+  padding: 22px;
   margin-bottom: 16px;
 }
 .context-area h3 {
@@ -432,22 +670,34 @@ option { background: var(--bg-card); color: var(--text-primary); }
 .context-area h3 .icon {
   width: 28px; height: 28px; border-radius: 8px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 14px;
+  font-size: 11px;
+  font-weight: 800;
 }
 
 .file-upload-zone {
-  border: 2px dashed var(--border);
-  border-radius: 10px;
+  border: 1px dashed var(--border-hover);
+  border-radius: var(--radius);
   padding: 18px;
-  text-align: center;
   cursor: pointer;
   transition: all .2s;
   margin-top: 12px;
   font-size: 13px;
   color: var(--text-muted);
 }
+.file-upload-zone strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 13px;
+  margin-bottom: 3px;
+}
+.file-upload-zone span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 12px;
+}
 .file-upload-zone:hover { border-color: var(--accent); background: var(--accent-glow); color: var(--accent); }
 .file-upload-zone.has-file { border-color: var(--success); background: rgba(52,211,153,0.08); color: var(--success); border-style: solid; }
+.file-upload-zone.has-file strong { color: var(--success); }
 .file-upload-zone input { display: none; }
 
 .rounds-config {
@@ -455,7 +705,7 @@ option { background: var(--bg-card); color: var(--text-primary); }
   font-size: 13px; color: var(--text-secondary);
 }
 .rounds-config select {
-  padding: 8px 12px; border: 1.5px solid var(--border); border-radius: 8px;
+  padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius);
   font-family: inherit; font-size: 13px; background: var(--bg-surface); color: var(--text-primary);
 }
 
@@ -467,44 +717,210 @@ option { background: var(--bg-card); color: var(--text-primary); }
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
+  box-shadow: var(--shadow-panel);
 }
 .boardroom-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, rgba(96,165,250,0.08), rgba(129,140,248,0.05));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  background: var(--bg-soft);
   border-bottom: 1px solid var(--border);
 }
-.boardroom-header h3 { font-size: 14px; font-weight: 700; }
-.live-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; color: var(--success); }
+.boardroom-kicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--accent-bright);
+  margin-bottom: 2px;
+}
+.boardroom-header h3 { font-size: 1.05rem; font-weight: 800; line-height: 1.25; }
+.boardroom-subtitle { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+.boardroom-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.meeting-chip,
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.025);
+}
+.live-badge { color: var(--success); border-color: rgba(91,185,140,0.28); }
+.live-badge.done { color: var(--text-muted); border-color: var(--border); }
+.live-badge.done .live-dot { background: var(--text-muted); animation: none; }
 .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); animation: pulse-dot 1.5s ease-in-out infinite; }
-@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+@keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
 
-.boardroom-avatars {
-  display: flex; gap: 0; padding: 14px 24px;
-  background: rgba(0,0,0,0.15);
+.meeting-stage {
+  display: grid;
+  grid-template-columns: minmax(260px, .82fr) minmax(0, 1.18fr);
+  gap: 18px;
+  padding: 22px 24px;
   border-bottom: 1px solid var(--border);
-  flex-wrap: wrap;
+  background: linear-gradient(180deg, rgba(255,255,255,0.024), rgba(255,255,255,0.01));
+}
+.active-speaker-card,
+.participants-panel {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(20,24,29,0.76);
+}
+.active-speaker-card {
+  padding: 18px;
+  min-height: 210px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.active-label,
+.participants-label,
+.stat-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.active-speaker-main { display: flex; align-items: center; gap: 12px; margin: 18px 0 14px; }
+.active-speaker-avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+  border: 1px solid rgba(255,255,255,0.16);
+}
+.active-speaker-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; }
+.active-speaker-copy strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 1rem;
+  line-height: 1.25;
+}
+.active-speaker-copy span {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+.active-speaker-cue {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+.meeting-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 18px;
+}
+.meeting-stat {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 9px 10px;
+  background: rgba(255,255,255,0.02);
+}
+.stat-value {
+  display: block;
+  margin-top: 2px;
+  color: var(--text-primary);
+  font-size: 14px;
+  font-weight: 800;
+}
+.participants-panel { padding: 16px; }
+.participants-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.participants-count {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+.boardroom-avatars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(178px, 1fr));
+  gap: 10px;
 }
 .mini-avatar {
-  width: 34px; height: 34px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 10px; font-weight: 700;
-  margin-left: -6px; border: 2px solid var(--bg-card);
-  transition: all .2s;
+  --seat-color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 66px;
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--seat-color);
+  border-radius: var(--radius);
+  padding: 10px;
+  background: rgba(255,255,255,0.018);
+  transition: border-color .2s, background .2s, transform .2s;
+}
+.mini-avatar.speaking {
+  border-color: rgba(80,151,146,0.58);
+  background: rgba(80,151,146,0.10);
+  transform: translateY(-1px);
+}
+.mini-avatar.inactive { opacity: .35; }
+.seat-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  flex-shrink: 0;
   overflow: hidden;
 }
-.mini-avatar:first-child { margin-left: 0; }
-.mini-avatar img { width: 100%; height: 100%; object-fit: cover; }
-.mini-avatar.speaking { box-shadow: 0 0 0 3px var(--accent); z-index: 2; }
-.mini-avatar.inactive { opacity: .25; }
+.seat-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.seat-copy { min-width: 0; }
+.seat-copy strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 12px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.seat-copy span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
 
 .discussion-feed {
   padding: 24px;
-  max-height: 520px;
+  max-height: 560px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
+  background: rgba(255,255,255,0.012);
 }
 /* Custom Scrollbar */
 .discussion-feed::-webkit-scrollbar { width: 6px; }
@@ -513,51 +929,98 @@ option { background: var(--bg-card); color: var(--text-primary); }
 
 .discussion-empty {
   text-align: center;
-  padding: 48px;
+  padding: 52px 24px;
   color: var(--text-muted);
   font-size: 14px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(20,24,29,0.48);
+}
+
+.round-separator {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  padding: 4px 0;
+}
+.round-separator::before,
+.round-separator::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: var(--border);
+}
+.round-separator span {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+  background: var(--bg-card);
 }
 
 .disc-msg {
-  display: flex; gap: 12px; align-items: flex-start;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 12px;
+  align-items: flex-start;
   animation: fadeIn .35s ease;
 }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 .disc-msg .avatar {
-  width: 40px; height: 40px; border-radius: 50%;
+  width: 44px; height: 44px; border-radius: var(--radius);
   flex-shrink: 0; overflow: hidden;
   display: flex; align-items: center; justify-content: center;
-  color: #fff; font-size: 13px; font-weight: 700;
+  color: #fff; font-size: 13px; font-weight: 800;
+  border: 1px solid rgba(255,255,255,0.14);
 }
 .disc-msg .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
 .disc-bubble {
-  flex: 1;
-  background: var(--bg-surface);
-  border-radius: 4px 14px 14px 14px;
-  padding: 14px 18px;
+  min-width: 0;
+  background: rgba(32,38,45,0.82);
+  border-radius: var(--radius-lg);
+  padding: 15px 18px;
   font-size: 14px;
   line-height: 1.65;
+  border: 1px solid var(--border);
   border-left: 3px solid var(--border);
 }
-.disc-bubble .name { font-size: 13px; font-weight: 700; }
+.disc-bubble .name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 800;
+}
 .disc-bubble .role-tag {
-  font-size: 10px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: .04em; margin-left: 8px; color: var(--text-muted);
+  font-size: 10px; font-weight: 800; text-transform: uppercase;
+  letter-spacing: .04em; color: var(--text-muted);
+}
+.disc-bubble .category-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 1px 7px;
 }
 .disc-bubble .round-tag {
   font-size: 10px; font-weight: 700;
   background: var(--accent);
   color: #fff;
   padding: 2px 8px;
-  border-radius: 20px;
-  margin-left: 8px;
+  border-radius: 999px;
 }
 .disc-bubble .text { margin-top: 8px; color: var(--text-secondary); white-space: pre-wrap; }
 
 /* Typing Indicator */
-.typing-indicator { display: none; align-items: center; gap: 10px; padding: 12px 24px; font-size: 13px; color: var(--text-muted); }
+.typing-indicator { display: none; align-items: center; gap: 10px; padding: 13px 24px; font-size: 13px; color: var(--text-muted); border-top: 1px solid var(--border); background: rgba(20,24,29,0.66); }
 .typing-indicator.on { display: flex; }
 .typing-dots { display: flex; gap: 4px; }
 .typing-dots span {
@@ -573,29 +1036,110 @@ option { background: var(--bg-card); color: var(--text-primary); }
 .progress-bar-wrap.on { display: block; }
 .progress-label { font-size: 11px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
 .progress-bar { height: 4px; background: var(--border); border-radius: 20px; overflow: hidden; }
-.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), #818cf8); border-radius: 20px; transition: width .5s ease; width: 0%; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 20px; transition: width .5s ease; width: 0%; }
 
 /* ══════════════════════════════════════════
    STEP 4: ERGEBNIS
    ══════════════════════════════════════════ */
+.result-brief {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: rgba(20,24,29,0.74);
+  padding: 20px 22px;
+  margin-bottom: 18px;
+}
+.brief-topline {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+}
+.brief-kicker {
+  color: var(--accent-bright);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .10em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.result-brief h3 {
+  font-size: 1.1rem;
+  line-height: 1.32;
+  margin-bottom: 8px;
+}
+.brief-question {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 920px;
+}
+.brief-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+.brief-chip {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.025);
+  font-size: 11px;
+  font-weight: 800;
+}
+.brief-chip strong { color: var(--text-primary); font-weight: 800; }
 .result-panel {
   background: var(--bg-card);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: 20px;
+  box-shadow: var(--shadow-panel);
 }
 .result-header {
   display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
   padding: 18px 24px;
-  background: linear-gradient(135deg, rgba(245,158,11,0.06), rgba(96,165,250,0.04));
+  background: var(--bg-soft);
   border-bottom: 1px solid var(--border);
 }
-.result-header h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; }
+.result-header h3 { font-size: 1.05rem; font-weight: 800; }
+.result-header p {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+.result-state {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 11px;
+  color: var(--text-secondary);
+  background: rgba(255,255,255,0.025);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.result-state::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: currentColor;
+  opacity: .72;
+}
+.result-state.loading { color: var(--accent-bright); border-color: rgba(80,151,146,0.34); background: rgba(80,151,146,0.08); }
+.result-state.loading::before { animation: statePulse 1s ease-in-out infinite; }
+.result-state.ready { color: var(--success); border-color: rgba(91,185,140,0.34); background: rgba(91,185,140,0.08); }
+.result-state.error { color: var(--error); border-color: rgba(220,111,107,0.38); background: rgba(220,111,107,0.08); }
+@keyframes statePulse { 0%,100% { opacity: .35; transform: scale(.85); } 50% { opacity: 1; transform: scale(1.15); } }
 
 .tab-bar {
   display: flex; gap: 0; border-bottom: 1px solid var(--border);
-  background: rgba(0,0,0,0.1); overflow-x: auto;
+  background: rgba(255,255,255,0.018); overflow-x: auto;
 }
 .tab-btn {
   padding: 12px 20px; font-size: 13px; font-weight: 700;
@@ -610,27 +1154,242 @@ option { background: var(--bg-card); color: var(--text-primary); }
   padding: 24px; display: none;
   font-size: 14px; line-height: 1.7;
   color: var(--text-secondary);
-  white-space: pre-wrap;
+  white-space: normal;
   min-height: 120px;
 }
 .tab-content.active { display: block; }
+.tab-content p { margin-bottom: 12px; }
+.tab-content ul,
+.tab-content ol { margin: 8px 0 12px 22px; }
+.tab-content li { margin-bottom: 6px; }
+.decision-text {
+  display: grid;
+  gap: 12px;
+}
+.decision-section-head {
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.decision-section-head span {
+  display: block;
+  color: var(--accent-bright);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: 4px;
+}
+.decision-section-head strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 1.05rem;
+}
+.decision-section-head p {
+  color: var(--text-muted);
+  font-size: 12px;
+  margin: 3px 0 0;
+  max-width: 780px;
+}
+.decision-text p {
+  color: var(--text-secondary);
+  max-width: 940px;
+}
+.decision-text .md-lead {
+  border: 1px solid rgba(80,151,146,0.22);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: rgba(80,151,146,0.07);
+  padding: 14px 16px;
+  color: var(--text-primary);
+  max-width: none;
+}
+.md-heading {
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: .01em;
+  margin: 10px 0 2px;
+  padding-top: 4px;
+}
+.md-heading:first-child { margin-top: 0; }
+.md-heading::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 8px;
+  box-shadow: 0 0 0 4px rgba(80,151,146,0.10);
+}
+.decision-text ul,
+.decision-text ol {
+  list-style: none;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+  counter-reset: decision-item;
+}
+.decision-text li {
+  position: relative;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.018);
+  padding: 12px 14px 12px 44px;
+  color: var(--text-secondary);
+  min-height: 44px;
+}
+.decision-text ol li { counter-increment: decision-item; }
+.decision-text ol li::before,
+.decision-text ul li::before {
+  position: absolute;
+  left: 13px;
+  top: 13px;
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-bright);
+  background: rgba(80,151,146,0.10);
+  border: 1px solid rgba(80,151,146,0.24);
+}
+.decision-text ol li::before { content: counter(decision-item); }
+.decision-text ul li::before { content: ''; width: 8px; height: 8px; left: 19px; top: 19px; border: none; background: var(--accent); }
+.decision-text strong { color: var(--text-primary); font-weight: 800; }
+.md-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.015);
+}
+.md-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 760px;
+  font-size: 13px;
+}
+.md-table th {
+  color: var(--text-primary);
+  background: rgba(80,151,146,0.10);
+  font-weight: 800;
+  text-align: left;
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.md-table td {
+  color: var(--text-secondary);
+  padding: 12px;
+  border-top: 1px solid rgba(214,222,230,0.08);
+  border-left: 1px solid rgba(214,222,230,0.06);
+  vertical-align: top;
+}
+.md-table td:first-child { border-left: none; font-weight: 800; color: var(--text-primary); min-width: 180px; }
+.md-table td strong { color: var(--text-primary); }
+.md-table tr:hover td { background: rgba(255,255,255,0.014); }
+.decision-text .md-table-wrap + .md-heading { margin-top: 16px; }
+.result-message {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  background: rgba(255,255,255,0.024);
+  color: var(--text-secondary);
+}
+.result-message.loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.result-message.error {
+  border-color: rgba(220,111,107,0.38);
+  color: var(--error);
+  background: rgba(220,111,107,0.07);
+}
+.result-message.muted { color: var(--text-muted); }
+.discussion-transcript {
+  display: grid;
+  gap: 12px;
+}
+.transcript-entry {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: var(--radius);
+  background: rgba(255,255,255,0.018);
+  padding: 13px 15px;
+}
+.transcript-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 7px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.transcript-role {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+.transcript-text {
+  color: var(--text-secondary);
+  line-height: 1.65;
+  white-space: normal;
+}
+.transcript-text p { margin-bottom: 12px; }
+.transcript-text p:last-child { margin-bottom: 0; }
+.transcript-text strong { color: var(--text-primary); font-weight: 800; }
+.transcript-text em { color: var(--text-secondary); }
+.transcript-text ul,
+.transcript-text ol { margin: 8px 0 12px 22px; }
+.transcript-text li { margin-bottom: 6px; }
+.transcript-text .md-table { min-width: 640px; }
 
 .export-bar {
-  display: flex; gap: 8px; flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
   padding: 16px 24px;
   border-top: 1px solid var(--border);
-  background: rgba(0,0,0,0.1);
+  background: rgba(255,255,255,0.018);
+}
+.export-copy {
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  max-width: 520px;
+}
+.export-copy strong {
+  display: block;
+  color: var(--text-primary);
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+.export-copy span { display: block; }
+.export-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 /* Copy Button */
 .copy-btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 9px 16px; border: 1px solid var(--border); border-radius: 8px;
+   padding: 9px 16px; border: 1px solid var(--border); border-radius: var(--radius);
   background: transparent; font-family: inherit; font-size: 12px; font-weight: 600;
   color: var(--text-secondary); cursor: pointer; transition: all .2s;
 }
 .copy-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-glow); }
 .copy-btn.copied { border-color: var(--success); color: var(--success); background: rgba(52,211,153,0.08); }
+.copy-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
 .copy-btn svg { flex-shrink: 0; }
 
 /* ══════════════════════════════════════════
@@ -641,22 +1400,24 @@ option { background: var(--bg-card); color: var(--text-primary); }
   background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 12px 20px;
+  border-left: 3px solid var(--border);
+  border-radius: var(--radius);
+  padding: 13px 18px;
   font-size: 13px; font-weight: 600;
-  box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+  box-shadow: var(--shadow-panel);
   transform: translateY(50px);
   opacity: 0;
-  transition: all .3s cubic-bezier(.34,1.56,.64,1);
+  transition: all .22s ease;
   z-index: 600;
   display: flex; align-items: center; gap: 8px;
+  max-width: min(420px, calc(100vw - 32px));
 }
 .toast.on { transform: translateY(0); opacity: 1; }
-.toast.ok { border-color: var(--success); }
+.toast.ok { border-color: rgba(91,185,140,0.42); border-left-color: var(--success); }
 .toast.ok::before { content: '\u2713'; color: var(--success); font-weight: 800; }
-.toast.warn { border-color: var(--warn); }
+.toast.warn { border-color: rgba(214,168,78,0.42); border-left-color: var(--warn); }
 .toast.warn::before { content: '\u26a0'; }
-.toast.err { border-color: var(--error); }
+.toast.err { border-color: rgba(220,111,107,0.46); border-left-color: var(--error); background: #20181a; }
 .toast.err::before { content: '\u2717'; color: var(--error); font-weight: 800; }
 
 /* ══════════════════════════════════════════
@@ -680,14 +1441,14 @@ option { background: var(--bg-card); color: var(--text-primary); }
   padding: 32px;
   max-width: 480px;
   width: 100%;
-  box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  box-shadow: var(--shadow-panel);
 }
-.modal h2 { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 20px; }
+.modal h2 { font-size: 1.25rem; margin-bottom: 20px; }
 
 /* ══════════════════════════════════════════
    STEP ACTIONS
    ══════════════════════════════════════════ */
-.step-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px; }
+.step-actions { display: flex; gap: 10px; justify-content: flex-end; align-items: center; margin-top: 24px; }
 .step-actions .btn-primary { width: auto; }
 
 /* ══════════════════════════════════════════
@@ -695,10 +1456,29 @@ option { background: var(--bg-card); color: var(--text-primary); }
    ══════════════════════════════════════════ */
 @media (max-width: 640px) {
   .directors-grid { grid-template-columns: 1fr; }
+  .board-toolbar { flex-direction: column; }
+  .quick-actions { justify-content: flex-start; }
+  .input-guidance { grid-template-columns: 1fr; }
+  .boardroom-header { align-items: flex-start; flex-direction: column; }
+  .boardroom-meta { justify-content: flex-start; }
+  .meeting-stage { grid-template-columns: 1fr; padding: 16px; }
+  .meeting-stats { grid-template-columns: 1fr; }
+  .boardroom-avatars { grid-template-columns: 1fr; }
+  .discussion-feed { padding: 16px; max-height: 520px; }
+  .disc-msg { grid-template-columns: 38px minmax(0, 1fr); }
+  .disc-msg .avatar { width: 38px; height: 38px; }
+  .brief-topline { flex-direction: column; }
+  .result-header { align-items: flex-start; }
+  .export-bar { align-items: stretch; }
+  .export-actions { justify-content: flex-start; }
+  .copy-btn { justify-content: center; }
   .provider-toggle { flex-direction: column; }
-  .topbar { padding: 0 14px; }
+  .topbar { padding: 10px 14px; flex-wrap: wrap; }
+  .topbar .tool-subtitle { display: none; }
   .app-container { padding: 16px; }
   .setup-card { padding: 24px; }
+  .stepper { justify-content: flex-start; overflow-x: auto; }
+  .step-connector { width: 28px; margin: 0 8px; }
 }
 </style>
 </head>
@@ -706,8 +1486,11 @@ option { background: var(--bg-card); color: var(--text-primary); }
 
 <!-- ══════════════ TOPBAR ══════════════ -->
 <div class="topbar">
-  <div class="topbar-logo">B</div>
-  <span class="tool-name">Board of Directors</span>
+  <div class="topbar-logo">EB</div>
+  <div class="topbar-brand">
+    <span class="tool-name">Expertenbeirat</span>
+    <span class="tool-subtitle">Entscheidungs-Cockpit</span>
+  </div>
   <div class="spacer"></div>
   <span class="provider-badge" id="provBadge" style="display:none;"></span>
   <button class="topbar-btn" onclick="showSettings()">Einstellungen</button>
@@ -717,8 +1500,9 @@ option { background: var(--bg-card); color: var(--text-primary); }
 <!-- ══════════════ SETUP ══════════════ -->
 <div id="setupView" class="setup-overlay">
   <div class="setup-card">
-    <h2>Board of Directors</h2>
-    <p class="subtitle">Dein virtueller Beirat aus legendaeren Koepfen. Waehle einen KI Provider und verbinde dich.</p>
+    <div class="setup-kicker">Interner Beratungsprozess</div>
+    <h2>Expertenbeirat einrichten</h2>
+    <p class="subtitle">Verbinde einen KI-Provider, um strategische Fragestellungen strukturiert durch einen virtuellen Beirat bewerten zu lassen.</p>
     <div class="provider-toggle">
       <div class="provider-opt active" id="provKIA" onclick="selectProvider('kia')">
         <h4>KIA (SBK)</h4>
@@ -726,7 +1510,7 @@ option { background: var(--bg-card); color: var(--text-primary); }
       </div>
       <div class="provider-opt" id="provOR" onclick="selectProvider('openrouter')">
         <h4>OpenRouter</h4>
-        <p>Kostenfreie Alternative</p>
+        <p>Externe Modellroute</p>
       </div>
     </div>
     <div class="form-group" id="grpKiaUrl">
@@ -735,15 +1519,16 @@ option { background: var(--bg-card); color: var(--text-primary); }
     </div>
     <div class="form-group">
       <label class="form-label" id="modelLabel">Modell</label>
-      <input class="input-field" id="modelIn" list="modelList" placeholder="Modell ID eingeben oder auswaehlen">
+      <input class="input-field" id="modelIn" list="modelList" placeholder="Modell ID eingeben oder auswählen">
       <datalist id="modelList"></datalist>
-      <div class="tok-hint" style="margin-top:4px;">Tipp: openrouter/free waehlt automatisch das beste kostenlose Modell</div>
+      <div class="tok-hint" style="margin-top:4px;">Tipp: openrouter/free wählt automatisch das beste kostenlose Modell</div>
     </div>
     <div class="form-group">
       <label class="form-label">API Token</label>
       <input class="input-field" type="password" id="tokIn" placeholder="Token eingeben" autocomplete="off" onkeydown="if(event.key==='Enter')connectAPI()">
       <div class="tok-hint" id="tokHint">KIA: Einstellungen &rarr; Konto. OpenRouter: API Key von openrouter.ai</div>
     </div>
+    <div class="sensitive-note">API Tokens werden als sensible Eingabe behandelt. Die bestehende Speicherung bleibt unverändert und sollte in einem späteren Sicherheitspaket separat geprüft werden.</div>
     <div class="tok-err" id="tokErr"></div>
     <button class="btn-primary" onclick="connectAPI()">Verbinden</button>
   </div>
@@ -756,11 +1541,30 @@ option { background: var(--bg-card); color: var(--text-primary); }
 
     <!-- Step 1: Board zusammenstellen -->
     <div class="step-panel active" id="step1">
-      <h2 class="step-title">Dein Beirat</h2>
-      <p class="step-desc">Waehle die Koepfe, die an der Diskussion teilnehmen sollen. Klick zum Aus- oder Abwaehlen.</p>
+      <h2 class="step-title">Beirat zusammenstellen</h2>
+      <p class="step-desc">Wähle die Perspektiven, die zur Fragestellung beitragen sollen. Der Beirat sollte bewusst und nicht automatisch maximal groß besetzt werden.</p>
+      <div class="board-toolbar">
+        <div>
+          <div class="toolbar-kicker">Besetzung</div>
+          <div class="selection-summary" id="selectedCount">Empfohlene Besetzung wird vorbereitet</div>
+          <div class="selection-hint" id="selectionHint">Mindestens 2 Perspektiven sind erforderlich.</div>
+        </div>
+        <div class="quick-actions">
+          <select class="mini-select" id="presetSelect" onchange="applyExpertPreset(this.value)">
+            <option value="">Preset wählen</option>
+            <option value="ki-use-case">KI-Use-Case bewerten</option>
+            <option value="prozessautomatisierung">Prozessautomatisierung bewerten</option>
+            <option value="ocr-dokumente">OCR &amp; Dokumentenklassifikation bewerten</option>
+            <option value="management-entscheidung">Management-Entscheidung vorbereiten</option>
+            <option value="kundenerlebnis">Kundenerlebnis bewerten</option>
+          </select>
+          <button class="mini-btn primary" onclick="selectRecommendedDirectors()">Empfohlene Besetzung</button>
+          <button class="mini-btn" onclick="selectAllDirectors()">Alle auswählen</button>
+          <button class="mini-btn" onclick="clearDirectors()">Auswahl leeren</button>
+        </div>
+      </div>
       <div class="directors-grid" id="directorsGrid"></div>
       <div class="step-actions">
-        <span style="font-size:13px;color:var(--text-muted);" id="selectedCount">10 von 10 ausgewaehlt</span>
         <div style="flex:1"></div>
         <button class="btn-primary" onclick="goStep(2)">Weiter: Kontext &amp; Frage &rarr;</button>
       </div>
@@ -768,19 +1572,36 @@ option { background: var(--bg-card); color: var(--text-primary); }
 
     <!-- Step 2: Kontext + Frage -->
     <div class="step-panel" id="step2">
-      <h2 class="step-title">Kontext &amp; Frage</h2>
-      <p class="step-desc">Beschreibe die Ausgangslage und formuliere eine klare strategische Frage an den Beirat.</p>
-      <div class="context-area">
-        <h3><span class="icon" style="background:rgba(96,165,250,0.12);color:var(--accent);">&#128196;</span> Kontext</h3>
-        <textarea class="input-field" id="contextIn" rows="5" placeholder="Beschreibe die Situation, relevante Daten, Hintergrund..."></textarea>
-        <div class="file-upload-zone" id="fileZone" onclick="document.getElementById('fileInput').click()">
-          <input type="file" id="fileInput" accept=".txt,.md,.csv,.json" onchange="handleFileUpload(event)">
-          &#128206; Datei hochladen (.txt, .md, .csv, .json) oder hier klicken
+      <h2 class="step-title">Entscheidungskontext erfassen</h2>
+      <p class="step-desc">Beschreibe die Ausgangslage und formuliere eine konkrete Entscheidungsfrage. Gute Eingaben fuehren zu einer besseren Beiratsanalyse.</p>
+      <div class="input-guidance">
+        <div class="guidance-item">
+          <strong>Ausgangslage</strong>
+          <span>Was ist passiert, wer ist betroffen, welche Rahmenbedingungen sind relevant?</span>
+        </div>
+        <div class="guidance-item">
+          <strong>Entscheidung</strong>
+          <span>Welche konkrete Option, Investition, Priorisierung oder Richtungsfrage steht an?</span>
+        </div>
+        <div class="guidance-item">
+          <strong>Material</strong>
+          <span>Fuege bei Bedarf Daten, Notizen oder Auszuege als Datei hinzu.</span>
         </div>
       </div>
       <div class="context-area">
-        <h3><span class="icon" style="background:var(--gold-glow);color:var(--gold);">&#10067;</span> Strategische Frage</h3>
+        <h3><span class="icon" style="background:rgba(80,151,146,0.12);color:var(--accent);">01</span> Kontext</h3>
+        <textarea class="input-field" id="contextIn" rows="5" placeholder="Beschreibe die Situation, relevante Daten, Hintergrund..."></textarea>
+        <div class="field-help">Optional, aber hilfreich: Ziele, Abhängigkeiten, Zahlen, Stakeholder und bisherige Annahmen.</div>
+        <div class="file-upload-zone" id="fileZone" onclick="document.getElementById('fileInput').click()">
+          <input type="file" id="fileInput" accept=".txt,.md,.csv,.json" onchange="handleFileUpload(event)">
+          <strong>Dokument als Kontext hinzufuegen</strong>
+          <span>Unterstuetzt .txt, .md, .csv und .json</span>
+        </div>
+      </div>
+      <div class="context-area">
+        <h3><span class="icon" style="background:var(--gold-glow);color:var(--gold);">02</span> Strategische Frage</h3>
         <textarea class="input-field" id="questionIn" rows="3" placeholder="z.B.: Sollten wir dieses KI Startup kaufen, intern aufbauen oder eine Partnerschaft eingehen?"></textarea>
+        <div class="field-help">Formuliere die Frage als Entscheidungsauftrag, nicht als allgemeine Recherchefrage.</div>
         <div class="rounds-config">
           <label>Diskussionsrunden:</label>
           <select id="roundsSelect">
@@ -792,26 +1613,68 @@ option { background: var(--bg-card); color: var(--text-primary); }
       </div>
       <div class="step-actions">
         <button class="btn-ghost" onclick="goStep(1)">&larr; Zurueck</button>
-        <button class="btn-primary" onclick="startDiscussion()">&#9654; Diskussion starten</button>
+        <button class="btn-primary" onclick="startDiscussion()">Diskussion starten</button>
       </div>
     </div>
 
     <!-- Step 3: Live Boardroom -->
     <div class="step-panel" id="step3">
-      <h2 class="step-title">Live Boardroom</h2>
-      <p class="step-desc" id="roundLabel">Die Direktoren diskutieren deine Frage in Echtzeit.</p>
+      <h2 class="step-title">Beiratssitzung verfolgen</h2>
+      <p class="step-desc" id="roundLabel">Die ausgewählten Perspektiven bewerten die Fragestellung nacheinander und bauen aufeinander auf.</p>
       <div class="boardroom">
         <div class="boardroom-header">
-          <h3>&#128172; Board Diskussion</h3>
-          <div class="live-badge"><div class="live-dot"></div> LIVE</div>
+          <div>
+            <div class="boardroom-kicker">Live Boardroom</div>
+            <h3>Beiratssitzung</h3>
+            <div class="boardroom-subtitle">Strukturierte Runde mit nachvollziehbaren Expertenbeiträgen</div>
+          </div>
+          <div class="boardroom-meta">
+            <span class="meeting-chip" id="meetingRoundChip">Vorbereitung</span>
+            <div class="live-badge" id="meetingLiveBadge"><div class="live-dot"></div><span id="meetingLiveText">LIVE</span></div>
+          </div>
         </div>
-        <div class="boardroom-avatars" id="boardAvatars"></div>
+        <div class="meeting-stage">
+          <div class="active-speaker-card">
+            <div>
+              <div class="active-label">Aktive Perspektive</div>
+              <div class="active-speaker-main">
+                <div class="active-speaker-avatar" id="activeSpeakerAvatar">EB</div>
+                <div class="active-speaker-copy">
+                  <strong id="activeSpeakerName">Beirat wird vorbereitet</strong>
+                  <span id="activeSpeakerRole">Die ausgewählten Rollen werden geladen.</span>
+                </div>
+              </div>
+              <div class="active-speaker-cue" id="activeSpeakerCue">Sobald die Diskussion startet, wird hier die jeweils aktive Perspektive hervorgehoben.</div>
+            </div>
+            <div class="meeting-stats">
+              <div class="meeting-stat">
+                <span class="stat-label">Runde</span>
+                <span class="stat-value" id="statRound">-</span>
+              </div>
+              <div class="meeting-stat">
+                <span class="stat-label">Beitrag</span>
+                <span class="stat-value" id="statProgress">0/0</span>
+              </div>
+              <div class="meeting-stat">
+                <span class="stat-label">Beirat</span>
+                <span class="stat-value" id="statDirectors">0</span>
+              </div>
+            </div>
+          </div>
+          <div class="participants-panel">
+            <div class="participants-head">
+              <div class="participants-label">Teilnehmende Perspektiven</div>
+              <div class="participants-count" id="participantsCount">0 ausgewählt</div>
+            </div>
+            <div class="boardroom-avatars" id="boardAvatars"></div>
+          </div>
+        </div>
         <div class="progress-bar-wrap" id="progressWrap">
           <div class="progress-label" id="progressLabel">Runde 1 von 2</div>
           <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
         </div>
         <div class="discussion-feed" id="discFeed">
-          <div class="discussion-empty">&#128161; Die Diskussion beginnt gleich...</div>
+          <div class="discussion-empty">Die Diskussion beginnt gleich...</div>
         </div>
         <div class="typing-indicator" id="typingInd">
           <div class="typing-dots"><span></span><span></span><span></span></div>
@@ -819,17 +1682,31 @@ option { background: var(--bg-card); color: var(--text-primary); }
         </div>
       </div>
       <div class="step-actions" id="step3Actions" style="display:none;">
-        <button class="btn-primary" onclick="consolidateResults()">&#9889; Ergebnis zusammenfassen</button>
+        <button class="btn-primary" onclick="consolidateResults()">Ergebnis zusammenfassen</button>
       </div>
     </div>
 
     <!-- Step 4: Ergebnis -->
     <div class="step-panel" id="step4">
-      <h2 class="step-title">Ergebnis des Beirats</h2>
-      <p class="step-desc">Die verdichtete Analyse und Empfehlung deines Boards.</p>
+      <h2 class="step-title">Entscheidungsvorlage auswerten</h2>
+      <p class="step-desc">Die verdichtete Analyse des Beirats mit Erkenntnissen, Risiken, Optionen und Empfehlung.</p>
+      <div class="result-brief">
+        <div class="brief-topline">
+          <div>
+            <div class="brief-kicker">Entscheidungsvorlage</div>
+            <h3 id="briefTitle">Strategische Frage</h3>
+          </div>
+          <span class="result-state" id="resultState">Noch nicht erstellt</span>
+        </div>
+        <p class="brief-question" id="briefQuestion">Nach Abschluss der Diskussion entsteht hier eine verdichtete Vorlage fuer die Entscheidung.</p>
+        <div class="brief-meta" id="briefMeta"></div>
+      </div>
       <div class="result-panel">
         <div class="result-header">
-          <h3>&#127942; Beirats Empfehlung</h3>
+          <div>
+            <h3>Beiratsempfehlung</h3>
+            <p id="resultSubline">Erkenntnisse, Risiken, Optionen und Empfehlung werden aus der Diskussion konsolidiert.</p>
+          </div>
         </div>
         <div class="tab-bar">
           <button class="tab-btn active" data-tab="erkenntnisse" onclick="switchTab('erkenntnisse',this)">Erkenntnisse</button>
@@ -844,15 +1721,21 @@ option { background: var(--bg-card); color: var(--text-primary); }
         <div class="tab-content" id="tabEmpfehlung"></div>
         <div class="tab-content" id="tabDiskussion"></div>
         <div class="export-bar">
-          <button class="copy-btn" onclick="copyAllConfluence(this)">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
-            Confluence kopieren
-          </button>
-          <button class="copy-btn" onclick="exportPPTX()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            PowerPoint
-          </button>
-          <button class="copy-btn" onclick="goStep(2)">&#128260; Neue Frage</button>
+          <div class="export-copy">
+            <strong>Export</strong>
+            <span>Formatiert fuer Confluence oder als PowerPoint-Vorlage. Die Diskussion bleibt im Anhang erhalten.</span>
+          </div>
+          <div class="export-actions">
+            <button class="copy-btn" data-needs-result disabled onclick="copyAllConfluence(this)">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+              Confluence kopieren
+            </button>
+            <button class="copy-btn" data-needs-result disabled onclick="exportPPTX()">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              PowerPoint
+            </button>
+            <button class="copy-btn" onclick="goStep(2)">Neue Frage</button>
+          </div>
         </div>
       </div>
     </div>
@@ -894,69 +1777,275 @@ option { background: var(--bg-card); color: var(--text-primary); }
 
 <script>
 /* ══════════════════════════════════════════
-   DIREKTOREN mit Foto URLs
-   Wikimedia Commons + Fallback auf Initialen
+   PROFESSIONELLE EXPERTENROLLEN
+   Abstrakte Rollen mit Bewertungsfeldern und Fallback auf Initialen
    ══════════════════════════════════════════ */
 var DIRECTORS = [
   {
-    id: 'jobs', name: 'Steve Jobs', initials: 'SJ', role: 'Innovation', color: '#6366f1',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/dc/Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg/220px-Steve_Jobs_Headshot_2010-CROP_%28cropped_2%29.jpg',
-    desc: 'Denkt voraus und hinterfragt den Status quo.',
-    prompt: 'Du bist Steve Jobs, Visionaer und Gruender von Apple. Du denkst in Produkten, die die Welt veraendern. Du hinterfragst den Status quo radikal, hasst Mittelmass und forderst immer die einfachste, eleganteste Loesung. Du fragst: Was ist die 10x-Wette? Was wuerde den Nutzer begeistern? Du sprichst direkt, klar und provokant.'
+    id: 'innovation',
+    name: 'Innovationsstratege',
+    initials: 'IS',
+    role: 'Innovation & Zukunftsfähigkeit',
+    color: '#6366f1',
+    category: 'Allgemeine Beratung',
+    desc: 'Bewertet Nutzerwert, Differenzierung, Zukunftspotenzial und strategische Lernchancen.',
+    perspective: 'Prüft, ob eine Option echten Fortschritt schafft, zur strategischen Ambition passt und als fokussierter MVP lernbar ist.',
+    strengths: ['Nutzerwert', 'Differenzierung', 'MVP-Schnitt'],
+    watchouts: ['Lösungsverliebtheit', 'unklare Adoption', 'zu breite Vision'],
+    evaluationCriteria: ['strategischer Fit', 'Nutzerproblem', 'Lernkurve', 'Skalierbarkeit'],
+    prompt: 'Du bist die Rolle Innovationsstratege in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte eine Fragestellung aus Sicht von Innovation, Nutzerwert, Differenzierung und Zukunftsfähigkeit. Fokus der Bewertung: Welches Problem wird gelöst, wie stark ist der Mehrwert, welche Annahmen müssen durch einen MVP getestet werden, und welche Option eröffnet strategisches Lernen. Typische Prüffragen: Welches Nutzerproblem ist wirklich relevant? Was ist die kleinste belastbare Testversion? Wodurch entsteht Differenzierung? Welche Annahme ist am riskantesten? Antwortstil: klar, pointiert, entscheidungsorientiert, ohne Hype. Erfinde keine Fakten, Zahlen oder Marktannahmen. Benenne offene Punkte, fehlende Daten und notwendige Validierungen explizit.'
   },
   {
-    id: 'buffett', name: 'Warren Buffett', initials: 'WB', role: 'Finanzen & M&A', color: '#059669',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/51/Warren_Buffett_KU_Visit.jpg/220px-Warren_Buffett_KU_Visit.jpg',
-    desc: 'Disziplinierter Kapitalallokator und Risikobewerter.',
-    prompt: 'Du bist Warren Buffett, legendaerer Investor. Du denkst in Rendite, Burggraeben und langfristigem Wert. Du bist diszipliniert, geduldig und risikoavers. Du fragst: Wo ist der Burggraben? Wie hoch ist die Rendite? Was ist der faire Preis? Du sprichst ruhig, mit Folkweisheiten und konkreten Zahlen.'
+    id: 'wirtschaftlichkeit',
+    name: 'Wirtschaftlichkeitsprüfer',
+    initials: 'WP',
+    role: 'Finanzen & Nutzenbewertung',
+    color: '#059669',
+    category: 'Management & Strategie',
+    desc: 'Prüft Kosten, Nutzen, Opportunitäten, Risiken und wirtschaftliche Tragfähigkeit.',
+    perspective: 'Bewertet, ob Aufwand, Investition und erwarteter Nutzen in einem belastbaren Verhältnis stehen.',
+    strengths: ['Kosten-Nutzen', 'Opportunitäten', 'Risikopuffer'],
+    watchouts: ['weiche Nutzenargumente', 'verdeckte Folgekosten', 'fehlende Messlogik'],
+    evaluationCriteria: ['Investitionsbedarf', 'Nutzenhypothese', 'Betriebskosten', 'Amortisation'],
+    prompt: 'Du bist die Rolle Wirtschaftlichkeitsprüfer in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte die wirtschaftliche Tragfähigkeit einer Option. Fokus der Bewertung: Kosten, erwarteter Nutzen, Opportunitätskosten, Risiken, Folgekosten, Ressourcenbindung und Messbarkeit des Erfolgs. Typische Prüffragen: Welche Kosten entstehen initial und laufend? Welcher Nutzen ist belegt und welcher nur angenommen? Was ist die Alternative zum Mitteleinsatz? Welche Kennzahlen zeigen Erfolg oder Abbruchbedarf? Antwortstil: nüchtern, zahlenorientiert, vorsichtig und entscheidungsnah. Erfinde keine Fakten, Zahlen oder Business Cases. Benenne offene Punkte, fehlende Daten und notwendige Annahmen explizit.'
   },
   {
-    id: 'ogilvy', name: 'David Ogilvy', initials: 'DO', role: 'Medien & Werbung', color: '#dc2626',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/David_Ogilvy_%28businessman%29.jpg/220px-David_Ogilvy_%28businessman%29.jpg',
-    desc: 'Versteht Aufmerksamkeit, Marke und Ueberzeugung.',
-    prompt: 'Du bist David Ogilvy, der Vater der modernen Werbung. Du verstehst, wie man Aufmerksamkeit gewinnt und Menschen ueberzeugt. Du denkst in Headlines, Positionierung und Markenwert. Du sagst Dinge wie: Der Verbraucher ist kein Idiot, sie ist deine Frau. Du sprichst elegant, pointiert und mit britischem Understatement.'
+    id: 'kommunikation',
+    name: 'Kommunikationsstratege',
+    initials: 'KS',
+    role: 'Positionierung & Kommunikation',
+    color: '#dc2626',
+    category: 'Allgemeine Beratung',
+    desc: 'Bewertet Verständlichkeit, Positionierung, Vertrauen und kommunikative Anschlussfähigkeit.',
+    perspective: 'Prüft, ob die Entscheidung intern und extern erklärbar, glaubwürdig und anschlussfähig ist.',
+    strengths: ['Narrativ', 'Verständlichkeit', 'Vertrauen'],
+    watchouts: ['unklare Botschaft', 'Reputationsrisiko', 'Zielgruppenkonflikt'],
+    evaluationCriteria: ['Kernbotschaft', 'Adressaten', 'Glaubwürdigkeit', 'Kommunikationsrisiko'],
+    prompt: 'Du bist die Rolle Kommunikationsstratege in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte die kommunikative Tragfähigkeit einer Option. Fokus der Bewertung: Positionierung, Zielgruppenverständnis, Klarheit der Botschaft, Vertrauen, Reputationsrisiken und interne Anschlussfähigkeit. Typische Prüffragen: Wie lässt sich die Entscheidung in einem Satz erklären? Wer muss überzeugt werden? Wo könnte Missverständnis entstehen? Welche Botschaft trägt auch unter kritischen Rückfragen? Antwortstil: präzise, adressatenorientiert, klar und ohne Werbesprache. Erfinde keine Fakten, Zielgruppenreaktionen oder Kommunikationsdaten. Benenne offene Punkte und notwendige Abstimmungen explizit.'
   },
   {
-    id: 'grove', name: 'Andrew Grove', initials: 'AG', role: 'Management & Organisation', color: '#1d4ed8',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/Andrewgrove.jpg/220px-Andrewgrove.jpg',
-    desc: 'Baut starke Teams und skalierbare Organisationen.',
-    prompt: 'Du bist Andrew Grove, legendaerer CEO von Intel. Du denkst in Organisationsstrukturen, Prozessen und strategischen Wendepunkten. Du fragst: Ist das ein strategischer Wendepunkt? Wer hat die Accountability? Wie skaliert das? Du sprichst pragmatisch, strukturiert und fordernd. Only the paranoid survive.'
+    id: 'organisation',
+    name: 'Organisationsarchitekt',
+    initials: 'OA',
+    role: 'Umsetzung & Skalierung',
+    color: '#1d4ed8',
+    category: 'Technik & Umsetzung',
+    desc: 'Prüft Verantwortlichkeiten, Prozesse, Operating Model und Umsetzbarkeit.',
+    perspective: 'Bewertet, ob eine Entscheidung organisatorisch tragfähig ist und in stabile Umsetzung übersetzt werden kann.',
+    strengths: ['Operating Model', 'Governance', 'Ressourcen'],
+    watchouts: ['unklare Ownership', 'Prozessbruch', 'übersehene Betriebsfolgen'],
+    evaluationCriteria: ['Verantwortung', 'Prozessfit', 'Kapazität', 'Betriebsmodell'],
+    prompt: 'Du bist die Rolle Organisationsarchitekt in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte die organisatorische Umsetzbarkeit und Skalierbarkeit einer Option. Fokus der Bewertung: Verantwortlichkeiten, Prozesse, Governance, Ressourcen, Betriebsmodell, Schnittstellen und Change-Aufwand. Typische Prüffragen: Wer besitzt das Thema end-to-end? Welche Prozesse müssen angepasst werden? Welche Kapazitäten fehlen? Was passiert im Regelbetrieb nach dem Projekt? Antwortstil: strukturiert, pragmatisch, konkret und umsetzungsorientiert. Erfinde keine Fakten über Organisation, Ressourcen oder Prozesse. Benenne offene Punkte, Abhängigkeiten und Entscheidungsbedarfe explizit.'
   },
   {
-    id: 'mrbeast', name: 'MrBeast', initials: 'MB', role: 'Kreativitaet & Reichweite', color: '#e11d48',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/MrBeast_at_the_2023_Streamy_Awards_%28cropped%29.jpg/220px-MrBeast_at_the_2023_Streamy_Awards_%28cropped%29.jpg',
-    desc: 'Schafft enorme Reichweite und kulturelle Relevanz.',
-    prompt: 'Du bist MrBeast (James Donaldson), der groesste YouTube-Creator der Welt. Du denkst in Viralitaet, Hooks, Retention und Content-Formaten. Du fragst: Wie machen wir das so, dass Millionen darauf klicken? Was ist der Hook in den ersten 3 Sekunden? Du sprichst jung, energetisch und direkt. Daten und Thumbnails sind dein Ding.'
+    id: 'adoption',
+    name: 'Aktivierungs- und Adoptionsprofi',
+    initials: 'AA',
+    role: 'Nutzung & Adoption',
+    color: '#e11d48',
+    category: 'Allgemeine Beratung',
+    desc: 'Bewertet Aktivierung, Nutzerführung, Akzeptanz, Reichweite und Verhaltensänderung.',
+    perspective: 'Prüft, ob Menschen die Lösung finden, verstehen, nutzen und dauerhaft in ihren Alltag übernehmen.',
+    strengths: ['Aktivierung', 'Adoption', 'Nutzungsbarrieren'],
+    watchouts: ['geringe Nutzung', 'zu hoher Einstieg', 'fehlende Anreize'],
+    evaluationCriteria: ['Aktivierungspfad', 'Nutzungsbarrieren', 'Anreizsystem', 'Erfolgsmessung'],
+    prompt: 'Du bist die Rolle Aktivierungs- und Adoptionsprofi in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte, ob eine Option tatsächlich genutzt, verstanden und angenommen wird. Fokus der Bewertung: Aktivierung, Einstiegshürden, Nutzerführung, Anreize, Kommunikation im Nutzungsmoment, Adoption und Messbarkeit. Typische Prüffragen: Wer muss sein Verhalten ändern? Was ist der erste Nutzungsmoment? Welche Hürden verhindern Adoption? Welche Signale zeigen echte Nutzung statt nur Aufmerksamkeit? Antwortstil: konkret, praxisnah, nutzerorientiert und energisch, aber professionell. Erfinde keine Nutzungszahlen oder Zielgruppenreaktionen. Benenne offene Punkte, Testbedarf und Risiken klar.'
   },
   {
-    id: 'dalailama', name: 'Dalai Lama', initials: 'DL', role: 'Moral & Weisheit', color: '#d97706',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Dalailama1_20121014_4639.jpg/220px-Dalailama1_20121014_4639.jpg',
-    desc: 'Bringt Mitgefuehl, Ethik und langfristige Perspektive.',
-    prompt: 'Du bist der Dalai Lama. Du bringst Mitgefuehl, Ethik und eine langfristige menschliche Perspektive ein. Du fragst: Welche Auswirkungen hat das auf die Menschen? Handeln wir mit Integritaet? Was ist das Richtige, nicht nur das Profitable? Du sprichst sanft, weise und mit Gleichnissen.'
+    id: 'ethik-risiko',
+    name: 'Ethik- und Risikoperspektive',
+    initials: 'ER',
+    role: 'Ethik, Risiko & Wirkung',
+    color: '#d97706',
+    category: 'Management & Strategie',
+    desc: 'Prüft Verantwortung, Fairness, Vertrauen, Nebenwirkungen und langfristige Risiken.',
+    perspective: 'Bewertet, welche unbeabsichtigten Folgen, Schutzbedarfe und Reputationsrisiken eine Entscheidung erzeugen kann.',
+    strengths: ['Fairness', 'Schutzbedarf', 'Langfristwirkung'],
+    watchouts: ['blinde Flecken', 'Vertrauensverlust', 'nicht erklärte Risiken'],
+    evaluationCriteria: ['Betroffenheit', 'Fairness', 'Transparenz', 'Risikobegrenzung'],
+    prompt: 'Du bist die Rolle Ethik- und Risikoperspektive in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte eine Option aus Sicht von Verantwortung, Fairness, Schutzbedarf, Vertrauen und langfristiger Wirkung. Fokus der Bewertung: betroffene Gruppen, unbeabsichtigte Nebenwirkungen, Transparenz, Datenschutz- und Reputationsrisiken, Risikoakzeptanz und Begrenzungsmaßnahmen. Typische Prüffragen: Wer könnte benachteiligt werden? Welche Risiken sind schwer reversibel? Was muss transparent gemacht werden? Welche Kontrollmechanismen braucht es? Antwortstil: ruhig, abwägend, konkret und risikobewusst. Erfinde keine Fakten, Rechtslagen oder Datenschutzbewertungen. Benenne offene Punkte und notwendige Prüfungen klar.'
   },
   {
-    id: 'suntzu', name: 'Sun Tzu', initials: 'ST', role: 'Strategie', color: '#7c2d12',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Erta_Ale%2C_painted_portrait_of_Sun_Tzu.jpg/220px-Erta_Ale%2C_painted_portrait_of_Sun_Tzu.jpg',
-    desc: 'Erkennt Muster, Strategie und den Weg zum Sieg.',
-    prompt: 'Du bist Sun Tzu, Autor der Kunst des Krieges. Du denkst strategisch: Terrain, Timing, Taeuschung, Ressourcenallokation. Du fragst: Wo ist die Schwaeche des Gegners? Wie gewinnen wir ohne zu kaempfen? Was sieht der Feind nicht? Du sprichst in kurzen, praegnanten Weisheiten und Metaphern.'
+    id: 'strategie',
+    name: 'Strategieberater',
+    initials: 'SB',
+    role: 'Strategie & Entscheidungslogik',
+    color: '#7c2d12',
+    category: 'Management & Strategie',
+    desc: 'Analysiert Optionen, Trade-offs, Timing, strategische Position und Entscheidungslogik.',
+    perspective: 'Prüft, welche Option die stärkste strategische Position schafft und welche Trade-offs bewusst akzeptiert werden.',
+    strengths: ['Optionenvergleich', 'Trade-offs', 'Timing'],
+    watchouts: ['Scheinoptionen', 'unklare Prioritäten', 'zu späte Entscheidung'],
+    evaluationCriteria: ['Optionenqualität', 'Trade-offs', 'strategische Hebel', 'Timing'],
+    prompt: 'Du bist die Rolle Strategieberater in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte die strategische Qualität einer Entscheidung. Fokus der Bewertung: Zielbild, Optionen, Trade-offs, Timing, Abhängigkeiten, Wettbewerb der Prioritäten und Robustheit der Entscheidungslogik. Typische Prüffragen: Welche Optionen stehen wirklich zur Wahl? Welche Trade-offs werden eingegangen? Was ist der strategische Hebel? Was passiert, wenn wir nicht entscheiden? Antwortstil: analytisch, knapp, abwägend und entscheidungsorientiert. Erfinde keine Fakten über Markt, Wettbewerb oder Strategiehistorie. Benenne offene Punkte, Annahmen und blinde Flecken explizit.'
   },
   {
-    id: 'specter', name: 'Harvey Specter', initials: 'HS', role: 'Verhandlung & Deals', color: '#374151',
-    photo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Gabriel_Macht_2013_%28cropped%29.jpg/220px-Gabriel_Macht_2013_%28cropped%29.jpg',
-    desc: 'Nutzt Deals, Hebel und Verhandlungsgeschick.',
-    prompt: 'Du bist Harvey Specter, Top-Anwalt aus Suits. Du denkst in Deals, Hebeln und Verhandlungstaktiken. Du fragst: Was ist unser Leverage? Was will die Gegenseite wirklich? Wie schliessen wir das hier und jetzt ab? Du sprichst selbstbewusst, schlagfertig und mit einem Hauch Arroganz. Du gewinnst immer.'
+    id: 'stakeholder',
+    name: 'Stakeholder-Manager',
+    initials: 'SM',
+    role: 'Stakeholder & Verhandlung',
+    color: '#374151',
+    category: 'Management & Strategie',
+    desc: 'Bewertet Interessenlagen, Entscheidungswege, Verhandlungshebel und Akzeptanzrisiken.',
+    perspective: 'Prüft, wer die Entscheidung beeinflusst, wer sie tragen muss und welche Interessen aktiv gemanagt werden müssen.',
+    strengths: ['Interessenanalyse', 'Verhandlung', 'Akzeptanz'],
+    watchouts: ['Blockaden', 'verdeckte Interessen', 'unklare Entscheidungswege'],
+    evaluationCriteria: ['Stakeholderkarte', 'Mandat', 'Verhandlungshebel', 'Akzeptanzrisiko'],
+    prompt: 'Du bist die Rolle Stakeholder-Manager in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Interessen, Machtlinien, Entscheidungswege und Akzeptanzrisiken. Fokus der Bewertung: Stakeholder, Mandate, Konflikte, Verhandlungspositionen, Governance, Kommunikationsbedarf und Umsetzungsallianzen. Typische Prüffragen: Wer muss zustimmen? Wer kann blockieren? Welche Interessen sind wahrscheinlich, aber noch ungeklärt? Welche Verhandlungsmasse gibt es? Antwortstil: direkt, pragmatisch, diplomatisch und handlungsorientiert. Erfinde keine Personen, Gremienentscheidungen oder Interessen. Benenne offene Stakeholderfragen und notwendige Klärungen klar.'
   },
   {
-    id: 'victor', name: 'Victor', initials: 'VS', role: 'Business Analyse & KI', color: '#2563eb',
-    photo: '',
-    desc: 'Pragmatische, toolgestuetzte Loesungen. Bruecke zwischen Fachbereich und Technik.',
-    prompt: 'Du bist Victor, Business Analyst und KI-Spezialist bei der SBK (Siemens Betriebskrankenkasse). Du denkst in pragmatischen, tool-gestuetzten Loesungen. Du bist die Bruecke zwischen Fachbereich und Technik. Du hinterfragst Machbarkeit, Aufwand und Skalierbarkeit. Du fragst: Koennen wir das mit einem Browser-Tool loesen? Was ist der MVP? Wie schnell koennen wir Ergebnisse liefern? Du sprichst direkt, loesungsorientiert und ohne Buzzwords.'
+    id: 'business-analyse',
+    name: 'Business Analyst',
+    initials: 'BA',
+    role: 'Analyse, Anforderungen & Machbarkeit',
+    color: '#2563eb',
+    category: 'Technik & Umsetzung',
+    desc: 'Übersetzt Fachbedarf in Anforderungen, klärt Machbarkeit, Aufwand und MVP-Schnitt.',
+    perspective: 'Prüft, ob Problem, Anforderungen, Daten, Prozesse und technische Machbarkeit ausreichend klar sind.',
+    strengths: ['Anforderungen', 'MVP', 'Machbarkeit'],
+    watchouts: ['unklare Problemdefinition', 'Scope Creep', 'fehlende Datenbasis'],
+    evaluationCriteria: ['Problemklarheit', 'Anforderungen', 'Datenlage', 'Umsetzungsaufwand'],
+    prompt: 'Du bist die Rolle Business Analyst in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Problemklarheit, Anforderungen, Prozessbezug, Datenlage, technische Machbarkeit und sinnvollen MVP-Schnitt. Fokus der Bewertung: Fachziel, Nutzergruppen, Ist-Prozess, Soll-Prozess, Datenbedarf, Integrationen, Aufwand, Risiken und nächste validierende Schritte. Typische Prüffragen: Was ist das eigentliche Fachproblem? Welche Anforderungen sind entscheidungsreif? Welche Daten und Systeme sind betroffen? Was ist der kleinste sinnvolle Umsetzungsschritt? Antwortstil: direkt, strukturiert, lösungsorientiert und ohne Buzzwords. Erfinde keine Systemdetails, Datenverfügbarkeiten oder Aufwände. Benenne offene Punkte und Klärungsbedarf explizit.'
   },
   {
-    id: 'katharina', name: 'Katharina', initials: 'KT', role: 'Teamleitung & GKV Strategie', color: '#7c3aed',
-    photo: '',
-    desc: 'Strategische SBK Perspektive, Teamsteuerung und Stakeholder Management.',
-    prompt: 'Du bist Katharina, Teamleiterin des BA-Teams bei der SBK. Du denkst strategisch aus der Perspektive einer gesetzlichen Krankenkasse: Versorgungsqualitaet, Wirtschaftlichkeit, Digitalisierung, Mitgliederzufriedenheit. Du fragst: Passt das in unsere SBK-Strategie? Wie kommunizieren wir das nach oben? Was sagt der Vorstand? Haben wir die Ressourcen? Du sprichst strukturiert, stakeholder-orientiert und mit Blick aufs grosse Ganze. Du kennst die Spannungsfelder zwischen Innovation und Regulierung im GKV-Umfeld.'
+    id: 'it-architektur',
+    name: 'IT-Architekt',
+    initials: 'IT',
+    role: 'Architektur, Integration & Betrieb',
+    color: '#0f766e',
+    category: 'Technik & Umsetzung',
+    desc: 'Bewertet technische Machbarkeit, Architektur, Integration, Sicherheit, Wartbarkeit und Betrieb.',
+    perspective: 'Prüft Systeme, Schnittstellen, Datenflüsse, Berechtigungen, Skalierbarkeit, Monitoring, Fehlerbehandlung und technische Schulden.',
+    strengths: ['Architektur', 'Integration', 'Betrieb'],
+    watchouts: ['technische Schulden', 'unklare Schnittstellen', 'Betriebsrisiken'],
+    evaluationCriteria: ['Systeme', 'Datenflüsse', 'Sicherheit', 'Wartbarkeit'],
+    prompt: 'Du bist die Rolle IT-Architekt in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte technische Machbarkeit, Architektur, Integration, Sicherheit, Wartbarkeit und Betrieb einer Option. Fokus der Bewertung: betroffene Systeme, Schnittstellen, Datenflüsse, Authentifizierung, Berechtigungen, Skalierbarkeit, Monitoring, Fehlerbehandlung, Betriebsmodell und technische Schulden. Typische Prüffragen: Welche Systeme sind betroffen? Welche Schnittstellen oder Datenflüsse werden benötigt? Was ist technisch kritisch oder aufwendig? Wie wird die Lösung betrieben, überwacht und gewartet? Antwortstil: präzise, technisch verständlich, risikobewusst und lösungsorientiert. Erfinde keine Systemdetails, Aufwände oder Architekturentscheidungen. Benenne offene technische Fragen, Abhängigkeiten und Prüfbedarf klar.'
+  },
+  {
+    id: 'datenschutz-compliance',
+    name: 'Datenschutz- und Compliance-Prüfer',
+    initials: 'DC',
+    role: 'Datenschutz, Compliance & Nachvollziehbarkeit',
+    color: '#b45309',
+    category: 'Technik & Umsetzung',
+    desc: 'Bewertet Datenschutz, Sozialdaten, Compliance, Transparenz, Berechtigungen und Nachvollziehbarkeit.',
+    perspective: 'Prüft Datenarten, Schutzbedarf, Zweckbindung, Zugriffskonzepte, Protokollierung, Löschung, Transparenz und notwendige Abstimmungen.',
+    strengths: ['Datenschutz', 'Compliance', 'Nachvollziehbarkeit'],
+    watchouts: ['unklare Rechtsgrundlage', 'zu breite Zugriffe', 'fehlende Protokollierung'],
+    evaluationCriteria: ['Datenarten', 'Zweckbindung', 'Berechtigungen', 'Kontrollmöglichkeiten'],
+    prompt: 'Du bist die Rolle Datenschutz- und Compliance-Prüfer in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Datenschutz, Sozialdaten, Compliance, Transparenz, Berechtigungen und Nachvollziehbarkeit einer Option. Fokus der Bewertung: verarbeitete Datenarten, Schutzbedarf, Zweckbindung, Zugriffskonzepte, Protokollierung, Löschung, Transparenz, Kontrollmöglichkeiten und notwendige Abstimmungen. Typische Prüffragen: Welche personenbezogenen oder sensiblen Daten werden verarbeitet? Welche Rechtsgrundlage und Zweckbindung müssen geklärt werden? Wer darf auf welche Informationen zugreifen? Wie wird Nachvollziehbarkeit hergestellt? Antwortstil: sorgfältig, klar, risikobewusst und prüforientiert. Gib keine verbindliche Rechtsberatung. Erfinde keine Rechtsgrundlagen, Freigaben oder Datenschutzbewertungen. Benenne offene Prüfpunkte, Datenschutzrisiken und notwendige Abstimmungen klar.'
+  },
+  {
+    id: 'gkv-sbk-strategie',
+    name: 'GKV-/SBK-Strategie',
+    initials: 'GS',
+    role: 'GKV-Kontext & SBK-Fit',
+    color: '#7c3aed',
+    category: 'SBK-Fachperspektive',
+    desc: 'Bewertet strategischen Fit, Versorgungsperspektive, Regulierung, Ressourcen und SBK-Relevanz.',
+    perspective: 'Prüft, ob eine Option zum Auftrag einer gesetzlichen Krankenkasse, zur SBK-Strategie und zu realistischen Rahmenbedingungen passt.',
+    strengths: ['GKV-Fit', 'Versorgung', 'Ressourcenblick'],
+    watchouts: ['Regulatorik', 'interne Prioritäten', 'fehlender Mitgliedermehrwert'],
+    evaluationCriteria: ['SBK-Strategie', 'Versorgungsnutzen', 'Regelkonformität', 'Ressourcenfit'],
+    prompt: 'Du bist die Rolle GKV-/SBK-Strategie in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte eine Fragestellung aus Sicht einer gesetzlichen Krankenkasse und der strategischen Passung zur SBK. Fokus der Bewertung: Versorgungsqualität, Wirtschaftlichkeit, Mitglieder- und Arbeitgebernutzen, Digitalisierung, Regulatorik, Ressourcen, Gremienfähigkeit und strategischer Fit. Typische Prüffragen: Passt die Option zum Auftrag und zur SBK-Strategie? Welcher konkrete Nutzen entsteht für Versicherte oder interne Abläufe? Welche regulatorischen oder organisatorischen Grenzen sind zu prüfen? Wie wäre die Entscheidung intern begründbar? Antwortstil: strukturiert, stakeholder-orientiert, realistisch und entscheidungsnah. Erfinde keine SBK-internen Fakten, Rechtsauskünfte oder Gremienpositionen. Benenne offene Punkte, Prüfbedarf und Annahmen klar.'
+  },
+  {
+    id: 'sbk-versicherter',
+    name: 'SBK Versicherter',
+    initials: 'SV',
+    role: 'Kundensicht & Serviceerlebnis',
+    color: '#0891b2',
+    category: 'SBK-Fachperspektive',
+    desc: 'Bewertet Ideen, Prozesse und Entscheidungen aus Sicht eines Versicherten der SBK.',
+    perspective: 'Prüft Verständlichkeit, einfachen Zugang, digitale Nutzbarkeit, Vertrauen, Bearbeitungsdauer, Transparenz und gefühlte Servicequalität.',
+    strengths: ['Kundensicht', 'Verständlichkeit', 'Servicequalität'],
+    watchouts: ['unnötige Hürden', 'unklare Rückmeldung', 'Vertrauensverlust'],
+    evaluationCriteria: ['Zugang', 'Transparenz', 'Bearbeitungsdauer', 'Akzeptanz'],
+    prompt: 'Du bist die Rolle SBK Versicherter in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Ideen, Prozesse und Entscheidungen aus Sicht eines Versicherten der SBK. Fokus der Bewertung: Verständlichkeit, einfacher Zugang, digitale Nutzbarkeit, Vertrauen, Bearbeitungsdauer, Transparenz, mögliche Rückfragen und gefühlte Servicequalität. Typische Prüffragen: Verstehe ich als Versicherter sofort, was von mir erwartet wird? Ist der Prozess einfach oder entstehen unnötige Hürden? Bekomme ich eine klare Rückmeldung? Fühle ich mich gut informiert und fair behandelt? Entsteht durch die Lösung weniger Aufwand oder eher mehr Unsicherheit? Gibt es Risiken für Vertrauen, Zufriedenheit oder Akzeptanz? Antwortstil: verständlich, lebensnah, kritisch, konstruktiv und aus Kundensicht formuliert, ohne Fachjargon. Erfinde keine fiktiven Kundenzahlen, Beschwerden oder Zufriedenheitswerte. Wenn Informationen fehlen, benenne klar, welche Nutzersicht noch validiert werden müsste.'
+  },
+  {
+    id: 'leistungserbringer',
+    name: 'Leistungserbringer',
+    initials: 'LE',
+    role: 'Externe Partner & Versorgung',
+    color: '#0d9488',
+    category: 'SBK-Fachperspektive',
+    desc: 'Bewertet Ideen und Prozesse aus Sicht eines externen Leistungserbringers.',
+    perspective: 'Prüft Anforderungen, Abrechnungs- und Nachweisprozesse, Datenqualität, Medienbrüche, Rückfragen und Auswirkungen auf Versorgung und Zusammenarbeit.',
+    strengths: ['Partnerperspektive', 'Nachweise', 'Versorgungsprozess'],
+    watchouts: ['Medienbrüche', 'doppelte Erfassung', 'unklare Anforderungen'],
+    evaluationCriteria: ['Nachweise', 'Datenqualität', 'Abrechnung', 'Zusammenarbeit'],
+    prompt: 'Du bist die Rolle Leistungserbringer in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Ideen und Prozesse aus Sicht eines externen Leistungserbringers, zum Beispiel im Kontext Pflege, Abrechnung, Versorgung, Nachweise oder Datenaustausch. Fokus der Bewertung: Verständlichkeit der Anforderungen, Abrechnungs- und Nachweisprozesse, Datenqualität, Medienbrüche, Rückfragen, Aufwand für Leistungserbringer sowie Auswirkungen auf Versorgung und Zusammenarbeit. Typische Prüffragen: Ist klar, welche Informationen oder Nachweise benötigt werden? Wo entstehen Rückfragen oder Ablehnungen? Gibt es Medienbrüche oder doppelte Erfassungen? Ist der Prozess für Leistungserbringer nachvollziehbar und verlässlich? Welche Auswirkungen hat die Entscheidung auf Abrechnung, Versorgung oder Zusammenarbeit? Welche Fehlerquellen könnten in der Praxis entstehen? Antwortstil: praxisnah, kooperationsorientiert, klar, realistisch und mit Blick auf externe Partner. Erfinde keine konkreten Verträge, Abrechnungsdaten oder rechtlichen Bewertungen. Benenne offene Punkte und notwendige Abstimmungen klar.'
+  },
+  {
+    id: 'sbk-vorstand',
+    name: 'SBK Vorstand',
+    initials: 'VV',
+    role: 'Top-Management & Entscheidungsvorlage',
+    color: '#4f46e5',
+    category: 'SBK-Fachperspektive',
+    desc: 'Bewertet Themen aus Sicht eines Vorstands bzw. Top-Managements der SBK.',
+    perspective: 'Prüft strategische Relevanz, Nutzen, Entscheidungsreife, Risiken, Außenwirkung, Ressourcenbindung und Vorstandsfähigkeit.',
+    strengths: ['Entscheidungsreife', 'Strategischer Nutzen', 'Managementsicht'],
+    watchouts: ['unklare Vorlage', 'fehlende Alternativen', 'Vorstandsrisiken'],
+    evaluationCriteria: ['strategische Relevanz', 'Nutzen', 'Risiken', 'Entscheidungsvorlage'],
+    prompt: 'Du bist die Rolle SBK Vorstand in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Themen aus Sicht eines Vorstands bzw. Top-Managements der SBK. Fokus der Bewertung: strategische Relevanz, Nutzen für Versicherte, Arbeitgeber, Mitarbeitende oder Wirtschaftlichkeit, Entscheidungsreife, Risiken, Außenwirkung, Ressourcenbindung und Vorstandsfähigkeit der Argumentation. Typische Prüffragen: Warum ist dieses Thema für die SBK strategisch relevant? Welcher konkrete Nutzen entsteht? Welche Risiken oder Eskalationen könnten beim Vorstand landen? Ist die Entscheidung ausreichend vorbereitet? Welche Alternativen wurden geprüft? Wie lässt sich die Empfehlung in zwei Minuten verständlich erklären? Was ist die klare Entscheidungsvorlage? Antwortstil: knapp, entscheidungsorientiert, strategisch, managementtauglich und ohne operative Detailtiefe. Erfinde keine echten Vorstandspositionen, Gremienentscheidungen oder internen Strategiedetails. Wenn strategische Informationen fehlen, benenne den Klärungsbedarf klar.'
+  },
+  {
+    id: 'sbk-ki-experte',
+    name: 'SBK KI-Experte',
+    initials: 'KI',
+    role: 'KI-Einsatz & Qualitätssicherung',
+    color: '#9333ea',
+    category: 'SBK-Fachperspektive',
+    desc: 'Bewertet KI-Einsatz, LLM-Nutzung, Qualitätssicherung, Modellgrenzen und produktive Umsetzbarkeit im SBK-Kontext.',
+    perspective: 'Prüft Use-Case-Eignung, Daten- und Wissensbasis, Prompt- und Systemdesign, Halluzinationsrisiken, Human-in-the-loop und Testfälle.',
+    strengths: ['KI-Eignung', 'Qualitätssicherung', 'Produktivfähigkeit'],
+    watchouts: ['KI-Hype', 'Halluzinationsrisiken', 'unklare Testfälle'],
+    evaluationCriteria: ['Use-Case-Typ', 'Wissensbasis', 'Qualitätsmessung', 'Human-in-the-loop'],
+    prompt: 'Du bist die Rolle SBK KI-Experte in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Fragestellungen aus Sicht von KI-Einsatz, LLM-Nutzung, Qualitätssicherung, Modellgrenzen und produktiver Umsetzbarkeit im SBK-Kontext. Fokus der Bewertung: Eignung als KI-Use-Case, Abgrenzung LLM vs. Regelwerk vs. klassische Automatisierung, Daten- und Wissensbasis, Prompt- und Systemdesign, Qualitätssicherung, Halluzinationsrisiken, Human-in-the-loop, Testfälle und Produktivfähigkeit. Typische Prüffragen: Ist KI hier wirklich sinnvoll oder reicht eine regelbasierte Lösung? Ist es ein LLM-Use-Case, ein ML-Use-Case oder ein Automatisierungsthema? Welche Wissensbasis wird benötigt? Wie wird Qualität gemessen? Welche Fehler wären kritisch? Wo braucht es Human-in-the-loop? Welche Testfälle sind für eine belastbare Bewertung nötig? Was unterscheidet einen Demo-Erfolg von produktiver Nutzbarkeit? Antwortstil: fachlich klar, realistisch, qualitätsorientiert, ohne KI-Hype und verständlich für Fachbereich und IT. Erfinde keine Modellfähigkeiten, Toolverfügbarkeiten oder Produktivfreigaben. Benenne offene technische, fachliche und qualitative Prüfpunkte klar.'
+  },
+  {
+    id: 'input-output-ocr',
+    name: 'SBK Input-/Outputmanagement OCR-Experte',
+    initials: 'OCR',
+    role: 'Dokumente, OCR & Routing',
+    color: '#0369a1',
+    category: 'SBK-Fachperspektive',
+    desc: 'Bewertet Inputmanagement, Outputmanagement, Dokumentenerkennung, OCR, Klassifikation, Dunkelverarbeitung und Dokumentenrouting.',
+    perspective: 'Prüft Eingangskanäle, Dokumentarten, OCR-Qualität, Klassifikation, Aussteuerungsgründe, Routing in Folgesysteme und repräsentative Testmengen.',
+    strengths: ['Dokumentenlogik', 'OCR', 'Routing'],
+    watchouts: ['Fehlklassifikation', 'schwache Testmenge', 'unklare Aussteuerung'],
+    evaluationCriteria: ['Dokumentarten', 'OCR-Qualität', 'Klassifikation', 'Dunkelverarbeitung'],
+    prompt: 'Du bist die Rolle SBK Input-/Outputmanagement OCR-Experte in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Themen aus Sicht von Inputmanagement, Outputmanagement, Dokumentenerkennung, OCR, Klassifikation, Dunkelverarbeitung und Dokumentenrouting. Fokus der Bewertung: Eingangskanäle, Dokumentarten, OCR-Qualität, Klassifikation, Ankerlogik, Fehlklassifikationen, Dunkelverarbeitung, Aussteuerungsgründe, Routing in Folgesysteme, repräsentative Testmengen sowie Auswirkungen auf WMS, IMS, Archiv und Belegverarbeitung. Typische Prüffragen: Welche Dokumentarten sind betroffen? Sind die Dokumente strukturiert, teilstrukturiert oder unstrukturiert? Welche Merkmale oder Anker sind für die Klassifikation relevant? Wo entstehen typische OCR- oder Klassifikationsfehler? Welche Aussteuerungsgründe braucht der Prozess? Ist Dunkelverarbeitung realistisch? Welche Testmenge ist repräsentativ? Welche Auswirkungen gibt es auf Eingangskanal, Archivierung, Routing und Folgebearbeitung? Antwortstil: technisch-fachlich, prozessnah, konkret, risikobewusst und mit Blick auf operative Verarbeitung. Erfinde keine konkreten Systemdetails, Fehlerquoten oder Dokumentenregeln. Wenn Beispiele, Daten oder Testmengen fehlen, benenne klar, was geprüft werden muss.'
+  },
+  {
+    id: 'kundenberatung-sbk',
+    name: 'Kundenberater der SBK',
+    initials: 'KB',
+    role: 'Kundenberatung & Servicebetrieb',
+    color: '#16a34a',
+    category: 'SBK-Fachperspektive',
+    desc: 'Bewertet Entscheidungen aus Sicht der operativen Kundenberatung und des direkten Kundenkontakts.',
+    perspective: 'Prüft Verständlichkeit für Kundinnen und Kunden, Beratungsaufwand, Rückfragepotenzial, Serviceauswirkungen, Sonderfälle und Prozessklarheit.',
+    strengths: ['Kundenkontakt', 'Erklärbarkeit', 'Servicepraxis'],
+    watchouts: ['mehr Rückfragen', 'unklare Sonderfälle', 'fehlende Textbausteine'],
+    evaluationCriteria: ['Beratungsaufwand', 'Rückfragen', 'Sonderfälle', 'Gesprächsleitfäden'],
+    prompt: 'Du bist die Rolle Kundenberater der SBK in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Entscheidungen aus Sicht der operativen Kundenberatung und des direkten Kundenkontakts. Fokus der Bewertung: Verständlichkeit für Kundinnen und Kunden, Beratungsaufwand, Rückfragepotenzial, Telefonie- und Serviceauswirkungen, Erklärbarkeit durch Mitarbeitende, Sonderfälle, Textbausteine und Prozessklarheit. Typische Prüffragen: Welche Rückfragen werden Kundinnen und Kunden stellen? Ist die Entscheidung einfach erklärbar? Führt die Lösung zu mehr oder weniger Beratungsaufwand? Welche Sonderfälle landen wahrscheinlich im Kundenservice? Gibt es klare Hinweise, Textbausteine oder Gesprächsleitfäden? Können Mitarbeitende den Prozess sicher und einheitlich erklären? Wo entstehen Unsicherheiten oder Missverständnisse? Antwortstil: praxisnah, kundenorientiert, klar, lösungsorientiert und mit Blick auf den Arbeitsalltag. Erfinde keine echten Beschwerdezahlen, Anrufvolumen oder Kundenreaktionen. Benenne offene Punkte und notwendige Praxistests klar.'
+  },
+  {
+    id: 'aktionssteuerung',
+    name: 'SBK Experte Aktionssteuerung',
+    initials: 'AS',
+    role: 'Regellogik, Aufgaben & Outputs',
+    color: '#a16207',
+    category: 'SBK-Fachperspektive',
+    desc: 'Bewertet Automatisierungsvorhaben aus Sicht der Aktionssteuerung, regelbasierter Prozesslogik und Aufgabensteuerung.',
+    perspective: 'Prüft regelbasierte Automatisierbarkeit, Prüfschritte, Datenverfügbarkeit, Aussteuerungsgründe, 21c/21cNG-Bezug, Aufgabenlogik, Briefe und Testfälle.',
+    strengths: ['Regellogik', 'Aufgabensteuerung', 'Fachtest'],
+    watchouts: ['unklare Datenfelder', 'fehlende Aussteuerung', 'zu wenig Testfälle'],
+    evaluationCriteria: ['Regelbarkeit', 'Datenfelder', 'Aussteuerung', 'Testfälle'],
+    prompt: 'Du bist die Rolle SBK Experte Aktionssteuerung in einem professionellen Entscheidungs- und Beratungscockpit. Aufgabe: Bewerte Automatisierungsvorhaben aus Sicht der Aktionssteuerung, regelbasierter Prozesslogik, 21c/21cNG-naher Verarbeitung, Aufgabensteuerung und automatisierter Briefe. Fokus der Bewertung: regelbasierte Automatisierbarkeit, Prüfschritte, Datenverfügbarkeit, Aussteuerungsgründe, 21c/21cNG-Bezug, Helic- und Aufgabenlogik, Serienbriefe, automatische Entscheidungen, manuelle Nachbearbeitung und Testfälle. Typische Prüffragen: Ist der Prozess regelbasiert beschreibbar? Welche Prüfschritte sind eindeutig? Welche Datenfelder werden benötigt? Liegen die benötigten Daten systemseitig vor? Wann kann automatisch entschieden werden? Wann muss ausgesteuert werden? Welche Aufgaben entstehen in Helic oder 21cNG? Welche Briefe oder Outputs müssen erzeugt werden? Welche Testfälle braucht es für Erstattung, Ablehnung, Sonderfälle und manuelle Prüfung? Antwortstil: regelorientiert, prozessnah, sehr konkret, umsetzungsorientiert und mit Blick auf Fachtest und Betrieb. Erfinde keine konkreten 21c/21cNG-Feldnamen, ASNG-Regeln oder Fachlogiken, wenn sie nicht in der Fragestellung genannt sind. Benenne offene Datenfelder, Aussteuerungen und Testfallbedarfe klar.'
   }
 ];
 
@@ -989,6 +2078,35 @@ var OPENROUTER_MODELS = [
 var KIA_MODELS = [
   { value: 'openai/gpt-oss-120b', label: 'openai/gpt-oss-120b (Standard)' }
 ];
+var DEFAULT_DIRECTOR_IDS = ['business-analyse', 'it-architektur', 'datenschutz-compliance', 'wirtschaftlichkeit', 'gkv-sbk-strategie'];
+var EXPERT_PRESETS = [
+  {
+    id: 'ki-use-case',
+    name: 'KI-Use-Case bewerten',
+    directorIds: ['business-analyse', 'sbk-ki-experte', 'datenschutz-compliance', 'it-architektur', 'gkv-sbk-strategie', 'wirtschaftlichkeit']
+  },
+  {
+    id: 'prozessautomatisierung',
+    name: 'Prozessautomatisierung bewerten',
+    directorIds: ['business-analyse', 'aktionssteuerung', 'it-architektur', 'organisation', 'kundenberatung-sbk', 'wirtschaftlichkeit']
+  },
+  {
+    id: 'ocr-dokumente',
+    name: 'OCR & Dokumentenklassifikation bewerten',
+    directorIds: ['input-output-ocr', 'sbk-ki-experte', 'it-architektur', 'business-analyse', 'datenschutz-compliance', 'organisation']
+  },
+  {
+    id: 'management-entscheidung',
+    name: 'Management-Entscheidung vorbereiten',
+    directorIds: ['sbk-vorstand', 'gkv-sbk-strategie', 'wirtschaftlichkeit', 'stakeholder', 'organisation', 'business-analyse']
+  },
+  {
+    id: 'kundenerlebnis',
+    name: 'Kundenerlebnis bewerten',
+    directorIds: ['sbk-versicherter', 'kundenberatung-sbk', 'kommunikation', 'adoption', 'gkv-sbk-strategie']
+  }
+];
+var directorsInitialized = false;
 
 /* ══════════════════════════════════════════
    PROVIDER & SETUP
@@ -1043,6 +2161,7 @@ function connectAPI() {
   document.getElementById('mainApp').classList.add('visible');
   renderStepper();
   renderDirectorsGrid();
+  resetResultView();
 }
 
 function restoreSettings() {
@@ -1055,7 +2174,7 @@ function restoreSettings() {
     if (u && p === 'kia') document.getElementById('kiaUrlIn').value = u;
     var m = localStorage.getItem('beirat-model');
     if (m) document.getElementById('modelIn').value = m;
-    /* Konsistenz Pruefung: Provider und URL muessen zusammenpassen */
+    /* Konsistenzprüfung: Provider und URL müssen zusammenpassen */
     if (p === 'openrouter' && u && u.indexOf('openrouter') === -1) {
       localStorage.removeItem('beirat-url');
     }
@@ -1157,7 +2276,7 @@ function renderStepper() {
 
 function goStep(n) {
   if (state.isRunning) return;
-  if (n > 1 && state.selectedDirectors.length < 2) { showToast('Bitte mindestens 2 Direktoren auswaehlen.', 'warn'); return; }
+  if (n > 1 && state.selectedDirectors.length < 2) { showToast('Bitte mindestens 2 Direktoren auswählen.', 'warn'); return; }
   state.currentStep = n;
   document.querySelectorAll('.step-panel').forEach(function(p) { p.classList.remove('active'); });
   document.getElementById('step' + n).classList.add('active');
@@ -1171,13 +2290,15 @@ function goStep(n) {
 function renderDirectorsGrid() {
   var grid = document.getElementById('directorsGrid');
   grid.innerHTML = '';
-  if (state.selectedDirectors.length === 0) {
-    state.selectedDirectors = DIRECTORS.map(function(d) { return d.id; });
+  if (!directorsInitialized && state.selectedDirectors.length === 0) {
+    state.selectedDirectors = getRecommendedDirectorIds();
+    directorsInitialized = true;
   }
   DIRECTORS.forEach(function(d) {
     var sel = state.selectedDirectors.indexOf(d.id) !== -1;
+    var rec = DEFAULT_DIRECTOR_IDS.indexOf(d.id) !== -1;
     var card = document.createElement('div');
-    card.className = 'director-card' + (sel ? ' selected' : '');
+    card.className = 'director-card' + (sel ? ' selected' : '') + (rec ? ' recommended' : '');
     card.onclick = function() { toggleDirector(d.id); };
 
     /* Foto oder Initialen Fallback */
@@ -1188,26 +2309,111 @@ function renderDirectorsGrid() {
     card.innerHTML =
       '<div class="check-mark">' + (sel ? '\u2713' : '') + '</div>' +
       photoHtml +
-      '<div class="director-info">' +
+        '<div class="director-info">' +
         '<h4>' + d.name + '</h4>' +
         '<div class="director-role" style="color:' + d.color + '">' + d.role + '</div>' +
+        '<div class="category-badge">' + escH(d.category || 'Expertenrolle') + '</div>' +
         '<div class="director-desc">' + d.desc + '</div>' +
+        '<div class="persona-detail">' +
+          '<span class="persona-label">Perspektive</span>' +
+          '<div class="persona-perspective">' + escH(d.perspective || '') + '</div>' +
+          renderPersonaTags(d.evaluationCriteria || d.strengths || []) +
+        '</div>' +
+        renderPersonaDetails(d) +
+        (rec ? '<div class="recommend-badge">Empfohlen</div>' : '') +
       '</div>';
     grid.appendChild(card);
   });
   updateSelectedCount();
 }
 
+function renderPersonaTags(items) {
+  if (!items || !items.length) return '';
+  return '<div class="persona-tags">' + items.slice(0, 4).map(function(item) {
+    return '<span class="persona-tag">' + escH(item) + '</span>';
+  }).join('') + '</div>';
+}
+
+function renderPersonaDetails(d) {
+  return '<details class="persona-more" onclick="event.stopPropagation()">' +
+    '<summary>Mehr zur Rolle</summary>' +
+    '<div class="persona-more-grid">' +
+      '<div class="persona-more-block"><strong>Stärken</strong>' + renderPersonaTags(d.strengths || []) + '</div>' +
+      '<div class="persona-more-block"><strong>Watchouts</strong>' + renderPersonaTags(d.watchouts || []) + '</div>' +
+      '<div class="persona-more-block"><strong>Prüfkriterien</strong>' + renderPersonaTags(d.evaluationCriteria || []) + '</div>' +
+    '</div>' +
+  '</details>';
+}
+
+function getRecommendedDirectorIds() {
+  return DEFAULT_DIRECTOR_IDS.filter(function(id) {
+    return DIRECTORS.some(function(d) { return d.id === id; });
+  });
+}
+
 function toggleDirector(id) {
   var idx = state.selectedDirectors.indexOf(id);
   if (idx === -1) state.selectedDirectors.push(id);
   else state.selectedDirectors.splice(idx, 1);
+  directorsInitialized = true;
   renderDirectorsGrid();
+}
+
+function selectRecommendedDirectors() {
+  state.selectedDirectors = getRecommendedDirectorIds();
+  directorsInitialized = true;
+  setPresetSelectValue('');
+  renderDirectorsGrid();
+}
+
+function selectAllDirectors() {
+  state.selectedDirectors = DIRECTORS.map(function(d) { return d.id; });
+  directorsInitialized = true;
+  setPresetSelectValue('');
+  renderDirectorsGrid();
+}
+
+function clearDirectors() {
+  state.selectedDirectors = [];
+  directorsInitialized = true;
+  setPresetSelectValue('');
+  renderDirectorsGrid();
+}
+
+function applyExpertPreset(id) {
+  if (!id) return;
+  var preset = EXPERT_PRESETS.find(function(p) { return p.id === id; });
+  if (!preset) return;
+  state.selectedDirectors = preset.directorIds.filter(function(dId) {
+    return DIRECTORS.some(function(d) { return d.id === dId; });
+  });
+  directorsInitialized = true;
+  renderDirectorsGrid();
+  showToast('Preset angewendet: ' + preset.name, 'ok');
+}
+
+function setPresetSelectValue(value) {
+  var el = document.getElementById('presetSelect');
+  if (el) el.value = value;
+}
+
+function isRecommendedSelection() {
+  var rec = getRecommendedDirectorIds().slice().sort().join('|');
+  var cur = state.selectedDirectors.slice().sort().join('|');
+  return rec === cur;
 }
 
 function updateSelectedCount() {
   var el = document.getElementById('selectedCount');
-  if (el) el.textContent = state.selectedDirectors.length + ' von ' + DIRECTORS.length + ' ausgewaehlt';
+  var hint = document.getElementById('selectionHint');
+  var count = state.selectedDirectors.length;
+  if (el) el.textContent = count + ' von ' + DIRECTORS.length + ' Perspektiven ausgewählt';
+  if (hint) {
+    hint.className = 'selection-hint' + (count < 2 ? ' warn' : '');
+    if (count < 2) hint.textContent = 'Bitte mindestens 2 Perspektiven auswählen, bevor du fortfährst.';
+    else if (isRecommendedSelection()) hint.textContent = 'Empfohlene Startbesetzung für eine ausgewogene Bewertung.';
+    else hint.textContent = 'Auswahl angepasst. Achte auf unterschiedliche Perspektiven für die Diskussion.';
+  }
 }
 
 /* ══════════════════════════════════════════
@@ -1221,7 +2427,7 @@ function handleFileUpload(event) {
   reader.onload = function(e) {
     state.fileContent = e.target.result;
     zone.className = 'file-upload-zone has-file';
-    zone.innerHTML = '<input type="file" id="fileInput" accept=".txt,.md,.csv,.json" onchange="handleFileUpload(event)">\u2705 ' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)';
+    zone.innerHTML = '<input type="file" id="fileInput" accept=".txt,.md,.csv,.json" onchange="handleFileUpload(event)"><strong>Datei geladen</strong><span>' + file.name + ' (' + Math.round(file.size / 1024) + ' KB)</span>';
     showToast('Datei geladen', 'ok');
   };
   reader.readAsText(file);
@@ -1236,28 +2442,89 @@ function startDiscussion() {
   state.rounds = parseInt(document.getElementById('roundsSelect').value);
   if (!state.question) { showToast('Bitte eine strategische Frage formulieren.', 'warn'); return; }
   state.discussion = [];
+  state.erkenntnisse = ''; state.risiken = ''; state.optionen = ''; state.empfehlung = '';
+  resetResultView();
   goStep(3);
   renderBoardAvatars();
+  updateDiscussionStatus(null, 1, 0, state.selectedDirectors.length * state.rounds, false);
   runDiscussion();
 }
 
 function renderBoardAvatars() {
   var w = document.getElementById('boardAvatars');
   w.innerHTML = '';
-  DIRECTORS.forEach(function(d) {
-    var active = state.selectedDirectors.indexOf(d.id) !== -1;
+  var selected = DIRECTORS.filter(function(d) { return state.selectedDirectors.indexOf(d.id) !== -1; });
+  var count = document.getElementById('participantsCount');
+  if (count) count.textContent = selected.length + ' ausgewählt';
+  selected.forEach(function(d) {
     var div = document.createElement('div');
-    div.className = 'mini-avatar' + (active ? '' : ' inactive');
-    div.style.background = d.color;
-    div.title = d.name;
+    div.className = 'mini-avatar';
+    div.style.setProperty('--seat-color', d.color);
+    div.title = d.name + ' - ' + d.role;
     div.id = 'ava-' + d.id;
+    var avatarHtml;
     if (d.photo) {
-      div.innerHTML = '<img src="' + d.photo + '" onerror="this.parentNode.textContent=\'' + d.initials + '\'">';
+      avatarHtml = '<div class="seat-avatar" style="background:' + d.color + '"><img src="' + d.photo + '" onerror="this.parentNode.textContent=\'' + escH(d.initials) + '\'"></div>';
     } else {
-      div.textContent = d.initials;
+      avatarHtml = '<div class="seat-avatar" style="background:' + d.color + '">' + escH(d.initials) + '</div>';
     }
+    div.innerHTML = avatarHtml +
+      '<div class="seat-copy"><strong>' + escH(d.name) + '</strong><span>' + escH(d.role) + '</span></div>';
     w.appendChild(div);
   });
+}
+
+function updateDiscussionStatus(dir, round, stepNum, total, done) {
+  var roundChip = document.getElementById('meetingRoundChip');
+  var activeAvatar = document.getElementById('activeSpeakerAvatar');
+  var activeName = document.getElementById('activeSpeakerName');
+  var activeRole = document.getElementById('activeSpeakerRole');
+  var activeCue = document.getElementById('activeSpeakerCue');
+  var liveBadge = document.getElementById('meetingLiveBadge');
+  var liveText = document.getElementById('meetingLiveText');
+  var statRound = document.getElementById('statRound');
+  var statProgress = document.getElementById('statProgress');
+  var statDirectors = document.getElementById('statDirectors');
+  var selectedCount = state.selectedDirectors.length;
+
+  if (statDirectors) statDirectors.textContent = selectedCount;
+  if (statProgress) statProgress.textContent = stepNum + '/' + total;
+  if (statRound) statRound.textContent = done ? state.rounds + '/' + state.rounds : round + '/' + state.rounds;
+
+  if (done) {
+    if (roundChip) roundChip.textContent = 'Abgeschlossen';
+    if (liveBadge) liveBadge.classList.add('done');
+    if (liveText) liveText.textContent = 'ABGESCHLOSSEN';
+    if (activeAvatar) { activeAvatar.textContent = '✓'; activeAvatar.style.background = 'var(--success)'; }
+    if (activeName) activeName.textContent = 'Sitzung abgeschlossen';
+    if (activeRole) activeRole.textContent = 'Alle Beiträge liegen vor.';
+    if (activeCue) activeCue.textContent = 'Die Diskussion kann jetzt zu einer Entscheidungsvorlage zusammengefasst werden.';
+    return;
+  }
+
+  if (!dir) {
+    if (roundChip) roundChip.textContent = 'Vorbereitung';
+    if (liveBadge) liveBadge.classList.remove('done');
+    if (liveText) liveText.textContent = 'LIVE';
+    if (activeAvatar) { activeAvatar.textContent = 'EB'; activeAvatar.style.background = 'var(--accent)'; }
+    if (activeName) activeName.textContent = 'Beirat wird vorbereitet';
+    if (activeRole) activeRole.textContent = selectedCount + ' Perspektiven ausgewählt';
+    if (activeCue) activeCue.textContent = 'Sobald die Diskussion startet, wird hier die jeweils aktive Perspektive hervorgehoben.';
+    return;
+  }
+
+  if (roundChip) roundChip.textContent = 'Runde ' + round + ' von ' + state.rounds;
+  if (liveBadge) liveBadge.classList.remove('done');
+  if (liveText) liveText.textContent = 'LIVE';
+  if (activeAvatar) {
+    activeAvatar.style.background = dir.color;
+    activeAvatar.innerHTML = dir.photo
+      ? '<img src="' + dir.photo + '" onerror="this.parentNode.textContent=\'' + escH(dir.initials) + '\'">'
+      : escH(dir.initials);
+  }
+  if (activeName) activeName.textContent = dir.name;
+  if (activeRole) activeRole.textContent = dir.role;
+  if (activeCue) activeCue.textContent = (dir.perspective || 'Diese Rolle bewertet die Fragestellung aus ihrer fachlichen Perspektive.');
 }
 
 function runDiscussion() {
@@ -1271,6 +2538,7 @@ function runDiscussion() {
   var total = dirs.length * state.rounds;
   var stepNum = 0;
   var round = 1;
+  updateDiscussionStatus(null, round, stepNum, total, false);
 
   function nextRound() {
     if (round > state.rounds) {
@@ -1278,14 +2546,16 @@ function runDiscussion() {
       document.getElementById('typingInd').classList.remove('on');
       document.getElementById('progressLabel').textContent = 'Diskussion abgeschlossen';
       document.getElementById('progressFill').style.width = '100%';
+      document.querySelectorAll('.mini-avatar').forEach(function(a) { a.classList.remove('speaking'); });
+      updateDiscussionStatus(null, state.rounds, total, total, true);
       document.getElementById('step3Actions').style.display = '';
       showToast('Diskussion beendet! Jetzt Ergebnis zusammenfassen.', 'ok');
       return;
     }
     /* Runden Trenner */
     var sep = document.createElement('div');
-    sep.style.cssText = 'text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.1em;padding:10px 0;';
-    sep.textContent = '\u2500\u2500\u2500 Runde ' + round + ' von ' + state.rounds + ' \u2500\u2500\u2500';
+    sep.className = 'round-separator';
+    sep.innerHTML = '<span>Runde ' + round + ' von ' + state.rounds + '</span>';
     feed.appendChild(sep);
 
     var idx = 0;
@@ -1300,6 +2570,7 @@ function runDiscussion() {
       document.querySelectorAll('.mini-avatar').forEach(function(a) { a.classList.remove('speaking'); });
       var ava = document.getElementById('ava-' + dir.id);
       if (ava) ava.classList.add('speaking');
+      updateDiscussionStatus(dir, round, stepNum, total, false);
 
       var sys = dir.prompt + '\n\nDu sitzt in einem virtuellen Beirat (Board of Directors) mit anderen Experten. Antworte auf Deutsch, konkret und in deiner typischen Stimme. Halte dich auf 3-5 Saetze pro Beitrag. Beziehe dich wo sinnvoll auf vorherige Beitraege anderer Direktoren.';
       var ctx = 'KONTEXT:\n' + (state.context || '(Kein Kontext)');
@@ -1338,13 +2609,14 @@ function addDiscMsg(dir, round, text) {
   div.className = 'disc-msg';
 
   var avatarHtml = dir.photo
-    ? '<div class="avatar" style="background:' + dir.color + '"><img src="' + dir.photo + '" onerror="this.parentNode.textContent=\'' + dir.initials + '\'"></div>'
-    : '<div class="avatar" style="background:' + dir.color + '">' + dir.initials + '</div>';
+    ? '<div class="avatar" style="background:' + dir.color + '"><img src="' + dir.photo + '" onerror="this.parentNode.textContent=\'' + escH(dir.initials) + '\'"></div>'
+    : '<div class="avatar" style="background:' + dir.color + '">' + escH(dir.initials) + '</div>';
 
   div.innerHTML = avatarHtml +
     '<div class="disc-bubble" style="border-left-color:' + dir.color + '">' +
-      '<div class="name" style="color:' + dir.color + '">' + dir.name +
-        '<span class="role-tag">' + dir.role + '</span>' +
+      '<div class="name" style="color:' + dir.color + '">' + escH(dir.name) +
+        '<span class="role-tag">' + escH(dir.role) + '</span>' +
+        '<span class="category-tag">' + escH(dir.category || 'Expertenrolle') + '</span>' +
         '<span class="round-tag">R' + round + '</span>' +
       '</div>' +
       '<div class="text">' + escH(text) + '</div>' +
@@ -1361,22 +2633,175 @@ function getDirector(id) {
 /* ══════════════════════════════════════════
    STEP 4: KONSOLIDIERUNG
    ══════════════════════════════════════════ */
-function consolidateResults() {
-  goStep(4);
-  /* Diskussions Tab fuellen */
-  var dHtml = '';
+function hasDecisionResults() {
+  return !!(state.erkenntnisse || state.risiken || state.optionen || state.empfehlung);
+}
+
+function cleanDecisionText(text) {
+  return String(text || '')
+    .replace(/\r\n/g, '\n')
+    .replace(/\u00a0|\u202f/g, ' ')
+    .replace(/[ \t]{2,}$/gm, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+function updateResultExportState(enabled) {
+  document.querySelectorAll('[data-needs-result]').forEach(function(btn) {
+    btn.disabled = !enabled;
+  });
+}
+
+function setResultState(kind, label, detail) {
+  var stateEl = document.getElementById('resultState');
+  if (stateEl) {
+    stateEl.className = 'result-state' + (kind ? ' ' + kind : '');
+    stateEl.textContent = label;
+  }
+  var subline = document.getElementById('resultSubline');
+  if (subline && detail) subline.textContent = detail;
+}
+
+function renderResultBrief() {
+  var title = document.getElementById('briefTitle');
+  var question = document.getElementById('briefQuestion');
+  var meta = document.getElementById('briefMeta');
+  if (title) title.textContent = 'Vorlage zur Entscheidung';
+  if (question) question.textContent = state.question || 'Keine Frage hinterlegt.';
+  if (!meta) return;
+  var perspectiveLabel = state.selectedDirectors.length === 1 ? 'Perspektive' : 'Perspektiven';
+  var chips = [
+    { l: 'Beirat', v: state.selectedDirectors.length + ' ' + perspectiveLabel },
+    { l: 'Runden', v: String(state.rounds || 0) },
+    { l: 'Beitraege', v: String(state.discussion.length) },
+    { l: 'Kontext', v: (state.context || state.fileContent) ? 'vorhanden' : 'ohne Zusatzkontext' }
+  ];
+  meta.innerHTML = chips.map(function(c) {
+    return '<span class="brief-chip">' + escH(c.l) + ': <strong>' + escH(c.v) + '</strong></span>';
+  }).join('');
+}
+
+function renderLoadingMessage(label) {
+  return '<div class="result-message loading"><div class="typing-dots" style="display:flex;gap:4px;"><span></span><span></span><span></span></div><span>' + escH(label) + '</span></div>';
+}
+
+function renderErrorMessage(message) {
+  return '<div class="result-message error"><strong>Konsolidierung fehlgeschlagen.</strong><br>' + escH(message) + '</div>';
+}
+
+function renderDecisionText(text, title, subtitle) {
+  var cleaned = cleanDecisionText(text);
+  if (!cleaned) return '<div class="result-message muted">Fuer diesen Abschnitt wurden keine Inhalte geliefert.</div>';
+  var head = '';
+  if (title) {
+    head = '<div class="decision-section-head"><span>Auswertung</span><strong>' + escH(title) + '</strong><p>' + escH(subtitle || '') + '</p></div>';
+  }
+  return head + '<div class="decision-text">' + mdToClipboardHtml(cleaned) + '</div>';
+}
+
+function renderDiscussionTranscript() {
+  if (!state.discussion.length) return '<div class="result-message muted">Noch keine Diskussionsbeitraege vorhanden.</div>';
+  var html = '<div class="discussion-transcript">';
   state.discussion.forEach(function(e) {
     var d = getDirector(e.directorId);
-    dHtml += '<strong style="color:' + d.color + '">' + d.name + '</strong> <em style="color:var(--text-muted)">(' + d.role + ', Runde ' + e.round + ')</em>:\n' + e.content + '\n\n';
+    html += '<article class="transcript-entry" style="border-left-color:' + d.color + '">' +
+      '<div class="transcript-meta"><span style="color:' + d.color + '">' + escH(d.name) + '</span>' +
+      '<span class="transcript-role">' + escH(d.role) + '</span>' +
+      '<span class="transcript-role">Runde ' + e.round + '</span></div>' +
+      '<div class="transcript-text">' + mdToClipboardHtml(e.content) + '</div>' +
+    '</article>';
   });
-  document.getElementById('tabDiskussion').innerHTML = dHtml;
+  return html + '</div>';
+}
 
-  var loadHtml = '<div style="display:flex;align-items:center;gap:10px;color:var(--text-muted);padding:20px 0;"><div class="typing-dots" style="display:flex;gap:4px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typeBounce .8s ease-in-out infinite;"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typeBounce .8s ease-in-out infinite .15s;"></span><span style="width:7px;height:7px;border-radius:50%;background:var(--accent);animation:typeBounce .8s ease-in-out infinite .3s;"></span></div> Wird zusammengefasst...</div>';
+function resetResultView() {
+  setResultState('', 'Noch nicht erstellt', 'Erkenntnisse, Risiken, Optionen und Empfehlung werden aus der Diskussion konsolidiert.');
+  updateResultExportState(false);
+  renderResultBrief();
+  var empty = '<div class="result-message muted">Die Zusammenfassung wird nach Abschluss der Diskussion erstellt.</div>';
+  ['tabErkenntnisse','tabRisiken','tabOptionen','tabEmpfehlung'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.innerHTML = empty;
+  });
+  var disc = document.getElementById('tabDiskussion');
+  if (disc) disc.innerHTML = '';
+}
+
+function consolidateResults() {
+  goStep(4);
+  renderResultBrief();
+  setResultState('loading', 'Konsolidiert', 'Der Beirat wird zu einer entscheidungsreifen Vorlage verdichtet.');
+  updateResultExportState(false);
+  document.getElementById('tabDiskussion').innerHTML = renderDiscussionTranscript();
+
+  var loadHtml = renderLoadingMessage('Wird zusammengefasst...');
   ['tabErkenntnisse', 'tabRisiken', 'tabOptionen', 'tabEmpfehlung'].forEach(function(id) {
     document.getElementById(id).innerHTML = loadHtml;
   });
 
-  var prompt = 'Du bist ein erfahrener Management-Berater. Dir liegt die Diskussion eines virtuellen Beirats vor. Erstelle eine strukturierte Zusammenfassung. Schreibe auf Deutsch, klar und konkret.\n\nAntworte EXAKT in diesem Format:\n===ERKENNTNISSE===\n(Wichtigste Einsichten)\n\n===RISIKEN===\n(Identifizierte Risiken)\n\n===OPTIONEN===\n(Handlungsoptionen)\n\n===EMPFEHLUNG===\n(Klare Handlungsempfehlung)';
+  var prompt = [
+    'Du bist ein erfahrener Strategie- und Umsetzungsberater. Dir liegt die Diskussion eines virtuellen Beirats vor.',
+    'Erstelle daraus eine entscheidungsreife Vorlage fuer eine Fuehrungsrunde: klar, konkret, verstaendlich, handlungsorientiert.',
+    '',
+    'Qualitaetsanspruch:',
+    '- Keine generischen Management-Floskeln. Jede Aussage muss der Entscheidung helfen.',
+    '- Verdichte die Diskussion, wiederhole sie nicht chronologisch.',
+    '- Nenne Annahmen, fehlende Daten und Entscheidungskriterien offen.',
+    '- Erfinde keine Fakten, Zahlen, Namen oder regulatorischen Vorgaben. Nutze nur Angaben aus Kontext und Diskussion; wenn Zahlen fehlen, formuliere als zu pruefende Annahme.',
+    '- Schreibe kurze, praezise Saetze. Zielgruppe: Fach- und Managemententscheider.',
+    '- Keine Markdown-Zierzeilen, keine Codeblocks, keine alleinstehenden **, keine --- Trennlinien.',
+    '',
+    'Antworte EXAKT mit diesen vier Markern und der beschriebenen Struktur:',
+    '',
+    '===ERKENNTNISSE===',
+    '### Kurzfazit',
+    '1 Satz: Was ist die wichtigste Einsicht fuer die Entscheidung?',
+    '',
+    '| Erkenntnis | Bedeutung fuer die Entscheidung | Evidenz aus der Diskussion | Konsequenz |',
+    '|---|---|---|---|',
+    '| 3 bis 5 priorisierte Erkenntnisse | Warum relevant | Welche Rolle/Argumentlinie stuetzt es | Was daraus folgt |',
+    '',
+    '### Offene Punkte',
+    '- 2 bis 4 Punkte, die vor einer finalen Entscheidung geklaert werden muessen.',
+    '',
+    '===RISIKEN===',
+    '### Risikobild',
+    '1 Satz: Welches Risiko ist entscheidend, nicht nur auffaellig?',
+    '',
+    '| Risiko | Warum kritisch | Fruehwarnsignal | Gegenmassnahme |',
+    '|---|---|---|---|',
+    '| 4 bis 6 Risiken | Auswirkung auf Entscheidung/Umsetzung | Woran man es frueh erkennt | Konkrete Steuerung |',
+    '',
+    '### Entscheidungsrelevante Abwaegung',
+    '- 2 bis 3 Saetze: Welche Risiken sind tragbar, welche waeren Stopper?',
+    '',
+    '===OPTIONEN===',
+    '### Optionslogik',
+    '1 Satz: Welche realistischen Wege stehen zur Wahl?',
+    '',
+    '| Option | Nutzenversprechen | Voraussetzungen | Hauptrisiken | Entscheidungslogik |',
+    '|---|---|---|---|---|',
+    '| 3 bis 4 Optionen | Was wird gewonnen | Was muss stimmen | Was kann scheitern | Wann diese Option sinnvoll ist |',
+    '',
+    '### Nicht empfehlenswerte Variante',
+    '1 bis 2 Saetze: Welche scheinbare Option sollte nicht weiterverfolgt werden und warum?',
+    '',
+    '===EMPFEHLUNG===',
+    '### Entscheidungsvorschlag',
+    '1 klarer Satz: Welche Option soll gewaehlt werden?',
+    '',
+    '### Begruendung',
+    '- 3 bis 5 Gruende, jeweils mit Nutzen und Abwaegung.',
+    '',
+    '### Naechste Schritte',
+    '1. Konkreter Schritt mit Ziel, Verantwortungsbereich und Ergebnis.',
+    '2. Konkreter Schritt mit Ziel, Verantwortungsbereich und Ergebnis.',
+    '3. Konkreter Schritt mit Ziel, Verantwortungsbereich und Ergebnis.',
+    '4. Optionaler Schritt, falls noetig.',
+    '',
+    '### Go/No-Go-Kriterien',
+    '- 3 bis 5 mess- oder pruefbare Kriterien, die ueber Fortfuehrung, Anpassung oder Abbruch entscheiden.'
+  ].join('\n');
   var discText = 'FRAGE: ' + state.question + '\nKONTEXT: ' + (state.context || '(keiner)') + '\n\nDISKUSSION:\n';
   state.discussion.forEach(function(e) {
     var d = getDirector(e.directorId);
@@ -1385,17 +2810,21 @@ function consolidateResults() {
 
   callLLM([{ role: 'user', content: discText }], prompt).then(function(answer) {
     var s = parseConsolidation(answer);
-    state.erkenntnisse = s.erkenntnisse; state.risiken = s.risiken;
-    state.optionen = s.optionen; state.empfehlung = s.empfehlung;
-    document.getElementById('tabErkenntnisse').textContent = s.erkenntnisse;
-    document.getElementById('tabRisiken').textContent = s.risiken;
-    document.getElementById('tabOptionen').textContent = s.optionen;
-    document.getElementById('tabEmpfehlung').textContent = s.empfehlung;
+    state.erkenntnisse = cleanDecisionText(s.erkenntnisse); state.risiken = cleanDecisionText(s.risiken);
+    state.optionen = cleanDecisionText(s.optionen); state.empfehlung = cleanDecisionText(s.empfehlung);
+    document.getElementById('tabErkenntnisse').innerHTML = renderDecisionText(state.erkenntnisse, 'Entscheidungsrelevante Erkenntnisse', 'Verdichtete Einsichten mit Bedeutung, Evidenz und Konsequenz.');
+    document.getElementById('tabRisiken').innerHTML = renderDecisionText(state.risiken, 'Risikobild und Steuerung', 'Welche Risiken entscheidend sind, woran sie frueh erkennbar werden und wie sie reduziert werden.');
+    document.getElementById('tabOptionen').innerHTML = renderDecisionText(state.optionen, 'Handlungsoptionen im Vergleich', 'Realistische Wege mit Voraussetzungen, Nutzen, Risiken und Entscheidungslogik.');
+    document.getElementById('tabEmpfehlung').innerHTML = renderDecisionText(state.empfehlung, 'Empfehlung und naechste Schritte', 'Klarer Vorschlag mit Begruendung, Umsetzungsplan und Go/No-Go-Kriterien.');
+    setResultState('ready', 'Bereit', 'Die Entscheidungsvorlage ist konsolidiert und kann exportiert werden.');
+    updateResultExportState(hasDecisionResults());
     showToast('Ergebnis steht bereit!', 'ok');
   }).catch(function(err) {
+    setResultState('error', 'Fehler', 'Die Zusammenfassung konnte nicht erstellt werden. Bitte erneut versuchen.');
+    updateResultExportState(false);
     showToast('Fehler: ' + err.message, 'err');
     ['tabErkenntnisse','tabRisiken','tabOptionen','tabEmpfehlung'].forEach(function(id) {
-      document.getElementById(id).textContent = 'Fehler: ' + err.message;
+      document.getElementById(id).innerHTML = renderErrorMessage(err.message);
     });
   });
 }
@@ -1428,23 +2857,125 @@ function switchTab(name, btn) {
    CONFLUENCE COPY
    ══════════════════════════════════════════ */
 var escH = function(t) { return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
-function stripMd(t) { return (t||'').replace(/\*\*(.+?)\*\*/g,'$1').replace(/\*([^*\n]+?)\*/g,'$1'); }
+function stripMd(t) {
+  return cleanDecisionText(t)
+    .replace(/^#{1,6}\s+/gm,'')
+    .replace(/\*\*(.+?)\*\*/g,'$1')
+    .replace(/\*([^*\n]+?)\*/g,'$1')
+    .replace(/[ \t]+([.,;:!?])/g, '$1');
+}
+
+function isMdNoiseLine(line) {
+  var t = String(line || '').trim();
+  return t === '**' || /^-{3,}$/.test(t) || /^_{3,}$/.test(t);
+}
+
+function splitMdTableRow(line) {
+  var t = String(line || '').trim();
+  if (t.charAt(0) === '|') t = t.substring(1);
+  if (t.charAt(t.length - 1) === '|') t = t.substring(0, t.length - 1);
+  return t.split('|').map(function(cell) { return cell.trim(); });
+}
+
+function isMdTableRow(line) {
+  return String(line || '').indexOf('|') !== -1 && splitMdTableRow(line).length > 1;
+}
+
+function isMdTableSeparator(line) {
+  var cells = splitMdTableRow(line);
+  return cells.length > 1 && cells.every(function(cell) {
+    return /^:?-{3,}:?$/.test(cell.replace(/\s/g, ''));
+  });
+}
+
+function renderMdTable(headers, rows) {
+  var html = '<div class="md-table-wrap"><table class="md-table"><thead><tr>';
+  headers.forEach(function(h) { html += '<th>' + h + '</th>'; });
+  html += '</tr></thead><tbody>';
+  rows.forEach(function(row) {
+    html += '<tr>';
+    for (var i = 0; i < headers.length; i++) {
+      html += '<td>' + (row[i] || '') + '</td>';
+    }
+    html += '</tr>';
+  });
+  return html + '</tbody></table></div>';
+}
+
+function mdToPlainText(text) {
+  var cleaned = cleanDecisionText(text);
+  if (!cleaned) return '';
+  var lines = cleaned.split('\n');
+  var out = [];
+  for (var i = 0; i < lines.length; i++) {
+    var l = lines[i];
+    if (isMdNoiseLine(l)) continue;
+    if (isMdTableRow(l) && i + 1 < lines.length && isMdTableSeparator(lines[i + 1])) {
+      var headers = splitMdTableRow(l).map(stripMd);
+      i += 2;
+      while (i < lines.length && isMdTableRow(lines[i]) && !isMdTableSeparator(lines[i])) {
+        var row = splitMdTableRow(lines[i]).map(stripMd);
+        if (row[0]) out.push(row[0]);
+        for (var c = 1; c < Math.max(headers.length, row.length); c++) {
+          if (row[c]) out.push((headers[c] ? headers[c] + ': ' : '') + row[c]);
+        }
+        out.push('');
+        i++;
+      }
+      i--;
+    } else {
+      out.push(stripMd(l));
+    }
+  }
+  return out.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+}
 
 function mdToClipboardHtml(text) {
   if (!text) return '';
-  var h = escH(text);
+  var h = escH(cleanDecisionText(text));
   h = h.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   h = h.replace(/\*([^*\s][^*\n]*?)\*/g, '<em>$1</em>');
-  var lines = h.split('\n'), out = '', inUl = false, inOl = false;
+  var lines = h.split('\n'), out = '', inUl = false, inOl = false, paragraphCount = 0;
+  function closeLists() {
+    if (inUl) { out += '</ul>'; inUl = false; }
+    if (inOl) { out += '</ol>'; inOl = false; }
+  }
   for (var i = 0; i < lines.length; i++) {
     var l = lines[i];
+    var trimmed = l.trim();
+    if (!trimmed) continue;
+    if (isMdNoiseLine(l)) { closeLists(); continue; }
+    var heading = trimmed.match(/^#{1,4}\s+(.+)/);
+    var strongHeading = trimmed.match(/^<strong>([^<]+)<\/strong>:?$/);
+    if (heading || strongHeading) {
+      closeLists();
+      out += '<div class="md-heading">' + (heading ? heading[1] : strongHeading[1]) + '</div>';
+      continue;
+    }
+    if (isMdTableRow(l) && i + 1 < lines.length && isMdTableSeparator(lines[i + 1])) {
+      closeLists();
+      var headers = splitMdTableRow(l);
+      var rows = [];
+      i += 2;
+      while (i < lines.length && isMdTableRow(lines[i]) && !isMdTableSeparator(lines[i])) {
+        rows.push(splitMdTableRow(lines[i]));
+        i++;
+      }
+      i--;
+      out += renderMdTable(headers, rows);
+      continue;
+    }
     var ul = l.match(/^(\s*)[-\u2013\u2014*\u2022]\s+(.+)/);
     var ol = l.match(/^(\s*)\d+\.\s+(.+)/);
     if (ul) { if (!inUl) { out += '<ul>'; inUl = true; } out += '<li>' + ul[2] + '</li>'; }
     else if (ol) { if (inUl) { out += '</ul>'; inUl = false; } if (!inOl) { out += '<ol>'; inOl = true; } out += '<li>' + ol[2] + '</li>'; }
-    else { if (inUl) { out += '</ul>'; inUl = false; } if (inOl) { out += '</ol>'; inOl = false; } if (l.trim()) out += '<p>' + l + '</p>'; }
+    else {
+      closeLists();
+      out += '<p' + (paragraphCount === 0 ? ' class="md-lead"' : '') + '>' + l + '</p>';
+      paragraphCount++;
+    }
   }
-  if (inUl) out += '</ul>'; if (inOl) out += '</ol>';
+  closeLists();
   return out;
 }
 
@@ -1465,55 +2996,154 @@ function setCopyFeedback(btn) {
 }
 
 function copyAllConfluence(btn) {
+  if (!hasDecisionResults()) { showToast('Noch kein exportierbares Ergebnis vorhanden.', 'warn'); return; }
   var pp = [], hp = [];
   pp.push('STRATEGISCHE FRAGE: ' + state.question);
   hp.push('<h2>Strategische Frage</h2><p>' + escH(state.question) + '</p>');
   if (state.context) { pp.push('KONTEXT: ' + state.context); hp.push('<h3>Kontext</h3><p>' + escH(state.context) + '</p>'); }
   [{l:'Erkenntnisse',d:state.erkenntnisse},{l:'Risiken',d:state.risiken},{l:'Optionen',d:state.optionen},{l:'Empfehlung',d:state.empfehlung}].forEach(function(t) {
-    if (t.d) { pp.push(t.l + ':\n' + stripMd(t.d)); hp.push('<h3>' + t.l + '</h3>' + mdToClipboardHtml(t.d)); }
+    if (t.d) { pp.push(t.l + ':\n' + mdToPlainText(t.d)); hp.push('<h3>' + t.l + '</h3>' + mdToClipboardHtml(t.d)); }
   });
   pp.push('DISKUSSION:'); hp.push('<h3>Diskussion</h3>');
   state.discussion.forEach(function(e) {
     var d = getDirector(e.directorId);
-    pp.push(d.name + ' (' + d.role + ', R' + e.round + '): ' + e.content);
-    hp.push('<p><b>' + escH(d.name) + '</b> <em>(' + escH(d.role) + ', Runde ' + e.round + ')</em>: ' + escH(e.content) + '</p>');
+    pp.push(d.name + ' (' + d.role + ', R' + e.round + '): ' + mdToPlainText(e.content));
+    hp.push('<p><b>' + escH(d.name) + '</b> <em>(' + escH(d.role) + ', Runde ' + e.round + ')</em>:</p>' + mdToClipboardHtml(e.content));
   });
   copyRich(pp.join('\n\n'), hp.join('')).then(function() {
     setCopyFeedback(btn);
     showToast('In Zwischenablage kopiert', 'ok');
+  }).catch(function(err) {
+    showToast('Kopieren fehlgeschlagen: ' + err.message, 'err');
   });
 }
 
 /* ══════════════════════════════════════════
    POWERPOINT EXPORT
    ══════════════════════════════════════════ */
+function formatPptBody(text) {
+  return mdToPlainText(text || 'Keine Daten')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+}
+
 function exportPPTX() {
   if (typeof PptxGenJS === 'undefined') { showToast('PptxGenJS nicht geladen.', 'err'); return; }
+  if (!hasDecisionResults()) { showToast('Noch kein exportierbares Ergebnis vorhanden.', 'warn'); return; }
   var pptx = new PptxGenJS();
-  pptx.layout = 'LAYOUT_WIDE'; pptx.author = 'Board of Directors'; pptx.title = 'Beirat: ' + state.question.substring(0, 50);
-  var BG = '0a0e1a', CARD = '111827', ACC = '60a5fa', WHITE = 'f1f5f9', MUTED = '94a3b8';
+  pptx.layout = 'LAYOUT_WIDE';
+  pptx.author = 'Expertenbeirat';
+  pptx.subject = 'Entscheidungsvorlage';
+  pptx.title = 'Beirat: ' + state.question.substring(0, 50);
+
+  var BG = '101316', SURFACE = '171b20', PANEL = '20262d', ACC = '509792', WHITE = 'eef2f4', MUTED = 'bac4cb', BORDER = '38424a', GOLD = 'c79242', RED = 'dc6f6b';
+  var W = 13.333, H = 7.5;
+
+  function safeColor(c) { return String(c || ACC).replace('#',''); }
+  function shorten(text, max) {
+    var t = String(text || '').replace(/\s+/g, ' ').trim();
+    return t.length > max ? t.substring(0, max - 1).trim() + '...' : t;
+  }
+  function addHeader(slide, title, accent, kicker) {
+    slide.background = { color: BG };
+    slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: W, h: 0.16, fill: { color: accent }, line: { color: accent } });
+    slide.addText(kicker || 'ENTSCHEIDUNGSVORLAGE', { x: 0.65, y: 0.43, w: 7, h: 0.24, fontSize: 8.5, fontFace: 'Calibri', color: accent, bold: true, letterSpacing: 1.4 });
+    slide.addText(title, { x: 0.65, y: 0.72, w: 9.6, h: 0.48, fontSize: 22, fontFace: 'Georgia', color: WHITE, bold: true, margin: 0 });
+    slide.addText(shorten(state.question, 130), { x: 0.65, y: 1.18, w: 11.7, h: 0.32, fontSize: 9.5, fontFace: 'Calibri', color: MUTED, margin: 0 });
+  }
+  function addFooter(slide) {
+    slide.addText('Expertenbeirat', { x: 0.65, y: 7.08, w: 3, h: 0.18, fontSize: 7.5, fontFace: 'Calibri', color: MUTED, margin: 0 });
+    slide.addText('Export aus dem Entscheidungs-Cockpit', { x: 8.6, y: 7.08, w: 4, h: 0.18, fontSize: 7.5, fontFace: 'Calibri', color: MUTED, align: 'right', margin: 0 });
+  }
+  function parseFirstTable(text) {
+    var lines = cleanDecisionText(text).split('\n');
+    for (var i = 0; i < lines.length - 1; i++) {
+      if (isMdTableRow(lines[i]) && isMdTableSeparator(lines[i + 1])) {
+        var rows = [];
+        var j = i + 2;
+        while (j < lines.length && isMdTableRow(lines[j]) && !isMdTableSeparator(lines[j])) {
+          rows.push(splitMdTableRow(lines[j]).map(stripMd));
+          j++;
+        }
+        return { headers: splitMdTableRow(lines[i]).map(stripMd), rows: rows };
+      }
+    }
+    return null;
+  }
+  function splitTextChunks(text, maxLen) {
+    var paras = formatPptBody(text).split(/\n{2,}/);
+    var chunks = [], current = '';
+    paras.forEach(function(p) {
+      if ((current + '\n\n' + p).length > maxLen && current) { chunks.push(current); current = p; }
+      else current = current ? current + '\n\n' + p : p;
+    });
+    if (current) chunks.push(current);
+    return chunks.length ? chunks : ['Keine Daten'];
+  }
+  function addTextSlides(title, text, accent) {
+    splitTextChunks(text, 1450).forEach(function(chunk, idx) {
+      var s = pptx.addSlide();
+      addHeader(s, title + (idx ? ' (' + (idx + 1) + ')' : ''), accent);
+      s.addShape(pptx.ShapeType.rect, { x: 0.65, y: 1.75, w: 12.0, h: 4.95, fill: { color: SURFACE, transparency: 0 }, line: { color: BORDER, transparency: 10 } });
+      s.addText(chunk, { x: 0.95, y: 2.05, w: 11.35, h: 4.35, fontSize: 12.2, fontFace: 'Calibri', color: WHITE, breakLine: false, valign: 'top', fit: 'shrink' });
+      addFooter(s);
+    });
+  }
+  function addTableCardSlides(title, text, accent) {
+    var table = parseFirstTable(text);
+    if (!table || !table.rows.length) { addTextSlides(title, text, accent); return; }
+    for (var start = 0; start < table.rows.length; start += 4) {
+      var s = pptx.addSlide();
+      addHeader(s, title + (start ? ' (' + (Math.floor(start / 4) + 1) + ')' : ''), accent);
+      table.rows.slice(start, start + 4).forEach(function(row, idx) {
+        var col = idx % 2, r = Math.floor(idx / 2);
+        var x = 0.65 + col * 6.17, y = 1.72 + r * 2.58, cardW = 5.82, cardH = 2.28;
+        s.addShape(pptx.ShapeType.rect, { x: x, y: y, w: cardW, h: cardH, fill: { color: SURFACE }, line: { color: BORDER, transparency: 8 } });
+        s.addShape(pptx.ShapeType.rect, { x: x, y: y, w: 0.08, h: cardH, fill: { color: accent }, line: { color: accent } });
+        s.addText(shorten(row[0] || 'Option', 72), { x: x + 0.24, y: y + 0.16, w: cardW - 0.44, h: 0.32, fontSize: 12.5, fontFace: 'Calibri', color: WHITE, bold: true, margin: 0 });
+        var details = [];
+        for (var c = 1; c < Math.min(table.headers.length, row.length); c++) {
+          if (row[c]) details.push((table.headers[c] ? table.headers[c] + ': ' : '') + row[c]);
+        }
+        s.addText(shorten(details.join('\n'), 470), { x: x + 0.24, y: y + 0.58, w: cardW - 0.44, h: cardH - 0.78, fontSize: 8.7, fontFace: 'Calibri', color: MUTED, valign: 'top', fit: 'shrink' });
+      });
+      addFooter(s);
+    }
+  }
 
   var s1 = pptx.addSlide(); s1.background = { color: BG };
-  s1.addText('BOARD OF DIRECTORS', { x: 0.8, y: 0.8, w: 11, h: 0.5, fontSize: 12, fontFace: 'Calibri', color: ACC, bold: true, letterSpacing: 4 });
-  s1.addText(state.question, { x: 0.8, y: 1.8, w: 11, h: 1.5, fontSize: 28, fontFace: 'Georgia', color: WHITE, bold: true });
-  var names = state.selectedDirectors.map(function(id) { return getDirector(id).name; }).join(' \u00b7 ');
-  s1.addText(names, { x: 0.8, y: 4.0, w: 11, h: 0.4, fontSize: 11, fontFace: 'Calibri', color: MUTED });
+  s1.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 0.18, h: H, fill: { color: ACC }, line: { color: ACC } });
+  s1.addText('EXPERTENBEIRAT', { x: 0.72, y: 0.76, w: 5.5, h: 0.3, fontSize: 10.5, fontFace: 'Calibri', color: ACC, bold: true, letterSpacing: 2.2, margin: 0 });
+  s1.addText('Entscheidungsvorlage', { x: 0.72, y: 1.18, w: 7.8, h: 0.5, fontSize: 22, fontFace: 'Georgia', color: WHITE, bold: true, margin: 0 });
+  s1.addText(state.question, { x: 0.72, y: 2.0, w: 11.6, h: 1.45, fontSize: 25, fontFace: 'Georgia', color: WHITE, bold: true, margin: 0, fit: 'shrink' });
+  var names = state.selectedDirectors.map(function(id) { return getDirector(id).name; }).join('  |  ');
+  s1.addShape(pptx.ShapeType.rect, { x: 0.72, y: 4.35, w: 11.9, h: 0.92, fill: { color: SURFACE }, line: { color: BORDER, transparency: 10 } });
+  s1.addText(state.selectedDirectors.length + ' Perspektiven  |  ' + state.rounds + ' Runden  |  ' + state.discussion.length + ' Beitraege', { x: 0.98, y: 4.56, w: 11.2, h: 0.23, fontSize: 10, fontFace: 'Calibri', color: WHITE, bold: true, margin: 0 });
+  s1.addText(shorten(names, 165), { x: 0.98, y: 4.84, w: 11.2, h: 0.23, fontSize: 8.8, fontFace: 'Calibri', color: MUTED, margin: 0 });
+  addFooter(s1);
 
-  [{t:'Erkenntnisse',d:state.erkenntnisse,c:ACC},{t:'Risiken',d:state.risiken,c:'f87171'},{t:'Optionen',d:state.optionen,c:ACC},{t:'Empfehlung',d:state.empfehlung,c:'fbbf24'}].forEach(function(tab) {
-    var s = pptx.addSlide(); s.background = { color: CARD };
-    s.addText(tab.t, { x: 0.8, y: 0.5, w: 11, h: 0.7, fontSize: 24, fontFace: 'Georgia', color: tab.c, bold: true });
-    s.addText(stripMd(tab.d || 'Keine Daten'), { x: 0.8, y: 1.4, w: 11, h: 3.8, fontSize: 13, fontFace: 'Calibri', color: WHITE, valign: 'top' });
+  [{t:'Erkenntnisse',d:state.erkenntnisse,c:ACC},{t:'Risiken',d:state.risiken,c:RED},{t:'Optionen',d:state.optionen,c:ACC},{t:'Empfehlung',d:state.empfehlung,c:GOLD}].forEach(function(tab) {
+    addTableCardSlides(tab.t, tab.d, tab.c);
   });
 
-  state.discussion.slice(0, 10).forEach(function(e) {
-    var d = getDirector(e.directorId);
-    var s = pptx.addSlide(); s.background = { color: BG };
-    s.addShape(pptx.ShapeType.ellipse, { x: 0.6, y: 0.4, w: 0.55, h: 0.55, fill: { color: d.color.replace('#','') } });
-    s.addText(d.initials, { x: 0.6, y: 0.4, w: 0.55, h: 0.55, fontSize: 11, fontFace: 'Calibri', color: 'FFFFFF', bold: true, align: 'center', valign: 'middle' });
-    s.addText(d.name, { x: 1.3, y: 0.35, w: 8, h: 0.3, fontSize: 18, fontFace: 'Georgia', color: d.color.replace('#',''), bold: true });
-    s.addText(d.role + ' \u00b7 Runde ' + e.round, { x: 1.3, y: 0.65, w: 8, h: 0.25, fontSize: 10, fontFace: 'Calibri', color: MUTED });
-    s.addText(stripMd(e.content), { x: 0.8, y: 1.3, w: 11, h: 3.8, fontSize: 13, fontFace: 'Calibri', color: WHITE, valign: 'top' });
-  });
+  if (state.discussion.length) {
+    for (var i = 0; i < Math.min(state.discussion.length, 8); i += 2) {
+      var ds = pptx.addSlide();
+      addHeader(ds, 'Diskussionsauszug', ACC, 'ANHANG');
+      state.discussion.slice(i, i + 2).forEach(function(e, idx) {
+        var d = getDirector(e.directorId);
+        var y = 1.78 + idx * 2.55;
+        ds.addShape(pptx.ShapeType.rect, { x: 0.65, y: y, w: 12, h: 2.18, fill: { color: SURFACE }, line: { color: BORDER, transparency: 8 } });
+        ds.addShape(pptx.ShapeType.ellipse, { x: 0.9, y: y + 0.2, w: 0.48, h: 0.48, fill: { color: safeColor(d.color) }, line: { color: safeColor(d.color) } });
+        ds.addText(d.initials, { x: 0.9, y: y + 0.29, w: 0.48, h: 0.14, fontSize: 8, fontFace: 'Calibri', color: 'FFFFFF', bold: true, align: 'center', margin: 0 });
+        ds.addText(d.name, { x: 1.55, y: y + 0.18, w: 4.6, h: 0.22, fontSize: 11.5, fontFace: 'Calibri', color: safeColor(d.color), bold: true, margin: 0 });
+        ds.addText(d.role + ' | Runde ' + e.round, { x: 1.55, y: y + 0.44, w: 4.6, h: 0.2, fontSize: 8.2, fontFace: 'Calibri', color: MUTED, margin: 0 });
+        ds.addText(shorten(formatPptBody(e.content), 700), { x: 0.92, y: y + 0.82, w: 11.35, h: 1.1, fontSize: 9.8, fontFace: 'Calibri', color: WHITE, valign: 'top', fit: 'shrink' });
+      });
+      addFooter(ds);
+    }
+  }
 
   pptx.writeFile({ fileName: 'Beirat-Ergebnis.pptx' }).then(function() { showToast('PowerPoint exportiert!', 'ok'); }).catch(function(e) { showToast('Export Fehler: ' + e.message, 'err'); });
 }
@@ -1533,9 +3163,12 @@ function resetAll() {
   if (state.isRunning) { showToast('Diskussion laeuft noch...', 'warn'); return; }
   state.discussion = []; state.context = ''; state.fileContent = ''; state.question = '';
   state.erkenntnisse = ''; state.risiken = ''; state.optionen = ''; state.empfehlung = '';
+  state.selectedDirectors = getRecommendedDirectorIds(); directorsInitialized = true;
+  resetResultView();
   try { document.getElementById('contextIn').value = ''; document.getElementById('questionIn').value = ''; } catch(e) {}
+  try { renderDirectorsGrid(); } catch(e) {}
   var z = document.getElementById('fileZone');
-  if (z) { z.className = 'file-upload-zone'; z.innerHTML = '<input type="file" id="fileInput" accept=".txt,.md,.csv,.json" onchange="handleFileUpload(event)">&#128206; Datei hochladen oder hier klicken'; }
+  if (z) { z.className = 'file-upload-zone'; z.innerHTML = '<input type="file" id="fileInput" accept=".txt,.md,.csv,.json" onchange="handleFileUpload(event)"><strong>Dokument als Kontext hinzufuegen</strong><span>Unterstuetzt .txt, .md, .csv und .json</span>'; }
   goStep(1);
 }
 
